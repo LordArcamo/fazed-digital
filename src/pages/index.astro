@@ -31,16 +31,16 @@ import Footer from '../components/Footer';
   <main>
     <HeroSection client:only="react" />
     <MarqueeSection client:only="react" />
-    <ServicesSection client:only="react" />
-    <WorkSection client:only="react" />
-    <ProcessSection client:only="react" />
-    <ImageStrip client:only="react" />
-    <StatsSection client:only="react" />
-    <WhyFazedSection client:only="react" />
-    <AboutSection client:only="react" />
-    <TestimonialsSection client:only="react" />
-    <ContactSection client:only="react" />
+    <ServicesSection client:visible />
+    <WorkSection client:visible />
+    <ProcessSection client:visible />
+    <ImageStrip client:visible />
+    <StatsSection client:visible />
+    <WhyFazedSection client:visible />
+    <AboutSection client:visible />
+    <TestimonialsSection client:visible />
+    <ContactSection client:visible />
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>

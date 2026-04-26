@@ -206,7 +206,7 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
       <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center;">
         <div>
           <div class="label" style="margin-bottom: 1.25rem;">Stay Sharp</div>
-          <AnimatedText client:only="react" text="Get insights delivered monthly." as="h2" className="display-md" />
+          <AnimatedText client:visible text="Get insights delivered monthly." as="h2" className="display-md" />
         </div>
         <form style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
           <input
@@ -214,13 +214,13 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
             placeholder="your@email.com"
             style="flex: 1; min-width: 200px; background: var(--gray-800); border: 1px solid var(--border); border-radius: 100px; padding: 0.85rem 1.5rem; color: var(--white); font-family: var(--font-body); font-size: 0.9rem; outline: none;"
           />
-          <MagneticButton client:only="react" variant="primary" size="md">Subscribe →</MagneticButton>
+          <MagneticButton client:visible variant="primary" size="md">Subscribe →</MagneticButton>
         </form>
       </div>
     </section>
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>
 
 <script>

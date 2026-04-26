@@ -139,10 +139,10 @@ const services = [
             <div style={i % 2 !== 0 ? 'order: 2' : ''}>
               <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
                 <span class="label">{s.num}</span>
-                <ServiceIcon client:only="react" serviceId={s.id} />
+                <ServiceIcon client:visible serviceId={s.id} />
               </div>
               <AnimatedText
-                client:only="react"
+                client:visible
                 text={s.title}
                 as="h2"
                 className="display-md"
@@ -154,7 +154,7 @@ const services = [
               <p class="body-lg" style="color: var(--gray-500); margin-bottom: 2.5rem; line-height: 1.75;">
                 {s.body}
               </p>
-              <MagneticButton client:only="react" href="/contact" variant="primary" size="md">
+              <MagneticButton client:visible href="/contact" variant="primary" size="md">
                 Start a Project →
               </MagneticButton>
             </div>
@@ -174,7 +174,7 @@ const services = [
       </section>
     ))}
 
-    <StatsSection client:only="react" />
+    <StatsSection client:visible />
 
     <!-- CTA strip -->
     <section style="padding: clamp(5rem,10vw,10rem) 0; background: var(--black); border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
@@ -186,14 +186,14 @@ const services = [
         <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem,6vw,6rem); font-weight: 700; letter-spacing: -0.02em; color: var(--white); line-height: 0.95; max-width: 16ch;">
           Let's build your bold brand.
         </h2>
-        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">
+        <MagneticButton client:visible href="/contact" variant="primary" size="lg">
           Get a Free Consultation →
         </MagneticButton>
       </div>
     </section>
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>
 
 <style>

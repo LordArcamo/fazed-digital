@@ -59,7 +59,7 @@ const values = [
           <div>
             <div class="label" style="margin-bottom: 1.25rem;">Our Story</div>
             <AnimatedText
-              client:only="react"
+              client:visible
               text="Started small. Think big."
               as="h2"
               className="display-md"
@@ -87,16 +87,16 @@ const values = [
     </section>
 
     <!-- Team -->
-    <TeamSection client:only="react" />
+    <TeamSection client:visible />
 
-    <StatsSection client:only="react" />
+    <StatsSection client:visible />
 
     <!-- Values -->
     <section class="section" style="background: var(--black);">
       <div class="container">
         <div class="label" style="margin-bottom: 1.25rem;">Our Values</div>
         <AnimatedText
-          client:only="react"
+          client:visible
           text="What drives every decision we make."
           as="h2"
           className="display-md"
@@ -148,13 +148,13 @@ const values = [
     <!-- CTA -->
     <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); text-align: center; border-top: 1px solid var(--border);">
       <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
-        <AnimatedText client:only="react" text="Ready to start something?" as="h2" className="display-md" />
-        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">Get in Touch →</MagneticButton>
+        <AnimatedText client:visible text="Ready to start something?" as="h2" className="display-md" />
+        <MagneticButton client:visible href="/contact" variant="primary" size="lg">Get in Touch →</MagneticButton>
       </div>
     </section>
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>
 
 <style>

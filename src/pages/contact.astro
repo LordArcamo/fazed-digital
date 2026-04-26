@@ -64,7 +64,7 @@ const faqs = [
 
     <MarqueeSection client:only="react" />
 
-    <ContactSection client:only="react" />
+    <ContactSection client:visible />
 
     <!-- FAQ -->
     <section class="section" style="background: var(--gray-900); border-top: 1px solid var(--border);">
@@ -73,7 +73,7 @@ const faqs = [
           <div class="faq-sticky" style="position: sticky; top: 8rem;">
             <div class="label" style="margin-bottom: 1.25rem;">FAQ</div>
             <AnimatedText
-              client:only="react"
+              client:visible
               text="Common questions answered."
               as="h2"
               className="display-sm"
@@ -100,7 +100,7 @@ const faqs = [
     </section>
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>
 
 <script>

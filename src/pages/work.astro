@@ -134,13 +134,13 @@ const filters = ['All', 'Brand', 'Web', 'E-commerce', 'Product'];
     <!-- CTA -->
     <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); border-top: 1px solid var(--border); text-align: center;">
       <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
-        <AnimatedText client:only="react" text="Want to be in here?" as="h2" className="display-md" />
-        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">Start a Project →</MagneticButton>
+        <AnimatedText client:visible text="Want to be in here?" as="h2" className="display-md" />
+        <MagneticButton client:visible href="/contact" variant="primary" size="lg">Start a Project →</MagneticButton>
       </div>
     </section>
   </main>
 
-  <Footer client:only="react" />
+  <Footer client:visible />
 </Layout>
 
 <script>
