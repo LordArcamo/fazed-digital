@@ -1,0 +1,61 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import MagneticButton from '../components/MagneticButton';
+import NotFoundAnim from '../components/NotFoundAnim';
+---
+
+<Layout
+  title="404 — Page Not Found | Fazed Digital"
+  description="The page you're looking for doesn't exist. Head back to the Fazed Digital homepage."
+  page="404"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" />
+
+  <main style="min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(2rem,6vw,6rem); background: var(--black); text-align: center; position: relative; overflow: hidden;">
+    <!-- BG watermark -->
+    <div aria-hidden style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; user-select: none;">
+      <span style="font-family: var(--font-display); font-style: italic; font-size: clamp(20rem, 45vw, 55rem); font-weight: 600; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.025); line-height: 1; letter-spacing: -0.04em;">
+        404
+      </span>
+    </div>
+
+    <!-- Radar animation -->
+    <div aria-hidden style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(80%, 480px); aspect-ratio: 1; pointer-events: none; opacity: 0.55; z-index: 0;">
+      <NotFoundAnim client:only="react" />
+    </div>
+
+    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.75rem;">
+      <div class="label">Error 404</div>
+      <h1 style="font-family: var(--font-display); font-style: italic; font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; max-width: 16ch;">
+        This page got lost in the ether.
+      </h1>
+      <p class="body-lg" style="color: var(--gray-400); max-width: 36ch;">
+        The page you're looking for doesn't exist, was moved, or never existed
+        in the first place. Let's get you somewhere useful.
+      </p>
+      <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+        <MagneticButton client:only="react" href="/" variant="primary" size="lg">← Go Home</MagneticButton>
+        <MagneticButton client:only="react" href="/work" variant="outline" size="lg">See Our Work</MagneticButton>
+      </div>
+      <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
+        {[
+          { label: 'About', href: '/about' },
+          { label: 'Services', href: '/services' },
+          { label: 'Blog', href: '/blog' },
+          { label: 'Contact', href: '/contact' },
+        ].map(l => (
+          <a href={l.href} class="label" style="color: var(--gray-500); transition: color 0.2s;"
+            onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
+            {l.label}
+          </a>
+        ))}
+      </div>
+    </div>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>

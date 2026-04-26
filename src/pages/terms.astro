@@ -1,0 +1,105 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+---
+
+<Layout
+  title="Terms of Service — Fazed Digital"
+  description="Fazed Digital's terms of service governing the use of our website and services."
+  page="terms"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/terms" />
+
+  <main style="background: var(--black); min-height: 100svh;">
+    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,6rem); border-bottom: 1px solid var(--border);">
+      <div class="container" style="max-width: 800px;">
+        <div class="label" style="margin-bottom: 1.25rem;">Legal</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; margin-bottom: 1.5rem;">
+          Terms of Service
+        </h1>
+        <p class="body" style="color: var(--gray-400);">
+          Last updated: 1 January 2025
+        </p>
+      </div>
+    </section>
+
+    <section style="padding: clamp(3rem,6vw,6rem) 0;">
+      <div class="container legal-body" style="max-width: 800px;">
+
+        <h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using the Fazed Digital website (fazeddigital.com) and engaging our services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website or services.</p>
+
+        <h2>2. Services</h2>
+        <p>Fazed Digital provides creative and digital services including web design and development, brand identity design, SEO marketing, and product design. The specific scope, deliverables, timeline, and fees for each project are outlined in a separate Statement of Work or Service Agreement provided to each client.</p>
+
+        <h2>3. Intellectual Property</h2>
+        <p>Upon receipt of full payment for a project, Fazed Digital assigns all intellectual property rights in the final deliverables to the client, unless otherwise specified in the project agreement.</p>
+        <p>Fazed Digital retains the right to display completed work in our portfolio, case studies, and marketing materials unless the client requests otherwise in writing.</p>
+        <p>All content on this website — including text, graphics, logos, and code — remains the property of Fazed Digital and may not be reproduced without written permission.</p>
+
+        <h2>4. Client Responsibilities</h2>
+        <p>Clients are responsible for:</p>
+        <ul>
+          <li>Providing accurate and complete project briefs and materials</li>
+          <li>Providing timely feedback and approvals as outlined in the project timeline</li>
+          <li>Ensuring they have rights to use any materials provided to Fazed Digital</li>
+          <li>Payment of invoices in accordance with agreed terms</li>
+        </ul>
+        <p>Delays caused by client inaction may result in timeline adjustments and additional fees.</p>
+
+        <h2>5. Payment Terms</h2>
+        <p>Unless otherwise agreed in writing, our standard payment terms are:</p>
+        <ul>
+          <li>50% deposit required before project commencement</li>
+          <li>Remaining balance due upon project completion before final file delivery</li>
+          <li>Payment due within 14 days of invoice</li>
+          <li>Late payments may incur interest at 1.5% per month</li>
+        </ul>
+
+        <h2>6. Revisions and Changes</h2>
+        <p>Each project includes a specified number of revision rounds as outlined in the project agreement. Additional revisions or changes to project scope will be quoted and invoiced separately. Significant scope changes may require a new Statement of Work.</p>
+
+        <h2>7. Limitation of Liability</h2>
+        <p>To the maximum extent permitted by law, Fazed Digital's total liability for any claim arising from our services is limited to the total fees paid by the client for the specific project to which the claim relates.</p>
+        <p>We are not liable for any indirect, consequential, or incidental damages arising from the use of our services or the website.</p>
+
+        <h2>8. Termination</h2>
+        <p>Either party may terminate a project with 14 days' written notice. In the event of termination, the client is liable for payment for all work completed to the date of termination. The deposit is non-refundable once work has commenced.</p>
+
+        <h2>9. Governing Law</h2>
+        <p>These terms are governed by the laws of the Republic of the Philippines. Any disputes shall be subject to the exclusive jurisdiction of the appropriate courts of the Philippines.</p>
+
+        <h2>10. Changes to Terms</h2>
+        <p>We reserve the right to update these terms at any time. Continued use of our website or services after changes constitutes acceptance of the revised terms.</p>
+
+        <h2>11. Contact</h2>
+        <p>
+          <strong>Fazed Digital</strong><br />
+          Iligan City, Lanao del Norte, Philippines<br />
+          <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a><br />
+          <a href="tel:+639221234567">+63 922 123 4567</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<style>
+  .legal-body h2 {
+    font-family: var(--font-display); font-style: italic; font-weight: 600;
+    font-size: clamp(1.25rem, 2vw, 1.75rem); letter-spacing: -0.01em;
+    color: var(--white); margin: 2.5rem 0 0.875rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .legal-body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+  .legal-body p  { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; font-size: 0.975rem; }
+  .legal-body ul { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; padding-left: 1.5rem; font-size: 0.975rem; }
+  .legal-body ul li { list-style: disc; margin-bottom: 0.3rem; }
+  .legal-body a  { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+  .legal-body strong { color: var(--white); }
+</style>

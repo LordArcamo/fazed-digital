@@ -1,0 +1,205 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import AnimatedText from '../components/AnimatedText';
+import MagneticButton from '../components/MagneticButton';
+import MarqueeSection from '../components/MarqueeSection';
+import StatsSection from '../components/StatsSection';
+import ServicesHeroAnim from '../components/ServicesHeroAnim';
+import ServiceIcon from '../components/ServiceIcon';
+
+const services = [
+  {
+    id: 'web',
+    num: '01',
+    icon: '◈',
+    title: 'Web Design & Development',
+    sub: 'Performance-first websites that convert.',
+    body: 'We design and build websites that marry exceptional aesthetics with technical excellence. Every project is mobile-first, accessibility-compliant, and optimised for Core Web Vitals. From landing pages to full-scale web applications.',
+    features: [
+      'Custom design — no templates, ever',
+      'React, Astro, Next.js, or Webflow',
+      'Headless CMS integration',
+      'WCAG 2.1 AA accessibility',
+      'Core Web Vitals optimisation',
+      'Ongoing support & maintenance',
+    ],
+  },
+  {
+    id: 'brand',
+    num: '02',
+    icon: '◇',
+    title: 'Brand Identity',
+    sub: 'Identities built to be remembered.',
+    body: 'Great brands don\'t happen by accident. We develop comprehensive visual identity systems — from logo to guidelines — that give you a consistent, powerful presence across every touchpoint your audience encounters.',
+    features: [
+      'Logo design + all variations',
+      'Typography system & font licensing',
+      'Colour palette & usage rules',
+      'Brand guidelines document',
+      'Social media templates',
+      'Print & packaging design',
+    ],
+  },
+  {
+    id: 'seo',
+    num: '03',
+    icon: '◉',
+    title: 'SEO Marketing',
+    sub: 'Organic growth that compounds.',
+    body: 'We take a full-funnel approach: technical foundation, content strategy, on-page optimisation, and authority building. Our campaigns are data-driven and transparent — you always know exactly what we\'re doing and why.',
+    features: [
+      'Technical SEO audit & remediation',
+      'Keyword & content strategy',
+      'On-page optimisation',
+      'Link acquisition',
+      'Monthly reporting & analytics',
+      'Google Search Console & GA4 setup',
+    ],
+  },
+  {
+    id: 'product',
+    num: '04',
+    icon: '◐',
+    title: 'Product Design',
+    sub: 'UX that users love and businesses grow on.',
+    body: 'From user research and wireframing through to high-fidelity UI and design systems, we help digital products reach their full potential. Close collaboration with your development team ensures flawless handoff.',
+    features: [
+      'User research & interviews',
+      'Information architecture',
+      'Wireframing & prototyping',
+      'High-fidelity UI design (Figma)',
+      'Design system creation',
+      'Developer-ready handoff',
+    ],
+  },
+  {
+    id: 'systems',
+    num: '05',
+    icon: '⬡',
+    title: 'Custom System Development',
+    sub: 'Bespoke software built for your exact workflow.',
+    body: 'Off-the-shelf software rarely fits perfectly. We build custom internal tools, automation pipelines, APIs, and full-stack applications — precisely engineered to your processes so your team moves faster and your business scales without friction.',
+    features: [
+      'Full-stack web applications',
+      'Custom API design & integration',
+      'Business process automation',
+      'Internal tools & dashboards',
+      'Database architecture & optimisation',
+      'Ongoing maintenance & support',
+    ],
+  },
+];
+---
+
+<Layout
+  title="Services — Web Design, Branding, SEO & Product Design | Fazed Digital"
+  description="Explore Fazed Digital's services: web design, brand identity, SEO marketing, product design, and custom system development. Strategy-led creative for ambitious brands in Iligan City and beyond."
+  page="services"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/services" />
+
+  <main>
+    <!-- Hero -->
+    <section style="min-height: 55svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem,6vw,6rem); padding-top: 10rem; background: var(--black); overflow: hidden; position: relative; border-bottom: 1px solid var(--border);">
+      <div aria-hidden style="position: absolute; top: 0; right: 0; width: 45%; height: 100%; background: radial-gradient(ellipse at 80% 30%, rgba(255,255,255,0.03) 0%, transparent 55%); pointer-events: none;"></div>
+      <!-- Pentagon service wheel -->
+      <div aria-hidden style="position: absolute; right: -2%; top: 50%; transform: translateY(-50%); width: min(48%, 440px); aspect-ratio: 1; pointer-events: none; opacity: 0.6; z-index: 0;">
+        <ServicesHeroAnim client:only="react" />
+      </div>
+      <div style="position: relative; z-index: 1;">
+        <div class="label" style="margin-bottom: 1.5rem;">What We Do</div>
+        <AnimatedText
+          client:only="react"
+          text="Services that move the needle."
+          as="h1"
+          className="display-lg"
+          style={{ maxWidth: '18ch', marginBottom: '2rem' }}
+        />
+        <p class="body-lg" style="color: var(--gray-400); max-width: 50ch; line-height: 1.75;">
+          From first impression to final conversion, we craft every touchpoint with
+          intent. Strategy-led creative for brands that mean business.
+        </p>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <!-- Service sections -->
+    {services.map((s, i) => (
+      <section
+        id={s.id}
+        style={`background: ${i % 2 === 0 ? 'var(--black)' : 'var(--gray-900)'}; padding: clamp(5rem,10vw,10rem) 0; border-top: 1px solid var(--border);`}
+      >
+        <div class="container">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem,6vw,8rem); align-items: start;">
+            <div style={i % 2 !== 0 ? 'order: 2' : ''}>
+              <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem;">
+                <span class="label">{s.num}</span>
+                <ServiceIcon client:only="react" serviceId={s.id} />
+              </div>
+              <AnimatedText
+                client:only="react"
+                text={s.title}
+                as="h2"
+                className="display-md"
+                style={{ marginBottom: '0.75rem' }}
+              />
+              <p style="font-family: var(--font-display); font-size: clamp(1rem,1.5vw,1.2rem); font-weight: 400; color: var(--gray-400); margin-bottom: 2rem;">
+                {s.sub}
+              </p>
+              <p class="body-lg" style="color: var(--gray-500); margin-bottom: 2.5rem; line-height: 1.75;">
+                {s.body}
+              </p>
+              <MagneticButton client:only="react" href="/contact" variant="primary" size="md">
+                Start a Project →
+              </MagneticButton>
+            </div>
+
+            <div style={i % 2 !== 0 ? 'order: 1' : ''}>
+              <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                {s.features.map(f => (
+                  <div style="display: flex; align-items: center; gap: 1rem; padding: 0.9rem 1.25rem; border: 1px solid var(--border); border-radius: 0.625rem; background: var(--gray-800);">
+                    <span style="color: var(--white); flex-shrink: 0; font-size: 0.85rem;">✓</span>
+                    <span class="body" style="color: var(--gray-300);">{f}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    ))}
+
+    <StatsSection client:only="react" />
+
+    <!-- CTA strip -->
+    <section style="padding: clamp(5rem,10vw,10rem) 0; background: var(--black); border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
+      <div aria-hidden style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 80%, rgba(201,255,87,0.07) 0%, transparent 65%); pointer-events: none;"></div>
+      <div aria-hidden style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: clamp(400px,60vw,900px); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(201,255,87,0.06); pointer-events: none;"></div>
+      <div aria-hidden style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: clamp(260px,40vw,600px); aspect-ratio: 1; border-radius: 50%; border: 1px solid rgba(201,255,87,0.08); pointer-events: none;"></div>
+      <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2.5rem; position: relative; z-index: 1;">
+        <div class="label" style="color: var(--accent);">Ready to go?</div>
+        <h2 style="font-family: var(--font-display); font-size: clamp(2.5rem,6vw,6rem); font-weight: 700; letter-spacing: -0.02em; color: var(--white); line-height: 0.95; max-width: 16ch;">
+          Let's build your bold brand.
+        </h2>
+        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">
+          Get a Free Consultation →
+        </MagneticButton>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<style>
+  @media (max-width: 860px) {
+    section > .container > div { grid-template-columns: 1fr !important; }
+    section > .container > div > div[style*="order: 2"] { order: 1 !important; }
+    section > .container > div > div[style*="order: 1"] { order: 2 !important; }
+  }
+</style>

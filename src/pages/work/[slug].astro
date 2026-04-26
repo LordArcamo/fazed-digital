@@ -1,0 +1,209 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Cursor from '../../components/Cursor';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
+import AnimatedText from '../../components/AnimatedText';
+import MagneticButton from '../../components/MagneticButton';
+import MarqueeSection from '../../components/MarqueeSection';
+
+export function getStaticPaths() {
+  const cases = [
+    {
+      slug: '01',
+      title: 'Arcadia Studio',
+      category: 'Brand Identity + Web Design',
+      year: '2024',
+      client: 'Arcadia Studio',
+      industry: 'Architecture & Interior Design',
+      services: ['Brand Identity', 'Web Design', 'Development'],
+      duration: '10 weeks',
+      challenge: 'Arcadia Studio is a boutique Brisbane architecture practice with exceptional work but a dated, inconsistent brand that didn\'t reflect their calibre. They needed an identity as refined as their buildings, and a website that attracted premium residential clients.',
+      solution: 'We began with brand strategy — defining their positioning as the firm for clients who treat their home as a considered investment. From this, we developed a restrained, typographic identity using a custom wordmark and a palette drawn from natural materials: stone, timber, and light.',
+      result: 'Within four months of launch, Arcadia reported a 40% increase in qualified enquiries, with several new clients specifically citing the website as the reason they made contact. The rebrand also supported a 15% average project fee increase.',
+      outcomes: ['40% increase in qualified leads', '15% average fee increase', '3× improvement in organic search visibility', 'Featured in Architectural Review Australia'],
+    },
+    {
+      slug: '02',
+      title: 'Meridian Finance',
+      category: 'Web Design + SEO',
+      year: '2024',
+      client: 'Meridian Finance Group',
+      industry: 'Financial Services',
+      services: ['Web Design', 'Development', 'SEO Marketing'],
+      duration: '8 weeks',
+      challenge: 'Meridian Finance had strong products but a website that conveyed neither trust nor expertise. Generic stock photography, cluttered layout, and no SEO foundation meant they were invisible to searchers and unconvincing to visitors who did find them.',
+      solution: 'A ground-up redesign focused on credibility signals: clear articulation of their value proposition, prominent social proof, and a content architecture built around buyer journeys. An SEO audit drove a technical remediation and a 12-month content strategy targeting high-intent keywords.',
+      result: 'Organic traffic grew 180% in the first six months. Conversion rate on the main lead form improved from 1.2% to 4.8%. The site now ranks page one for seven target terms in their core markets.',
+      outcomes: ['180% organic traffic growth', '4× improvement in lead conversion', 'Page 1 rankings on 7 target terms', '38% reduction in cost per acquisition'],
+    },
+    {
+      slug: '03',
+      title: 'Bloom Organics',
+      category: 'E-commerce + Brand Identity',
+      year: '2023',
+      client: 'Bloom Organics',
+      industry: 'Health & Wellness',
+      services: ['Brand Identity', 'E-commerce Development'],
+      duration: '12 weeks',
+      challenge: 'A quality organic skincare brand launching into a very crowded market. They needed a brand and an e-commerce experience that communicated premium quality without pretension — accessible luxury for everyday wellness.',
+      solution: 'We developed a brand system rooted in the idea of "nature, refined" — botanical illustration elements combined with clean typographic hierarchy. The Shopify build prioritised product storytelling, ingredient transparency, and a subscription model for recurring revenue.',
+      result: 'First-month revenue exceeded projections by 65%. The subscription model achieved a 31% take-up rate. The brand was covered in three lifestyle publications in the first quarter.',
+      outcomes: ['65% above first-month revenue target', '31% subscription uptake', '4.8★ average product rating', 'Featured in 3 lifestyle publications'],
+    },
+    {
+      slug: '04',
+      title: 'NexaTech SaaS',
+      category: 'Product Design',
+      year: '2024',
+      client: 'NexaTech Pty Ltd',
+      industry: 'SaaS / Technology',
+      services: ['UX Research', 'Product Design', 'Design System'],
+      duration: '16 weeks',
+      challenge: 'NexaTech had built a genuinely powerful B2B analytics platform, but the interface was dense, confusing, and causing high churn during trial periods. Users weren\'t staying long enough to experience the product\'s real value.',
+      solution: 'A comprehensive UX research programme — interviews, session recordings, and usability testing — revealed that users couldn\'t find the core "aha moment" within the product. We redesigned the onboarding flow, simplified the main dashboard, and built a component library enabling faster future development.',
+      result: 'Trial-to-paid conversion improved from 12% to 27%. Average session duration increased 2.4×. Support tickets during trials dropped 55%.',
+      outcomes: ['27% trial-to-paid conversion (from 12%)', '2.4× increase in session duration', '55% reduction in support tickets', 'Design system adopted by engineering team'],
+    },
+    {
+      slug: '05',
+      title: 'Summit Health',
+      category: 'Brand Identity + Web Design',
+      year: '2023',
+      client: 'Summit Health Group',
+      industry: 'Healthcare',
+      services: ['Brand Identity', 'Web Design', 'Development'],
+      duration: '9 weeks',
+      challenge: 'A growing allied health group with three clinics, inconsistent branding across locations, and a fragmented online presence that was confusing patients and making booking difficult.',
+      solution: 'A unified brand identity that worked across all three clinics while maintaining location-specific warmth. A new website with integrated online booking, clear service structure, and trust-building content — testimonials, practitioner profiles, and FAQ content.',
+      result: 'Online booking increased by 90% in the first three months. Patient retention rates improved as the consistent brand built familiarity and trust across touchpoints.',
+      outcomes: ['90% increase in online bookings', 'Reduced front-desk call volume by 40%', 'Consistent NPS improvement across all clinics', 'Successfully onboarded 4th clinic to unified brand'],
+    },
+    {
+      slug: '06',
+      title: 'Vantage Realty',
+      category: 'Web Design + SEO',
+      year: '2023',
+      client: 'Vantage Realty',
+      industry: 'Real Estate',
+      services: ['Web Design', 'Development', 'SEO'],
+      duration: '7 weeks',
+      challenge: 'A boutique real estate agency competing against major networks in a tough market. Their website lacked the visual quality and search visibility needed to compete for premium property listings.',
+      solution: 'A premium website built around property photography, with IDX integration for live listings, a market insights blog for SEO, and a lead magnet funnel for vendor prospecting. Schema markup and local SEO fundamentals drove local visibility.',
+      result: 'First-page local rankings for 14 terms in their target suburbs within five months. Vendor enquiry form submissions tripled. The site became a key conversation piece in listing presentations.',
+      outcomes: ['Page 1 rankings for 14 local terms', '3× vendor enquiry volume', 'Website cited in 40% of listing presentations', '22% increase in average listing value'],
+    },
+  ];
+
+  return cases.map(c => ({ params: { slug: c.slug }, props: c }));
+}
+
+const { title, category, year, client, industry, services, duration, challenge, solution, result, outcomes, slug } = Astro.props;
+---
+
+<Layout
+  title={`${title} — Case Study | Fazed Digital`}
+  description={`How Fazed Digital helped ${client} with ${category}. See the challenge, approach, and results.`}
+  page="work"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/work" />
+
+  <main>
+    <!-- Hero -->
+    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,5rem); background: var(--black); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <a href="/work" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-500); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2rem; transition: color 0.2s;"
+          onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
+          ← Back to Work
+        </a>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap;">
+          <span class="label">{category}</span>
+          <span class="label">—</span>
+          <span class="label">{year}</span>
+        </div>
+        <AnimatedText
+          client:only="react"
+          text={title}
+          as="h1"
+          className="display-lg"
+          style={{ marginBottom: '3rem' }}
+        />
+        <!-- Meta row -->
+        <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; padding: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+          {[
+            { label: 'Client',    value: client },
+            { label: 'Industry',  value: industry },
+            { label: 'Services',  value: services.join(', ') },
+            { label: 'Duration',  value: duration },
+          ].map(m => (
+            <div>
+              <div class="label" style="margin-bottom: 0.35rem;">{m.label}</div>
+              <div style="font-size: 0.9rem; color: var(--gray-200);">{m.value}</div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Visual placeholder -->
+    <section style="background: var(--gray-900); border-bottom: 1px solid var(--border); overflow: hidden;">
+      <div class="container" style="padding-top: clamp(3rem,6vw,6rem); padding-bottom: clamp(3rem,6vw,6rem);">
+        <div style="aspect-ratio: 16/7; border-radius: var(--radius); background: var(--gray-800); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
+          <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%);"></div>
+          <span style="font-family: var(--font-display); font-style: italic; font-size: clamp(8rem, 18vw, 20rem); font-weight: 600; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.05); user-select: none; letter-spacing: -0.02em;">
+            {slug.padStart(2, '0')}
+          </span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case study content -->
+    <section class="section" style="background: var(--black);">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem,6vw,8rem);">
+          {[
+            { label: 'The Challenge', body: challenge },
+            { label: 'Our Approach',  body: solution },
+          ].map(({ label, body }) => (
+            <div>
+              <div class="label" style="margin-bottom: 1.5rem;">{label}</div>
+              <p style="color: var(--gray-400); line-height: 1.8; font-size: 1.0125rem;">{body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Results -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+      <div class="container">
+        <div class="label" style="margin-bottom: 1.5rem;">The Results</div>
+        <AnimatedText client:only="react" text={result} as="p" className="display-sm" style={{ color: 'var(--white)', marginBottom: '3rem' }} />
+        <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem;">
+          {outcomes.map(o => (
+            <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--gray-800);">
+              <span style="color: var(--white); font-size: 1.1rem; flex-shrink: 0;">✓</span>
+              <span style="color: var(--gray-200); font-size: 0.95rem;">{o}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <!-- CTA -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--black); text-align: center;">
+      <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+        <AnimatedText client:only="react" text="Want results like these?" as="h2" className="display-md" />
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+          <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">Start a Project →</MagneticButton>
+          <MagneticButton client:only="react" href="/work" variant="outline" size="lg">More Work</MagneticButton>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>

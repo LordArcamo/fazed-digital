@@ -1,0 +1,99 @@
+---
+export interface Props {
+  title?: string;
+  description?: string;
+  image?: string;
+  page?: string;
+}
+
+const {
+  title = 'Fazed Digital — Bold Creative Agency',
+  description = 'Fazed Digital builds bold identities that speak your story — visually and verbally. Web design, brand identity, SEO marketing, and digital product design.',
+  image = '/og-image.jpg',
+  page = 'home',
+} = Astro.props;
+
+const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fazeddigital.com');
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Fazed Digital" />
+  <meta name="keywords" content="digital agency, web design, brand identity, SEO, Iligan City, Philippines, creative agency" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(image, 'https://fazeddigital.com')} />
+  <meta property="og:site_name" content="Fazed Digital" />
+  <meta property="og:locale" content="en_AU" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={new URL(image, 'https://fazeddigital.com')} />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Fonts — preconnect first, then load -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <!-- Clash Display — sharp, geometric, premium agency feel -->
+  <link
+    href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap"
+    rel="stylesheet"
+  />
+  <!-- Plus Jakarta Sans + Space Mono -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Schema.org structured data -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "ProfessionalService",
+    "name": "Fazed Digital",
+    "url": "https://fazeddigital.com",
+    "email": "info@fazeddigital.com",
+    "telephone": "+639221234567",
+    "address": { "@type": "PostalAddress", "addressLocality": "Iligan City", "addressCountry": "PH" },
+    "description": description,
+    "openingHours": "Mo-Fr 08:30-17:00",
+    "priceRange": "$$",
+    "serviceType": ["Web Design", "Brand Identity", "SEO Marketing", "Product Design", "Custom System Development"],
+    "sameAs": ["https://fazeddigital.com"]
+  })} />
+</head>
+
+<body data-page={page}>
+  <slot />
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+
+  /* Mobile nav & layout helpers */
+  @media (max-width: 860px) {
+    .grid-2, .two-col { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 640px) {
+    body { cursor: auto; }
+    a, button, [role="button"] { cursor: auto; }
+  }
+</style>

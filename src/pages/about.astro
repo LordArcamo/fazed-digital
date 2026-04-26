@@ -1,0 +1,195 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import AnimatedText from '../components/AnimatedText';
+import MagneticButton from '../components/MagneticButton';
+import StatsSection from '../components/StatsSection';
+import MarqueeSection from '../components/MarqueeSection';
+import TeamSection from '../components/TeamSection';
+import AboutHeroAnim from '../components/AboutHeroAnim';
+
+const values = [
+  { num: '01', title: 'Bold by default',   body: 'We don\'t do safe. Every colour, word, and decision is made with conviction. Safe design is invisible design.' },
+  { num: '02', title: 'Strategy first',    body: 'Beautiful design without purpose is decoration. We lead with why before we ever touch a pixel.' },
+  { num: '03', title: 'Craft matters',     body: 'Pixel-level attention to detail, always. Typography, spacing, motion — every element earns its place.' },
+  { num: '04', title: 'Results-driven',    body: 'We measure success by your growth, not our awards cabinet. If you win, we win.' },
+];
+---
+
+<Layout
+  title="About Fazed Digital — Our Story, Values & Team"
+  description="Learn about Fazed Digital, an Iligan City-based creative agency founded in 2018. We combine design excellence, strategy, and technical expertise to grow ambitious brands."
+  page="about"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/about" />
+
+  <main>
+    <!-- Hero -->
+    <section style="min-height: 65svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem,6vw,6rem); padding-top: 10rem; background: var(--black); position: relative; overflow: hidden; border-bottom: 1px solid var(--border);">
+      <div aria-hidden style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: radial-gradient(ellipse at 70% 20%, rgba(255,255,255,0.03) 0%, transparent 55%); pointer-events: none;"></div>
+      <!-- Orbital animation -->
+      <div aria-hidden style="position: absolute; right: 0; top: 0; bottom: 0; width: min(50%, 400px); pointer-events: none; opacity: 0.55; z-index: 0;">
+        <AboutHeroAnim client:only="react" />
+      </div>
+      <div style="position: relative; z-index: 1;">
+        <div class="label" style="margin-bottom: 1.5rem;">About Us</div>
+        <AnimatedText
+          client:only="react"
+          text="We make bold brands for ambitious people."
+          as="h1"
+          className="display-lg"
+          style={{ maxWidth: '18ch', marginBottom: '2.5rem' }}
+        />
+        <p class="body-lg" style="color: var(--gray-400); max-width: 48ch; line-height: 1.75;">
+          Fazed Digital was founded with one purpose: to create design that actually
+          moves the needle — strategy-led, craft-obsessed, results-driven.
+        </p>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <!-- Story -->
+    <section class="section" style="background: var(--black);">
+      <div class="container">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem,6vw,8rem); align-items: start;">
+          <div>
+            <div class="label" style="margin-bottom: 1.25rem;">Our Story</div>
+            <AnimatedText
+              client:only="react"
+              text="Started small. Think big."
+              as="h2"
+              className="display-md"
+            />
+          </div>
+          <div style="padding-top: 0.5rem; display: flex; flex-direction: column; gap: 1.25rem;">
+            <p class="body-lg" style="color: var(--gray-400);">
+              Fazed Digital started in Iligan City in 2018 with a simple belief: that
+              small and mid-sized businesses deserve agency-level design and strategy
+              without the agency-sized price tag and attitude.
+            </p>
+            <p class="body" style="color: var(--gray-500);">
+              Over six years, we've grown from a one-person studio into a tight-knit
+              team of designers, strategists, and developers — all bound by an obsession
+              with craft and a genuine investment in our clients' success.
+            </p>
+            <p class="body" style="color: var(--gray-500);">
+              Every project starts with asking the right questions: who are you, who
+              are you talking to, and what do you want them to feel? The answers
+              shape everything that follows.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Team -->
+    <TeamSection client:only="react" />
+
+    <StatsSection client:only="react" />
+
+    <!-- Values -->
+    <section class="section" style="background: var(--black);">
+      <div class="container">
+        <div class="label" style="margin-bottom: 1.25rem;">Our Values</div>
+        <AnimatedText
+          client:only="react"
+          text="What drives every decision we make."
+          as="h2"
+          className="display-md"
+          style={{ marginBottom: '3.5rem' }}
+        />
+        <div class="grid-2" style="gap: 1.25rem;">
+          {values.map((v, i) => (
+            <div style="padding: 2.25rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); display: flex; flex-direction: column; gap: 0.875rem; position: relative; overflow: hidden;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <span class="label">{v.num}</span>
+                <!-- Per-value animated icon -->
+                {i === 0 && (
+                  <svg class="val-icon" viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden>
+                    <path class="bolt-anim" d="M18 3 L10 17 H16 L14 29 L24 13 H18 Z"
+                      fill="rgba(201,255,87,0.1)" stroke="rgba(201,255,87,0.55)" stroke-width="1.4" stroke-linejoin="round" />
+                  </svg>
+                )}
+                {i === 1 && (
+                  <svg class="val-icon" viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden>
+                    <circle class="ring-outer" cx="16" cy="16" r="12" stroke="rgba(255,255,255,0.14)" stroke-width="1.2" />
+                    <circle class="ring-mid" cx="16" cy="16" r="7" stroke="rgba(255,255,255,0.22)" stroke-width="1.2" />
+                    <circle class="ring-inner" cx="16" cy="16" r="3" fill="rgba(201,255,87,0.8)" />
+                  </svg>
+                )}
+                {i === 2 && (
+                  <svg class="val-icon" viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden>
+                    <path class="diamond-anim" d="M16 4 L28 14 L16 28 L4 14 Z"
+                      fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.32)" stroke-width="1.4" />
+                    <line x1="4" y1="14" x2="28" y2="14" stroke="rgba(255,255,255,0.12)" stroke-width="1" />
+                  </svg>
+                )}
+                {i === 3 && (
+                  <svg class="val-icon" viewBox="0 0 32 32" width="26" height="26" fill="none" aria-hidden>
+                    <polyline class="chart-anim" points="3,25 9,18 15,21 21,12 29,7"
+                      stroke="var(--accent)" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"
+                      stroke-dasharray="44" stroke-dashoffset="44" fill="none" />
+                    <circle cx="29" cy="7" r="2.5" fill="var(--accent)" opacity="0.8" />
+                  </svg>
+                )}
+              </div>
+              <h3 style="font-family: var(--font-display); font-size: clamp(1.25rem, 2vw, 1.6rem); font-weight: 600; letter-spacing: -0.01em;">{v.title}</h3>
+              <p class="body" style="color: var(--gray-500);">{v.body}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); text-align: center; border-top: 1px solid var(--border);">
+      <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+        <AnimatedText client:only="react" text="Ready to start something?" as="h2" className="display-md" />
+        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">Get in Touch →</MagneticButton>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<style>
+  @keyframes boltFlash {
+    0%,100% { opacity: 0.45; }
+    50% { opacity: 1; filter: drop-shadow(0 0 4px rgba(201,255,87,0.5)); }
+  }
+  @keyframes ringPulse {
+    0%,100% { transform: scale(1); opacity: 0.9; }
+    50% { transform: scale(1.15); opacity: 0.5; }
+  }
+  @keyframes diamondGlow {
+    0%,100% { stroke-opacity: 0.32; }
+    50% { stroke-opacity: 0.8; }
+  }
+  @keyframes chartDraw {
+    0% { stroke-dashoffset: 44; }
+    60% { stroke-dashoffset: 0; }
+    100% { stroke-dashoffset: 0; }
+  }
+  .bolt-anim    { animation: boltFlash  2s ease-in-out infinite; }
+  .ring-inner   { animation: ringPulse  1.8s ease-in-out infinite; transform-origin: 16px 16px; }
+  .ring-mid     { animation: ringPulse  1.8s ease-in-out infinite 0.2s; transform-origin: 16px 16px; }
+  .ring-outer   { animation: ringPulse  1.8s ease-in-out infinite 0.4s; transform-origin: 16px 16px; }
+  .diamond-anim { animation: diamondGlow 2.4s ease-in-out infinite; }
+  .chart-anim   { animation: chartDraw  2.8s ease-out infinite 0.6s; }
+  .val-icon     { flex-shrink: 0; }
+
+  @media (max-width: 860px) {
+    .grid-2 { grid-template-columns: 1fr !important; }
+  }
+  @media (max-width: 860px) {
+    section > .container > div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+  }
+</style>
+

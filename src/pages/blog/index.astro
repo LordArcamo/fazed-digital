@@ -1,0 +1,273 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Cursor from '../../components/Cursor';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
+import AnimatedText from '../../components/AnimatedText';
+import MagneticButton from '../../components/MagneticButton';
+import MarqueeSection from '../../components/MarqueeSection';
+
+const posts = [
+  {
+    slug: 'why-brand-identity-matters',
+    title: 'Why Brand Identity Is Your Most Important Business Asset',
+    excerpt: 'In a market flooded with options, the brands that win are the ones people remember. Here\'s why investing in identity is always worth it.',
+    category: 'Branding',
+    date: '18 Apr 2025',
+    readTime: '6 min read',
+    featured: true,
+  },
+  {
+    slug: 'core-web-vitals-seo',
+    title: 'Core Web Vitals: What They Are and Why They Destroy Rankings',
+    excerpt: 'Google\'s page experience signals are now a confirmed ranking factor. We break down LCP, FID, and CLS in plain English — and how to fix them.',
+    category: 'SEO',
+    date: '02 Apr 2025',
+    readTime: '8 min read',
+    featured: false,
+  },
+  {
+    slug: 'astro-vs-nextjs-agencies',
+    title: 'Astro vs Next.js: Which Should Your Agency Choose in 2025?',
+    excerpt: 'We\'ve built with both. Here\'s an honest comparison from the trenches — performance, DX, and the projects each framework is truly built for.',
+    category: 'Development',
+    date: '21 Mar 2025',
+    readTime: '9 min read',
+    featured: false,
+  },
+  {
+    slug: 'ux-mistakes-killing-conversions',
+    title: '7 UX Mistakes That Are Quietly Killing Your Conversion Rate',
+    excerpt: 'Most conversion problems aren\'t about copy or offers — they\'re about friction. Here are the design errors we see most often in audits.',
+    category: 'Design',
+    date: '05 Mar 2025',
+    readTime: '7 min read',
+    featured: false,
+  },
+  {
+    slug: 'content-strategy-small-business',
+    title: 'A No-Nonsense Content Strategy for Small Businesses',
+    excerpt: 'You don\'t need a 40-page strategy document. You need to know what to say, to whom, on which channels, and how often. Let\'s simplify.',
+    category: 'Strategy',
+    date: '14 Feb 2025',
+    readTime: '5 min read',
+    featured: false,
+  },
+  {
+    slug: 'typography-web-design',
+    title: 'Typography in Web Design: The Rules That Actually Matter',
+    excerpt: 'Type is 95% of web design, yet it\'s the most overlooked element. The principles that separate good typography from great — and from unreadable.',
+    category: 'Design',
+    date: '28 Jan 2025',
+    readTime: '6 min read',
+    featured: false,
+  },
+];
+
+const featured = posts.find(p => p.featured)!;
+const rest = posts.filter(p => !p.featured);
+const categories = ['All', ...new Set(posts.map(p => p.category))];
+---
+
+<Layout
+  title="Blog — Insights on Design, SEO & Digital | Fazed Digital"
+  description="Practical insights on web design, brand identity, SEO, and digital strategy from the Fazed Digital team. No fluff, just useful thinking."
+  page="blog"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/blog" />
+
+  <main>
+    <!-- Hero -->
+    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,6rem); background: var(--black); border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+      <!-- Animated quill / writing SVG -->
+      <div aria-hidden class="blog-hero-anim" style="position: absolute; right: 0; top: 0; bottom: 0; width: min(45%, 420px); pointer-events: none; opacity: 0.5; display: flex; align-items: center; justify-content: center;">
+        <svg viewBox="0 0 280 320" fill="none" style="width: 100%; height: 100%;">
+          <!-- Text lines that draw in -->
+          <line class="bl-line bl-l1" x1="40" y1="80"  x2="240" y2="80"  stroke="rgba(255,255,255,0.3)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="200" stroke-dashoffset="200" />
+          <line class="bl-line bl-l2" x1="40" y1="104" x2="200" y2="104" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="160" stroke-dashoffset="160" />
+          <line class="bl-line bl-l3" x1="40" y1="128" x2="220" y2="128" stroke="rgba(255,255,255,0.2)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="180" stroke-dashoffset="180" />
+          <line class="bl-line bl-l4" x1="40" y1="152" x2="180" y2="152" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="140" stroke-dashoffset="140" />
+          <line class="bl-line bl-l5" x1="40" y1="180" x2="230" y2="180" stroke="rgba(201,255,87,0.4)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="190" stroke-dashoffset="190" />
+          <line class="bl-line bl-l6" x1="40" y1="204" x2="160" y2="204" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" stroke-linecap="round" stroke-dasharray="120" stroke-dashoffset="120" />
+          <!-- Blinking cursor -->
+          <rect class="bl-cursor" x="244" y="172" width="2" height="20" rx="1" fill="var(--accent)" />
+          <!-- Pen nib decoration -->
+          <path d="M220 240 L230 256 L240 240 Z" fill="none" stroke="rgba(255,255,255,0.2)" stroke-width="1.2" stroke-linejoin="round" />
+          <line x1="230" y1="256" x2="230" y2="280" stroke="rgba(255,255,255,0.12)" stroke-width="1.2" stroke-linecap="round" />
+          <circle cx="230" cy="283" r="3" fill="rgba(201,255,87,0.4)" class="bl-inkdrop" />
+        </svg>
+      </div>
+      <div class="container" style="position: relative; z-index: 1;">
+        <div class="label" style="margin-bottom: 1.25rem;">Insights & Thinking</div>
+        <AnimatedText
+          client:only="react"
+          text="Ideas that move brands forward."
+          as="h1"
+          className="display-lg"
+          style={{ marginBottom: '1.5rem' }}
+        />
+        <p class="body-lg" style="color: var(--gray-400); max-width: 48ch;">
+          Practical thinking on design, strategy, and the web — from the team at Fazed Digital.
+        </p>
+      </div>
+    </section>
+
+    <!-- Featured post -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--black);">
+      <div class="container">
+        <div class="label" style="margin-bottom: 2rem;">Featured Article</div>
+        <a href={`/blog/${featured.slug}`} style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center; text-decoration: none; group: true;" data-cursor="link">
+          <!-- Visual placeholder -->
+          <div style="aspect-ratio: 16/10; border-radius: var(--radius); background: var(--gray-900); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
+            <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 40% 50%, rgba(255,255,255,0.04) 0%, transparent 60%);"></div>
+            <span style="font-family: var(--font-display); font-style: italic; font-size: 8rem; font-weight: 600; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.06); user-select: none;">
+              01
+            </span>
+          </div>
+          <!-- Text -->
+          <div>
+            <span style="display: inline-block; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.14em; text-transform: uppercase; color: var(--gray-500); border: 1px solid var(--border); padding: 0.25rem 0.65rem; border-radius: 4px; margin-bottom: 1.5rem;">
+              {featured.category}
+            </span>
+            <h2 style="font-family: var(--font-display); font-style: italic; font-size: clamp(1.75rem, 3.5vw, 3rem); font-weight: 600; line-height: 1.05; letter-spacing: -0.01em; color: var(--white); margin-bottom: 1.25rem;">
+              {featured.title}
+            </h2>
+            <p style="color: var(--gray-400); line-height: 1.7; margin-bottom: 2rem;">
+              {featured.excerpt}
+            </p>
+            <div style="display: flex; align-items: center; gap: 1.5rem;">
+              <span class="label">{featured.date}</span>
+              <span class="label">{featured.readTime}</span>
+              <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--white); font-weight: 500;">Read Article →</span>
+            </div>
+          </div>
+        </a>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <!-- All posts -->
+    <section class="section" style="background: var(--black);">
+      <div class="container">
+        <!-- Category filter -->
+        <div id="filter-row" style="display: flex; gap: 0.65rem; flex-wrap: wrap; margin-bottom: 3rem;">
+          {categories.map(cat => (
+            <button
+              class="cat-btn"
+              data-cat={cat}
+              style={`font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.1em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 100px; border: 1px solid var(--border); color: var(--muted); background: transparent; transition: all 0.2s;`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        <!-- Posts grid -->
+        <div id="posts-grid" style="display: grid; grid-template-columns: repeat(3,1fr); gap: 1.5rem;">
+          {rest.map((post, i) => (
+            <a
+              href={`/blog/${post.slug}`}
+              data-category={post.category}
+              class="post-card"
+              style="display: flex; flex-direction: column; gap: 1rem; text-decoration: none; padding: 2rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); transition: border-color 0.2s;"
+              data-cursor="link"
+            >
+              <!-- Mini visual -->
+              <div style="aspect-ratio: 16/9; border-radius: 0.5rem; background: var(--gray-800); border: 1px solid var(--gray-700); display: flex; align-items: center; justify-content: center; overflow: hidden;">
+                <span style="font-family: var(--font-mono); font-size: 0.68rem; color: var(--gray-600); letter-spacing: 0.14em; text-transform: uppercase;">
+                  {post.category}
+                </span>
+              </div>
+              <div style="display: flex; gap: 0.5rem; align-items: center;">
+                <span style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--gray-600); border: 1px solid var(--border); padding: 0.2rem 0.55rem; border-radius: 4px;">
+                  {post.category}
+                </span>
+              </div>
+              <h3 style="font-family: var(--font-display); font-style: italic; font-size: clamp(1.1rem,1.8vw,1.35rem); font-weight: 600; line-height: 1.15; letter-spacing: -0.01em; color: var(--white);">
+                {post.title}
+              </h3>
+              <p class="small" style="color: var(--gray-500); line-height: 1.65; flex-grow: 1;">
+                {post.excerpt}
+              </p>
+              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border);">
+                <span class="label">{post.date}</span>
+                <span class="label">{post.readTime}</span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Newsletter CTA -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); border-top: 1px solid var(--border);">
+      <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center;">
+        <div>
+          <div class="label" style="margin-bottom: 1.25rem;">Stay Sharp</div>
+          <AnimatedText client:only="react" text="Get insights delivered monthly." as="h2" className="display-md" />
+        </div>
+        <form style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <input
+            type="email"
+            placeholder="your@email.com"
+            style="flex: 1; min-width: 200px; background: var(--gray-800); border: 1px solid var(--border); border-radius: 100px; padding: 0.85rem 1.5rem; color: var(--white); font-family: var(--font-body); font-size: 0.9rem; outline: none;"
+          />
+          <MagneticButton client:only="react" variant="primary" size="md">Subscribe →</MagneticButton>
+        </form>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<script>
+  // Category filter logic
+  const btns  = document.querySelectorAll<HTMLButtonElement>('.cat-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.post-card');
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const cat = btn.dataset.cat ?? 'All';
+      btns.forEach(b => {
+        b.style.color        = 'var(--muted)';
+        b.style.borderColor  = 'var(--border)';
+        b.style.background   = 'transparent';
+      });
+      btn.style.color       = 'var(--black)';
+      btn.style.background  = 'var(--accent)';
+      btn.style.borderColor = 'var(--accent)';
+
+      cards.forEach(card => {
+        const show = cat === 'All' || card.dataset.category === cat;
+        card.style.display = show ? 'flex' : 'none';
+      });
+    });
+  });
+
+  // Activate "All" by default
+  (btns[0] as HTMLButtonElement)?.click();
+</script>
+
+<style>
+  .post-card:hover { border-color: var(--gray-500) !important; }
+  @media (max-width: 900px) { #posts-grid { grid-template-columns: repeat(2,1fr) !important; } }
+  @media (max-width: 580px) { #posts-grid { grid-template-columns: 1fr !important; } }
+  @media (max-width: 640px) { .blog-hero-anim { display: none !important; } }
+
+  /* Quill line draw-in animations */
+  @keyframes drawLine { to { stroke-dashoffset: 0; } }
+  @keyframes cursorBlink { 0%,100%{opacity:1} 50%{opacity:0} }
+  @keyframes inkDrop { 0%,80%{opacity:0.4;transform:scale(1)} 90%{opacity:0.9;transform:scale(1.5)} 100%{opacity:0.4;transform:scale(1)} }
+
+  .bl-l1 { animation: drawLine 0.7s 0.6s ease-out forwards, drawLine 4s 0.6s ease-out infinite; }
+  .bl-l2 { animation: drawLine 0.6s 1.0s ease-out forwards, drawLine 4s 1.0s ease-out infinite; }
+  .bl-l3 { animation: drawLine 0.65s 1.3s ease-out forwards, drawLine 4s 1.3s ease-out infinite; }
+  .bl-l4 { animation: drawLine 0.55s 1.6s ease-out forwards, drawLine 4s 1.6s ease-out infinite; }
+  .bl-l5 { animation: drawLine 0.7s 1.9s ease-out forwards, drawLine 4s 1.9s ease-out infinite; }
+  .bl-l6 { animation: drawLine 0.5s 2.2s ease-out forwards, drawLine 4s 2.2s ease-out infinite; }
+  .bl-cursor { animation: cursorBlink 0.9s 2.5s ease-in-out infinite; opacity: 0; }
+  .bl-inkdrop { animation: inkDrop 3s 2s ease-in-out infinite; }
+</style>

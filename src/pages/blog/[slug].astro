@@ -1,0 +1,223 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Cursor from '../../components/Cursor';
+import Nav from '../../components/Nav';
+import Footer from '../../components/Footer';
+import AnimatedText from '../../components/AnimatedText';
+import MagneticButton from '../../components/MagneticButton';
+
+export function getStaticPaths() {
+  const posts = [
+    {
+      slug: 'why-brand-identity-matters',
+      title: 'Why Brand Identity Is Your Most Important Business Asset',
+      category: 'Branding',
+      date: '18 Apr 2025',
+      readTime: '6 min read',
+      author: 'Alex R.',
+      excerpt: "In a market flooded with options, the brands that win are the ones people remember. Here's why investing in identity is always worth it.",
+      content: `
+        <p>In a world where every category is crowded, the brand that wins isn't always the best product — it's the one people remember. Brand identity is the system that makes remembering easy.</p>
+        <h2>What brand identity actually is</h2>
+        <p>Brand identity isn't just a logo. It's the complete visual and verbal language your business uses to communicate with the world — your logo, typography, colour palette, photography style, tone of voice, and the way all of these work together across every touchpoint.</p>
+        <p>When done well, brand identity creates immediate recognition, builds trust over time, and makes every marketing dollar work harder. When done poorly — or not at all — you're starting from zero every time someone encounters you.</p>
+        <h2>The ROI argument</h2>
+        <p>Businesses with strong, consistent brand identities outperform their less-defined competitors on every measurable metric: revenue, customer loyalty, price resilience, and employee retention. The research is unambiguous.</p>
+        <p>Lucidpress found that consistent brand presentation increases revenue by 23% on average. McKinsey's Brand Power study shows that strong brands deliver three times the shareholder value of weak ones. These aren't soft, vanity metrics — they're business outcomes.</p>
+        <h2>The compounding effect</h2>
+        <p>The real power of brand identity is that it compounds. Every piece of content, every ad, every email that carries your brand consistently adds to a mental bank account in your audience's mind. Over months and years, this creates the kind of brand recognition that makes people choose you instinctively — without even comparing options.</p>
+        <p>This is why the businesses that invest in proper identity work early almost always outgrow those who patch it together as they go. The foundation determines everything built on top of it.</p>
+        <h2>Where to start</h2>
+        <p>If your brand identity is inconsistent, unclear, or simply doesn't reflect who you are today, the answer isn't to keep patching — it's to rebuild properly. Start with strategy: who are you, who do you serve, what do you believe, and what makes you different? From that foundation, design can speak with clarity and conviction.</p>
+      `,
+    },
+    {
+      slug: 'core-web-vitals-seo',
+      title: 'Core Web Vitals: What They Are and Why They Destroy Rankings',
+      category: 'SEO',
+      date: '02 Apr 2025',
+      readTime: '8 min read',
+      author: 'Priya K.',
+      excerpt: "Google's page experience signals are now a confirmed ranking factor. We break down LCP, FID, and CLS in plain English — and how to fix them.",
+      content: `
+        <p>Since Google made Core Web Vitals an official ranking factor, we've seen sites drop significantly in rankings not because of content issues, but because of performance problems that went unnoticed for years.</p>
+        <h2>The three metrics that matter</h2>
+        <p><strong>Largest Contentful Paint (LCP)</strong> measures how long it takes for the main content of a page to load. Google considers anything under 2.5 seconds "Good". Common culprits: unoptimised images, slow server response, render-blocking CSS and JavaScript.</p>
+        <p><strong>Interaction to Next Paint (INP)</strong> measures responsiveness — how quickly your page responds when a user interacts with it. It replaced First Input Delay in 2024. Long tasks on the main thread are usually the problem.</p>
+        <p><strong>Cumulative Layout Shift (CLS)</strong> measures visual stability — does your content jump around as it loads? CLS above 0.1 is a problem. Reserve space for images and embeds, avoid injecting content above existing content.</p>
+        <h2>How to measure them</h2>
+        <p>Use Google's PageSpeed Insights, Search Console's Core Web Vitals report, or the Web Vitals Chrome extension for field data. Always fix field data (real user data) over lab data — Google ranks based on what real users experience.</p>
+        <h2>Quick wins</h2>
+        <p>Compress and properly size images (WebP format, explicit width and height attributes). Move render-blocking scripts to the bottom of the body or use defer/async. Use a CDN. Minimise third-party scripts — analytics, chat widgets, and ad platforms are often the biggest culprits.</p>
+      `,
+    },
+    {
+      slug: 'astro-vs-nextjs-agencies',
+      title: 'Astro vs Next.js: Which Should Your Agency Choose in 2025?',
+      category: 'Development',
+      date: '21 Mar 2025',
+      readTime: '9 min read',
+      author: 'Jordan M.',
+      excerpt: "We've built with both. Here's an honest comparison from the trenches — performance, DX, and the projects each framework is truly built for.",
+      content: `
+        <p>We've shipped production projects with both Astro and Next.js in the past two years. Here's our honest take on when to reach for each one.</p>
+        <h2>The core difference</h2>
+        <p>Astro ships zero JavaScript by default. It's built on the "islands" architecture — static HTML with interactive components only where you actually need them. This makes it extraordinary for content-heavy sites where performance is critical and most of the page doesn't need interactivity.</p>
+        <p>Next.js is a full React framework with flexible rendering strategies: SSG, SSR, ISR, and client-side rendering. It shines on applications where data freshness, auth, and complex client interactions matter more than raw performance.</p>
+        <h2>When to choose Astro</h2>
+        <p>Marketing sites, agency portfolios, blogs, documentation, landing pages — anything where the primary goal is fast loading and SEO. Astro's output is lean HTML with excellent Core Web Vitals almost by default. We use it for client sites where page speed directly impacts conversions.</p>
+        <h2>When to choose Next.js</h2>
+        <p>SaaS dashboards, e-commerce platforms, apps with real-time data, anything requiring auth and personalisation. The React ecosystem and deployment infrastructure (especially on Vercel) are unmatched for application development.</p>
+        <h2>The honest verdict</h2>
+        <p>For most agency client sites in 2025, we reach for Astro first. The performance baseline is simply better, and clients see the results in rankings and conversion rates. For anything with significant app functionality, Next.js is still our tool of choice.</p>
+      `,
+    },
+    {
+      slug: 'ux-mistakes-killing-conversions',
+      title: '7 UX Mistakes That Are Quietly Killing Your Conversion Rate',
+      category: 'Design',
+      date: '05 Mar 2025',
+      readTime: '7 min read',
+      author: 'Sam T.',
+      excerpt: "Most conversion problems aren't about copy or offers — they're about friction. Here are the design errors we see most often in audits.",
+      content: `
+        <p>When a client comes to us with poor conversion rates, the first thing we do is a UX audit. Nine times out of ten, the problem isn't the offer — it's friction. Here are the most common mistakes we find.</p>
+        <h2>1. No clear visual hierarchy</h2>
+        <p>Users scan, they don't read. If your page doesn't have a clear primary action — one thing you most want visitors to do — they'll default to doing nothing. Every page needs a single, unmistakable CTA that stands above the rest.</p>
+        <h2>2. Forms that ask too much</h2>
+        <p>Every additional field in a form reduces completion rates. Ask only for what you actually need at this stage of the relationship. Name and email to start. Everything else can wait.</p>
+        <h2>3. Mobile-hostile interactions</h2>
+        <p>Hover states that don't work on touch. Tap targets under 44px. Horizontal scrolling. These aren't "nice to have" — they actively drive users away on the majority of your traffic.</p>
+        <h2>4. Slow loading on real devices</h2>
+        <p>Your site feels fast on your broadband-connected MacBook. Try it on a mid-range Android on 4G. Then check your bounce rate on mobile in Analytics. The correlation is usually undeniable.</p>
+        <h2>5. Trust signals buried or absent</h2>
+        <p>Testimonials, case studies, client logos, certifications — these should be visible before you ask for commitment. Placing them after your CTA is too late.</p>
+        <h2>6. Inconsistent design language</h2>
+        <p>When buttons look different on different pages, when spacing is arbitrary, when colours feel random — users unconsciously sense a lack of care. It erodes trust before they've read a word.</p>
+        <h2>7. No feedback on interaction</h2>
+        <p>What happens when I click this button? Did the form submit? Did my cart update? Feedback states — loading indicators, success messages, error explanations — are not optional UI flourishes. They're table stakes.</p>
+      `,
+    },
+    {
+      slug: 'content-strategy-small-business',
+      title: 'A No-Nonsense Content Strategy for Small Businesses',
+      category: 'Strategy',
+      date: '14 Feb 2025',
+      readTime: '5 min read',
+      author: 'Priya K.',
+      excerpt: "You don't need a 40-page strategy document. You need to know what to say, to whom, on which channels, and how often. Let's simplify.",
+      content: `
+        <p>Most small business content strategies fail not because they're poorly designed, but because they're never actually implemented. The strategy was too complex, too expensive, or too disconnected from the actual business.</p>
+        <h2>The only four questions you need to answer</h2>
+        <p><strong>Who are you talking to?</strong> Not "everyone." One specific type of person with specific problems. The more precisely you can describe them, the better your content will perform.</p>
+        <p><strong>What do they actually care about?</strong> Not what you care about — what keeps them up at night, what questions they're Googling, what decisions they're trying to make. Your content answers those questions.</p>
+        <p><strong>What channels do they use?</strong> Don't be everywhere. Be excellent somewhere. One blog + one social channel, executed consistently, beats five channels executed poorly.</p>
+        <p><strong>What can you sustainably produce?</strong> One excellent piece of content per fortnight beats one burnout-and-quit marathon. Build a content rhythm you can maintain for two years, not two months.</p>
+        <h2>The simple system</h2>
+        <p>One long-form piece of content per month (blog post, video, or podcast episode) that answers a genuine question your ideal customer has. This becomes the source material for four social posts, one email, and a dozen stories. That's a content strategy that works.</p>
+      `,
+    },
+    {
+      slug: 'typography-web-design',
+      title: 'Typography in Web Design: The Rules That Actually Matter',
+      category: 'Design',
+      date: '28 Jan 2025',
+      readTime: '6 min read',
+      author: 'Sam T.',
+      excerpt: "Type is 95% of web design, yet it's the most overlooked element. The principles that separate good typography from great — and from unreadable.",
+      content: `
+        <p>Oliver Reichenstein famously wrote that web design is 95% typography. After years of design work, we think he was understating it. Get the type right and everything else becomes easier. Get it wrong and no amount of colour or imagery will save you.</p>
+        <h2>The scale problem</h2>
+        <p>Most websites use too small a type scale. If your body copy is 14px and your headings are 22px, you don't have a hierarchy — you have noise. A clear scale (16px body, then a ratio of at least 1.25 between each step) creates visual order without effort.</p>
+        <h2>Line length is non-negotiable</h2>
+        <p>The optimal line length for reading is 55–75 characters. Count your characters. If your text column spans the full page width on a desktop, you're making reading work. Constrain it with max-width. Users will read more, not less.</p>
+        <h2>Pairing fonts: the one rule</h2>
+        <p>Pair a serif with a sans-serif, or two sans-serifs with clearly different weights and personalities. The mistake is pairing fonts that are too similar — they compete rather than complement. Contrast is the entire point.</p>
+        <h2>Whitespace is type's best friend</h2>
+        <p>More space between lines (line-height 1.5–1.7 for body), more space between paragraphs, more padding around text blocks. Whitespace isn't waste — it's the room type needs to breathe. Compressed text communicates cheapness, whether you intend it or not.</p>
+        <h2>Variable fonts are worth using</h2>
+        <p>Modern variable fonts let you use any weight and width in a single file, reducing HTTP requests and enabling creative use of weight transitions. Browsers support them well. The performance and design benefits are real.</p>
+      `,
+    },
+  ];
+
+  return posts.map(p => ({ params: { slug: p.slug }, props: p }));
+}
+
+const { title, category, date, readTime, author, excerpt, content, slug } = Astro.props;
+---
+
+<Layout
+  title={`${title} — Fazed Digital Blog`}
+  description={excerpt}
+  page="blog"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/blog" />
+
+  <main>
+    <!-- Hero -->
+    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,5rem); background: var(--black); border-bottom: 1px solid var(--border);">
+      <div class="container" style="max-width: 860px;">
+        <a href="/blog" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-500); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2rem; transition: color 0.2s;"
+          onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
+          ← Back to Blog
+        </a>
+        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap;">
+          <span style="font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); border: 1px solid var(--border); padding: 0.25rem 0.65rem; border-radius: 4px;">
+            {category}
+          </span>
+          <span class="label">{date}</span>
+          <span class="label">{readTime}</span>
+          <span class="label">By {author}</span>
+        </div>
+        <AnimatedText
+          client:only="react"
+          text={title}
+          as="h1"
+          className="display-md"
+          style={{ marginBottom: '1.75rem' }}
+        />
+        <p class="body-lg" style="color: var(--gray-400); max-width: 52ch;">
+          {excerpt}
+        </p>
+      </div>
+    </section>
+
+    <!-- Article body -->
+    <article style="padding: clamp(3rem,6vw,6rem) 0; background: var(--black);">
+      <div class="container article-body" style="max-width: 720px;" set:html={content} />
+    </article>
+
+    <!-- Author + CTA -->
+    <section style="padding: clamp(3rem,6vw,6rem) 0; background: var(--gray-900); border-top: 1px solid var(--border);">
+      <div class="container" style="max-width: 860px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
+        <div style="display: flex; align-items: center; gap: 1.25rem;">
+          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--gray-800); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--gray-400);">
+            {author.charAt(0)}
+          </div>
+          <div>
+            <div style="font-weight: 600; font-size: 0.9rem;">{author}</div>
+            <div class="label">Fazed Digital</div>
+          </div>
+        </div>
+        <MagneticButton client:only="react" href="/blog" variant="outline" size="md">← More Articles</MagneticButton>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<style>
+  .article-body { color: var(--gray-300); }
+  .article-body p  { font-size: 1.0625rem; line-height: 1.85; margin-bottom: 1.5rem; }
+  .article-body h2 {
+    font-family: var(--font-display); font-style: italic; font-weight: 600;
+    font-size: clamp(1.4rem, 2.5vw, 2rem); letter-spacing: -0.01em;
+    color: var(--white); margin: 3rem 0 1.25rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .article-body strong { color: var(--white); font-weight: 600; }
+  .article-body a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+</style>

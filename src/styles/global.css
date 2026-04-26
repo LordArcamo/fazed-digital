@@ -1,0 +1,206 @@
+@import url('https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap');
+
+/* ── Design tokens — strict B&W ───────────────────────────── */
+:root {
+  --black:    #090909;
+  --white:    #F5F4F0;
+  --gray-900: #111111;
+  --gray-800: #1C1C1C;
+  --gray-700: #2A2A2A;
+  --gray-600: #404040;
+  --gray-500: #676767;
+  --gray-400: #939393;
+  --gray-300: #BCBCBC;
+  --gray-200: #DCDCDC;
+  --gray-100: #EFEFEB;
+
+  /* accent — electric lime */
+  --accent:        #C9FF57;
+  --accent-dark:   #9FCC2E;
+  --accent-muted:  rgba(201, 255, 87, 0.10);
+  --accent-border: rgba(201, 255, 87, 0.25);
+
+  /* semantic aliases */
+  --bg:       var(--black);
+  --surface:  var(--gray-900);
+  --border:   var(--gray-700);
+  --text:     var(--white);
+  --muted:    var(--gray-500);
+
+  /* fonts */
+  --font-display: 'Clash Display', system-ui, sans-serif;
+  --font-body:    'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-mono:    'Space Mono', 'Courier New', monospace;
+
+  /* easing */
+  --ease-expo:   cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in:     cubic-bezier(0.76, 0, 0.24, 1);
+
+  --container: 1340px;
+  --gutter: clamp(1.5rem, 5vw, 4rem);
+  --radius: 0.875rem;
+}
+
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  line-height: 1.65;
+  overflow-x: hidden;
+  cursor: none;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Restore cursor on touch / coarse-pointer devices */
+@media (pointer: coarse) {
+  body, a, button, [role="button"], [data-cursor] { cursor: auto; }
+}
+
+body.loading { overflow: hidden; }
+
+img, video { max-width: 100%; display: block; }
+a          { color: inherit; text-decoration: none; }
+button     { cursor: none; border: none; background: none; font-family: inherit; }
+ul, ol     { list-style: none; }
+
+/* ── Type scale ────────────────────────────────────────────── */
+.display-xl {
+  font-family: var(--font-display);
+  font-size: clamp(4.5rem, 11vw, 13rem);
+  font-weight: 700;
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+}
+
+.display-lg {
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 7vw, 8.5rem);
+  font-weight: 700;
+  line-height: 0.91;
+  letter-spacing: -0.025em;
+}
+
+.display-md {
+  font-family: var(--font-display);
+  font-size: clamp(2.25rem, 4.5vw, 5rem);
+  font-weight: 700;
+  line-height: 0.95;
+  letter-spacing: -0.02em;
+}
+
+.display-sm {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 3vw, 3rem);
+  font-weight: 600;
+  line-height: 1.05;
+  letter-spacing: -0.015em;
+}
+
+.heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2vw, 1.75rem);
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.body-lg { font-size: clamp(1rem, 1.4vw, 1.2rem); line-height: 1.75; }
+.body    { font-size: 0.975rem; line-height: 1.7; }
+.small   { font-size: 0.825rem; line-height: 1.6; }
+
+/* ── Layout ─────────────────────────────────────────────────── */
+.container {
+  max-width: var(--container);
+  margin: 0 auto;
+  padding: 0 var(--gutter);
+}
+
+.section  { padding: clamp(5rem, 10vw, 10rem) 0; }
+.section-sm { padding: clamp(3rem, 6vw, 6rem) 0; }
+
+/* ── Clip reveal (word-by-word) ─────────────────────────────── */
+.clip-word {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+}
+.clip-word .inner {
+  display: inline-block;
+  transform: translateY(110%);
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────── */
+::-webkit-scrollbar       { width: 3px; }
+::-webkit-scrollbar-track { background: var(--black); }
+::-webkit-scrollbar-thumb { background: var(--gray-600); border-radius: 2px; }
+
+/* ── Selection ──────────────────────────────────────────────── */
+::selection { background: var(--accent); color: var(--black); }
+
+/* ── Divider ─────────────────────────────────────────────────── */
+.hr { width: 100%; height: 1px; background: var(--border); }
+
+/* ── Noise grain overlay ─────────────────────────────────────── */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 99990;
+  opacity: 0.022;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+}
+
+/* ── Cursor override ─────────────────────────────────────────── */
+a, button, [role="button"], [data-cursor] { cursor: none; }
+
+/* ── Responsive grid helpers ─────────────────────────────────── */
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1.5rem; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; }
+
+@media (max-width: 1024px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) {
+  .grid-2, .grid-3, .grid-4 { grid-template-columns: 1fr; }
+}
+
+/* ── Mobile overrides ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .section { padding: clamp(3rem, 8vw, 5rem) 0; }
+  .display-lg { font-size: clamp(2.5rem, 10vw, 4rem); }
+  .display-md { font-size: clamp(2rem, 8vw, 3rem); }
+}
+
+/* ── Utility ──────────────────────────────────────────────────── */
+.text-muted    { color: var(--muted); }
+.text-white    { color: var(--white); }
+.text-italic   { font-style: italic; }
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-4 { margin-top: 2rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 2rem; }

@@ -1,0 +1,153 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import ContactSection from '../components/ContactSection';
+import AnimatedText from '../components/AnimatedText';
+import MarqueeSection from '../components/MarqueeSection';
+import ContactHeroAnim from '../components/ContactHeroAnim';
+
+const faqs = [
+  { q: 'How much does a website cost?', a: 'Every project is scoped individually. A typical website ranges from $5,000–$25,000+ depending on scope, functionality, and timeline. We provide a detailed quote after our initial discovery call — no commitment required.' },
+  { q: 'How long does a project take?', a: "Brand identity projects typically take 4–6 weeks. Websites range from 4 weeks for simpler builds to 12+ weeks for complex builds. We give you a clear timeline in the proposal before anything starts." },
+  { q: 'Do you work with clients outside Iligan City?', a: 'Absolutely. We work with clients across the Philippines and internationally. We\'re set up for seamless remote collaboration with clear processes, regular video check-ins, and detailed async communication.' },
+  { q: 'Do you offer ongoing support?', a: 'Yes — we offer monthly maintenance and support packages for websites, and SEO retainer arrangements for continued growth. Ask us about options during your discovery call.' },
+  { q: 'What do I need to get started?', a: 'Just a conversation. We\'ll ask about your business, goals, and budget, then put together a proposal. No long intake forms or upfront homework required.' },
+  { q: 'Do you work with startups?', a: 'Yes. We love working with early-stage businesses that need to establish a credible, professional presence quickly. We have streamlined packages designed for founders who need to move fast without cutting corners.' },
+];
+---
+
+<Layout
+  title="Contact Fazed Digital — Start Your Project Today"
+  description="Get in touch with Fazed Digital to discuss your web design, brand identity, SEO, or product design project. Iligan City-based, available worldwide. Reply within one business day."
+  page="contact"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/contact" />
+
+  <main>
+    <!-- Hero -->
+    <section style="min-height: 40svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem,6vw,6rem); padding-top: 10rem; background: var(--black); overflow: hidden; position: relative; border-bottom: 1px solid var(--border);">
+      <div aria-hidden style="position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 60%, rgba(255,255,255,0.03) 0%, transparent 50%); pointer-events: none;"></div>
+      <!-- Location pin + signal animation -->
+      <div aria-hidden style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: min(42%, 380px); aspect-ratio: 1.07; pointer-events: none; opacity: 0.65; z-index: 0;">
+        <ContactHeroAnim client:only="react" />
+      </div>
+      <div style="position: relative; z-index: 1;">
+        <div class="label" style="margin-bottom: 1.5rem;">Get In Touch</div>
+        <AnimatedText
+          client:only="react"
+          text="Let's build something great."
+          as="h1"
+          className="display-lg"
+          style={{ marginBottom: '2rem' }}
+        />
+        <div class="contact-hero-info" style="display: flex; gap: 3rem; flex-wrap: wrap;">
+          {[
+            { label: 'Email',    value: 'info@fazeddigital.com', href: 'mailto:info@fazeddigital.com' },
+            { label: 'Phone',   value: '+63 922 123 4567',       href: 'tel:+639221234567' },
+            { label: 'Hours',   value: 'Mon–Fri 8:30am–5:00pm' },
+            { label: 'Location', value: 'Iligan City, PH' },
+          ].map(item => (
+            <div>
+              <div class="label" style="margin-bottom: 0.25rem;">{item.label}</div>
+              {item.href
+                ? <a href={item.href} style="color: var(--white); font-weight: 500; font-size: 0.975rem;">{item.value}</a>
+                : <span style="color: var(--gray-300); font-size: 0.975rem;">{item.value}</span>
+              }
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <ContactSection client:only="react" />
+
+    <!-- FAQ -->
+    <section class="section" style="background: var(--gray-900); border-top: 1px solid var(--border);">
+      <div class="container">
+        <div class="faq-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: clamp(3rem,6vw,8rem); align-items: start;">
+          <div class="faq-sticky" style="position: sticky; top: 8rem;">
+            <div class="label" style="margin-bottom: 1.25rem;">FAQ</div>
+            <AnimatedText
+              client:only="react"
+              text="Common questions answered."
+              as="h2"
+              className="display-sm"
+            />
+          </div>
+          <div>
+            {faqs.map((item, i) => (
+              <div class="faq-item" style="border-top: 1px solid var(--border);">
+                <button class="faq-summary" aria-expanded="false" style="width: 100%; background: none; border: none; font-family: var(--font-display); font-size: clamp(1rem,1.8vw,1.35rem); font-weight: 600; letter-spacing: -0.01em; cursor: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.5rem 0; text-align: left; color: var(--white);">
+                  {item.q}
+                  <span class="faq-icon" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--gray-400);font-size:1rem;flex-shrink:0;font-family:var(--font-mono);transition:border-color 0.25s,color 0.25s;">+</span>
+                </button>
+                <div class="faq-body" style="overflow:hidden;height:0;">
+                  <p class="body" style="color: var(--gray-400); padding-bottom: 1.75rem; max-width: 58ch; line-height: 1.75;">
+                    {item.a}
+                  </p>
+                </div>
+              </div>
+            ))}
+            <div style="border-top: 1px solid var(--border);"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<script>
+  import { gsap } from 'gsap';
+
+  document.querySelectorAll<HTMLDivElement>('.faq-item').forEach(item => {
+    const btn  = item.querySelector<HTMLButtonElement>('.faq-summary')!;
+    const body = item.querySelector<HTMLDivElement>('.faq-body')!;
+    let isOpen = false;
+    let tween: gsap.core.Tween | null = null;
+
+    btn.addEventListener('click', () => {
+      if (tween) tween.kill();
+
+      if (!isOpen) {
+        // Open: measure full height, animate from 0
+        gsap.set(body, { height: 'auto', overflow: 'visible' });
+        const h = body.scrollHeight;
+        gsap.set(body, { height: 0, overflow: 'hidden' });
+        tween = gsap.to(body, { height: h, duration: 0.45, ease: 'power3.out', onComplete: () => {
+          gsap.set(body, { height: 'auto', overflow: 'visible' });
+        }});
+        item.classList.add('is-open');
+        btn.setAttribute('aria-expanded', 'true');
+      } else {
+        // Close
+        gsap.set(body, { height: body.offsetHeight, overflow: 'hidden' });
+        tween = gsap.to(body, { height: 0, duration: 0.38, ease: 'power3.inOut' });
+        item.classList.remove('is-open');
+        btn.setAttribute('aria-expanded', 'false');
+      }
+      isOpen = !isOpen;
+    });
+  });
+</script>
+
+<style>
+  .faq-summary { transition: color 0.2s; }
+  .faq-summary:hover { color: var(--white); }
+  .faq-summary:hover .faq-icon { border-color: var(--gray-400) !important; color: var(--white) !important; }
+  .faq-item.is-open .faq-icon { transform: rotate(45deg); border-color: var(--white) !important; color: var(--white) !important; }
+  @media (max-width: 860px) {
+    .faq-grid { grid-template-columns: 1fr !important; }
+    .faq-sticky { position: static !important; }
+  }
+  /* Hero info row on mobile */
+  @media (max-width: 640px) {
+    .contact-hero-info { gap: 1.5rem !important; }
+  }
+</style>

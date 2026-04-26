@@ -1,0 +1,119 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+---
+
+<Layout
+  title="Privacy Policy — Fazed Digital"
+  description="Fazed Digital's privacy policy. How we collect, use, and protect your personal information."
+  page="privacy"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/privacy" />
+
+  <main style="background: var(--black); min-height: 100svh;">
+    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,6rem); border-bottom: 1px solid var(--border);">
+      <div class="container" style="max-width: 800px;">
+        <div class="label" style="margin-bottom: 1.25rem;">Legal</div>
+        <h1 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; margin-bottom: 1.5rem;">
+          Privacy Policy
+        </h1>
+        <p class="body" style="color: var(--gray-400);">
+          Last updated: 1 January 2025
+        </p>
+      </div>
+    </section>
+
+    <section style="padding: clamp(3rem,6vw,6rem) 0;">
+      <div class="container legal-body" style="max-width: 800px;">
+
+        <h2>1. Who We Are</h2>
+        <p>Fazed Digital ("we", "us", "our") operates <strong>fazeddigital.com</strong>. We are a creative digital agency based in Iligan City, Philippines. Contact: <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a>.</p>
+
+        <h2>2. Information We Collect</h2>
+        <p>We collect information you provide directly, including:</p>
+        <ul>
+          <li>Contact form submissions (name, email address, phone number, message content)</li>
+          <li>Newsletter sign-ups (email address)</li>
+          <li>Project enquiry details</li>
+        </ul>
+        <p>We also collect information automatically through your use of our website:</p>
+        <ul>
+          <li>Browser type and version</li>
+          <li>Pages visited and time spent</li>
+          <li>Referring URLs</li>
+          <li>Device type and operating system</li>
+          <li>IP address (anonymised where possible)</li>
+        </ul>
+
+        <h2>3. How We Use Your Information</h2>
+        <p>We use the information we collect to:</p>
+        <ul>
+          <li>Respond to enquiries and provide our services</li>
+          <li>Send requested information about our services</li>
+          <li>Send newsletters and marketing communications (where you have opted in)</li>
+          <li>Improve our website and services</li>
+          <li>Comply with legal obligations</li>
+        </ul>
+        <p>We will never sell, rent, or share your personal information with third parties for their marketing purposes.</p>
+
+        <h2>4. Cookies</h2>
+        <p>Our website uses cookies to improve your experience. These include essential cookies required for the site to function, and analytics cookies (Google Analytics) to help us understand how visitors use the site. You can disable cookies in your browser settings, though this may affect site functionality.</p>
+
+        <h2>5. Data Retention</h2>
+        <p>We retain personal data for as long as necessary to provide our services and comply with legal obligations. Contact form data is retained for 24 months. You may request deletion of your data at any time by contacting us.</p>
+
+        <h2>6. Your Rights (Data Privacy Act)</h2>
+        <p>Under the Philippines Data Privacy Act of 2012 (RA 10173), you have the right to:</p>
+        <ul>
+          <li>Access the personal information we hold about you</li>
+          <li>Request correction of inaccurate information</li>
+          <li>Request deletion of your information</li>
+          <li>Opt out of direct marketing communications at any time</li>
+        </ul>
+        <p>To exercise these rights, contact us at <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a>.</p>
+
+        <h2>7. Security</h2>
+        <p>We take reasonable precautions to protect your personal information from unauthorised access, disclosure, or misuse. Our website uses HTTPS encryption. However, no method of transmission over the internet is 100% secure.</p>
+
+        <h2>8. Third-Party Services</h2>
+        <p>Our website may use the following third-party services, each with their own privacy policies:</p>
+        <ul>
+          <li>Google Analytics (analytics)</li>
+          <li>Google Fonts (typography)</li>
+        </ul>
+
+        <h2>9. Changes to This Policy</h2>
+        <p>We may update this policy from time to time. We will post the updated policy on this page with a revised "last updated" date. We encourage you to review this policy periodically.</p>
+
+        <h2>10. Contact</h2>
+        <p>If you have questions about this privacy policy or how we handle your information, please contact us:</p>
+        <p>
+          <strong>Fazed Digital</strong><br />
+          Iligan City, Lanao del Norte, Philippines<br />
+          <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a><br />
+          <a href="tel:+639221234567">+63 922 123 4567</a>
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<style>
+  .legal-body h2 {
+    font-family: var(--font-display); font-style: italic; font-weight: 600;
+    font-size: clamp(1.25rem, 2vw, 1.75rem); letter-spacing: -0.01em;
+    color: var(--white); margin: 2.5rem 0 0.875rem;
+    padding-top: 2rem; border-top: 1px solid var(--border);
+  }
+  .legal-body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
+  .legal-body p  { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; font-size: 0.975rem; }
+  .legal-body ul { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; padding-left: 1.5rem; font-size: 0.975rem; }
+  .legal-body ul li { list-style: disc; margin-bottom: 0.3rem; }
+  .legal-body a  { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
+  .legal-body strong { color: var(--white); }
+</style>

@@ -1,0 +1,217 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Cursor from '../components/Cursor';
+import Nav from '../components/Nav';
+import Footer from '../components/Footer';
+import AnimatedText from '../components/AnimatedText';
+import MagneticButton from '../components/MagneticButton';
+import MarqueeSection from '../components/MarqueeSection';
+import WorkHeroAnim from '../components/WorkHeroAnim';
+
+const projects = [
+  { slug: '01', title: 'Arcadia Studio',   category: 'Brand',       label: 'Brand Identity + Web', year: '2024',
+    accent: 'rgba(201,255,87,0.12)', accentLine: 'rgba(201,255,87,0.35)' },
+  { slug: '02', title: 'Meridian Finance',  category: 'Web',         label: 'Web Design + SEO',     year: '2024',
+    accent: 'rgba(120,180,255,0.10)', accentLine: 'rgba(120,180,255,0.30)' },
+  { slug: '03', title: 'Bloom Organics',   category: 'E-commerce',  label: 'E-commerce + Brand',   year: '2023',
+    accent: 'rgba(255,180,100,0.10)', accentLine: 'rgba(255,180,100,0.28)' },
+  { slug: '04', title: 'NexaTech SaaS',    category: 'Product',     label: 'Product Design',        year: '2024',
+    accent: 'rgba(180,120,255,0.10)', accentLine: 'rgba(180,120,255,0.28)' },
+  { slug: '05', title: 'Summit Health',    category: 'Brand',       label: 'Brand Identity + Web',  year: '2023',
+    accent: 'rgba(201,255,87,0.12)', accentLine: 'rgba(201,255,87,0.35)' },
+  { slug: '06', title: 'Vantage Realty',   category: 'Web',         label: 'Web Design + SEO',      year: '2023',
+    accent: 'rgba(120,180,255,0.10)', accentLine: 'rgba(120,180,255,0.30)' },
+];
+
+const filters = ['All', 'Brand', 'Web', 'E-commerce', 'Product'];
+---
+
+<Layout
+  title="Our Work — Portfolio | Fazed Digital"
+  description="Explore Fazed Digital's portfolio of web design, brand identity, SEO, and product design projects. Bold, strategy-led work for ambitious brands."
+  page="work"
+>
+  <Cursor client:only="react" />
+  <Nav client:only="react" currentPath="/work" />
+
+  <main>
+    <!-- Hero -->
+    <section style="min-height: 50svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem,6vw,6rem); padding-top: 10rem; background: var(--black); border-bottom: 1px solid var(--border); position: relative; overflow: hidden;">
+      <!-- Dot grid animation -->
+      <div aria-hidden style="position: absolute; right: 0; top: 0; bottom: 0; width: min(55%, 480px); pointer-events: none; opacity: 0.45; z-index: 0;">
+        <WorkHeroAnim client:only="react" />
+      </div>
+      <div style="position: relative; z-index: 1;">
+      <div class="label" style="margin-bottom: 1.5rem;">Selected Work</div>
+      <AnimatedText
+        client:only="react"
+        text="Projects we're proud of."
+        as="h1"
+        className="display-lg"
+        style={{ marginBottom: '1.5rem' }}
+      />
+      <p class="body-lg" style="color: var(--gray-400); max-width: 46ch;">
+        A selection of recent work across web design, branding, SEO, and product design.
+        Each project starts with strategy and ends with results.
+      </p>
+      </div>
+    </section>
+
+    <MarqueeSection client:only="react" />
+
+    <!-- Projects -->
+    <section class="section" style="background: var(--black);">
+      <div class="container">
+        <!-- Filter buttons -->
+        <div id="filter-row" style="display: flex; gap: 0.6rem; flex-wrap: wrap; margin-bottom: 3rem;">
+          {filters.map(f => (
+            <button
+              class="filter-btn"
+              data-filter={f}
+              style="font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.45rem 1.05rem; border-radius: 100px; border: 1px solid var(--border); color: var(--muted); background: transparent; transition: all 0.2s;"
+            >
+              {f}
+            </button>
+          ))}
+        </div>
+
+        <!-- Grid -->
+        <div id="work-grid" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem;">
+          {projects.map((p, i) => (
+            <a
+              href={`/work/${p.slug}`}
+              class="work-card"
+              data-category={p.category}
+              style="display: block; text-decoration: none;"
+              data-cursor="link"
+            >
+              <article style={`border-radius: var(--radius); overflow: hidden; background: var(--surface); border: 1px solid var(--border); aspect-ratio: 16/10; position: relative; transition: border-color 0.3s;`}>
+                <!-- Accent gradient wash -->
+                <div style={`position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 30%, ${p.accent} 0%, transparent 65%);`}></div>
+                <!-- Grid lines -->
+                <svg style="position: absolute; inset: 0; width: 100%; height: 100%;" aria-hidden>
+                  {[0,1,2,3,4,5,6,7].map(j => (
+                    <line x1={`${j*14.3}%`} y1="0" x2={`${j*14.3}%`} y2="100%" stroke="white" stroke-opacity="0.03" stroke-width="1"/>
+                  ))}
+                  {[0,1,2,3].map(j => (
+                    <line x1="0" y1={`${j*33.3}%`} x2="100%" y2={`${j*33.3}%`} stroke="white" stroke-opacity="0.03" stroke-width="1"/>
+                  ))}
+                  <!-- Accent corner geometry -->
+                  <circle cx="82%" cy="25%" r="60" fill="none" stroke={p.accentLine} stroke-width="1" stroke-opacity="0.6"/>
+                  <circle cx="82%" cy="25%" r="38" fill="none" stroke={p.accentLine} stroke-width="1" stroke-opacity="0.35"/>
+                  <circle cx="82%" cy="25%" r="7" fill={p.accentLine} fill-opacity="0.7"/>
+                  <line x1="76%" y1="19%" x2="88%" y2="31%" stroke={p.accentLine} stroke-width="1" stroke-opacity="0.3"/>
+                  <line x1="88%" y1="19%" x2="76%" y2="31%" stroke={p.accentLine} stroke-width="1" stroke-opacity="0.3"/>
+                </svg>
+                <!-- Big number watermark -->
+                <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: flex-start; padding-left: 2rem;">
+                  <span style="font-family: var(--font-display); font-style: italic; font-size: clamp(5rem,10vw,10rem); font-weight: 700; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.06); user-select: none; letter-spacing: -0.03em;">
+                    {p.slug}
+                  </span>
+                </div>
+                <!-- Hover overlay -->
+                <div class="work-hover" style="position: absolute; inset: 0; background: rgba(0,0,0,0.86); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.35s; flex-direction: column; gap: 0.5rem;">
+                  <span style="font-family: var(--font-display); font-size: clamp(1.25rem,2.5vw,2rem); font-weight: 700; color: var(--accent); letter-spacing: -0.02em;">
+                    View Case Study →
+                  </span>
+                  <span style="font-family: var(--font-mono); font-size: 0.65rem; letter-spacing: 0.14em; color: var(--gray-400); text-transform: uppercase;">{p.label}</span>
+                </div>
+                <!-- Info bar -->
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 1.5rem 2rem; background: linear-gradient(to top, rgba(0,0,0,0.88) 0%, transparent 100%); display: flex; justify-content: space-between; align-items: flex-end;">
+                  <div>
+                    <div class="label" style="color: var(--gray-500); margin-bottom: 0.3rem;">{p.label}</div>
+                    <div style="font-family: var(--font-display); font-weight: 700; font-size: clamp(1.1rem,2.2vw,1.5rem); color: var(--white); letter-spacing: -0.01em;">{p.title}</div>
+                  </div>
+                  <span class="label" style="color: var(--gray-600);">{p.year}</span>
+                </div>
+              </article>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA -->
+    <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); border-top: 1px solid var(--border); text-align: center;">
+      <div class="container" style="display: flex; flex-direction: column; align-items: center; gap: 2rem;">
+        <AnimatedText client:only="react" text="Want to be in here?" as="h2" className="display-md" />
+        <MagneticButton client:only="react" href="/contact" variant="primary" size="lg">Start a Project →</MagneticButton>
+      </div>
+    </section>
+  </main>
+
+  <Footer client:only="react" />
+</Layout>
+
+<script>
+  import { gsap } from 'gsap';
+  import { ScrollTrigger } from 'gsap/ScrollTrigger';
+  gsap.registerPlugin(ScrollTrigger);
+
+  const btns  = document.querySelectorAll<HTMLButtonElement>('.filter-btn');
+  const cards = document.querySelectorAll<HTMLElement>('.work-card');
+
+  // Scroll reveal
+  cards.forEach((card, i) => {
+    gsap.from(card, {
+      y: 50, autoAlpha: 0, duration: 0.8, delay: (i % 2) * 0.1,
+      ease: 'power3.out',
+      scrollTrigger: { trigger: card, start: 'top 88%', toggleActions: 'play none none none' },
+    });
+  });
+
+  function setActive(btn: HTMLButtonElement) {
+    btns.forEach(b => {
+      b.style.color       = 'var(--muted)';
+      b.style.background  = 'transparent';
+      b.style.borderColor = 'var(--border)';
+    });
+    btn.style.color       = 'var(--black)';
+    btn.style.background  = 'var(--accent)';
+    btn.style.borderColor = 'var(--accent)';
+  }
+
+  btns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const filter = btn.dataset.filter ?? 'All';
+      setActive(btn);
+
+      cards.forEach(card => {
+        const match = filter === 'All' || card.dataset.category === filter;
+        if (match) {
+          card.style.display = 'block';
+          gsap.fromTo(card, { autoAlpha: 0, y: 20 }, { autoAlpha: 1, y: 0, duration: 0.45, ease: 'power2.out' });
+        } else {
+          gsap.to(card, { autoAlpha: 0, y: 10, duration: 0.25, ease: 'power2.in',
+            onComplete: () => { card.style.display = 'none'; }
+          });
+        }
+      });
+    });
+  });
+
+  // Activate "All" on load
+  const allBtn = document.querySelector<HTMLButtonElement>('[data-filter="All"]');
+  if (allBtn) setActive(allBtn);
+
+  // Hover effect on cards
+  cards.forEach(card => {
+    const overlay = card.querySelector<HTMLElement>('.work-hover');
+    const article = card.querySelector<HTMLElement>('article');
+    if (!overlay || !article) return;
+    card.addEventListener('mouseenter', () => {
+      gsap.to(overlay,  { opacity: 1, duration: 0.3, ease: 'power2.out' });
+      gsap.to(article,  { borderColor: 'var(--gray-500)', duration: 0.25 });
+    });
+    card.addEventListener('mouseleave', () => {
+      gsap.to(overlay,  { opacity: 0, duration: 0.25, ease: 'power2.in' });
+      gsap.to(article,  { borderColor: 'var(--border)', duration: 0.25 });
+    });
+  });
+</script>
+
+<style>
+  @media (max-width: 640px) {
+    #work-grid { grid-template-columns: 1fr !important; }
+  }
+</style>
