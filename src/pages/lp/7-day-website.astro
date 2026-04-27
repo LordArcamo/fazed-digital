@@ -46,6 +46,30 @@ const schema = [
   }
 ];
 
+const testimonials = [
+  {
+    quote: "I've worked with agencies that took 3 months and charged 10× more. Fazed had our full site live in 6 days. Our phone hasn't stopped ringing since launch.",
+    name: 'James R.',
+    role: 'Owner',
+    company: 'A Framing Company',
+    initials: 'JR',
+  },
+  {
+    quote: "The brief process made everything effortless. They understood our brand on day one and the site was live before we even expected it. Clients constantly compliment the design.",
+    name: 'Maria L.',
+    role: 'Founder',
+    company: 'Cleen & Green',
+    initials: 'ML',
+  },
+  {
+    quote: "Building our platform in under a week seemed impossible. The team delivered exactly what we envisioned and flagged improvements we hadn't thought of. Truly impressive work.",
+    name: 'Carlos M.',
+    role: 'Co-founder',
+    company: 'CrateOnScene',
+    initials: 'CM',
+  },
+];
+
 const pricing = [
   {
     name: 'Starter',
@@ -208,6 +232,65 @@ const faqs = [
     </div>
   </section>
 
+  <!-- ─── PAIN COMPARISON ─────────────────────────────────── -->
+  <section class="lp-section" style="padding:clamp(3rem,6vw,4.5rem) 0; border-bottom:1px solid var(--border);">
+    <div class="lp-container">
+      <div class="lp-reveal" style="text-align:center; margin-bottom:2.75rem;">
+        <h2 style="font-family:var(--font-display); font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.15;">
+          Why not just hire a<br/>regular agency?
+        </h2>
+        <p style="color:var(--gray-500); font-size:0.9rem; margin-top:0.6rem;">Here's what you're actually signing up for.</p>
+      </div>
+
+      <div class="comparison-grid lp-reveal">
+        <div class="comparison-col comparison-col--bad">
+          <div class="comparison-col-header">Typical Agency</div>
+          <ul class="comparison-list">
+            {[
+              '6–10 week delivery timeline',
+              '$3,000–$15,000+ minimum budget',
+              'Hourly rates — surprise invoices',
+              'Vague revision processes',
+              'Multiple handoffs & delays',
+              'Lock-in contracts',
+            ].map(item => (
+              <li>
+                <span class="cmp-icon cmp-icon--bad">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div class="comparison-col comparison-col--good">
+          <div class="comparison-col-header">
+            Fazed Digital
+            <span class="comparison-badge">That's us</span>
+          </div>
+          <ul class="comparison-list">
+            {[
+              'Live in 7 days, guaranteed',
+              'Fixed price from $499',
+              'One flat fee — no surprises',
+              'Structured 5-step process',
+              'One dedicated team, direct line',
+              'Full ownership — no lock-in',
+            ].map(item => (
+              <li>
+                <span class="cmp-icon cmp-icon--good">
+                  <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                </span>
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <!-- ─── PRICING ──────────────────────────────────────────── -->
   <section id="pricing" class="lp-section" style="background:var(--black);">
     <div class="lp-container">
@@ -258,6 +341,40 @@ const faqs = [
     </div>
   </section>
 
+  <!-- ─── TESTIMONIALS ───────────────────────────────────────── -->
+  <section class="lp-section" style="background:var(--black);">
+    <div class="lp-container">
+      <div class="lp-reveal" style="text-align:center; margin-bottom:3rem;">
+        <div class="label" style="margin-bottom:1rem;">Client Reviews</div>
+        <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
+          Don't take our word for it.
+        </h2>
+      </div>
+
+      <div class="testimonials-grid">
+        {testimonials.map(t => (
+          <div class="lp-reveal testimonial-card">
+            <div class="testimonial-stars">
+              {[...Array(5)].map(() => (
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent)" stroke="none" aria-hidden="true">
+                  <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+              ))}
+            </div>
+            <p class="testimonial-quote">"{t.quote}"</p>
+            <div class="testimonial-author">
+              <div class="testimonial-avatar">{t.initials}</div>
+              <div>
+                <div class="testimonial-name">{t.name}</div>
+                <div class="testimonial-role">{t.role} · {t.company}</div>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
   <!-- ─── PROCESS ──────────────────────────────────────────── -->
   <section class="lp-section" style="background:rgba(255,255,255,0.015); border-top:1px solid var(--border); border-bottom:1px solid var(--border);">
     <div class="lp-container">
@@ -281,6 +398,17 @@ const faqs = [
       </div>
     </div>
   </section>
+
+  <!-- ─── MID CTA STRIP ──────────────────────────────────────── -->
+  <div class="lp-mid-cta">
+    <div class="lp-container" style="display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;">
+      <p style="margin:0; font-family:var(--font-display); font-size:1.15rem; font-weight:700; color:var(--white); letter-spacing:-0.02em;">
+        Convinced? Let's get you live in 7 days.
+        <span style="font-family:var(--font-body); font-weight:400; font-size:0.85rem; color:var(--gray-500); margin-left:0.6rem;">No commitment required.</span>
+      </p>
+      <a href="#get-started" class="lp-btn-primary" style="flex-shrink:0;">Claim Your Spot →</a>
+    </div>
+  </div>
 
   <!-- ─── WHY FAZED ────────────────────────────────────────── -->
   <section class="lp-section">
@@ -471,6 +599,18 @@ const faqs = [
   gsap.from('.process-step', {
     y: 30, autoAlpha: 0, duration: 0.6, stagger: 0.1, ease: 'power2.out',
     scrollTrigger: { trigger: '.process-grid', start: 'top 82%', toggleActions: 'play none none none' },
+  });
+
+  // Testimonial cards stagger
+  gsap.from('.testimonial-card', {
+    y: 40, autoAlpha: 0, duration: 0.7, stagger: 0.14, ease: 'power3.out',
+    scrollTrigger: { trigger: '.testimonials-grid', start: 'top 82%', toggleActions: 'play none none none' },
+  });
+
+  // Comparison columns
+  gsap.from('.comparison-col', {
+    y: 30, autoAlpha: 0, duration: 0.65, stagger: 0.15, ease: 'power2.out',
+    scrollTrigger: { trigger: '.comparison-grid', start: 'top 85%', toggleActions: 'play none none none' },
   });
 
   // FAQ chevron toggle
@@ -817,20 +957,121 @@ const faqs = [
     white-space: nowrap;
   }
 
+  /* Comparison */
+  .comparison-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    max-width: 780px;
+    margin: 0 auto;
+  }
+  .comparison-col {
+    border-radius: var(--radius);
+    padding: 1.75rem;
+    border: 1px solid var(--border);
+  }
+  .comparison-col--bad  { background: rgba(255,255,255,0.02); }
+  .comparison-col--good { background: rgba(201,255,87,0.04); border-color: rgba(201,255,87,0.25); }
+  .comparison-col-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .comparison-col--bad  .comparison-col-header { color: var(--gray-500); }
+  .comparison-col--good .comparison-col-header { color: var(--accent); }
+  .comparison-badge {
+    background: var(--accent);
+    color: #090909;
+    font-size: 0.58rem;
+    font-weight: 700;
+    padding: 0.2rem 0.55rem;
+    border-radius: 2rem;
+    letter-spacing: 0.06em;
+  }
+  .comparison-list {
+    list-style: none; padding: 0; margin: 0;
+    display: flex; flex-direction: column; gap: 0.8rem;
+  }
+  .comparison-list li {
+    display: flex; align-items: center; gap: 0.7rem;
+    font-size: 0.875rem; line-height: 1.4;
+  }
+  .comparison-col--bad  .comparison-list li { color: var(--gray-500); }
+  .comparison-col--good .comparison-list li { color: var(--gray-200); }
+  .cmp-icon {
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+  }
+  .cmp-icon--bad  { background: rgba(255,80,80,0.1);    color: rgba(255,100,100,0.7); }
+  .cmp-icon--good { background: rgba(201,255,87,0.12);  color: var(--accent); }
+
+  /* Mid CTA strip */
+  .lp-mid-cta {
+    padding: 1.5rem 0;
+    background: rgba(201,255,87,0.04);
+    border-top: 1px solid rgba(201,255,87,0.15);
+    border-bottom: 1px solid rgba(201,255,87,0.15);
+  }
+
+  /* Testimonials */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .testimonial-card {
+    padding: 1.75rem;
+    background: var(--gray-900);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: flex; flex-direction: column; gap: 1rem;
+    transition: border-color 0.2s;
+  }
+  .testimonial-card:hover { border-color: var(--gray-600); }
+  .testimonial-stars { display: flex; gap: 0.2rem; }
+  .testimonial-quote {
+    font-size: 0.9rem; color: var(--gray-300);
+    line-height: 1.75; flex: 1; margin: 0;
+  }
+  .testimonial-author {
+    display: flex; align-items: center; gap: 0.75rem;
+    padding-top: 1rem; border-top: 1px solid var(--border);
+  }
+  .testimonial-avatar {
+    width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0;
+    background: rgba(201,255,87,0.08);
+    border: 1px solid rgba(201,255,87,0.2);
+    display: flex; align-items: center; justify-content: center;
+    font-family: var(--font-mono); font-size: 0.65rem; font-weight: 700;
+    color: var(--accent); letter-spacing: 0.06em;
+  }
+  .testimonial-name { font-weight: 600; font-size: 0.875rem; color: var(--white); }
+  .testimonial-role {
+    font-size: 0.7rem; color: var(--gray-500);
+    font-family: var(--font-mono); letter-spacing: 0.04em; margin-top: 0.15rem;
+  }
+
   /* ── Responsive ─────────────────────────────────────────── */
   @media (max-width: 900px) {
-    .pricing-grid { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
+    .pricing-grid      { grid-template-columns: 1fr; max-width: 440px; margin: 0 auto; }
     .pricing-card--popular { transform: none; }
-    .process-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-    .why-grid { grid-template-columns: 1fr 1fr; }
-    .lp-cta-grid { grid-template-columns: 1fr; }
+    .process-grid      { grid-template-columns: 1fr 1fr; gap: 1rem; }
+    .why-grid          { grid-template-columns: 1fr 1fr; }
+    .comparison-grid   { grid-template-columns: 1fr; max-width: 480px; }
+    .testimonials-grid { grid-template-columns: 1fr; max-width: 500px; margin: 0 auto; }
   }
   @media (max-width: 600px) {
-    .lp-trust-bar { gap: 1rem; padding: 1rem; }
+    .lp-trust-bar  { gap: 1rem; padding: 1rem; }
     .lp-trust-item { padding: 0 0.75rem; }
     .lp-trust-divider { display: none; }
-    .process-grid { grid-template-columns: 1fr; }
-    .why-grid { grid-template-columns: 1fr; }
-    .work-grid { grid-template-columns: 1fr; }
+    .process-grid  { grid-template-columns: 1fr; }
+    .why-grid      { grid-template-columns: 1fr; }
+    .work-grid     { grid-template-columns: 1fr; }
+    .lp-mid-cta .lp-container { flex-direction: column; text-align: center; }
   }
 </style>
