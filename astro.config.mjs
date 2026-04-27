@@ -5,7 +5,7 @@ import vercel from '@astrojs/vercel/serverless';
 export default defineConfig({
   // hybrid: all pages are static by default, API routes are serverless
   output: 'hybrid',
-  adapter: vercel(),
+  adapter: vercel({ functionPerRoute: false }),
 
   integrations: [react()],
   site: 'https://fazeddigital.com',
