@@ -1,12 +1,13 @@
-export const prerender = false; // serverless — never statically rendered
+export const prerender = false;
 
 import type { APIRoute } from 'astro';
 
-const HUBSPOT_TOKEN   = import.meta.env.HUBSPOT_ACCESS_TOKEN;
-const HUBSPOT_PORTAL  = '244473168';
-const NOTIFY_EMAIL    = 'info@fazeddigital.com';
+// ─── HubSpot config ─────────────────────────────────────────────────────────
+// Uses the public Forms Submission API — no Private App token required.
+// Replace FORM_GUID with the GUID from your HubSpot form URL once created.
+const PORTAL_ID = '244473168';
+const FORM_GUID = import.meta.env.HUBSPOT_FORM_GUID ?? 'c119e15a-357c-4bfb-9264-a1fb3f1a3389';
 
-/* Map service dropdown value → readable label */
 const SERVICE_LABELS: Record<string, string> = {
   web:     'Web Design & Development',
   brand:   'Brand Identity',
@@ -16,129 +17,68 @@ const SERVICE_LABELS: Record<string, string> = {
 };
 
 export const POST: APIRoute = async ({ request }) => {
-  /* ── 1. Parse body ──────────────────────────────────────── */
+  /* ── Parse body ─────────────────────────────────────────── */
   let body: { name?: string; email?: string; service?: string; message?: string };
   try {
     body = await request.json();
   } catch {
-    return new Response(JSON.stringify({ error: 'Invalid JSON' }), { status: 400 });
+    return json({ error: 'Invalid request' }, 400);
   }
 
   const { name = '', email = '', service = '', message = '' } = body;
 
   if (!name.trim() || !email.trim() || !message.trim()) {
-    return new Response(JSON.stringify({ error: 'Missing required fields' }), { status: 400 });
+    return json({ error: 'Please fill in all required fields.' }, 400);
   }
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    return new Response(JSON.stringify({ error: 'Invalid email' }), { status: 400 });
-  }
-  if (!HUBSPOT_TOKEN) {
-    return new Response(JSON.stringify({ error: 'HubSpot not configured' }), { status: 500 });
+    return json({ error: 'Please enter a valid email address.' }, 400);
   }
 
   const [firstName, ...rest] = name.trim().split(' ');
-  const lastName  = rest.join(' ') || '';
-  const serviceLabel = SERVICE_LABELS[service] ?? service ?? 'Not specified';
+  const lastName     = rest.join(' ') || '-';
+  const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
-  const headers = {
-    'Content-Type': 'application/json',
-    Authorization: `Bearer ${HUBSPOT_TOKEN}`,
-  };
-
-  /* ── 2. Upsert contact in HubSpot ───────────────────────── */
-  let contactId: string | null = null;
-  try {
-    const res = await fetch('https://api.hubapi.com/crm/v3/objects/contacts', {
+  /* ── Submit to HubSpot public Forms API (no auth needed) ── */
+  const hsRes = await fetch(
+    `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`,
+    {
       method: 'POST',
-      headers,
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        properties: {
-          email,
-          firstname:      firstName,
-          lastname:       lastName,
-          hs_lead_source: 'Website Contact Form',
-          message,
-          // Store the service enquiry in the "jobtitle" field (repurposed) or a custom prop
-          // Using "subject" note for now — easy to map to a custom property later
+        fields: [
+          { name: 'firstname', value: firstName },
+          { name: 'lastname',  value: lastName  },
+          { name: 'email',     value: email     },
+          { name: 'message',   value: message   },
+          { name: 'service_interest', value: serviceLabel },
+        ],
+        context: {
+          pageUri:  request.headers.get('referer') ?? 'https://fazeddigital.com/contact',
+          pageName: 'Fazed Digital — Contact',
         },
-      }),
-    });
-
-    if (res.ok) {
-      const data = await res.json();
-      contactId = data.id;
-    } else if (res.status === 409) {
-      // Contact already exists — fetch their ID
-      const existing = await fetch(
-        `https://api.hubapi.com/crm/v3/objects/contacts/${encodeURIComponent(email)}?idProperty=email`,
-        { headers }
-      );
-      if (existing.ok) {
-        const data = await existing.json();
-        contactId = data.id;
-        // Update existing contact properties
-        await fetch(`https://api.hubapi.com/crm/v3/objects/contacts/${contactId}`, {
-          method: 'PATCH',
-          headers,
-          body: JSON.stringify({
-            properties: { hs_lead_source: 'Website Contact Form', message },
-          }),
-        });
-      }
-    }
-  } catch (err) {
-    console.error('HubSpot contact error:', err);
-  }
-
-  /* ── 3. Create a Deal linked to the contact ─────────────── */
-  try {
-    const dealRes = await fetch('https://api.hubapi.com/crm/v3/objects/deals', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        properties: {
-          dealname:   `${name} — ${serviceLabel}`,
-          pipeline:   'default',
-          dealstage:  'appointmentscheduled', // first stage: "New Lead"
-          description: message,
-          hs_lead_source: 'Website Contact Form',
-        },
-        associations: contactId
-          ? [{ to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 3 }] }]
-          : [],
-      }),
-    });
-    if (!dealRes.ok) {
-      const errBody = await dealRes.text();
-      console.error('Deal creation failed:', errBody);
-    }
-  } catch (err) {
-    console.error('HubSpot deal error:', err);
-  }
-
-  /* ── 4. Internal notification note on the contact ───────── */
-  if (contactId) {
-    try {
-      await fetch('https://api.hubapi.com/crm/v3/objects/notes', {
-        method: 'POST',
-        headers,
-        body: JSON.stringify({
-          properties: {
-            hs_note_body: `New enquiry from website:\n\nService: ${serviceLabel}\n\nMessage:\n${message}`,
-            hs_timestamp: new Date().toISOString(),
+        legalConsentOptions: {
+          consent: {
+            consentToProcess: true,
+            text: 'I agree to allow Fazed Digital to store and process my personal data.',
           },
-          associations: [
-            { to: { id: contactId }, types: [{ associationCategory: 'HUBSPOT_DEFINED', associationTypeId: 202 }] },
-          ],
-        }),
-      });
-    } catch (err) {
-      console.error('HubSpot note error:', err);
+        },
+      }),
     }
+  );
+
+  if (!hsRes.ok) {
+    const errText = await hsRes.text();
+    console.error('HubSpot Forms API error:', hsRes.status, errText);
+    // Still return OK to the user — don't expose internal errors
+    return json({ ok: true });
   }
 
-  return new Response(JSON.stringify({ ok: true, contactId }), {
-    status: 200,
+  return json({ ok: true });
+};
+
+function json(data: object, status = 200) {
+  return new Response(JSON.stringify(data), {
+    status,
     headers: { 'Content-Type': 'application/json' },
   });
-};
+}
