@@ -18,6 +18,7 @@ export function getStaticPaths() {
       industry: 'Construction',
       services: ['Web Design', 'WordPress Development'],
       duration: '6 weeks',
+      image: '/images/work-aframing.svg',
       challenge: 'A Framing Company is a Utah-based framing contractor with a strong reputation for precision craftsmanship — wood framing, concrete work, and roofing across residential and commercial builds. But their online presence didn\'t reflect their calibre. An outdated site with no portfolio presence meant they were losing bids to competitors who simply looked more credible online.',
       solution: 'We designed a clean, high-performance WordPress website that put their project portfolio front and centre. The structure was built around three core audiences — general contractors, developers, and homeowners — with clear service pages for wood framing, concrete, and roofing. A curated project gallery highlighted completed builds across Utah, and testimonials from past clients were woven throughout to reinforce trust. The WordPress build gives the team full control to update projects and content without touching code.',
       result: 'Within weeks of launch, A Framing Company reported a significant uptick in inbound enquiries from contractors and developers who found them through search or were sent the site during the bidding process. The site became a core part of how they pitch new work.',
@@ -32,17 +33,48 @@ export function getStaticPaths() {
       industry: 'Cleaning Services',
       services: ['Brand Identity', 'Web Design', 'WordPress Development'],
       duration: '8 weeks',
+      image: '/images/work-cleen.svg',
       challenge: 'Cleen & Green is a premium cleaning company based in the Philippines offering deep house cleaning, post-construction cleaning, car interior detailing, and eco-safe disinfection. Their ambition was to position above the typical cleaning service — but their existing brand identity and website didn\'t communicate the premium, eco-conscious experience they actually delivered. They were underselling themselves in a market where trust and first impressions are everything.',
       solution: 'We developed a full brand identity rooted in their eco-conscious values — a fresh green palette, clean typographic system, and a visual language built around clarity and care. The WordPress site was structured to convert: service pages with clear scope descriptions, a frictionless quote request flow, and customer testimonials at key decision points. We also built the franchise opportunity section as a dedicated page, giving it the professional weight it needed to attract serious enquiries — all manageable by the client through WordPress.',
       result: 'The rebrand gave Cleen & Green the market positioning that matched their actual service quality. The new site converts better, the brand is consistent across all touchpoints, and the franchise enquiry section opened a new growth channel they hadn\'t been able to activate before.',
       outcomes: ['Brand identity aligned with premium eco-positioning', 'Improved quote request conversion rate', 'Franchise section activated as a new revenue stream', 'Client-editable WordPress CMS across all service pages'],
+    },
+    {
+      slug: '03',
+      title: 'CrateOnScene',
+      category: 'MVP Platform Build',
+      year: '2024',
+      client: 'CrateOnScene / Import Crate',
+      industry: 'Automotive Events & Community',
+      services: ['Web Design', 'Platform Development', 'PWA'],
+      duration: '5 weeks',
+      image: '/images/work-crate.svg',
+      challenge: 'CrateOnScene needed to go from idea to live product fast. The vision was a centralised automotive event discovery platform — a hub where drivers, spectators, businesses, and event organisers could find and connect around car shows, meets, and racing events across the US. They needed an MVP that felt polished enough to attract real users from day one, not a rough prototype.',
+      solution: 'We scoped the MVP tightly: event discovery, driver profiles, business listings, and organiser tools — all built as a progressive web app so users could add it to their home screen without an app store. The UI was designed around the car culture aesthetic — dark, bold, high-contrast — with a clean information architecture that made browsing events by type, date, and location intuitive. We shipped in 5 weeks.',
+      result: 'CrateOnScene launched with a fully functional platform serving multiple user types simultaneously. The PWA approach kept the barrier to entry low, and the event-first design kept users engaged from their first visit.',
+      outcomes: ['Full MVP shipped in 5 weeks', 'Multi-stakeholder platform: drivers, organisers, businesses, spectators', 'PWA — installable without an app store', 'Event discovery across JDM, tuner, muscle, and import segments'],
+    },
+    {
+      slug: '04',
+      title: 'The Telecom Shop',
+      category: 'E-commerce Migration',
+      year: '2024',
+      client: 'The Telecom Shop',
+      industry: 'Retail — Telecommunications',
+      services: ['E-commerce Migration', 'PrestaShop Development', 'Data Migration'],
+      duration: '10 weeks',
+      image: '/images/work-telecom.svg',
+      challenge: "The Telecom Shop is an Australian retailer selling phones, tablets, accessories, and plans online. Their Magento store had become a liability — slow, expensive to maintain, and increasingly difficult to update. They needed to migrate their full catalogue, customer data, and order history to PrestaShop without disrupting sales or losing SEO ground during the transition.",
+      solution: 'We planned the migration in phases: data audit and mapping first, then a parallel PrestaShop build matching their existing catalogue structure, followed by a staged migration of products, customers, and orders. The new PrestaShop store was redesigned to be faster and easier to manage — cleaner product pages, streamlined checkout, and a backend the team could actually use without developer help. Go-live was sequenced to minimise downtime.',
+      result: 'The migration completed with zero data loss and minimal disruption to trading. The new PrestaShop store loaded significantly faster than the old Magento build, and the team regained full control of their catalogue and promotions without needing ongoing developer involvement.',
+      outcomes: ['Full Magento-to-PrestaShop migration with zero data loss', 'Faster storefront — significant improvement in page load times', 'Clean product, customer, and order history transfer', 'Team-managed backend requiring no developer for day-to-day operations'],
     },
   ];
 
   return cases.map(c => ({ params: { slug: c.slug }, props: c }));
 }
 
-const { title, category, year, client, industry, services, duration, challenge, solution, result, outcomes, slug } = Astro.props;
+const { title, category, year, client, industry, services, duration, challenge, solution, result, outcomes, slug, image } = Astro.props;
 ---
 
 <Layout
@@ -93,11 +125,12 @@ const { title, category, year, client, industry, services, duration, challenge, 
     <!-- Visual placeholder -->
     <section style="background: var(--gray-900); border-bottom: 1px solid var(--border); overflow: hidden;">
       <div class="container" style="padding-top: clamp(3rem,6vw,6rem); padding-bottom: clamp(3rem,6vw,6rem);">
-        <div style="aspect-ratio: 16/7; border-radius: var(--radius); background: var(--gray-800); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; position: relative; overflow: hidden;">
-          <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, rgba(255,255,255,0.04) 0%, transparent 60%);"></div>
-          <span style="font-family: var(--font-display); font-style: italic; font-size: clamp(8rem, 18vw, 20rem); font-weight: 600; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.05); user-select: none; letter-spacing: -0.02em;">
-            {slug.padStart(2, '0')}
-          </span>
+        <div style="aspect-ratio: 16/7; border-radius: var(--radius); border: 1px solid var(--border); overflow: hidden; position: relative; background: var(--gray-900);">
+          <img
+            src={image}
+            alt={`${title} website`}
+            style="width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block;"
+          />
         </div>
       </div>
     </section>
