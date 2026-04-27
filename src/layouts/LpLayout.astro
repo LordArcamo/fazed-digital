@@ -1,0 +1,102 @@
+---
+export interface Props {
+  title: string;
+  description: string;
+  canonical?: string;
+  schema?: object | object[];
+}
+
+const {
+  title,
+  description,
+  canonical = 'https://fazeddigital.com/lp/7-day-website',
+  schema,
+} = Astro.props;
+---
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="generator" content={Astro.generator} />
+
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  <link rel="canonical" href={canonical} />
+  <meta name="robots" content="index, follow" />
+  <meta name="author" content="Fazed Digital" />
+  <meta name="keywords" content="website design 7 days, fast website design, affordable website design small business, professional website one week, quick website development" />
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content="https://fazeddigital.com/og-image.jpg" />
+  <meta property="og:site_name" content="Fazed Digital" />
+  <meta property="og:locale" content="en_US" />
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content="https://fazeddigital.com/og-image.jpg" />
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+  <!-- Fonts — same async non-blocking pattern as main Layout -->
+  <link rel="preconnect" href="https://api.fontshare.com" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+  <link rel="preload" as="style"
+    href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap" />
+  <link rel="stylesheet" media="print" onload="this.media='all'"
+    href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap" />
+
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" />
+  <link rel="stylesheet" media="print" onload="this.media='all'"
+    href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" />
+
+  <noscript>
+    <link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=clash-display@700,600,500,400&display=swap" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Mono:wght@400;700&display=swap" />
+  </noscript>
+
+  <!-- Structured data -->
+  {Array.isArray(schema)
+    ? schema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)
+    : schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  }
+</head>
+
+<body>
+  <slot />
+</body>
+</html>
+
+<style is:global>
+  @import '../styles/global.css';
+
+  @media (max-width: 640px) {
+    body { cursor: auto; }
+    a, button, [role="button"] { cursor: auto; }
+  }
+
+  /* Hide floating reCAPTCHA badge — attribution shown inline */
+  .grecaptcha-badge { visibility: hidden !important; }
+
+  /* LP-specific overrides */
+  .lp-section {
+    padding: clamp(4rem, 8vw, 7rem) 0;
+  }
+  .lp-container {
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 clamp(1.25rem, 5vw, 3rem);
+  }
+</style>
