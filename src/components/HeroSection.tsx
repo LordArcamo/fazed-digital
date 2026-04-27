@@ -9,15 +9,22 @@ import HeroGraphic from './HeroGraphic';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const CHARS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ∆◆◇◈';
+// GSAP-driven scramble — runs inside the rAF loop instead of a separate setInterval
 function scramble(el: HTMLElement, final: string) {
-  let i = 0;
-  const total = final.length * 7;
-  const id = setInterval(() => {
-    el.textContent = final.split('').map((c, idx) =>
-      idx < Math.floor(i / 7) ? c : c === ' ' ? ' ' : CHARS[Math.floor(Math.random() * CHARS.length)]
-    ).join('');
-    if (++i > total) { clearInterval(id); el.textContent = final; }
-  }, 28);
+  const len = final.length;
+  const obj = { p: 0 };
+  gsap.to(obj, {
+    p: 1,
+    duration: (len * 7 * 28) / 1000,
+    ease: 'none',
+    onUpdate() {
+      const revealed = Math.floor(obj.p * len);
+      el.textContent = final.split('').map((c, idx) =>
+        idx < revealed ? c : c === ' ' ? ' ' : CHARS[Math.floor(Math.random() * CHARS.length)]
+      ).join('');
+    },
+    onComplete() { el.textContent = final; },
+  });
 }
 
 /* Glow orb — uses quickTo so no new tween on every mousemove */
@@ -56,7 +63,8 @@ export default function HeroSection() {
   const badgeRef  = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    const tl = gsap.timeline({ delay: 1.9 });
+    // Loader now takes ~1.4s — reduced from 1.9s to match
+    const tl = gsap.timeline({ delay: 1.3 });
     tl.from(heroRef.current, { autoAlpha: 0, duration: 0.4 })
       .add(() => {
         if (craftRef.current) scramble(craftRef.current, 'We craft');

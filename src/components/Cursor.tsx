@@ -13,7 +13,7 @@ export default function Cursor() {
 
     gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
 
-    // quickTo for cursor — single tween instance, no allocation per move
+    // quickTo — single tween instance, zero allocation per mousemove
     const xDot  = gsap.quickTo(dot,  'x', { duration: 0.06, ease: 'none' });
     const yDot  = gsap.quickTo(dot,  'y', { duration: 0.06, ease: 'none' });
     const xRing = gsap.quickTo(ring, 'x', { duration: 0.42, ease: 'power2.out' });
@@ -24,64 +24,66 @@ export default function Cursor() {
       xRing(e.clientX); yRing(e.clientY);
     };
 
+    // Cursor state tracking — prevents re-triggering the same animation
+    let curState = 'default';
+
     const reset = () => {
-      gsap.to(ring, { scale: 1, background: 'transparent', borderColor: 'rgba(245,244,240,0.4)', duration: 0.35, ease: 'power2.out' });
-      gsap.to(dot,  { scale: 1, duration: 0.2 });
+      if (curState === 'default') return;
+      curState = 'default';
+      gsap.to(ring,  { scale: 1, background: 'transparent', borderColor: 'rgba(245,244,240,0.4)', duration: 0.35, ease: 'power2.out' });
+      gsap.to(dot,   { scale: 1, duration: 0.2 });
       gsap.to(label, { opacity: 0, scale: 0.6, duration: 0.2 });
     };
     const onLinkEnter = () => {
+      if (curState === 'link') return;
+      curState = 'link';
       gsap.to(ring, { scale: 2, borderColor: 'rgba(245,244,240,0.8)', duration: 0.3, ease: 'power2.out' });
       gsap.to(dot,  { scale: 0, duration: 0.15 });
     };
     const onBtnEnter = () => {
+      if (curState === 'button') return;
+      curState = 'button';
       gsap.to(ring, { scale: 2.8, background: 'rgba(201,255,87,0.08)', borderColor: 'var(--accent)', duration: 0.35, ease: 'back.out(1.7)' });
       gsap.to(dot,  { scale: 0, duration: 0.15 });
     };
     const onViewEnter = (text: string) => {
+      if (curState === `view:${text}`) return;
+      curState = `view:${text}`;
       label.textContent = text;
-      gsap.to(ring, { scale: 3.2, background: 'rgba(201,255,87,0.1)', borderColor: 'var(--accent)', duration: 0.4, ease: 'back.out(1.5)' });
-      gsap.to(dot, { scale: 0, duration: 0.15 });
+      gsap.to(ring,  { scale: 3.2, background: 'rgba(201,255,87,0.1)', borderColor: 'var(--accent)', duration: 0.4, ease: 'back.out(1.5)' });
+      gsap.to(dot,   { scale: 0, duration: 0.15 });
       gsap.to(label, { opacity: 1, scale: 1, duration: 0.3, ease: 'back.out(2)' });
     };
 
     window.addEventListener('mousemove', move, { passive: true });
 
-    // Track already-bound elements to prevent duplicate listeners
-    const bound = new WeakSet<Element>();
+    // Event delegation — two document listeners instead of per-element bindings + MutationObserver.
+    // mouseover bubbles up so we can check the closest matching ancestor.
+    const SELECTOR = '[data-cursor-label], button, [data-cursor="button"], a:not([data-cursor]), [data-cursor="link"]';
 
-    const bind = () => {
-      document.querySelectorAll<Element>('a:not([data-cursor]), [data-cursor="link"]').forEach(el => {
-        if (bound.has(el)) return;
-        bound.add(el);
-        el.addEventListener('mouseenter', onLinkEnter);
-        el.addEventListener('mouseleave', reset);
-      });
-      document.querySelectorAll<Element>('button, [data-cursor="button"]').forEach(el => {
-        if (bound.has(el)) return;
-        bound.add(el);
-        el.addEventListener('mouseenter', onBtnEnter);
-        el.addEventListener('mouseleave', reset);
-      });
-      document.querySelectorAll<Element>('[data-cursor-label]').forEach(el => {
-        if (bound.has(el)) return;
-        bound.add(el);
-        const text = (el as HTMLElement).dataset.cursorLabel ?? 'VIEW';
-        el.addEventListener('mouseenter', () => onViewEnter(text));
-        el.addEventListener('mouseleave', reset);
-      });
+    const over = (e: MouseEvent) => {
+      const target = (e.target as Element | null)?.closest(SELECTOR) as HTMLElement | null;
+      if (!target) return; // not over anything interactive
+      const lbl = target.dataset.cursorLabel;
+      if (lbl)                                         onViewEnter(lbl);
+      else if (target.matches('button, [data-cursor="button"]')) onBtnEnter();
+      else                                              onLinkEnter();
     };
-    bind();
 
-    // Only watch for added nodes — not all mutations
-    const obs = new MutationObserver(mutations => {
-      const hasNew = mutations.some(m => m.addedNodes.length > 0);
-      if (hasNew) bind();
-    });
-    obs.observe(document.body, { childList: true, subtree: true });
+    const out = (e: MouseEvent) => {
+      // Only reset when leaving an interactive element for a non-interactive one
+      const to = e.relatedTarget as Element | null;
+      if (to?.closest(SELECTOR)) return; // still hovering interactive element
+      reset();
+    };
+
+    document.addEventListener('mouseover',  over, { passive: true });
+    document.addEventListener('mouseout',   out,  { passive: true });
 
     return () => {
       window.removeEventListener('mousemove', move);
-      obs.disconnect();
+      document.removeEventListener('mouseover',  over);
+      document.removeEventListener('mouseout',   out);
     };
   }, []);
 

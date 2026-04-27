@@ -23,14 +23,15 @@ export default function ParticleCanvas() {
     resize();
 
     const makeParticles = (): Dot[] => {
-      const count = Math.min(90, Math.floor((canvas.width * canvas.height) / 11000));
+      // Reduced from 90 → 50 max; fewer particles = fewer O(n²) connection checks
+      const count = Math.min(50, Math.floor((canvas.width * canvas.height) / 14000));
       return Array.from({ length: count }, (_, i) => ({
         x:    Math.random() * canvas.width,
         y:    Math.random() * canvas.height,
-        vx:   (Math.random() - 0.5) * 0.35,
-        vy:   (Math.random() - 0.5) * 0.35,
+        vx:   (Math.random() - 0.5) * 0.3,
+        vy:   (Math.random() - 0.5) * 0.3,
         r:    Math.random() * 1.2 + 0.4,
-        lime: i % 7 === 0, // ~14% lime coloured
+        lime: i % 7 === 0,
       }));
     };
 
@@ -38,59 +39,63 @@ export default function ParticleCanvas() {
 
     const onResize = () => { resize(); dots = makeParticles(); };
     window.addEventListener('resize', onResize, { passive: true });
-    window.addEventListener('mousemove', (e) => {
+
+    const onMouseMove = (e: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
       mx = e.clientX - rect.left;
       my = e.clientY - rect.top;
-    }, { passive: true });
+    };
+    window.addEventListener('mousemove', onMouseMove, { passive: true });
 
-    const LINK  = 140; // max connection distance
-    const REPEL = 90;  // mouse repel radius
+    // Pre-compute squared thresholds — avoids sqrt in the hot O(n²) path
+    const LINK    = 110;
+    const LINK_SQ = LINK * LINK;
+    const REPEL   = 80;
+    const REPEL_SQ = REPEL * REPEL;
 
     const tick = () => {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // Update physics + draw dots
       for (const d of dots) {
-        // Mouse repulsion
         const dx = d.x - mx, dy = d.y - my;
-        const dist = Math.hypot(dx, dy);
-        if (dist < REPEL && dist > 0) {
+        const distSq = dx * dx + dy * dy;
+        if (distSq < REPEL_SQ && distSq > 0) {
+          const dist = Math.sqrt(distSq);
           const f = ((REPEL - dist) / REPEL) * 0.018;
           d.vx += (dx / dist) * f;
           d.vy += (dy / dist) * f;
         }
-        d.vx *= 0.98;
-        d.vy *= 0.98;
-        d.x  += d.vx;
-        d.y  += d.vy;
-        // Wrap edges instead of bouncing — smoother feel
-        if (d.x < -5)               d.x = canvas.width  + 5;
+        d.vx *= 0.98; d.vy *= 0.98;
+        d.x  += d.vx; d.y  += d.vy;
+        if (d.x < -5)                d.x = canvas.width  + 5;
         if (d.x > canvas.width  + 5) d.x = -5;
-        if (d.y < -5)               d.y = canvas.height + 5;
+        if (d.y < -5)                d.y = canvas.height + 5;
         if (d.y > canvas.height + 5) d.y = -5;
 
-        // Draw dot
         ctx.beginPath();
         ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
         ctx.fillStyle = d.lime ? 'rgba(201,255,87,0.55)' : 'rgba(255,255,255,0.45)';
         ctx.fill();
       }
 
-      // Draw connections — O(n²) but n≤90 so ~4k checks/frame, fine at 60fps
+      // Draw connections — squared distance check skips sqrt for ~97% of pairs
+      ctx.lineWidth = 0.6;
       for (let i = 0; i < dots.length; i++) {
+        const a = dots[i];
         for (let j = i + 1; j < dots.length; j++) {
-          const a = dots[i], b = dots[j];
-          const d = Math.hypot(a.x - b.x, a.y - b.y);
-          if (d > LINK) continue;
+          const b = dots[j];
+          const dx = a.x - b.x, dy = a.y - b.y;
+          const dSq = dx * dx + dy * dy;
+          if (dSq > LINK_SQ) continue;
+          const d = Math.sqrt(dSq);
           const alpha = (1 - d / LINK) * 0.1;
-          const isLime = a.lime || b.lime;
           ctx.beginPath();
           ctx.moveTo(a.x, a.y);
           ctx.lineTo(b.x, b.y);
-          ctx.strokeStyle = isLime
-            ? `rgba(201,255,87,${alpha * 1.6})`
-            : `rgba(255,255,255,${alpha})`;
-          ctx.lineWidth = 0.6;
+          ctx.strokeStyle = (a.lime || b.lime)
+            ? `rgba(201,255,87,${(alpha * 1.6).toFixed(3)})`
+            : `rgba(255,255,255,${alpha.toFixed(3)})`;
           ctx.stroke();
         }
       }
@@ -103,6 +108,7 @@ export default function ParticleCanvas() {
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', onResize);
+      window.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 

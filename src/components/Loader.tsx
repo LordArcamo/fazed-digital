@@ -26,16 +26,16 @@ export default function Loader() {
 
     tl.to(obj, {
       val: 100,
-      duration: 1.6,
+      duration: 0.85,
       ease: 'power2.inOut',
       onUpdate() {
         counter.textContent = String(Math.round(obj.val)).padStart(3, '0');
         bar.style.transform = `scaleX(${obj.val / 100})`;
       },
     })
-    .to(word, { yPercent: -110, duration: 0.7, ease: 'power3.inOut' }, '-=0.2')
-    .to(counter, { yPercent: -110, duration: 0.65, ease: 'power3.inOut' }, '<0.04')
-    .to(loader, { yPercent: -100, duration: 0.9, ease: 'expo.inOut' }, '-=0.35');
+    .to(word,    { yPercent: -110, duration: 0.45, ease: 'power3.inOut' }, '-=0.15')
+    .to(counter, { yPercent: -110, duration: 0.4,  ease: 'power3.inOut' }, '<0.03')
+    .to(loader,  { yPercent: -100, duration: 0.55, ease: 'expo.inOut'   }, '-=0.2');
 
     return () => { tl.kill(); };
   }, []);
