@@ -11,7 +11,7 @@ const projects = [
   { id: '01', title: 'A Framing Company', category: 'Web Design + WordPress',     year: '2024', img: '/images/work-aframing.jpg' },
   { id: '02', title: 'Cleen & Green',     category: 'Brand Identity + WordPress',  year: '2025', img: '/images/work-cleen.jpg'    },
   { id: '03', title: 'CrateOnScene',      category: 'MVP Platform Build',          year: '2024', img: '/images/work-crate.jpg'    },
-  { id: '04', title: 'The Telecom Shop',  category: 'E-commerce Migration',        year: '2024', img: '/images/work-telecom.svg'  },
+  { id: '04', title: 'The Telecom Shop',  category: 'E-commerce Migration',        year: '2024', img: '/images/work-telecom.jpg'  },
 ];
 
 function ProjectCard({ p }: { p: typeof projects[0] }) {
