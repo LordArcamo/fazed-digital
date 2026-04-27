@@ -18,7 +18,8 @@ export function getStaticPaths() {
       industry: 'Construction',
       services: ['Web Design', 'WordPress Development'],
       duration: '6 weeks',
-      image: '/images/work-aframing.svg',
+      liveUrl: 'https://aframingcompany.com',
+      image: '/images/work-aframing.jpg',
       challenge: 'A Framing Company is a Utah-based framing contractor with a strong reputation for precision craftsmanship — wood framing, concrete work, and roofing across residential and commercial builds. But their online presence didn\'t reflect their calibre. An outdated site with no portfolio presence meant they were losing bids to competitors who simply looked more credible online.',
       solution: 'We designed a clean, high-performance WordPress website that put their project portfolio front and centre. The structure was built around three core audiences — general contractors, developers, and homeowners — with clear service pages for wood framing, concrete, and roofing. A curated project gallery highlighted completed builds across Utah, and testimonials from past clients were woven throughout to reinforce trust. The WordPress build gives the team full control to update projects and content without touching code.',
       result: 'Within weeks of launch, A Framing Company reported a significant uptick in inbound enquiries from contractors and developers who found them through search or were sent the site during the bidding process. The site became a core part of how they pitch new work.',
@@ -33,7 +34,8 @@ export function getStaticPaths() {
       industry: 'Cleaning Services',
       services: ['Brand Identity', 'Web Design', 'WordPress Development'],
       duration: '8 weeks',
-      image: '/images/work-cleen.svg',
+      liveUrl: 'https://cleenandgreen.com',
+      image: '/images/work-cleen.jpg',
       challenge: 'Cleen & Green is a premium cleaning company based in the Philippines offering deep house cleaning, post-construction cleaning, car interior detailing, and eco-safe disinfection. Their ambition was to position above the typical cleaning service — but their existing brand identity and website didn\'t communicate the premium, eco-conscious experience they actually delivered. They were underselling themselves in a market where trust and first impressions are everything.',
       solution: 'We developed a full brand identity rooted in their eco-conscious values — a fresh green palette, clean typographic system, and a visual language built around clarity and care. The WordPress site was structured to convert: service pages with clear scope descriptions, a frictionless quote request flow, and customer testimonials at key decision points. We also built the franchise opportunity section as a dedicated page, giving it the professional weight it needed to attract serious enquiries — all manageable by the client through WordPress.',
       result: 'The rebrand gave Cleen & Green the market positioning that matched their actual service quality. The new site converts better, the brand is consistent across all touchpoints, and the franchise enquiry section opened a new growth channel they hadn\'t been able to activate before.',
@@ -48,7 +50,8 @@ export function getStaticPaths() {
       industry: 'Automotive Events & Community',
       services: ['Web Design', 'Platform Development', 'PWA'],
       duration: '5 weeks',
-      image: '/images/work-crate.svg',
+      liveUrl: 'https://crateonscene.com',
+      image: '/images/work-crate.jpg',
       challenge: 'CrateOnScene needed to go from idea to live product fast. The vision was a centralised automotive event discovery platform — a hub where drivers, spectators, businesses, and event organisers could find and connect around car shows, meets, and racing events across the US. They needed an MVP that felt polished enough to attract real users from day one, not a rough prototype.',
       solution: 'We scoped the MVP tightly: event discovery, driver profiles, business listings, and organiser tools — all built as a progressive web app so users could add it to their home screen without an app store. The UI was designed around the car culture aesthetic — dark, bold, high-contrast — with a clean information architecture that made browsing events by type, date, and location intuitive. We shipped in 5 weeks.',
       result: 'CrateOnScene launched with a fully functional platform serving multiple user types simultaneously. The PWA approach kept the barrier to entry low, and the event-first design kept users engaged from their first visit.',
@@ -63,6 +66,7 @@ export function getStaticPaths() {
       industry: 'Retail — Telecommunications',
       services: ['E-commerce Migration', 'PrestaShop Development', 'Data Migration'],
       duration: '10 weeks',
+      liveUrl: 'https://www.thetelecomshop.com/au/',
       image: '/images/work-telecom.svg',
       challenge: "The Telecom Shop is an Australian retailer selling phones, tablets, accessories, and plans online. Their Magento store had become a liability — slow, expensive to maintain, and increasingly difficult to update. They needed to migrate their full catalogue, customer data, and order history to PrestaShop without disrupting sales or losing SEO ground during the transition.",
       solution: 'We planned the migration in phases: data audit and mapping first, then a parallel PrestaShop build matching their existing catalogue structure, followed by a staged migration of products, customers, and orders. The new PrestaShop store was redesigned to be faster and easier to manage — cleaner product pages, streamlined checkout, and a backend the team could actually use without developer help. Go-live was sequenced to minimise downtime.',
@@ -74,7 +78,7 @@ export function getStaticPaths() {
   return cases.map(c => ({ params: { slug: c.slug }, props: c }));
 }
 
-const { title, category, year, client, industry, services, duration, challenge, solution, result, outcomes, slug, image } = Astro.props;
+const { title, category, year, client, industry, services, duration, challenge, solution, result, outcomes, slug, image, liveUrl } = Astro.props;
 ---
 
 <Layout
@@ -89,10 +93,18 @@ const { title, category, year, client, industry, services, duration, challenge, 
     <!-- Hero -->
     <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,5rem); background: var(--black); border-bottom: 1px solid var(--border);">
       <div class="container">
-        <a href="/work" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-500); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2rem; transition: color 0.2s;"
-          onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
-          ← Back to Work
-        </a>
+        <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem;">
+          <a href="/work" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-500); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; transition: color 0.2s;"
+            onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
+            ← Back to Work
+          </a>
+          <a href={liveUrl} target="_blank" rel="noopener noreferrer"
+            style="display: inline-flex; align-items: center; gap: 0.5rem; font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); border: 1px solid var(--accent-border); border-radius: 100px; padding: 0.45rem 1.1rem; transition: all 0.2s; text-decoration: none;"
+            onmouseover="this.style.background='var(--accent-muted)'; this.style.borderColor='var(--accent)';" onmouseout="this.style.background='transparent'; this.style.borderColor='var(--accent-border)';">
+            <span style="display:inline-block;width:6px;height:6px;border-radius:50%;background:var(--accent);"></span>
+            Visit Live Site ↗
+          </a>
+        </div>
         <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 2rem; flex-wrap: wrap;">
           <span class="label">{category}</span>
           <span class="label">—</span>
