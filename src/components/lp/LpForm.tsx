@@ -2,6 +2,10 @@ import { useRef, useState, useEffect } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
+import {
+  Target, ShoppingBag, Award, RefreshCcw, Rocket, MessageSquare,
+  Minus, Zap, Briefcase, Smile, CheckCircle,
+} from 'lucide-react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
@@ -43,19 +47,19 @@ const PACKAGES = [
 const INDUSTRIES = ['Restaurant & Food', 'Retail & Fashion', 'Professional Services', 'Healthcare & Wellness', 'Real Estate', 'E-commerce', 'Education', 'Construction & Trades', 'Beauty & Salon', 'Tech & Startups', 'Other'];
 
 const GOALS = [
-  { value: 'leads',       label: '🎯  Get more leads & inquiries' },
-  { value: 'sell',        label: '🛒  Sell products online' },
-  { value: 'credibility', label: '✨  Build credibility & trust' },
-  { value: 'replace',     label: '🔄  Replace old/outdated website' },
-  { value: 'launch',      label: '🚀  Launch a new business' },
-  { value: 'other',       label: '💬  Something else' },
+  { value: 'leads',       label: 'Get more leads & inquiries',    Icon: Target       },
+  { value: 'sell',        label: 'Sell products online',          Icon: ShoppingBag  },
+  { value: 'credibility', label: 'Build credibility & trust',     Icon: Award        },
+  { value: 'replace',     label: 'Replace old/outdated website',  Icon: RefreshCcw   },
+  { value: 'launch',      label: 'Launch a new business',         Icon: Rocket       },
+  { value: 'other',       label: 'Something else',                Icon: MessageSquare },
 ];
 
 const STYLE_VIBES = [
-  { value: 'minimal',    emoji: '⬜', label: 'Minimal & Clean',          desc: 'Whitespace, simple typography' },
-  { value: 'bold',       emoji: '🔥', label: 'Bold & Vibrant',           desc: 'Strong colors, high energy' },
-  { value: 'corporate',  emoji: '💼', label: 'Corporate & Professional',  desc: 'Formal, trustworthy, polished' },
-  { value: 'playful',    emoji: '🎨', label: 'Playful & Fun',             desc: 'Friendly, colorful, approachable' },
+  { value: 'minimal',   Icon: Minus,     label: 'Minimal & Clean',         desc: 'Whitespace, simple typography' },
+  { value: 'bold',      Icon: Zap,       label: 'Bold & Vibrant',          desc: 'Strong colors, high energy' },
+  { value: 'corporate', Icon: Briefcase, label: 'Corporate & Professional', desc: 'Formal, trustworthy, polished' },
+  { value: 'playful',   Icon: Smile,     label: 'Playful & Fun',           desc: 'Friendly, colorful, approachable' },
 ];
 
 const ALL_PAGES = ['Home', 'About', 'Services', 'Contact', 'Blog', 'Gallery', 'Portfolio', 'FAQ', 'Team', 'Testimonials', 'Pricing', 'Shop / Store'];
@@ -214,7 +218,9 @@ export default function LpForm() {
         background: 'rgba(201,255,87,0.04)', textAlign: 'center',
         display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem',
       }}>
-        <div style={{ fontSize: '3rem' }}>🚀</div>
+        <div style={{ width: 64, height: 64, borderRadius: 16, background: 'rgba(201,255,87,0.1)', border: '1px solid rgba(201,255,87,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--accent)' }}>
+          <CheckCircle size={30} strokeWidth={1.5} />
+        </div>
         <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', fontWeight: 700, color: 'var(--white)', letterSpacing: '-0.02em' }}>
           You're booked in!
         </div>
@@ -420,12 +426,16 @@ function Step2({ data, set, focus, blur }: { data: FormData; set: (f: keyof Form
             const active = data.goal === g.value;
             return (
               <button key={g.value} type="button" onClick={() => set('goal', g.value)} style={{
-                padding: '0.7rem 1rem', borderRadius: '0.5rem', cursor: 'pointer', textAlign: 'left',
+                padding: '0.75rem 1rem', borderRadius: '0.5rem', cursor: 'pointer',
+                textAlign: 'left', display: 'flex', alignItems: 'center', gap: '0.7rem',
                 border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
                 background: active ? 'rgba(201,255,87,0.06)' : 'var(--gray-900)',
                 color: active ? 'var(--accent)' : 'var(--gray-300)',
                 fontFamily: 'var(--font-body)', fontSize: '0.875rem', transition: 'all 0.18s',
-              }}>{g.label}</button>
+              }}>
+                <g.Icon size={15} strokeWidth={1.75} style={{ flexShrink: 0, color: active ? 'var(--accent)' : 'var(--gray-500)' }} />
+                {g.label}
+              </button>
             );
           })}
         </div>
@@ -446,12 +456,21 @@ function Step3({ data, set, togglePage, focus, blur }: { data: FormData; set: (f
             const active = data.styleVibe === v.value;
             return (
               <button key={v.value} type="button" onClick={() => set('styleVibe', v.value)} style={{
-                padding: '0.85rem 0.75rem', borderRadius: '0.625rem', cursor: 'pointer', textAlign: 'left',
+                padding: '1rem 0.9rem', borderRadius: '0.625rem', cursor: 'pointer', textAlign: 'left',
                 border: `1px solid ${active ? 'var(--accent)' : 'var(--border)'}`,
                 background: active ? 'rgba(201,255,87,0.06)' : 'var(--gray-900)',
                 transition: 'all 0.18s', fontFamily: 'var(--font-body)',
               }}>
-                <div style={{ fontSize: '1.25rem', marginBottom: '0.35rem' }}>{v.emoji}</div>
+                <div style={{
+                  width: 36, height: 36, borderRadius: 8,
+                  background: active ? 'rgba(201,255,87,0.15)' : 'rgba(255,255,255,0.05)',
+                  border: `1px solid ${active ? 'rgba(201,255,87,0.3)' : 'var(--border)'}`,
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: active ? 'var(--accent)' : 'var(--gray-400)',
+                  marginBottom: '0.6rem', transition: 'all 0.18s',
+                }}>
+                  <v.Icon size={16} strokeWidth={1.75} />
+                </div>
                 <div style={{ fontWeight: 600, fontSize: '0.82rem', color: active ? 'var(--accent)' : 'var(--white)' }}>{v.label}</div>
                 <div style={{ fontSize: '0.72rem', color: 'var(--gray-500)', marginTop: '0.2rem', lineHeight: 1.3 }}>{v.desc}</div>
               </button>
