@@ -7,128 +7,145 @@ import MagneticButton from './MagneticButton';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
-/* ── Unique SVG thumbnails — memo so they never re-render ── */
-const Thumb01 = memo(function Thumb01() {
+/* ── SVG thumbnails — thematic per client ── */
+const ThumbFraming = memo(function ThumbFraming() {
   return (
-    <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+    <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <defs>
-        <radialGradient id="t01g" cx="65%" cy="35%" r="60%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.06)" />
+        <radialGradient id="tfg" cx="35%" cy="55%" r="65%">
+          <stop offset="0%" stopColor="rgba(255,160,60,0.08)" />
           <stop offset="100%" stopColor="rgba(0,0,0,0)" />
         </radialGradient>
       </defs>
-      <rect width="800" height="400" fill="url(#t01g)" />
-      {[0,1,2,3,4,5,6,7].map(i => <line key={i} x1={i*115} y1="0" x2={i*115} y2="400" stroke="white" strokeOpacity="0.04" strokeWidth="1"/>)}
-      {[0,1,2,3,4].map(i => <line key={i} x1="0" y1={i*100} x2="800" y2={i*100} stroke="white" strokeOpacity="0.04" strokeWidth="1"/>)}
-      <rect x="200" y="60" width="380" height="300" fill="none" stroke="white" strokeOpacity="0.12" strokeWidth="1"/>
-      {[0,1,2,3,4].map(col => [0,1,2,3].map(row => (
-        <rect key={`${col}${row}`} x={220+col*64} y={80+row*62} width={44} height={42} fill="none" stroke="white" strokeOpacity={0.08+row*0.06} strokeWidth="1"/>
-      )))}
-      <circle cx="660" cy="200" r="110" fill="none" stroke="rgba(201,255,87,0.18)" strokeWidth="1"/>
-      <circle cx="660" cy="200" r="70" fill="none" stroke="rgba(201,255,87,0.10)" strokeWidth="1"/>
-      <circle cx="660" cy="200" r="30" fill="rgba(201,255,87,0.06)" stroke="rgba(201,255,87,0.2)" strokeWidth="1"/>
-      <text x="28" y="360" fontFamily="'Clash Display', sans-serif" fontSize="200" fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1.5">01</text>
-    </svg>
-  );
-});
+      <rect width="800" height="400" fill="url(#tfg)" />
 
-const Thumb02 = memo(function Thumb02() {
-  const pts = [60,220, 140,190, 200,175, 270,140, 340,120, 400,90, 450,70].join(' ');
-  return (
-    <svg viewBox="0 0 460 280" preserveAspectRatio="xMidYMid slice" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      <defs>
-        <radialGradient id="t02g" cx="70%" cy="25%" r="55%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.05)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-        </radialGradient>
-      </defs>
-      <rect width="460" height="280" fill="url(#t02g)" />
-      {[0,1,2,3,4,5].map(i => <line key={i} x1="0" y1={i*56} x2="460" y2={i*56} stroke="white" strokeOpacity="0.04" strokeWidth="1"/>)}
-      {[0,1,2,3,4,5,6].map(i => <line key={i} x1={i*75} y1="0" x2={i*75} y2="280" stroke="white" strokeOpacity="0.04" strokeWidth="1"/>)}
-      {/* Trend line */}
-      <polyline points={pts} fill="none" stroke="rgba(201,255,87,0.55)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-      {/* Area fill */}
-      <polygon points={`60,260 ${pts} 450,260`} fill="rgba(201,255,87,0.04)"/>
-      {/* Data dots */}
-      {[[60,220],[140,190],[270,140],[400,90],[450,70]].map(([x,y],i) => (
-        <circle key={i} cx={x} cy={y} r={i===4?5:3} fill={i===4?'rgba(201,255,87,0.9)':'rgba(201,255,87,0.45)'} />
+      {/* Blueprint grid */}
+      {[0,1,2,3,4,5,6,7,8,9].map(i => (
+        <line key={`v${i}`} x1={i*90} y1="0" x2={i*90} y2="400"
+          stroke="white" strokeOpacity="0.035" strokeWidth="1"/>
       ))}
-      <text x="230" y="265" fontFamily="'Clash Display', sans-serif" fontSize="160" fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1" textAnchor="middle">02</text>
+      {[0,1,2,3,4,5].map(i => (
+        <line key={`h${i}`} x1="0" y1={i*80} x2="800" y2={i*80}
+          stroke="white" strokeOpacity="0.035" strokeWidth="1"/>
+      ))}
+
+      {/* Structural frame — A-frame silhouette */}
+      <polyline points="200,340 400,80 600,340" fill="none"
+        stroke="rgba(255,160,60,0.45)" strokeWidth="1.8" strokeLinejoin="round"/>
+      {/* Horizontal tie beam */}
+      <line x1="255" y1="230" x2="545" y2="230"
+        stroke="rgba(255,160,60,0.35)" strokeWidth="1.4"/>
+      {/* Vertical king post */}
+      <line x1="400" y1="80" x2="400" y2="340"
+        stroke="rgba(255,160,60,0.25)" strokeWidth="1.2" strokeDasharray="6 5"/>
+      {/* Rafter sub-lines */}
+      <line x1="310" y1="155" x2="255" y2="230"
+        stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+      <line x1="490" y1="155" x2="545" y2="230"
+        stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+
+      {/* Corner node dots */}
+      {[[400,80],[200,340],[600,340],[255,230],[545,230],[400,230]].map(([cx,cy],i) => (
+        <circle key={i} cx={cx} cy={cy} r={i===0?5:3.5}
+          fill={i===0?'rgba(255,160,60,0.9)':'rgba(255,160,60,0.45)'}/>
+      ))}
+
+      {/* Measurement ticks */}
+      <line x1="200" y1="360" x2="600" y2="360" stroke="rgba(255,255,255,0.1)" strokeWidth="1"/>
+      <line x1="200" y1="354" x2="200" y2="366" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+      <line x1="600" y1="354" x2="600" y2="366" stroke="rgba(255,255,255,0.15)" strokeWidth="1"/>
+      <line x1="400" y1="354" x2="400" y2="366" stroke="rgba(255,160,60,0.4)" strokeWidth="1"/>
+
+      {/* Floating dimension text */}
+      <text x="400" y="382" fontFamily="monospace" fontSize="9" fill="rgba(255,160,60,0.4)"
+        textAnchor="middle" letterSpacing="2">SPAN 40'-0"</text>
+      <text x="130" y="210" fontFamily="monospace" fontSize="9" fill="rgba(255,255,255,0.15)"
+        textAnchor="middle" letterSpacing="1" transform="rotate(-63 130 210)">RAFTER</text>
+
+      {/* Number watermark */}
+      <text x="680" y="360" fontFamily="serif" fontStyle="italic" fontSize="220"
+        fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1.5" textAnchor="middle">01</text>
     </svg>
   );
 });
 
-const Thumb03 = memo(function Thumb03() {
+const ThumbCleen = memo(function ThumbCleen() {
   return (
-    <svg viewBox="0 0 460 345" preserveAspectRatio="xMidYMid slice" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
+    <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice"
+      style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
       <defs>
-        <radialGradient id="t03g" cx="40%" cy="50%" r="65%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.05)" />
+        <radialGradient id="tcg" cx="60%" cy="40%" r="60%">
+          <stop offset="0%" stopColor="rgba(80,210,120,0.1)" />
           <stop offset="100%" stopColor="rgba(0,0,0,0)" />
         </radialGradient>
       </defs>
-      <rect width="460" height="345" fill="url(#t03g)" />
-      {/* Organic petal shapes */}
-      <ellipse cx="230" cy="172" rx="80" ry="140" fill="none" stroke="white" strokeOpacity="0.12" strokeWidth="1"/>
-      <ellipse cx="230" cy="172" rx="140" ry="80" fill="none" stroke="white" strokeOpacity="0.10" strokeWidth="1"/>
-      <ellipse cx="230" cy="172" rx="55" ry="120" transform="rotate(45 230 172)" fill="none" stroke="rgba(201,255,87,0.18)" strokeWidth="1"/>
-      <ellipse cx="230" cy="172" rx="55" ry="120" transform="rotate(-45 230 172)" fill="none" stroke="rgba(201,255,87,0.12)" strokeWidth="1"/>
-      {/* Center circle */}
-      <circle cx="230" cy="172" r="28" fill="rgba(255,255,255,0.04)" stroke="white" strokeOpacity="0.25" strokeWidth="1"/>
-      <circle cx="230" cy="172" r="6" fill="rgba(201,255,87,0.7)"/>
+      <rect width="800" height="400" fill="url(#tcg)" />
+
+      {/* Soft grid */}
+      {[0,1,2,3,4,5,6,7,8].map(i => (
+        <line key={`v${i}`} x1={i*100} y1="0" x2={i*100} y2="400"
+          stroke="white" strokeOpacity="0.03" strokeWidth="1"/>
+      ))}
+      {[0,1,2,3,4].map(i => (
+        <line key={`h${i}`} x1="0" y1={i*100} x2="800" y2={i*100}
+          stroke="white" strokeOpacity="0.03" strokeWidth="1"/>
+      ))}
+
+      {/* Leaf / organic shape — main */}
+      <ellipse cx="420" cy="200" rx="130" ry="160" transform="rotate(-25 420 200)"
+        fill="none" stroke="rgba(80,210,120,0.35)" strokeWidth="1.4"/>
+      <ellipse cx="420" cy="200" rx="130" ry="160" transform="rotate(25 420 200)"
+        fill="none" stroke="rgba(80,210,120,0.22)" strokeWidth="1.2"/>
+
+      {/* Vein lines */}
+      <path d="M420,80 Q450,200 420,320" fill="none"
+        stroke="rgba(80,210,120,0.3)" strokeWidth="1.2"/>
+      <path d="M420,140 Q470,175 460,210" fill="none"
+        stroke="rgba(80,210,120,0.18)" strokeWidth="1"/>
+      <path d="M420,140 Q375,175 385,210" fill="none"
+        stroke="rgba(80,210,120,0.18)" strokeWidth="1"/>
+      <path d="M420,190 Q475,215 475,245" fill="none"
+        stroke="rgba(80,210,120,0.14)" strokeWidth="1"/>
+      <path d="M420,190 Q365,215 365,245" fill="none"
+        stroke="rgba(80,210,120,0.14)" strokeWidth="1"/>
+
+      {/* Center droplet / dot */}
+      <circle cx="420" cy="200" r="8" fill="rgba(80,210,120,0.8)"/>
+      <circle cx="420" cy="200" r="20" fill="none"
+        stroke="rgba(80,210,120,0.3)" strokeWidth="1"/>
+      <circle cx="420" cy="200" r="36" fill="none"
+        stroke="rgba(80,210,120,0.15)" strokeWidth="1"/>
+
+      {/* Water droplets scattered */}
+      {[[180,130],[620,260],[150,280],[680,130],[580,310]].map(([cx,cy],i) => (
+        <g key={i}>
+          <path d={`M${cx},${cy-12} C${cx-7},${cy-5} ${cx-7},${cy+4} ${cx},${cy+8} C${cx+7},${cy+4} ${cx+7},${cy-5} ${cx},${cy-12}Z`}
+            fill="none" stroke="rgba(80,210,120,0.25)" strokeWidth="1"/>
+          <circle cx={cx} cy={cy} r="1.5" fill="rgba(80,210,120,0.4)"/>
+        </g>
+      ))}
+
       {/* Outer ring */}
-      <circle cx="230" cy="172" r="160" fill="none" stroke="white" strokeOpacity="0.05" strokeWidth="1"/>
-      <text x="230" y="335" fontFamily="'Clash Display', sans-serif" fontSize="160" fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1" textAnchor="middle">03</text>
+      <circle cx="420" cy="200" r="170" fill="none"
+        stroke="rgba(80,210,120,0.08)" strokeWidth="1"/>
+
+      {/* Label */}
+      <text x="200" y="350" fontFamily="monospace" fontSize="8"
+        fill="rgba(80,210,120,0.3)" letterSpacing="3">ECO-CERTIFIED · ALL-NATURAL · FAMILY SAFE</text>
+
+      {/* Number watermark */}
+      <text x="90" y="360" fontFamily="serif" fontStyle="italic" fontSize="220"
+        fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1.5" textAnchor="middle">02</text>
     </svg>
   );
 });
 
-const Thumb04 = memo(function Thumb04() {
-  return (
-    <svg viewBox="0 0 800 400" preserveAspectRatio="xMidYMid slice" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%' }}>
-      <defs>
-        <radialGradient id="t04g" cx="30%" cy="60%" r="55%">
-          <stop offset="0%" stopColor="rgba(255,255,255,0.05)" />
-          <stop offset="100%" stopColor="rgba(0,0,0,0)" />
-        </radialGradient>
-      </defs>
-      <rect width="800" height="400" fill="url(#t04g)" />
-      {/* App UI wireframe – main window */}
-      <rect x="80" y="60" width="320" height="280" rx="8" fill="none" stroke="white" strokeOpacity="0.14" strokeWidth="1"/>
-      {/* Window titlebar */}
-      <rect x="80" y="60" width="320" height="36" rx="8" fill="rgba(255,255,255,0.04)" stroke="white" strokeOpacity="0.14" strokeWidth="1"/>
-      <circle cx="106" cy="78" r="5" fill="none" stroke="white" strokeOpacity="0.2" strokeWidth="1"/>
-      <circle cx="124" cy="78" r="5" fill="none" stroke="white" strokeOpacity="0.14" strokeWidth="1"/>
-      <circle cx="142" cy="78" r="5" fill="none" stroke="white" strokeOpacity="0.1" strokeWidth="1"/>
-      {/* Nav sidebar */}
-      <rect x="80" y="96" width="68" height="244" fill="rgba(255,255,255,0.02)" stroke="white" strokeOpacity="0.1" strokeWidth="1"/>
-      {[0,1,2,3,4].map(i => <rect key={i} x="94" y={112+i*36} width="40" height="8" rx="4" fill="rgba(255,255,255,0.06)" />)}
-      {/* Content area */}
-      <rect x="162" y="108" width="224" height="16" rx="4" fill="rgba(255,255,255,0.08)" />
-      <rect x="162" y="134" width="180" height="10" rx="4" fill="rgba(255,255,255,0.04)" />
-      <rect x="162" y="156" width="220" height="80" rx="6" fill="rgba(255,255,255,0.03)" stroke="white" strokeOpacity="0.08" strokeWidth="1"/>
-      <rect x="162" y="248" width="100" height="32" rx="6" fill="rgba(201,255,87,0.12)" stroke="rgba(201,255,87,0.3)" strokeWidth="1"/>
-      <text x="212" y="269" fontFamily="'Plus Jakarta Sans', sans-serif" fontSize="9" fill="rgba(201,255,87,0.7)" textAnchor="middle">Get Started</text>
-      {/* Second floating card */}
-      <rect x="440" y="90" width="240" height="180" rx="8" fill="rgba(255,255,255,0.03)" stroke="white" strokeOpacity="0.1" strokeWidth="1"/>
-      <rect x="456" y="110" width="120" height="12" rx="4" fill="rgba(255,255,255,0.07)" />
-      {[0,1,2].map(i => <rect key={i} x="456" y={136+i*30} width={180-i*40} height="8" rx="4" fill="rgba(255,255,255,0.04)" />)}
-      {/* Connection lines */}
-      <line x1="400" y1="200" x2="440" y2="180" stroke="rgba(201,255,87,0.2)" strokeWidth="1" strokeDasharray="4 6"/>
-      <circle cx="400" cy="200" r="3" fill="rgba(201,255,87,0.4)"/>
-      <circle cx="440" cy="180" r="3" fill="rgba(201,255,87,0.4)"/>
-      <text x="650" y="370" fontFamily="'Clash Display', sans-serif" fontSize="200" fill="none" stroke="white" strokeOpacity="0.04" strokeWidth="1.5">04</text>
-    </svg>
-  );
-});
-
-const thumbs = [Thumb01, Thumb02, Thumb03, Thumb04];
+const thumbs = [ThumbFraming, ThumbCleen];
 
 const projects = [
-  { id: '01', title: 'Arcadia Studio',   category: 'Brand Identity + Web', year: '2024', span: 2 },
-  { id: '02', title: 'Meridian Finance',  category: 'Web Design + SEO',     year: '2024', span: 1 },
-  { id: '03', title: 'Bloom Organics',   category: 'E-commerce + Brand',   year: '2023', span: 1 },
-  { id: '04', title: 'NexaTech SaaS',    category: 'Product Design',        year: '2024', span: 2 },
+  { id: '01', title: 'A Framing Company', category: 'Web Design + WordPress',    year: '2024', span: 1 },
+  { id: '02', title: 'Cleen & Green',     category: 'Brand Identity + WordPress', year: '2025', span: 1 },
 ];
 
 function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () => JSX.Element }) {
@@ -154,10 +171,12 @@ function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () =>
     };
     card.addEventListener('mouseenter', onEnter);
     card.addEventListener('mouseleave', onLeave);
-    return () => { card.removeEventListener('mouseenter', onEnter); card.removeEventListener('mouseleave', onLeave); };
+    return () => {
+      card.removeEventListener('mouseenter', onEnter);
+      card.removeEventListener('mouseleave', onLeave);
+    };
   }, { scope: cardRef });
 
-  const large = p.span === 2;
   return (
     <a
       href={`/work/${p.id}`}
@@ -167,7 +186,7 @@ function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () =>
       <div ref={cardRef} style={{
         borderRadius: 'var(--radius)', overflow: 'hidden',
         background: 'var(--gray-900)', border: '1px solid var(--border)',
-        aspectRatio: large ? '16/8' : '4/3',
+        aspectRatio: '4/3',
         position: 'relative',
       }}>
         {/* Thumbnail art */}
@@ -178,7 +197,7 @@ function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () =>
         {/* Hover overlay */}
         <div ref={hoverRef} style={{
           position: 'absolute', inset: 0,
-          background: 'rgba(9,9,9,0.82)',
+          background: 'rgba(9,9,9,0.84)',
           backdropFilter: 'blur(2px)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
           flexDirection: 'column', gap: '0.5rem',
@@ -187,8 +206,11 @@ function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () =>
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(1.4rem, 2.5vw, 2.25rem)', fontWeight: 700,
             color: 'var(--accent)', letterSpacing: '-0.02em',
-          }}>View Project →</span>
-          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.14em', color: 'var(--gray-400)', textTransform: 'uppercase' }}>
+          }}>View Case Study →</span>
+          <span style={{
+            fontFamily: 'var(--font-mono)', fontSize: '0.65rem',
+            letterSpacing: '0.14em', color: 'var(--gray-400)', textTransform: 'uppercase',
+          }}>
             {p.category}
           </span>
         </div>
@@ -202,7 +224,10 @@ function ProjectCard({ p, ThumbComp }: { p: typeof projects[0]; ThumbComp: () =>
         }}>
           <div>
             <div className="label" style={{ color: 'var(--gray-500)', marginBottom: '0.3rem' }}>{p.category}</div>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1rem, 2vw, 1.5rem)', fontWeight: 700, color: 'var(--white)', letterSpacing: '-0.015em' }}>
+            <div style={{
+              fontFamily: 'var(--font-display)', fontSize: 'clamp(1rem, 2vw, 1.5rem)',
+              fontWeight: 700, color: 'var(--white)', letterSpacing: '-0.015em',
+            }}>
               {p.title}
             </div>
           </div>
@@ -217,7 +242,10 @@ export default function WorkSection() {
   return (
     <section className="section" id="work" style={{ background: 'var(--black)' }}>
       <div className="container">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', flexWrap: 'wrap', gap: '2rem', marginBottom: '3.5rem' }}>
+        <div style={{
+          display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end',
+          flexWrap: 'wrap', gap: '2rem', marginBottom: '3.5rem',
+        }}>
           <div>
             <div className="label" style={{ marginBottom: '1.25rem' }}>Selected Work</div>
             <AnimatedText text="Projects we're proud of." as="h2" className="display-md" />
@@ -234,7 +262,6 @@ export default function WorkSection() {
       <style>{`
         @media (max-width: 640px) {
           .work-section-grid { grid-template-columns: 1fr !important; }
-          .work-section-grid [style*="span 2"] { grid-column: span 1 !important; }
         }
       `}</style>
     </section>
