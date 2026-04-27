@@ -233,7 +233,7 @@ export default function LpForm() {
     <div ref={wrapRef} style={{ borderRadius: 'var(--radius)', border: '1px solid var(--border)', background: 'var(--surface)', overflow: 'hidden' }}>
 
       {/* Progress bar */}
-      <div style={{ padding: '1.5rem 2rem', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
+      <div style={{ padding: '1.5rem 2.5rem', borderBottom: '1px solid var(--border)', background: 'rgba(255,255,255,0.02)' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 0 }}>
           {STEP_LABELS.map((label, i) => {
             const n = i + 1;
@@ -271,7 +271,7 @@ export default function LpForm() {
       </div>
 
       {/* Step content */}
-      <div style={{ padding: '2rem' }}>
+      <div style={{ padding: '2.5rem' }}>
         {error && (
           <div style={{ marginBottom: '1rem', padding: '0.75rem 1rem', background: 'rgba(255,100,100,0.08)', borderRadius: '0.5rem', border: '1px solid rgba(255,100,100,0.2)', color: '#ff9090', fontSize: '0.84rem' }}>
             {error}
@@ -393,7 +393,7 @@ function Step1({ data, set }: { data: FormData; set: (f: keyof FormData, v: any)
 // ─── Step 2: Business Details ─────────────────────────────────────────────────
 function Step2({ data, set, focus, blur }: { data: FormData; set: (f: keyof FormData, v: any) => void; focus: any; blur: any }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <StepHeading step={2} title="Tell us about your business." sub="The more context you give, the better we can tailor your site." />
 
       <Field label="Business Name *">
@@ -437,7 +437,7 @@ function Step2({ data, set, focus, blur }: { data: FormData; set: (f: keyof Form
 // ─── Step 3: Design Preferences ───────────────────────────────────────────────
 function Step3({ data, set, togglePage, focus, blur }: { data: FormData; set: (f: keyof FormData, v: any) => void; togglePage: (p: string) => void; focus: any; blur: any }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <StepHeading step={3} title="Design preferences." sub="Help us nail the look and feel of your site." />
 
       <Field label="Style Vibe *">
@@ -498,7 +498,7 @@ function Step3({ data, set, togglePage, focus, blur }: { data: FormData; set: (f
 // ─── Step 4: Contact Info ─────────────────────────────────────────────────────
 function Step4({ data, set, focus, blur }: { data: FormData; set: (f: keyof FormData, v: any) => void; focus: any; blur: any }) {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <StepHeading step={4} title="Your contact details." sub="We'll use these to reach out with your project brief and start date." />
 
       <Row>
@@ -544,7 +544,7 @@ function Step5({ data, set, focus, blur }: { data: FormData; set: (f: keyof Form
   const vibe = STYLE_VIBES.find(v => v.value === data.styleVibe);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
       <StepHeading step={5} title="Review your brief." sub="Everything look good? Submit and we'll be in touch within one business day." />
 
       {/* Summary card */}

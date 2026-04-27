@@ -348,41 +348,42 @@ const faqs = [
   <!-- ─── CTA + FORM ───────────────────────────────────────── -->
   <section id="get-started" class="lp-section" style="background:rgba(201,255,87,0.03); border-top:1px solid rgba(201,255,87,0.1);">
     <div class="lp-container">
-      <div class="lp-cta-grid">
 
-        <!-- Left: copy -->
-        <div class="lp-reveal">
-          <div class="label" style="color:var(--accent); margin-bottom:1.25rem;">Limited Spots Available</div>
-          <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.1; margin-bottom:1.5rem;">
-            Ready to go live<br/>in 7 days?
-          </h2>
-          <p style="color:var(--gray-400); font-size:1rem; line-height:1.65; margin-bottom:2rem;">
-            Fill out the form and we'll get back to you within one business day with a
-            project brief and start date. No commitment required.
-          </p>
-          <div style="display:flex; flex-direction:column; gap:0.75rem;">
-            {[
-              '✓ No contracts or lock-ins',
-              '✓ Fixed price — no surprise invoices',
-              '✓ 7-day delivery or 20% off',
-              '✓ Full ownership of your website',
-            ].map(item => (
-              <div style="display:flex; align-items:center; gap:0.6rem; font-size:0.9rem; color:var(--gray-300);">{item}</div>
-            ))}
-          </div>
-
-          <div style="margin-top:2.5rem; padding:1.25rem; background:var(--gray-900); border:1px solid var(--border); border-radius:var(--radius);">
-            <div style="font-size:0.7rem; font-family:var(--font-mono); letter-spacing:0.1em; text-transform:uppercase; color:var(--gray-500); margin-bottom:0.5rem;">Direct Contact</div>
-            <a href="mailto:info@fazeddigital.com" style="color:var(--white); font-weight:600; text-decoration:none;">info@fazeddigital.com</a>
-          </div>
-        </div>
-
-        <!-- Right: form -->
-        <div>
-          <LpForm client:visible />
-        </div>
-
+      <!-- Centered heading -->
+      <div class="lp-reveal" style="text-align:center; max-width:640px; margin:0 auto 2.75rem;">
+        <div class="label" style="color:var(--accent); margin-bottom:1rem;">Limited Spots Available</div>
+        <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.1; margin-bottom:1.1rem;">
+          Ready to go live<br/>in 7 days?
+        </h2>
+        <p style="color:var(--gray-400); font-size:1rem; line-height:1.65; margin:0;">
+          Tell us about your project and we'll get back to you within one business day
+          with a confirmed start date. No commitment required.
+        </p>
       </div>
+
+      <!-- Trust pills row -->
+      <div class="lp-reveal cta-pills">
+        {[
+          '✓ No contracts or lock-ins',
+          '✓ Fixed price — no surprises',
+          '✓ 7-day delivery or 20% off',
+          '✓ Full ownership of your site',
+        ].map(item => (
+          <span class="cta-pill">{item}</span>
+        ))}
+      </div>
+
+      <!-- Form — full width, capped at 780px -->
+      <div class="lp-reveal" style="max-width:780px; margin:0 auto;">
+        <LpForm client:visible />
+      </div>
+
+      <!-- Subtle email fallback -->
+      <p class="lp-reveal" style="text-align:center; margin-top:1.75rem; font-size:0.82rem; color:var(--gray-600);">
+        Prefer email?&nbsp;
+        <a href="mailto:info@fazeddigital.com" style="color:var(--gray-400); text-decoration:underline; text-underline-offset:3px;">info@fazeddigital.com</a>
+      </p>
+
     </div>
   </section>
 
@@ -732,12 +733,27 @@ const faqs = [
     margin: 0;
   }
 
-  /* CTA section grid */
-  .lp-cta-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: clamp(3rem, 6vw, 6rem);
-    align-items: start;
+  /* CTA trust pills */
+  .cta-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.6rem;
+    margin-bottom: 2.5rem;
+  }
+  .cta-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: 2rem;
+    border: 1px solid rgba(201,255,87,0.2);
+    background: rgba(201,255,87,0.05);
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(201,255,87,0.7);
+    white-space: nowrap;
   }
 
   /* ── Responsive ─────────────────────────────────────────── */
