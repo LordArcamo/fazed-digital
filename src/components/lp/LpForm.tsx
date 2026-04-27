@@ -177,25 +177,25 @@ export default function LpForm() {
         });
       });
 
-      const pkg   = PACKAGES.find(p => p.value === data.package);
-      const message = [
-        `Package: ${pkg?.name} (${pkg?.price})`,
-        `Business: ${data.businessName} | ${data.industry}`,
-        `Goal: ${GOALS.find(g => g.value === data.goal)?.label || data.goal}`,
-        `Current website: ${data.currentWebsite || 'None'}`,
-        `Style: ${STYLE_VIBES.find(s => s.value === data.styleVibe)?.label || data.styleVibe}`,
-        `Pages: ${data.pagesNeeded.join(', ')}`,
-        `Brand colors: ${data.brandColors || 'Not specified'}`,
-        `Inspiration: ${data.inspirationUrls || 'Not specified'}`,
-        `Referral: ${data.referral || 'Not specified'}`,
-        `Phone: ${data.phone || 'Not provided'}`,
-        data.notes ? `Notes: ${data.notes}` : '',
-      ].filter(Boolean).join('\n');
-
-      const res = await fetch('/api/contact', {
+      const res = await fetch('/api/lp-submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: data.name, email: data.email, service: 'web', message, captchaToken }),
+        body: JSON.stringify({
+          package:        data.package,
+          businessName:   data.businessName,
+          industry:       data.industry,
+          goal:           data.goal,
+          styleVibe:      data.styleVibe,
+          pagesNeeded:    data.pagesNeeded,
+          brandColors:    data.brandColors,
+          inspirationUrls: data.inspirationUrls,
+          name:           data.name,
+          email:          data.email,
+          phone:          data.phone,
+          referral:       data.referral,
+          notes:          data.notes,
+          captchaToken,
+        }),
       });
 
       if (!res.ok) {
