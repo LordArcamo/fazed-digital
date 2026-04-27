@@ -55,6 +55,10 @@ function ProjectCard({ p }: { p: typeof projects[0] }) {
           <img
             src={p.img}
             alt={`${p.title} website screenshot`}
+            loading="lazy"
+            decoding="async"
+            width={1200}
+            height={750}
             style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'top center', display: 'block' }}
           />
         </div>

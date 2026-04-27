@@ -6,9 +6,8 @@ export default defineConfig({
   site: 'https://fazeddigital.com',
   compressHTML: true,
 
-  // Prefetch all internal links on hover for instant navigation
+  // Prefetch on hover only — don't blast all links on page load
   prefetch: {
-    prefetchAll: true,
     defaultStrategy: 'hover',
   },
 
