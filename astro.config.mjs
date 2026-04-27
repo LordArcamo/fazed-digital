@@ -1,19 +1,22 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
+  // hybrid: all pages are static by default, API routes are serverless
+  output: 'hybrid',
+  adapter: vercel(),
+
   integrations: [react()],
   site: 'https://fazeddigital.com',
   compressHTML: true,
 
-  // Prefetch on hover only — don't blast all links on page load
   prefetch: {
     defaultStrategy: 'hover',
   },
 
   vite: {
     build: {
-      // Split large vendor chunks so browsers can cache them independently
       rollupOptions: {
         output: {
           manualChunks(id) {

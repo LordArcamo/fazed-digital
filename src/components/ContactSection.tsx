@@ -30,12 +30,13 @@ export default function ContactSection() {
   const bgRef       = useRef<HTMLDivElement>(null);
   const shapesRef   = useRef<HTMLDivElement>(null);
 
-  const [sent,    setSent]    = useState(false);
-  const [name,    setName]    = useState('');
-  const [email,   setEmail]   = useState('');
-  const [service, setService] = useState('');
-  const [message, setMessage] = useState('');
-  const [error,   setError]   = useState('');
+  const [sent,     setSent]     = useState(false);
+  const [loading,  setLoading]  = useState(false);
+  const [name,     setName]     = useState('');
+  const [email,    setEmail]    = useState('');
+  const [service,  setService]  = useState('');
+  const [message,  setMessage]  = useState('');
+  const [error,    setError]    = useState('');
 
   useGSAP(() => {
     gsap.from(formRef.current, {
@@ -71,7 +72,7 @@ export default function ContactSection() {
   const blur  = (e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) =>
     (e.target.style.borderColor = 'var(--border)');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
     if (!name.trim() || !email.trim() || !message.trim()) {
@@ -82,9 +83,27 @@ export default function ContactSection() {
       setError('Please enter a valid email address.');
       return;
     }
+
     const btn = (e.currentTarget as HTMLFormElement).querySelector('[type="submit"]') as HTMLElement;
     gsap.to(btn, { scale: 0.96, duration: 0.1, yoyo: true, repeat: 1 });
-    setTimeout(() => setSent(true), 400);
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, service, message }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error ?? 'Something went wrong. Please try again.');
+      }
+      setSent(true);
+    } catch (err: any) {
+      setError(err.message ?? 'Something went wrong. Please try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -218,7 +237,9 @@ export default function ContactSection() {
                 <Field label="Message *">
                   <textarea rows={5} value={message} onChange={e => setMessage(e.target.value)} placeholder="Tell us about your project…" style={{ ...inputCss, resize: 'vertical' }} onFocus={focus} onBlur={blur} />
                 </Field>
-                <MagneticButton type="submit" variant="primary" size="lg">Send Message →</MagneticButton>
+                <MagneticButton type="submit" variant="primary" size="lg">
+                  {loading ? 'Sending…' : 'Send Message →'}
+                </MagneticButton>
               </form>
             )}
           </div>
