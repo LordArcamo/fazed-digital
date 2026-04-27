@@ -1,4 +1,6 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
+
+const RECAPTCHA_SITE_KEY = '6LdYgc0sAAAAAJy0R-ZRG3VKjadhIoWs_-9VOZ1x';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { useGSAP } from '@gsap/react';
@@ -29,6 +31,16 @@ export default function ContactSection() {
   const formRef     = useRef<HTMLDivElement>(null);
   const bgRef       = useRef<HTMLDivElement>(null);
   const shapesRef   = useRef<HTMLDivElement>(null);
+
+  // Load reCAPTCHA v3 script once on mount
+  useEffect(() => {
+    if (document.getElementById('recaptcha-script')) return;
+    const script = document.createElement('script');
+    script.id  = 'recaptcha-script';
+    script.src = `https://www.google.com/recaptcha/api.js?render=${RECAPTCHA_SITE_KEY}`;
+    script.async = true;
+    document.head.appendChild(script);
+  }, []);
 
   const [sent,     setSent]     = useState(false);
   const [loading,  setLoading]  = useState(false);
@@ -89,10 +101,20 @@ export default function ContactSection() {
     setLoading(true);
 
     try {
+      // Get reCAPTCHA v3 token (invisible — no user interaction needed)
+      const captchaToken = await new Promise<string>((resolve, reject) => {
+        (window as any).grecaptcha.ready(() => {
+          (window as any).grecaptcha
+            .execute(RECAPTCHA_SITE_KEY, { action: 'contact' })
+            .then(resolve)
+            .catch(reject);
+        });
+      });
+
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, service, message }),
+        body: JSON.stringify({ name, email, service, message, captchaToken }),
       });
       if (!res.ok) {
         const data = await res.json().catch(() => ({}));
@@ -240,6 +262,12 @@ export default function ContactSection() {
                 <MagneticButton type="submit" variant="primary" size="lg">
                   {loading ? 'Sending…' : 'Send Message →'}
                 </MagneticButton>
+                <p style={{ fontSize: '0.72rem', color: 'var(--gray-600)', textAlign: 'center', margin: 0 }}>
+                  Protected by reCAPTCHA —{' '}
+                  <a href="https://policies.google.com/privacy" target="_blank" rel="noopener" style={{ color: 'var(--gray-500)' }}>Privacy</a>
+                  {' & '}
+                  <a href="https://policies.google.com/terms" target="_blank" rel="noopener" style={{ color: 'var(--gray-500)' }}>Terms</a>
+                </p>
               </form>
             )}
           </div>
@@ -249,6 +277,8 @@ export default function ContactSection() {
         @media (max-width: 860px) {
           .contact-grid { grid-template-columns: 1fr !important; }
         }
+        /* Hide the floating reCAPTCHA badge — attribution shown inline instead */
+        .grecaptcha-badge { visibility: hidden !important; }
       `}</style>
     </section>
   );

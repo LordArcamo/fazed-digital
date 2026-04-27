@@ -3,10 +3,11 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 
 // ─── HubSpot config ─────────────────────────────────────────────────────────
-// Uses the public Forms Submission API — no Private App token required.
-// Replace FORM_GUID with the GUID from your HubSpot form URL once created.
 const PORTAL_ID = '244473168';
 const FORM_GUID = import.meta.env.HUBSPOT_FORM_GUID ?? 'c119e15a-357c-4bfb-9264-a1fb3f1a3389';
+
+// ─── reCAPTCHA v3 config ─────────────────────────────────────────────────────
+const RECAPTCHA_SECRET = import.meta.env.RECAPTCHA_SECRET_KEY;
 
 const SERVICE_LABELS: Record<string, string> = {
   web:     'Web Design & Development',
@@ -18,14 +19,28 @@ const SERVICE_LABELS: Record<string, string> = {
 
 export const POST: APIRoute = async ({ request }) => {
   /* ── Parse body ─────────────────────────────────────────── */
-  let body: { name?: string; email?: string; service?: string; message?: string };
+  let body: { name?: string; email?: string; service?: string; message?: string; captchaToken?: string };
   try {
     body = await request.json();
   } catch {
     return json({ error: 'Invalid request' }, 400);
   }
 
-  const { name = '', email = '', service = '', message = '' } = body;
+  const { name = '', email = '', service = '', message = '', captchaToken = '' } = body;
+
+  /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
+  if (RECAPTCHA_SECRET) {
+    const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${RECAPTCHA_SECRET}&response=${captchaToken}`,
+    });
+    const captchaData = await captchaRes.json() as { success: boolean; score: number; action: string };
+    if (!captchaData.success || captchaData.score < 0.5) {
+      console.warn('reCAPTCHA failed:', captchaData);
+      return json({ error: 'Spam check failed. Please try again.' }, 400);
+    }
+  }
 
   if (!name.trim() || !email.trim() || !message.trim()) {
     return json({ error: 'Please fill in all required fields.' }, 400);
