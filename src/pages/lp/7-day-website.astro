@@ -225,7 +225,10 @@ const faqs = [
             aria-label={`${tier.name} package at ${tier.price}`}
           >
             {tier.popular && (
-              <div class="pricing-popular-badge">⭐ Most Popular</div>
+              <div class="pricing-popular-badge">
+                <svg width="10" height="10" viewBox="0 0 24 24" fill="currentColor" stroke="none" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                Most Popular
+              </div>
             )}
             <div class="pricing-card-header">
               <div style="font-family:var(--font-mono); font-size:0.65rem; letter-spacing:0.14em; text-transform:uppercase; color:var(--gray-500); margin-bottom:0.5rem;">
@@ -605,6 +608,9 @@ const faqs = [
     padding: 0.3rem 0.8rem;
     border-radius: 2rem;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
   }
   .pricing-card-header { text-align: center; }
   .pricing-price {

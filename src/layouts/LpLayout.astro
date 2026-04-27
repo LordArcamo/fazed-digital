@@ -1,4 +1,6 @@
 ---
+import Cursor from '../components/Cursor';
+
 export interface Props {
   title: string;
   description: string;
@@ -74,6 +76,7 @@ const {
 </head>
 
 <body>
+  <Cursor client:only="react" />
   <slot />
 </body>
 </html>
