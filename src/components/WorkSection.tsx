@@ -8,10 +8,14 @@ import MagneticButton from './MagneticButton';
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const projects = [
-  { id: '01', title: 'A Framing Company', category: 'Web Design + WordPress',     year: '2024', img: '/images/work-aframing.jpg' },
-  { id: '02', title: 'Cleen & Green',     category: 'Brand Identity + WordPress',  year: '2025', img: '/images/work-cleen.jpg'    },
-  { id: '03', title: 'CrateOnScene',      category: 'MVP Platform Build',          year: '2024', img: '/images/work-crate.jpg'    },
-  { id: '04', title: 'The Telecom Shop',  category: 'E-commerce Migration',        year: '2024', img: '/images/work-telecom.jpg'  },
+  { id: '01', title: 'A Framing Company', category: 'Web Design + WordPress',        year: '2024', img: '/images/work-aframing.jpg'  },
+  { id: '02', title: 'Cleen & Green',     category: 'Brand Identity + WordPress',   year: '2025', img: '/images/work-cleen.jpg'      },
+  { id: '03', title: 'CrateOnScene',      category: 'MVP Platform Build',           year: '2024', img: '/images/work-crate.jpg'      },
+  { id: '04', title: 'The Telecom Shop',  category: 'E-commerce Migration',         year: '2024', img: '/images/work-telecom.jpg'    },
+  { id: '05', title: 'Canwell',           category: 'Web Platform + Admin Portal',  year: '2024', img: '/images/work-canwell.jpg'    },
+  { id: '06', title: '8Drive',            category: 'Web App — Car Rental System',  year: '2024', img: '/images/work-8drive.jpg'     },
+  { id: '07', title: 'UGLQ',              category: 'Membership Management Portal', year: '2024', img: '/images/work-uglq.jpg'       },
+  { id: '08', title: 'QLD Law Group',     category: 'Website + Web App + Mobile',   year: '2025', img: '/images/work-qldlaw.jpg'     },
 ];
 
 function ProjectCard({ p }: { p: typeof projects[0] }) {
