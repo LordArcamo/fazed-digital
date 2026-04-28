@@ -7,7 +7,15 @@ const config: StorybookConfig = {
   framework: {
     name: '@storybook/react-vite',
     options: {},
-  }
+  },
+
+  // Set base path so assets load correctly when served at /storybook/
+  viteFinal(config) {
+    return {
+      ...config,
+      base: '/storybook/',
+    };
+  },
 };
 
 export default config;
