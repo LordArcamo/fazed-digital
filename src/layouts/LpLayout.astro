@@ -1,5 +1,6 @@
 ---
 import Cursor from '../components/Cursor';
+import Analytics from '@vercel/analytics/astro';
 
 export interface Props {
   title: string;
@@ -87,6 +88,7 @@ const {
 <body>
   <Cursor client:only="react" />
   <slot />
+  <Analytics />
 </body>
 </html>
 
