@@ -613,33 +613,48 @@ const faqs = [
     scrollTrigger: { trigger: '.comparison-grid', start: 'top 85%', toggleActions: 'play none none none' },
   });
 
-  // FAQ accordion — one open at a time
+  // FAQ — smooth GSAP accordion
   const faqItems = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq-item'));
 
-  faqItems.forEach((item) => {
-    item.addEventListener('toggle', () => {
-      const chevron = item.querySelector<HTMLElement>('.faq-chevron');
-      if (chevron) chevron.textContent = item.open ? '−' : '+';
+  function openFaq(item: HTMLDetailsElement) {
+    const answer  = item.querySelector<HTMLElement>('.faq-answer')!;
+    const chevron = item.querySelector<HTMLElement>('.faq-chevron');
+    item.open = true;                          // render content so scrollHeight is real
+    const target = answer.scrollHeight;
+    gsap.fromTo(answer,
+      { height: 0, opacity: 0 },
+      { height: target, opacity: 1, duration: 0.38, ease: 'power2.out',
+        onComplete: () => gsap.set(answer, { height: 'auto' }) }
+    );
+    if (chevron) chevron.textContent = '−';
+  }
 
-      // Close all siblings when this one opens
+  function closeFaq(item: HTMLDetailsElement) {
+    const answer  = item.querySelector<HTMLElement>('.faq-answer')!;
+    const chevron = item.querySelector<HTMLElement>('.faq-chevron');
+    gsap.to(answer, {
+      height: 0, opacity: 0, duration: 0.28, ease: 'power2.in',
+      onComplete: () => { item.open = false; gsap.set(answer, { clearProps: 'height,opacity' }); }
+    });
+    if (chevron) chevron.textContent = '+';
+  }
+
+  faqItems.forEach((item) => {
+    const summary = item.querySelector('summary')!;
+    summary.addEventListener('click', (e) => {
+      e.preventDefault();
       if (item.open) {
-        faqItems.forEach((other) => {
-          if (other !== item && other.open) {
-            other.open = false;
-            const otherChevron = other.querySelector<HTMLElement>('.faq-chevron');
-            if (otherChevron) otherChevron.textContent = '+';
-          }
-        });
+        closeFaq(item);
+      } else {
+        // Close any open sibling first
+        faqItems.forEach((other) => { if (other !== item && other.open) closeFaq(other); });
+        openFaq(item);
       }
     });
   });
 
-  // Open the first FAQ by default
-  if (faqItems[0]) {
-    faqItems[0].open = true;
-    const firstChevron = faqItems[0].querySelector<HTMLElement>('.faq-chevron');
-    if (firstChevron) firstChevron.textContent = '−';
-  }
+  // Open first item without animation
+  if (faqItems[0]) openFaq(faqItems[0]);
 </script>
 
 <!-- ─── LP STYLES ───────────────────────────────────────────── -->
@@ -950,12 +965,8 @@ const faqs = [
   }
   .faq-item[open] .faq-chevron { color: var(--accent); }
   .faq-answer {
+    overflow: hidden;
     padding-bottom: 1.35rem;
-    animation: faqSlideDown 0.25s ease;
-  }
-  @keyframes faqSlideDown {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
   }
   .faq-answer p {
     font-size: 0.9rem;
