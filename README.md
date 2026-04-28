@@ -1,240 +1,334 @@
-# Fazed Digital — Marketing Site
+<div align="center">
 
-Marketing website for **Fazed Digital**, a creative & digital agency based in Iligan City, Philippines.
+<br />
 
-**Live:** [fazeddigital.com](https://fazeddigital.com)
+```
+███████╗ █████╗ ███████╗███████╗██████╗
+██╔════╝██╔══██╗╚══███╔╝██╔════╝██╔══██╗
+█████╗  ███████║  ███╔╝ █████╗  ██║  ██║
+██╔══╝  ██╔══██║ ███╔╝  ██╔══╝  ██║  ██║
+██║     ██║  ██║███████╗███████╗██████╔╝
+╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝
+         D I G I T A L
+```
+
+**Creative & Digital Agency — Iligan City, Philippines**
+
+[![Live](https://img.shields.io/badge/Live-fazeddigital.com-C9FF57?style=flat-square&labelColor=090909)](https://fazeddigital.com)
+[![Astro](https://img.shields.io/badge/Astro-4.x-FF5D01?style=flat-square&logo=astro&logoColor=white&labelColor=090909)](https://astro.build)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=61DAFB&labelColor=090909)](https://react.dev)
+[![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?style=flat-square&labelColor=090909)](https://gsap.com)
+[![Vercel](https://img.shields.io/badge/Deployed-Vercel-fff?style=flat-square&logo=vercel&logoColor=white&labelColor=090909)](https://vercel.com)
+
+<br />
+
+</div>
 
 ---
 
-## Stack
+## `>_ STACK`
 
-| Layer | Tool | Notes |
-|---|---|---|
-| Framework | **Astro 4** (hybrid SSG + SSR) | `output: hybrid` — most pages static, API routes serverless |
-| UI Islands | **React 18** via `@astrojs/react` | Hydrated selectively per component |
-| Animation | **GSAP 3** + `@gsap/react` | ScrollTrigger, useGSAP hook, quickTo |
-| Styling | Global CSS variables | No Tailwind — `src/styles/global.css` |
-| Deployment | **Vercel** | `@astrojs/vercel/serverless`, `functionPerRoute: false` |
-| Email | **Resend** | LP form lead notifications |
-| CRM | **HubSpot** (Free) | Contact form submissions via Forms API |
-| Spam protection | **Google reCAPTCHA v3** | Server-side score check on `/api/contact` |
+| Layer | Tool | Version | Notes |
+|---|---|---|---|
+| Framework | **Astro** | `4.x` | Hybrid SSG + SSR · `output: hybrid` |
+| UI Islands | **React** | `18.x` | Selective hydration via Astro islands |
+| Animation | **GSAP** + `@gsap/react` | `3.12.x` | ScrollTrigger · `useGSAP` · `quickTo` |
+| Styling | **CSS Variables** | — | No Tailwind · `src/styles/global.css` |
+| Deployment | **Vercel** | — | `@astrojs/vercel` · `functionPerRoute: false` |
+| Email | **Resend** | — | LP lead notifications to team |
+| CRM | **HubSpot Free** | — | Contact form via Forms API |
+| Spam | **reCAPTCHA v3** | — | Server-side score check |
 
 ---
 
-## Commands
+## `>_ GETTING STARTED`
 
 ```bash
+# Install dependencies
 npm install
-npm run dev       # dev server → http://localhost:4321
-npm run build     # production build → dist/
-npm run preview   # serve dist/ locally
+
+# Start dev server → http://localhost:4321
+npm run dev
+
+# Production build → dist/
+npm run build
+
+# Preview production build locally
+npm run preview
 ```
 
 ---
 
-## Environment Variables
+## `>_ ENVIRONMENT VARIABLES`
 
-Create a `.env` file in the project root (see `.env.example`):
+Copy `.env.example` → `.env` and fill in your values:
 
-| Variable | Required | Description |
-|---|---|---|
-| `HUBSPOT_FORM_GUID` | Optional | HubSpot form GUID — falls back to hardcoded value if not set |
-| `RECAPTCHA_SECRET_KEY` | Optional | reCAPTCHA v3 secret key — check is **skipped** if not set |
-| `RESEND_API_KEY` | Required for LP leads | Resend API key for LP form email notifications |
-| `RESEND_FROM` | Optional | From address — defaults to `Fazed Digital <onboarding@resend.dev>` |
-| `LP_FORM_GUID` | Pending | Separate HubSpot form GUID for the LP (not yet created) |
+```bash
+# HubSpot — falls back to hardcoded GUID if not set
+HUBSPOT_FORM_GUID=c119e15a-357c-4bfb-9264-a1fb3f1a3389
 
-**Vercel:** Add all production values under **Settings → Environment Variables**.
+# Google reCAPTCHA v3 — check is SKIPPED if not set
+RECAPTCHA_SECRET_KEY=your_secret_key_here
 
----
+# Resend — required for LP lead email notifications
+RESEND_API_KEY=re_xxxxxxxxxxxx
+RESEND_FROM=Fazed Digital <onboarding@resend.dev>
 
-## API Routes
+# Pending — LP HubSpot form (not yet created)
+# LP_FORM_GUID=
+```
 
-### `POST /api/contact`
-Main contact form endpoint (`/contact` page).
-
-- Validates name, email, message
-- reCAPTCHA v3 soft-check (logs result, doesn't block — re-enable once key is confirmed)
-- Submits to HubSpot Forms API with: `firstname`, `lastname`, `email`, `message`, `service_interest`
-
-### `POST /api/lp-submit`
-Landing page brief form endpoint (`/lp/7-day-website`).
-
-- Validates name + email only
-- Sends notification email via **Resend** to team inboxes
-- HubSpot wiring **pending** — waiting for dedicated LP form to be created
-- Logs full payload to Vercel function logs (leads never lost even if email fails)
+> Add all production values in **Vercel → Settings → Environment Variables**
 
 ---
 
-## Third-Party Integrations
+## `>_ API ROUTES`
 
-### HubSpot
-- **Portal ID:** `244473168`
-- **Form GUID:** `c119e15a-357c-4bfb-9264-a1fb3f1a3389` (Fazed Digital Main Contact Form)
-- **API used:** Public Forms Submission API — no auth token needed
-- **Custom properties to create** (Settings → Properties → Contacts):
-  - `website_package`, `business_industry`, `project_goal`, `website_style`, `pages_needed`, `referral_source`
+<details>
+<summary><strong>POST /api/contact</strong> — Main contact form</summary>
 
-### reCAPTCHA v3
-- **Site key (public):** `6LdYgc0sAAAAAJy0R-ZRG3VKjadhIoWs_-9VOZ1x` — hardcoded in `ContactSection.tsx` and `LpForm.tsx`
-- **Secret key:** Set as `RECAPTCHA_SECRET_KEY` in Vercel
-- **Score threshold:** `0.3` on `/api/contact`
-- **Domain must be registered** at [google.com/recaptcha/admin](https://google.com/recaptcha/admin) — add `fazeddigital.com`
+<br />
 
-### Resend
-- LP form submissions send a branded HTML email to the full team
-- Recipients: `reancirl@gmail.com`, `russeljessheyrana@gmail.com`, `lordrynkartracydwight@gmail.com`, `info@fazeddigital.com`
-- Set `RESEND_API_KEY` in Vercel
+- Validates `name`, `email`, `message`
+- reCAPTCHA v3 soft-check (score threshold `0.3`)
+- Submits to HubSpot Forms API
+
+**Fields sent to HubSpot:**
+```
+firstname · lastname · email · message · service_interest
+```
+
+</details>
+
+<details>
+<summary><strong>POST /api/lp-submit</strong> — 7-Day Website LP form</summary>
+
+<br />
+
+- Validates `name` + `email` only
+- Sends branded HTML notification email via **Resend**
+- Full payload logged to Vercel — leads never lost even if email fails
+- HubSpot wiring **pending** (waiting for dedicated LP form GUID)
+
+**Notification recipients:**
+```
+reancirl@gmail.com
+russeljessheyrana@gmail.com
+lordrynkartracydwight@gmail.com
+info@fazeddigital.com
+```
+
+</details>
 
 ---
 
-## Page Map
+## `>_ PAGES`
 
-| Route | File | Notes |
-|---|---|---|
-| `/` | `src/pages/index.astro` | Homepage |
-| `/about` | `src/pages/about.astro` | |
-| `/services` | `src/pages/services.astro` | |
-| `/work` | `src/pages/work.astro` | |
-| `/work/[01–04]` | `src/pages/work/[slug].astro` | Case studies (hardcoded) |
-| `/blog` | `src/pages/blog/index.astro` | |
-| `/blog/[slug]` | `src/pages/blog/[slug].astro` | |
-| `/contact` | `src/pages/contact.astro` | |
-| `/lp/7-day-website` | `src/pages/lp/7-day-website.astro` | Landing page |
-| `/404` | `src/pages/404.astro` | |
+```
+/                     Homepage
+├── /about            Company story + team
+├── /services         Service offerings
+├── /work             Portfolio grid
+│   └── /work/[01-04] Case studies
+├── /blog             Editorial
+│   └── /blog/[slug]  Blog post
+├── /contact          Contact form
+├── /lp
+│   └── /7-day-website  Landing page (multi-step form)
+└── /404              Not found
+```
 
 ---
 
-## Architecture
+## `>_ ARCHITECTURE`
 
 ### Hydration Strategy
 
-| Directive | When to use |
+| Directive | Used For |
 |---|---|
-| `client:only="react"` | Above-fold, must render immediately: `Cursor`, `Nav`, `Loader`, hero anims |
-| `client:idle` | Deferred to `requestIdleCallback`: `ScrollProgress` |
-| `client:visible` | Everything below the fold — hydrates on IntersectionObserver |
+| `client:only="react"` | Above-fold, renders immediately — `Cursor`, `Nav`, `Loader`, hero anims |
+| `client:idle` | Deferred to `requestIdleCallback` — `ScrollProgress` |
+| `client:visible` | Below-fold, hydrates on scroll — everything else |
 
-> **Never** use `client:only` for below-fold components — it breaks lazy hydration.
-
-### Layouts
-
-- `src/layouts/Layout.astro` — main site shell (fonts, ViewTransitions, SEO)
-- `src/layouts/LpLayout.astro` — LP-only shell (stripped nav, reCAPTCHA badge hidden, Cursor)
+> Never switch a below-fold component to `client:only` — defeats lazy hydration.
 
 ### GSAP Patterns
 
 ```tsx
-// Always useGSAP with a scope ref — never raw useEffect
+// Always useGSAP with scope ref — never raw useEffect
 import { useGSAP } from '@gsap/react';
 useGSAP(() => { /* animations */ }, { scope: ref });
 
-// SVG rotations — use svgOrigin, not CSS transformOrigin
+// SVG group rotations — svgOrigin not transformOrigin
 gsap.to('#group', { rotation: 360, svgOrigin: '200 200', repeat: -1, ease: 'none' });
 
-// High-frequency handlers (mousemove) — always quickTo
+// High-frequency events (mousemove) — always quickTo
 const xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'power2.out' });
+const yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'power2.out' });
 ```
 
 ---
 
-## Design Tokens
+## `>_ DESIGN TOKENS`
 
-All tokens in `src/styles/global.css`:
+```css
+/* Colors */
+--black:        #090909
+--white:        #F5F4F0
+--accent:       #C9FF57   /* electric lime */
+--accent-dark:  #9FCC2E
 
-| Token | Value |
-|---|---|
-| `--black` | `#090909` |
-| `--white` | `#F5F4F0` |
-| `--accent` | `#C9FF57` (electric lime) |
-| `--accent-dark` | `#9FCC2E` |
-| `--font-display` | Clash Display (Fontshare) |
-| `--font-body` | Plus Jakarta Sans (Google Fonts) |
-| `--font-mono` | Space Mono (Google Fonts) |
-| `--radius` | `0.875rem` |
-| `--container` | `1340px` |
+/* Typography */
+--font-display: 'Clash Display'      /* Fontshare */
+--font-body:    'Plus Jakarta Sans'  /* Google Fonts */
+--font-mono:    'Space Mono'         /* Google Fonts */
 
-> Never hardcode hex colors or font names in components — always reference variables.
+/* Layout */
+--radius:       0.875rem
+--container:    1340px
+```
+
+> Never hardcode hex values or font names in components — always reference variables.
 
 ---
 
-## Key Components
+## `>_ KEY COMPONENTS`
+
+<details>
+<summary>Show all components</summary>
+
+<br />
 
 | Component | Purpose |
 |---|---|
-| `HeroSection` | Homepage hero — particle canvas + orbital SVG + scramble text |
-| `ParticleCanvas` | Canvas particle network (max 50 dots, O(n²) connection lines) |
-| `HeroGraphic` | Orbital sphere SVG — `<animateMotion>` tracks + mouse parallax |
-| `ServicesSection` | 6 service cards with animated `ServiceIcon` per card |
-| `ProcessSection` | 4-step process with GSAP connector line animation |
+| `HeroSection` | Homepage hero — particles + orbital SVG + scramble text |
+| `ParticleCanvas` | Canvas particle network — max 50 dots, O(n²) connections |
+| `HeroGraphic` | Orbital sphere SVG — `<animateMotion>` + mouse parallax |
+| `ServicesSection` | 6 service cards with animated `ServiceIcon` |
+| `ProcessSection` | 4-step process — animated GSAP connector line |
 | `WorkSection` | Portfolio preview grid (4 client projects) |
 | `StatsSection` | Animated counters |
 | `TestimonialsSection` | Client testimonials |
-| `ContactSection` | Contact form with reCAPTCHA v3 |
-| `MarqueeSection` | Scrolling ticker (used on all pages) |
+| `ContactSection` | Contact form + reCAPTCHA v3 |
+| `MarqueeSection` | Scrolling ticker — used on all pages |
 | `MagneticButton` | GSAP magnetic hover — `quickTo` on mousemove |
-| `AnimatedText` | Word-by-word reveal on mount |
+| `AnimatedText` | Word-by-word reveal on scroll |
 | `Cursor` | Custom cursor — event delegation + `quickTo` |
 | `Loader` | Page load sequence (~1.4s total) |
-| `ScrollProgress` | Top progress bar |
-| `Footer` | Site footer |
-| `LpForm` | 5-step multi-step brief wizard (LP only) |
+| `ScrollProgress` | Top-of-page progress bar |
+| `LpForm` | 5-step multi-step brief wizard (LP page only) |
+| `Footer` | Site footer with nav + contact info |
+
+</details>
 
 ---
 
-## Work Case Studies
+## `>_ WORK CASE STUDIES`
 
-Hardcoded in `src/pages/work/[slug].astro`. SVG mockups in `public/images/`.
+Hardcoded in `src/pages/work/[slug].astro` · SVG mockups in `public/images/`
 
 | Slug | Client | Services | Year |
 |---|---|---|---|
 | `01` | A Framing Company | Web Design + WordPress | 2024 |
 | `02` | Cleen & Green | Brand Identity + WordPress | 2025 |
-| `03` | CrateOnScene | MVP Platform Build (PWA) | 2024 |
+| `03` | CrateOnScene | MVP Platform — PWA | 2024 |
 | `04` | The Telecom Shop | E-commerce Migration (Magento → PrestaShop) | 2024 |
 
 ---
 
-## Performance Rules
+## `>_ INTEGRATIONS`
 
-| Rule | Reason |
+<details>
+<summary><strong>HubSpot</strong></summary>
+
+<br />
+
+- **Portal ID:** `244473168`
+- **Form:** `c119e15a-357c-4bfb-9264-a1fb3f1a3389` (Fazed Digital Main Contact Form)
+- **API:** Public Forms Submission API — no auth token needed
+- **Custom properties to create** (Settings → Properties → Contacts):
+
+```
+website_package     · business_industry  · project_goal
+website_style       · pages_needed       · referral_source
+```
+
+</details>
+
+<details>
+<summary><strong>reCAPTCHA v3</strong></summary>
+
+<br />
+
+- **Site key (public):** `6LdYgc0sAAAAAJy0R-ZRG3VKjadhIoWs_-9VOZ1x`
+- **Secret key:** `RECAPTCHA_SECRET_KEY` in Vercel env vars
+- **Score threshold:** `0.3` on `/api/contact`
+- **Required:** Add `fazeddigital.com` to allowed domains at [google.com/recaptcha/admin](https://google.com/recaptcha/admin)
+
+</details>
+
+<details>
+<summary><strong>Resend</strong></summary>
+
+<br />
+
+- LP form triggers a branded HTML email to the full team on every submission
+- Set `RESEND_API_KEY` in Vercel
+- Soft-fail: if email send fails, lead is still logged to Vercel function logs
+
+</details>
+
+---
+
+## `>_ PERFORMANCE RULES`
+
+| Rule | Why |
 |---|---|
-| No `@import url(...)` in `global.css` | Fonts load async via Layout.astro — `@import` blocks rendering |
-| `functionPerRoute: false` in Vercel adapter | Keeps all serverless functions bundled into 1 (Hobby plan limit is 12) |
-| `ParticleCanvas` max 50 particles | O(n²) connection loop — 50 = ~1,225 checks/frame |
-| `MagneticButton` uses `quickTo` refs | No new tween allocated on every mousemove pixel |
-| `Cursor` uses event delegation | Replaces per-element binding + MutationObserver on body |
-| `Loader` timeline ≤ 1.5s | Page interactive sooner; hero anim delay set to match at 1.3s |
+| No `@import` in `global.css` | Fonts load async via Layout.astro — CSS `@import` is render-blocking |
+| `functionPerRoute: false` | Bundles all routes into 1 serverless fn — stays within Vercel Hobby limit (12) |
+| Node `20.x` via `engines` in `package.json` | Forces Vercel to write `nodejs20.x` runtime — Node 18 EOL'd Apr 2025 |
+| `ParticleCanvas` capped at 50 particles | O(n²) loop — 50 pts = 1,225 checks/frame vs 4,005 at 90 pts |
+| `quickTo` on `MagneticButton` + `Cursor` | No new tween allocated per mousemove pixel |
+| `Loader` ≤ 1.5s | Hero animation delay set to 1.3s to match |
 
 ---
 
-## Deployment
+## `>_ TODO`
 
-- Push to `main` → Vercel auto-deploys
-- Node runtime: `20.x` (set via `engines.node` in `package.json`)
-- Adapter: `@astrojs/vercel@^7.8.2` (last version compatible with Astro 4)
-
----
-
-## Pending / TODO
-
-- [ ] Create dedicated LP HubSpot form → add GUID as `LP_FORM_GUID` env var in Vercel
-- [ ] Create 6 custom HubSpot contact properties (`website_package`, `business_industry`, `project_goal`, `website_style`, `pages_needed`, `referral_source`)
-- [ ] Add `fazeddigital.com` to allowed domains in reCAPTCHA console → re-enable hard block in `/api/contact`
-- [ ] Set `RESEND_API_KEY` in Vercel for LP lead email notifications
-- [ ] Stripe setup + `/api/checkout` endpoint (future)
+```
+[ ] Create LP HubSpot form → set LP_FORM_GUID env var in Vercel
+[ ] Create 6 custom HubSpot contact properties
+[ ] Add fazeddigital.com to reCAPTCHA allowed domains
+[ ] Set RESEND_API_KEY in Vercel
+[ ] Re-enable reCAPTCHA hard block on /api/contact once domain is verified
+[ ] Stripe setup + /api/checkout endpoint
+```
 
 ---
 
-## Content
+## `>_ DEPLOYMENT`
 
-- **Agency:** Fazed Digital, Iligan City, Philippines
-- **Coordinates:** `8.2280° N · 124.2452° E`
-- **Email:** `info@fazeddigital.com`
-- **Phone:** `+63 922 123 4567`
-- **Hours:** Mon–Fri 8:30am–5:00pm
+Push to `main` → Vercel auto-deploys.
+
+```
+Adapter:  @astrojs/vercel/serverless  (v7.8.2)
+Runtime:  nodejs20.x
+Output:   hybrid (SSG + serverless)
+```
 
 ---
+
+<div align="center">
+
+<br />
+
+```
+8.2280° N · 124.2452° E · Iligan City, Philippines
+info@fazeddigital.com · fazeddigital.com
+```
 
 *Built by **Lord Arcamo** — Founder, Fazed Digital.*
+
+<br />
+
+</div>
