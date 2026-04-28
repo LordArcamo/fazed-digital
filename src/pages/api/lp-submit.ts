@@ -85,7 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
     });
     const captchaData = await captchaRes.json() as { success: boolean; score: number; 'error-codes'?: string[] };
     console.log('reCAPTCHA result (LP):', JSON.stringify(captchaData));
-    if (!captchaData.success || captchaData.score < 0.3) {
+    if (!captchaData.success || captchaData.score < 0.5) {
       console.warn('reCAPTCHA failed (LP):', captchaData);
       return json({ error: 'Spam check failed. Please try again.' }, 400);
     }
