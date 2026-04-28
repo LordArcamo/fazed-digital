@@ -29,17 +29,18 @@ export const POST: APIRoute = async ({ request }) => {
   const { name = '', email = '', service = '', message = '', captchaToken = '' } = body;
 
   /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
+  // TODO: re-enable hard block once correct secret key is confirmed in Vercel
   if (RECAPTCHA_SECRET) {
-    const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: `secret=${RECAPTCHA_SECRET}&response=${captchaToken}`,
-    });
-    const captchaData = await captchaRes.json() as { success: boolean; score: number; action: string; 'error-codes'?: string[] };
-    console.log('reCAPTCHA result (contact):', JSON.stringify(captchaData));
-    if (!captchaData.success || captchaData.score < 0.3) {
-      console.warn('reCAPTCHA failed (contact):', captchaData);
-      return json({ error: 'Spam check failed. Please try again.' }, 400);
+    try {
+      const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: `secret=${RECAPTCHA_SECRET}&response=${captchaToken}`,
+      });
+      const captchaData = await captchaRes.json() as { success: boolean; score: number; action: string; 'error-codes'?: string[] };
+      console.log('reCAPTCHA result (contact):', JSON.stringify(captchaData));
+    } catch (err) {
+      console.warn('reCAPTCHA check error (contact):', err);
     }
   }
 
