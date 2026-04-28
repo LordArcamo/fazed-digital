@@ -9,7 +9,11 @@ const config: StorybookConfig = {
     options: {},
   },
 
-  // Set base path so assets load correctly when served at /storybook/
+  // Inject <base> FIRST in manager head so modulepreload links resolve correctly
+  // when Storybook is served at /storybook/ instead of root.
+  managerHead: (head) => `<base href="/storybook/" />\n${head}`,
+
+  // Set base path for the preview iframe (stories themselves)
   viteFinal(config) {
     return {
       ...config,

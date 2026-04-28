@@ -1,0 +1,120 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 750" width="1200" height="750">
+  <defs>
+    <linearGradient id="crHero" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0a0a0a;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#111318;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="crAccent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#e63946;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#ff6b6b;stop-opacity:1"/>
+    </linearGradient>
+    <linearGradient id="crCard" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a1f;stop-opacity:1"/>
+      <stop offset="100%" style="stop-color:#141418;stop-opacity:1"/>
+    </linearGradient>
+    <clipPath id="crClip">
+      <rect x="0" y="0" width="1200" height="750" rx="10" ry="10"/>
+    </clipPath>
+  </defs>
+  <g clip-path="url(#crClip)">
+    <!-- Browser chrome -->
+    <rect x="0" y="0" width="1200" height="44" fill="#1e1e1e"/>
+    <circle cx="20" cy="22" r="6" fill="#ff5f57"/>
+    <circle cx="40" cy="22" r="6" fill="#febc2e"/>
+    <circle cx="60" cy="22" r="6" fill="#28c840"/>
+    <rect x="200" y="10" width="800" height="24" rx="12" fill="#2a2a2a"/>
+    <text x="600" y="26" font-family="system-ui, sans-serif" font-size="11" fill="#888" text-anchor="middle">crateonscene.com</text>
+
+    <!-- Nav -->
+    <rect x="0" y="44" width="1200" height="56" fill="#0d0d0f"/>
+    <rect x="0" y="99" width="1200" height="1" fill="rgba(255,255,255,0.06)"/>
+    <!-- Logo -->
+    <rect x="48" y="58" width="28" height="28" rx="5" fill="url(#crAccent)"/>
+    <text x="64" y="77" font-family="system-ui, sans-serif" font-size="11" font-weight="900" fill="#fff" text-anchor="middle">C</text>
+    <text x="86" y="77" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#fff">CrateOnScene</text>
+    <!-- Nav links -->
+    <text x="700" y="77" font-family="system-ui, sans-serif" font-size="12" fill="rgba(255,255,255,0.55)">Events</text>
+    <text x="768" y="77" font-family="system-ui, sans-serif" font-size="12" fill="rgba(255,255,255,0.55)">Drivers</text>
+    <text x="836" y="77" font-family="system-ui, sans-serif" font-size="12" fill="rgba(255,255,255,0.55)">Businesses</text>
+    <text x="924" y="77" font-family="system-ui, sans-serif" font-size="12" fill="rgba(255,255,255,0.55)">Organizers</text>
+    <rect x="1048" y="59" width="110" height="28" rx="14" fill="url(#crAccent)"/>
+    <text x="1103" y="77" font-family="system-ui, sans-serif" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">Join the Scene</text>
+
+    <!-- Hero -->
+    <rect x="0" y="100" width="1200" height="310" fill="url(#crHero)"/>
+    <!-- Grid overlay -->
+    <line x1="0" y1="160" x2="1200" y2="160" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    <line x1="0" y1="230" x2="1200" y2="230" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    <line x1="0" y1="300" x2="1200" y2="300" stroke="rgba(255,255,255,0.03)" stroke-width="1"/>
+    <line x1="300" y1="100" x2="300" y2="410" stroke="rgba(255,255,255,0.025)" stroke-width="1"/>
+    <line x1="600" y1="100" x2="600" y2="410" stroke="rgba(255,255,255,0.025)" stroke-width="1"/>
+    <line x1="900" y1="100" x2="900" y2="410" stroke="rgba(255,255,255,0.025)" stroke-width="1"/>
+    <!-- Red glow -->
+    <ellipse cx="900" cy="250" rx="300" ry="200" fill="rgba(230,57,70,0.07)"/>
+    <!-- Hero text -->
+    <text x="80" y="152" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#e63946" letter-spacing="4">THE AUTOMOTIVE EVENT PLATFORM</text>
+    <text x="80" y="215" font-family="system-ui, sans-serif" font-size="50" font-weight="900" fill="#ffffff">Explore Car Events.</text>
+    <text x="80" y="272" font-family="system-ui, sans-serif" font-size="50" font-weight="900" fill="rgba(255,255,255,0.4)">Find the Brands</text>
+    <text x="80" y="328" font-family="system-ui, sans-serif" font-size="50" font-weight="900" fill="rgba(255,255,255,0.15)">Behind the Scene.</text>
+    <!-- CTA row -->
+    <rect x="80" y="350" width="168" height="40" rx="20" fill="url(#crAccent)"/>
+    <text x="164" y="374" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">Explore Events</text>
+    <rect x="264" y="350" width="148" height="40" rx="20" fill="rgba(255,255,255,0.07)" stroke="rgba(255,255,255,0.15)" stroke-width="1"/>
+    <text x="338" y="374" font-family="system-ui, sans-serif" font-size="12" fill="rgba(255,255,255,0.7)" text-anchor="middle">Add to Home</text>
+    <!-- Right side — event card preview -->
+    <rect x="740" y="116" width="420" height="275" rx="10" fill="rgba(255,255,255,0.03)" stroke="rgba(255,255,255,0.06)" stroke-width="1"/>
+    <rect x="740" y="116" width="420" height="100" rx="10" fill="rgba(230,57,70,0.12)"/>
+    <text x="760" y="152" font-family="system-ui, sans-serif" font-size="10" fill="rgba(230,57,70,0.8)" letter-spacing="2">UPCOMING EVENT</text>
+    <text x="760" y="178" font-family="system-ui, sans-serif" font-size="16" font-weight="800" fill="#fff">SoCal Import Fest 2025</text>
+    <text x="760" y="198" font-family="system-ui, sans-serif" font-size="11" fill="rgba(255,255,255,0.45)">Pomona Fairplex · Aug 14</text>
+    <rect x="760" y="232" width="380" height="1" fill="rgba(255,255,255,0.06)"/>
+    <text x="760" y="258" font-family="system-ui, sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">240+ Exhibitors</text>
+    <text x="900" y="258" font-family="system-ui, sans-serif" font-size="11" fill="rgba(255,255,255,0.4)">2,400 Attending</text>
+    <rect x="760" y="272" width="380" height="1" fill="rgba(255,255,255,0.06)"/>
+    <text x="760" y="295" font-family="system-ui, sans-serif" font-size="11" fill="rgba(255,255,255,0.3)">JDM · Import · Tuner · Muscle</text>
+    <rect x="1060" y="348" width="80" height="28" rx="14" fill="url(#crAccent)"/>
+    <text x="1100" y="366" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#fff" text-anchor="middle">RSVP</text>
+
+    <!-- Events section -->
+    <rect x="0" y="410" width="1200" height="200" fill="#0d0d0f"/>
+    <rect x="0" y="410" width="1200" height="1" fill="rgba(255,255,255,0.06)"/>
+    <text x="80" y="444" font-family="system-ui, sans-serif" font-size="10" font-weight="700" fill="#e63946" letter-spacing="3">BROWSE EVENTS</text>
+    <!-- Event mini cards -->
+    <rect x="80" y="458" width="255" height="130" rx="8" fill="url(#crCard)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <rect x="80" y="458" width="255" height="4" rx="2" fill="#e63946"/>
+    <text x="100" y="487" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">JDM All Stars</text>
+    <text x="100" y="505" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">Long Beach, CA · Jul 19</text>
+    <text x="100" y="540" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.25)">340 attending</text>
+    <rect x="100" y="558" width="60" height="18" rx="9" fill="rgba(230,57,70,0.15)"/>
+    <text x="130" y="571" font-family="system-ui, sans-serif" font-size="9" fill="#e63946" text-anchor="middle">JDM</text>
+
+    <rect x="355" y="458" width="255" height="130" rx="8" fill="url(#crCard)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <rect x="355" y="458" width="255" height="4" rx="2" fill="#e63946"/>
+    <text x="375" y="487" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">Muscle &amp; Chrome Show</text>
+    <text x="375" y="505" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">Pomona, CA · Aug 2</text>
+    <text x="375" y="540" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.25)">510 attending</text>
+    <rect x="375" y="558" width="68" height="18" rx="9" fill="rgba(230,57,70,0.15)"/>
+    <text x="409" y="571" font-family="system-ui, sans-serif" font-size="9" fill="#e63946" text-anchor="middle">MUSCLE</text>
+
+    <rect x="630" y="458" width="255" height="130" rx="8" fill="url(#crCard)" stroke="rgba(255,255,255,0.07)" stroke-width="1"/>
+    <rect x="630" y="458" width="255" height="4" rx="2" fill="#e63946"/>
+    <text x="650" y="487" font-family="system-ui, sans-serif" font-size="12" font-weight="700" fill="#fff">Import Crate Finals</text>
+    <text x="650" y="505" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.4)">Irwindale, CA · Sep 6</text>
+    <text x="650" y="540" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.25)">680 attending</text>
+    <rect x="650" y="558" width="62" height="18" rx="9" fill="rgba(230,57,70,0.15)"/>
+    <text x="681" y="571" font-family="system-ui, sans-serif" font-size="9" fill="#e63946" text-anchor="middle">TUNER</text>
+
+    <rect x="905" y="458" width="255" height="130" rx="8" fill="rgba(230,57,70,0.08)" stroke="rgba(230,57,70,0.2)" stroke-width="1"/>
+    <text x="1032" y="518" font-family="system-ui, sans-serif" font-size="13" font-weight="700" fill="#e63946" text-anchor="middle">+ 120 More</text>
+    <text x="1032" y="538" font-family="system-ui, sans-serif" font-size="11" fill="rgba(230,57,70,0.6)" text-anchor="middle">Browse all events →</text>
+
+    <!-- Footer -->
+    <rect x="0" y="610" width="1200" height="140" fill="#080809"/>
+    <rect x="0" y="610" width="1200" height="1" fill="rgba(255,255,255,0.05)"/>
+    <text x="80" y="644" font-family="system-ui, sans-serif" font-size="14" font-weight="800" fill="#fff">CrateOnScene</text>
+    <text x="80" y="662" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.3)">Part of the Import Crate family</text>
+    <text x="600" y="660" font-family="system-ui, sans-serif" font-size="10" fill="rgba(255,255,255,0.2)" text-anchor="middle">© 2025 CrateOnScene · Events · Drivers · Businesses · Organizers</text>
+    <rect x="1060" y="628" width="100" height="28" rx="14" fill="rgba(230,57,70,0.15)" stroke="rgba(230,57,70,0.3)" stroke-width="1"/>
+    <text x="1110" y="646" font-family="system-ui, sans-serif" font-size="10" fill="#e63946" text-anchor="middle">Add to Home</text>
+  </g>
+</svg>

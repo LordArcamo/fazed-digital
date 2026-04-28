@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 116" fill="none">
+  <!--
+    Fazed Digital — Isometric C mark
+    Single compound path, evenodd fill rule.
+    Outer silhouette + 3 punched-out white areas (2 depth grooves + inner C-opening).
+    Use fill="currentColor" in consumers so it adapts to any color via CSS.
+  -->
+  <path
+    fill="currentColor"
+    fill-rule="evenodd"
+    d="
+      M 0,28 L 38,0 L 100,18
+      L 100,50 L 66,64 L 66,72 L 100,86
+      L 100,104 L 56,116 L 0,100 Z
+
+      M 0,28 L 8,34 L 46,6 L 38,0 Z
+
+      M 16,40 L 28,48 L 66,20 L 54,12 Z
+
+      M 28,48 L 28,92 L 66,64 L 66,20 Z
+    "
+  />
+</svg>

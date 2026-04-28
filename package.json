@@ -4,10 +4,10 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "storybook build --output-dir public/storybook && astro build",
+    "build": "storybook build --output-dir public/storybook && node scripts/fix-storybook.mjs && astro build",
     "preview": "astro preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "build-storybook": "storybook build --output-dir public/storybook && node scripts/fix-storybook.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",
