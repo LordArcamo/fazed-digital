@@ -151,12 +151,16 @@ const faqs = [
   .faq-summary:hover { color: var(--white); }
   .faq-summary:hover .faq-icon { border-color: var(--gray-400) !important; color: var(--white) !important; }
   .faq-item.is-open .faq-icon { transform: rotate(45deg); border-color: var(--white) !important; color: var(--white) !important; }
-  @media (max-width: 860px) {
+  @media (max-width: 768px) {
     .faq-grid { grid-template-columns: 1fr !important; }
     .faq-sticky { position: static !important; }
   }
-  /* Hero info row on mobile */
+  /* Hero info row on mobile: 4-item flex → 2-col grid */
   @media (max-width: 640px) {
-    .contact-hero-info { gap: 1.5rem !important; }
+    .contact-hero-info { gap: 1.5rem !important; display: grid !important; grid-template-columns: 1fr 1fr !important; }
+  }
+  /* FAQ button: restore pointer cursor on touch devices */
+  @media (pointer: coarse) {
+    .faq-summary { cursor: pointer !important; }
   }
 </style>

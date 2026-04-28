@@ -204,7 +204,7 @@ const { title, category, year, client, industry, services, duration, challenge, 
           style={{ marginBottom: '3rem' }}
         />
         <!-- Meta row -->
-        <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; padding: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div class="work-meta-grid" style="display: grid; grid-template-columns: repeat(4,1fr); gap: 2rem; padding: 2rem 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
           {[
             { label: 'Client',    value: client },
             { label: 'Industry',  value: industry },
@@ -240,7 +240,7 @@ const { title, category, year, client, industry, services, duration, challenge, 
     <!-- Case study content -->
     <section class="section" style="background: var(--black);">
       <div class="container">
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem,6vw,8rem);">
+        <div class="work-content-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(3rem,6vw,8rem);">
           {[
             { label: 'The Challenge', body: challenge },
             { label: 'Our Approach',  body: solution },
@@ -259,7 +259,7 @@ const { title, category, year, client, industry, services, duration, challenge, 
       <div class="container">
         <div class="label" style="margin-bottom: 1.5rem;">The Results</div>
         <AnimatedText client:only="react" text={result} as="p" className="display-sm" style={{ color: 'var(--white)', marginBottom: '3rem' }} />
-        <div style="display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem;">
+        <div class="work-outcomes-grid" style="display: grid; grid-template-columns: repeat(2,1fr); gap: 1.25rem;">
           {outcomes.map(o => (
             <div style="display: flex; align-items: flex-start; gap: 1rem; padding: 1.5rem; border: 1px solid var(--border); border-radius: var(--radius); background: var(--gray-800);">
               <span style="color: var(--white); font-size: 1.1rem; flex-shrink: 0;">✓</span>
@@ -286,3 +286,21 @@ const { title, category, year, client, industry, services, duration, challenge, 
 
   <Footer client:only="react" />
 </Layout>
+
+<style>
+  /* Meta row: 4-col → 2-col → 1-col */
+  @media (max-width: 640px) {
+    .work-meta-grid { grid-template-columns: repeat(2,1fr) !important; }
+  }
+  @media (max-width: 400px) {
+    .work-meta-grid { grid-template-columns: 1fr !important; }
+  }
+  /* Challenge / Approach 2-col → 1-col */
+  @media (max-width: 768px) {
+    .work-content-grid { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+  }
+  /* Results outcomes 2-col → 1-col */
+  @media (max-width: 560px) {
+    .work-outcomes-grid { grid-template-columns: 1fr !important; }
+  }
+</style>

@@ -149,14 +149,14 @@ export default function HeroSection() {
         </div>
 
         <h1>
-          <div ref={line1Ref} style={{
+          <div ref={line1Ref} className="hero-h1-line" style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(4rem, 10vw, 12rem)', fontWeight: 700,
             lineHeight: 0.92, letterSpacing: '-0.02em', marginBottom: '0.05em',
           }}>
             <span ref={craftRef}>We craft</span>
           </div>
-          <div ref={line2Ref} style={{
+          <div ref={line2Ref} className="hero-h1-line" style={{
             fontFamily: 'var(--font-display)',
             fontSize: 'clamp(4rem, 10vw, 12rem)', fontWeight: 700,
             lineHeight: 0.92, letterSpacing: '-0.02em',
@@ -204,6 +204,9 @@ export default function HeroSection() {
           .hero-tags { display: none !important; }
           .hero-scroll-hint { display: none !important; }
           .hero-bottom-row { flex-direction: column; align-items: flex-start !important; }
+        }
+        @media (max-width: 480px) {
+          .hero-h1-line { font-size: clamp(3rem, 13vw, 4.5rem) !important; }
         }
       `}</style>
     </section>

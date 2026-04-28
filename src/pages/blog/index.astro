@@ -117,7 +117,7 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
     <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--black);">
       <div class="container">
         <div class="label" style="margin-bottom: 2rem;">Featured Article</div>
-        <a href={`/blog/${featured.slug}`} style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center; text-decoration: none; group: true;" data-cursor="link">
+        <a href={`/blog/${featured.slug}`} class="featured-post-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center; text-decoration: none; group: true;" data-cursor="link">
           <!-- Visual placeholder -->
           <div style="aspect-ratio: 16/10; border-radius: var(--radius); background: var(--gray-900); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
             <div style="position: absolute; inset: 0; background: radial-gradient(ellipse at 40% 50%, rgba(255,255,255,0.04) 0%, transparent 60%);"></div>
@@ -203,7 +203,7 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
 
     <!-- Newsletter CTA -->
     <section style="padding: clamp(4rem,8vw,8rem) 0; background: var(--gray-900); border-top: 1px solid var(--border);">
-      <div class="container" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center;">
+      <div class="container newsletter-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: clamp(2rem,5vw,6rem); align-items: center;">
         <div>
           <div class="label" style="margin-bottom: 1.25rem;">Stay Sharp</div>
           <AnimatedText client:visible text="Get insights delivered monthly." as="h2" className="display-md" />
@@ -256,6 +256,10 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
   @media (max-width: 900px) { #posts-grid { grid-template-columns: repeat(2,1fr) !important; } }
   @media (max-width: 580px) { #posts-grid { grid-template-columns: 1fr !important; } }
   @media (max-width: 640px) { .blog-hero-anim { display: none !important; } }
+  /* Featured post: 2-col → 1-col */
+  @media (max-width: 768px) { .featured-post-grid { grid-template-columns: 1fr !important; } }
+  /* Newsletter: 2-col → 1-col */
+  @media (max-width: 640px) { .newsletter-grid { grid-template-columns: 1fr !important; } }
 
   /* Quill line draw-in animations */
   @keyframes drawLine { to { stroke-dashoffset: 0; } }

@@ -60,9 +60,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Restore cursor on touch / coarse-pointer devices */
+/* Restore natural cursor on touch / coarse-pointer devices (no custom cursor) */
 @media (pointer: coarse) {
-  body, a, button, [role="button"], [data-cursor] { cursor: auto; }
+  body, a, button, [role="button"], [data-cursor], input, textarea, select, label { cursor: auto; }
+  a, button, [role="button"] { cursor: pointer; }
 }
 
 body.loading { overflow: hidden; }

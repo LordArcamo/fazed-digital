@@ -7,9 +7,16 @@ export default function Cursor() {
   const labelRef = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
+    // Don't attach on touch / coarse-pointer devices — cursor is irrelevant there
+    if (window.matchMedia('(pointer: coarse)').matches) return;
+
     const dot   = dotRef.current!;
     const ring  = ringRef.current!;
     const label = labelRef.current!;
+
+    // Show the cursor elements (hidden by default via CSS on coarse devices)
+    dot.style.display  = '';
+    ring.style.display = '';
 
     gsap.set([dot, ring], { xPercent: -50, yPercent: -50 });
 
@@ -89,18 +96,21 @@ export default function Cursor() {
 
   return (
     <>
+      {/* Hidden by default on coarse-pointer (touch) devices; shown in JS above */}
       <div ref={dotRef} style={{
         position: 'fixed', top: 0, left: 0,
         width: 7, height: 7, borderRadius: '50%',
         background: 'var(--white)', pointerEvents: 'none',
         zIndex: 99999, mixBlendMode: 'difference',
+        display: 'none',
       }} />
       <div ref={ringRef} style={{
         position: 'fixed', top: 0, left: 0,
         width: 34, height: 34, borderRadius: '50%',
         border: '1px solid rgba(245,244,240,0.4)',
         pointerEvents: 'none', zIndex: 99998,
-        display: 'flex', alignItems: 'center', justifyContent: 'center',
+        display: 'none',
+        alignItems: 'center', justifyContent: 'center',
       }}>
         <span ref={labelRef} style={{
           fontFamily: 'var(--font-mono)',
