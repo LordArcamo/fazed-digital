@@ -572,7 +572,7 @@ function Step5({ data, set, focus, blur }: { data: FormData; set: (f: keyof Form
           { label: '📦 Package',   value: `${pkg?.name} — ${pkg?.price}` },
           { label: '🏢 Business',  value: `${data.businessName} · ${data.industry}` },
           { label: '🎯 Goal',      value: goal?.label },
-          { label: '🎨 Style',     value: `${vibe?.emoji} ${vibe?.label}` },
+          { label: '🎨 Style',     value: vibe?.label },
           { label: '📄 Pages',     value: `${data.pagesNeeded.join(', ')} (${data.pagesNeeded.length})` },
           { label: '👤 Contact',   value: `${data.name} · ${data.email}` },
         ].map((row, i, arr) => (
