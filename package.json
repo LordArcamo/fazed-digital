@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "scripts": {
     "dev": "astro dev",
-    "build": "astro build",
+    "build": "storybook build --output-dir public/storybook && astro build",
     "preview": "astro preview",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build"
