@@ -1,5 +1,6 @@
 /* ── Design tokens — strict B&W ───────────────────────────── */
 /* Fonts are loaded async via Layout.astro preload — no @import needed */
+/* v2 */
 :root {
   --black:    #090909;
   --white:    #F5F4F0;
