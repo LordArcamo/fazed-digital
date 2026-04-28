@@ -3,7 +3,6 @@ import Layout from '../layouts/Layout.astro';
 import Loader from '../components/Loader';
 import Cursor from '../components/Cursor';
 import Nav from '../components/Nav';
-import ScrollProgress from '../components/ScrollProgress';
 import HeroSection from '../components/HeroSection';
 import MarqueeSection from '../components/MarqueeSection';
 import ServicesSection from '../components/ServicesSection';
@@ -25,7 +24,6 @@ import Footer from '../components/Footer';
 >
   <Cursor client:idle />
   <Loader client:only="react" />
-  <ScrollProgress client:idle />
   <Nav client:only="react" currentPath="/" />
 
   <main>

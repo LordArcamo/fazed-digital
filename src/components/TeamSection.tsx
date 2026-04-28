@@ -145,7 +145,7 @@ export const team = [
     name: 'Lord Arcamo',
     role: 'Founder',
     bio: 'The creative force behind Fazed Digital. Drives brand vision and keeps every project bold, strategic, and results-focused.',
-    photo: 'https://fazeddigital.com/wp-content/uploads/2026/04/Untitled-design-1-450x450.png',
+    photo: '/images/team-lord.jpeg',
   },
   {
     name: 'Reancirl Balaba',
@@ -157,7 +157,7 @@ export const team = [
     name: 'Russel Heyrana',
     role: 'Marketing Director',
     bio: 'Drives growth through data-informed strategy, brand positioning, and campaigns that actually move the needle.',
-    photo: 'https://fazeddigital.com/wp-content/uploads/2026/04/92196516_3500538183295510_7988113410728394752_n-450x450.jpg',
+    photo: '/images/team-russel.jpeg',
   },
   {
     name: 'Justin Sumaya',
@@ -209,10 +209,17 @@ function MemberCard({ member, index }: { member: typeof team[0]; index: number }
               src={member.photo}
               alt={member.name}
               style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center top' }}
+              onError={e => {
+                const img = e.currentTarget;
+                img.style.display = 'none';
+                const fallback = img.nextElementSibling as HTMLElement | null;
+                if (fallback) fallback.style.display = 'block';
+              }}
             />
-          ) : (
+          ) : null}
+          <div style={{ display: member.photo ? 'none' : 'block', width: '100%', height: '100%' }}>
             <Portrait />
-          )}
+          </div>
         </div>
         {/* Bottom gradient name overlay */}
         <div style={{
