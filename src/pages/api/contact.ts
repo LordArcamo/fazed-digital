@@ -30,20 +30,16 @@ export const POST: APIRoute = async ({ request }) => {
 
   /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
   if (RECAPTCHA_SECRET) {
-    try {
-      const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-        body: `secret=${RECAPTCHA_SECRET}&response=${captchaToken}`,
-      });
-      const captchaData = await captchaRes.json() as { success: boolean; score: number; action: string; 'error-codes'?: string[] };
-      console.log('reCAPTCHA result (contact):', JSON.stringify(captchaData));
-      // Soft-fail: log failures but don't block submissions while keys are being verified
-      if (!captchaData.success) {
-        console.warn('reCAPTCHA soft-fail (contact):', captchaData);
-      }
-    } catch (err) {
-      console.warn('reCAPTCHA check error (contact):', err);
+    const captchaRes = await fetch('https://www.google.com/recaptcha/api/siteverify', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: `secret=${RECAPTCHA_SECRET}&response=${captchaToken}`,
+    });
+    const captchaData = await captchaRes.json() as { success: boolean; score: number; action: string; 'error-codes'?: string[] };
+    console.log('reCAPTCHA result (contact):', JSON.stringify(captchaData));
+    if (!captchaData.success || captchaData.score < 0.5) {
+      console.warn('reCAPTCHA failed (contact):', captchaData);
+      return json({ error: 'Spam check failed. Please try again.' }, 400);
     }
   }
 
