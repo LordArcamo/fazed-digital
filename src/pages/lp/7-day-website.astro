@@ -613,13 +613,33 @@ const faqs = [
     scrollTrigger: { trigger: '.comparison-grid', start: 'top 85%', toggleActions: 'play none none none' },
   });
 
-  // FAQ chevron toggle
-  document.querySelectorAll<HTMLElement>('.faq-item').forEach((item) => {
+  // FAQ accordion — one open at a time
+  const faqItems = Array.from(document.querySelectorAll<HTMLDetailsElement>('.faq-item'));
+
+  faqItems.forEach((item) => {
     item.addEventListener('toggle', () => {
       const chevron = item.querySelector<HTMLElement>('.faq-chevron');
       if (chevron) chevron.textContent = item.open ? '−' : '+';
+
+      // Close all siblings when this one opens
+      if (item.open) {
+        faqItems.forEach((other) => {
+          if (other !== item && other.open) {
+            other.open = false;
+            const otherChevron = other.querySelector<HTMLElement>('.faq-chevron');
+            if (otherChevron) otherChevron.textContent = '+';
+          }
+        });
+      }
     });
   });
+
+  // Open the first FAQ by default
+  if (faqItems[0]) {
+    faqItems[0].open = true;
+    const firstChevron = faqItems[0].querySelector<HTMLElement>('.faq-chevron');
+    if (firstChevron) firstChevron.textContent = '−';
+  }
 </script>
 
 <!-- ─── LP STYLES ───────────────────────────────────────────── -->
@@ -899,12 +919,13 @@ const faqs = [
     border-bottom: 1px solid var(--border);
     overflow: hidden;
   }
+  .faq-item:first-child { border-top: 1px solid var(--border); }
   .faq-item summary {
     display: flex;
     align-items: center;
     justify-content: space-between;
     gap: 1rem;
-    padding: 1.25rem 0;
+    padding: 1.35rem 0;
     font-family: var(--font-body);
     font-weight: 600;
     font-size: 0.95rem;
@@ -916,16 +937,25 @@ const faqs = [
   }
   .faq-item summary::-webkit-details-marker { display: none; }
   .faq-item summary:hover { color: var(--accent); }
+  .faq-item[open] > summary { color: var(--accent); }
   .faq-chevron {
     font-family: var(--font-mono);
-    font-size: 1.25rem;
+    font-size: 1.35rem;
+    font-weight: 300;
     color: var(--gray-500);
     flex-shrink: 0;
-    transition: color 0.2s;
+    width: 1.5rem;
+    text-align: center;
+    transition: color 0.2s, transform 0.25s ease;
   }
   .faq-item[open] .faq-chevron { color: var(--accent); }
   .faq-answer {
-    padding-bottom: 1.25rem;
+    padding-bottom: 1.35rem;
+    animation: faqSlideDown 0.25s ease;
+  }
+  @keyframes faqSlideDown {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
   }
   .faq-answer p {
     font-size: 0.9rem;
