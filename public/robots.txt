@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Exclude generated/private paths
+Disallow: /storybook/
+Disallow: /lp/
+
+Sitemap: https://fazeddigital.com/sitemap.xml

@@ -22,6 +22,15 @@ const faqs = [
   title="Contact Fazed Digital — Start Your Project Today"
   description="Get in touch with Fazed Digital to discuss your web design, brand identity, SEO, or product design project. Iligan City-based, available worldwide. Reply within one business day."
   page="contact"
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(({ q, a }) => ({
+      "@type": "Question",
+      "name": q,
+      "acceptedAnswer": { "@type": "Answer", "text": a }
+    }))
+  }}
 >
   <Cursor client:only="react" />
   <Nav client:only="react" currentPath="/contact" />

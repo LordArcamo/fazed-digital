@@ -98,6 +98,24 @@ const services = [
   title="Services — Web Design, Branding, SEO & Product Design | Fazed Digital"
   description="Explore Fazed Digital's services: web design, brand identity, SEO marketing, product design, and custom system development. Strategy-led creative for ambitious brands in Iligan City and beyond."
   page="services"
+  schema={{
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Fazed Digital Services",
+    "description": "Full-service digital agency offering web design, brand identity, SEO, product design, and custom systems.",
+    "itemListElement": services.map((s, i) => ({
+      "@type": "ListItem",
+      "position": i + 1,
+      "item": {
+        "@type": "Service",
+        "name": s.title,
+        "description": s.body,
+        "provider": { "@type": "Organization", "name": "Fazed Digital", "url": "https://fazeddigital.com" },
+        "areaServed": "Worldwide",
+        "url": `https://fazeddigital.com/services#${s.id}`
+      }
+    }))
+  }}
 >
   <Cursor client:only="react" />
   <Nav client:only="react" currentPath="/services" />

@@ -147,8 +147,30 @@ const { title, category, year, client, industry, services, duration, challenge, 
 
 <Layout
   title={`${title} — Case Study | Fazed Digital`}
-  description={`How Fazed Digital helped ${client} with ${category}. See the challenge, approach, and results.`}
+  description={`How Fazed Digital helped ${client} with ${category}. See the challenge, our approach, and the results.`}
   page="work"
+  schema={[
+    {
+      "@context": "https://schema.org",
+      "@type": "CreativeWork",
+      "name": `${title} — Case Study`,
+      "description": `Fazed Digital case study: ${category} for ${client} in the ${industry} industry.`,
+      "url": `https://fazeddigital.com/work/${slug}`,
+      "creator": { "@type": "Organization", "name": "Fazed Digital", "url": "https://fazeddigital.com" },
+      "dateCreated": year,
+      "genre": category,
+      "keywords": services.join(", ")
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fazeddigital.com" },
+        { "@type": "ListItem", "position": 2, "name": "Work", "item": "https://fazeddigital.com/work" },
+        { "@type": "ListItem", "position": 3, "name": title, "item": `https://fazeddigital.com/work/${slug}` }
+      ]
+    }
+  ]}
 >
   <Cursor client:only="react" />
   <Nav client:only="react" currentPath="/work" />

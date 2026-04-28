@@ -148,9 +148,38 @@ const { title, category, date, readTime, author, excerpt, content, slug } = Astr
 ---
 
 <Layout
-  title={`${title} — Fazed Digital Blog`}
+  title={`${title} | Fazed Digital`}
   description={excerpt}
   page="blog"
+  schema={[
+    {
+      "@context": "https://schema.org",
+      "@type": "Article",
+      "headline": title,
+      "description": excerpt,
+      "author": { "@type": "Person", "name": author, "worksFor": { "@type": "Organization", "name": "Fazed Digital" } },
+      "publisher": {
+        "@type": "Organization",
+        "name": "Fazed Digital",
+        "url": "https://fazeddigital.com",
+        "logo": { "@type": "ImageObject", "url": "https://fazeddigital.com/favicon.svg" }
+      },
+      "datePublished": date,
+      "image": "https://fazeddigital.com/og-image.svg",
+      "url": `https://fazeddigital.com/blog/${slug}`,
+      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://fazeddigital.com/blog/${slug}` },
+      "keywords": category
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      "itemListElement": [
+        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fazeddigital.com" },
+        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fazeddigital.com/blog" },
+        { "@type": "ListItem", "position": 3, "name": title, "item": `https://fazeddigital.com/blog/${slug}` }
+      ]
+    }
+  ]}
 >
   <Cursor client:only="react" />
   <Nav client:only="react" currentPath="/blog" />

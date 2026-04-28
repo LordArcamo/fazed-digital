@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",
+    "@astrojs/sitemap": "^3.7.2",
     "@astrojs/vercel": "^7.8.2",
     "@gsap/react": "^2.1.2",
     "@vercel/analytics": "^2.0.1",
@@ -24,13 +25,13 @@
     "node": "20.x"
   },
   "devDependencies": {
+    "@storybook/addon-docs": "^10.3.5",
     "@storybook/addon-links": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "storybook": "^10.3.5",
     "typescript": "^5.6.3",
-    "vite": "^5.4.10",
-    "@storybook/addon-docs": "^10.3.5"
+    "vite": "^5.4.10"
   }
 }

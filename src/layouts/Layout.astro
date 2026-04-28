@@ -6,13 +6,16 @@ export interface Props {
   description?: string;
   image?: string;
   page?: string;
+  /** Pass page-specific JSON-LD schema objects (merged with site-level org schema) */
+  schema?: object | object[];
 }
 
 const {
   title = 'Fazed Digital — Bold Creative Agency',
   description = 'Fazed Digital builds bold identities that speak your story — visually and verbally. Web design, brand identity, SEO marketing, and digital product design.',
-  image = '/og-image.jpg',
+  image = '/og-image.svg',
   page = 'home',
+  schema,
 } = Astro.props;
 
 const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fazeddigital.com');
@@ -38,14 +41,19 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fazeddigita
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={new URL(image, 'https://fazeddigital.com')} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={`${title} — Fazed Digital`} />
   <meta property="og:site_name" content="Fazed Digital" />
-  <meta property="og:locale" content="en_AU" />
+  <meta property="og:locale" content="en_PH" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@fazeddigital" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
   <meta name="twitter:image" content={new URL(image, 'https://fazeddigital.com')} />
+  <meta name="twitter:image:alt" content={`${title} — Fazed Digital`} />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
@@ -85,21 +93,55 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fazeddigita
   <!-- View Transitions for SPA-like navigation -->
   <ViewTransitions />
 
-  <!-- Schema.org structured data -->
+  <!-- Schema.org — site-level Organisation -->
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org",
     "@type": "ProfessionalService",
     "name": "Fazed Digital",
     "url": "https://fazeddigital.com",
+    "logo": "https://fazeddigital.com/favicon.svg",
+    "image": "https://fazeddigital.com/og-image.svg",
     "email": "info@fazeddigital.com",
     "telephone": "+639221234567",
-    "address": { "@type": "PostalAddress", "addressLocality": "Iligan City", "addressCountry": "PH" },
-    "description": description,
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Iligan City",
+      "addressRegion": "Northern Mindanao",
+      "addressCountry": "PH"
+    },
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": "8.2280",
+      "longitude": "124.2452"
+    },
+    "description": "Fazed Digital is a bold creative agency in Iligan City, Philippines — building identities, websites, and digital experiences for ambitious brands.",
     "openingHours": "Mo-Fr 08:30-17:00",
     "priceRange": "$$",
-    "serviceType": ["Web Design", "Brand Identity", "SEO Marketing", "Product Design", "Custom System Development"],
-    "sameAs": ["https://fazeddigital.com"]
+    "areaServed": "Worldwide",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Digital Agency Services",
+      "itemListElement": [
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Web Design & Development" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Brand Identity" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "SEO Marketing" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Product Design" } },
+        { "@type": "Offer", "itemOffered": { "@type": "Service", "name": "Custom Systems" } }
+      ]
+    },
+    "sameAs": [
+      "https://fazeddigital.com",
+      "https://www.facebook.com/fazeddigital",
+      "https://www.instagram.com/fazeddigital"
+    ]
   })} />
+
+  {/* Page-specific schema (Article, BreadcrumbList, FAQPage, etc.) */}
+  {schema && (
+    Array.isArray(schema)
+      ? schema.map((s, i) => <script type="application/ld+json" set:html={JSON.stringify(s)} key={i} />)
+      : <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  )}
 </head>
 
 <body data-page={page}>
