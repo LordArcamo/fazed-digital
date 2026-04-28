@@ -104,7 +104,21 @@ export default function Nav({ currentPath = '/' }: { currentPath?: string }) {
         padding: '1.4rem clamp(1.5rem, 4vw, 3rem)',
         mixBlendMode: 'difference',
       }}>
-        <a href="/" aria-label="Fazed Digital home" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+        <a href="/" aria-label="Fazed Digital home" style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+          {/* Logo mark */}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 116" fill="none"
+            style={{ width: '1.5rem', height: 'auto', color: 'var(--white)', flexShrink: 0 }}
+            aria-hidden="true">
+            <path fill="currentColor" fillRule="evenodd" d="
+              M 0,28 L 38,0 L 100,18
+              L 100,50 L 66,64 L 66,72 L 100,86
+              L 100,104 L 56,116 L 0,100 Z
+              M 0,28 L 8,34 L 46,6 L 38,0 Z
+              M 16,40 L 28,48 L 66,20 L 54,12 Z
+              M 28,48 L 28,92 L 66,64 L 66,20 Z
+            "/>
+          </svg>
+          {/* Wordmark */}
           <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.45rem', fontWeight: 700, letterSpacing: '-0.01em', color: 'var(--white)' }}>
             Fazed
           </span>

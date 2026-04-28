@@ -58,8 +58,22 @@ export default function Footer() {
         }}>
           {/* Brand */}
           <div className="f-col" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
-            <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-              Fazed<span style={{ fontStyle: 'normal', fontWeight: 300, color: 'var(--gray-500)' }}> Digital</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 116" fill="none"
+                style={{ width: '1.5rem', height: 'auto', color: 'var(--white)', flexShrink: 0 }}
+                aria-hidden="true">
+                <path fill="currentColor" fillRule="evenodd" d="
+                  M 0,28 L 38,0 L 100,18
+                  L 100,50 L 66,64 L 66,72 L 100,86
+                  L 100,104 L 56,116 L 0,100 Z
+                  M 0,28 L 8,34 L 46,6 L 38,0 Z
+                  M 16,40 L 28,48 L 66,20 L 54,12 Z
+                  M 28,48 L 28,92 L 66,64 L 66,20 Z
+                "/>
+              </svg>
+              <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
+                Fazed<span style={{ fontWeight: 300, color: 'var(--gray-500)' }}> Digital</span>
+              </span>
             </div>
             <p className="small" style={{ color: 'var(--gray-500)', maxWidth: '24ch', lineHeight: 1.7 }}>
               Bold creative agency building identities that speak your story — visually and verbally.
