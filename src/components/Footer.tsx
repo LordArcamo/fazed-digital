@@ -60,7 +60,7 @@ export default function Footer() {
           <div className="f-col" style={{ display: 'flex', flexDirection: 'column', gap: '1.1rem' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="372 205 755 1089"
-                style={{ width: '1.4rem', height: 'auto', color: 'var(--white)', flexShrink: 0 }}
+                style={{ width: '1.4rem', height: 'auto', color: 'var(--accent)', flexShrink: 0 }}
                 aria-hidden="true">
                 <g transform="translate(0 1500) scale(0.1 -0.1)" fill="currentColor">
                   <path d="M7445 12847 c-22 -13 -348 -206 -725 -429 -377 -222 -723 -427 -770 -455 -47 -27 -506 -299 -1020 -603 -514 -303 -969 -572 -1012 -597 -43 -25 -87 -56 -98 -70 -20 -26 -20 -37 -20 -3282 0 -2590 3 -3261 13 -3274 17 -22 3645 -2000 3679 -2005 26 -4 692 354 2443 1313 143 79 481 263 750 409 270 147 496 274 503 283 19 26 18 1456 -2 1472 -10 8 -27 4 -72 -20 -32 -18 -854 -465 -1826 -995 -972 -530 -1776 -964 -1787 -964 -24 0 -2303 1299 -2338 1332 l-23 21 0 2517 0 2517 23 20 c12 11 326 199 697 418 371 219 945 558 1275 753 884 522 1310 774 1495 883 118 70 166 103 168 118 3 18 -78 61 -637 341 -353 176 -649 320 -658 320 -10 0 -36 -11 -58 -23z"/>
