@@ -14,7 +14,10 @@ export function getStaticPaths() {
       category: 'Branding',
       date: '18 Apr 2025',
       readTime: '6 min read',
-      author: 'Alex R.',
+      author: 'Lord Arcamo',
+      authorRole: 'Founder',
+      authorPhoto: '/images/team-lord.jpeg',
+      image: 'https://images.unsplash.com/photo-1434626881859-194d67b2b86f?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "In a market flooded with options, the brands that win are the ones people remember. Here's why investing in identity is always worth it.",
       content: `
         <p>In a world where every category is crowded, the brand that wins isn't always the best product — it's the one people remember. Brand identity is the system that makes remembering easy.</p>
@@ -37,7 +40,10 @@ export function getStaticPaths() {
       category: 'SEO',
       date: '02 Apr 2025',
       readTime: '8 min read',
-      author: 'Priya K.',
+      author: 'Russel Heyrana',
+      authorRole: 'Marketing Director',
+      authorPhoto: '/images/team-russel.jpeg',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "Google's page experience signals are now a confirmed ranking factor. We break down LCP, FID, and CLS in plain English — and how to fix them.",
       content: `
         <p>Since Google made Core Web Vitals an official ranking factor, we've seen sites drop significantly in rankings not because of content issues, but because of performance problems that went unnoticed for years.</p>
@@ -57,7 +63,10 @@ export function getStaticPaths() {
       category: 'Development',
       date: '21 Mar 2025',
       readTime: '9 min read',
-      author: 'Jordan M.',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: 'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "We've built with both. Here's an honest comparison from the trenches — performance, DX, and the projects each framework is truly built for.",
       content: `
         <p>We've shipped production projects with both Astro and Next.js in the past two years. Here's our honest take on when to reach for each one.</p>
@@ -78,7 +87,10 @@ export function getStaticPaths() {
       category: 'Design',
       date: '05 Mar 2025',
       readTime: '7 min read',
-      author: 'Sam T.',
+      author: 'Lord Arcamo',
+      authorRole: 'Founder',
+      authorPhoto: '/images/team-lord.jpeg',
+      image: 'https://images.unsplash.com/photo-1581291518857-4d27a540d9f2?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "Most conversion problems aren't about copy or offers — they're about friction. Here are the design errors we see most often in audits.",
       content: `
         <p>When a client comes to us with poor conversion rates, the first thing we do is a UX audit. Nine times out of ten, the problem isn't the offer — it's friction. Here are the most common mistakes we find.</p>
@@ -104,7 +116,10 @@ export function getStaticPaths() {
       category: 'Strategy',
       date: '14 Feb 2025',
       readTime: '5 min read',
-      author: 'Priya K.',
+      author: 'Reancirl Balaba',
+      authorRole: 'Co-Founder',
+      authorPhoto: 'https://fazeddigital.com/wp-content/uploads/2026/04/117749302_4540601115965165_6039017566881807039_n-450x450.jpg',
+      image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "You don't need a 40-page strategy document. You need to know what to say, to whom, on which channels, and how often. Let's simplify.",
       content: `
         <p>Most small business content strategies fail not because they're poorly designed, but because they're never actually implemented. The strategy was too complex, too expensive, or too disconnected from the actual business.</p>
@@ -123,7 +138,10 @@ export function getStaticPaths() {
       category: 'Design',
       date: '28 Jan 2025',
       readTime: '6 min read',
-      author: 'Sam T.',
+      author: 'Lord Arcamo',
+      authorRole: 'Founder',
+      authorPhoto: '/images/team-lord.jpeg',
+      image: 'https://images.unsplash.com/photo-1524781289445-ddf8f5695861?w=1200&h=630&fit=crop&auto=format&q=80',
       excerpt: "Type is 95% of web design, yet it's the most overlooked element. The principles that separate good typography from great — and from unreadable.",
       content: `
         <p>Oliver Reichenstein famously wrote that web design is 95% typography. After years of design work, we think he was understating it. Get the type right and everything else becomes easier. Get it wrong and no amount of colour or imagery will save you.</p>
@@ -144,7 +162,7 @@ export function getStaticPaths() {
   return posts.map(p => ({ params: { slug: p.slug }, props: p }));
 }
 
-const { title, category, date, readTime, author, excerpt, content, slug } = Astro.props;
+const { title, category, date, readTime, author, authorRole, authorPhoto, image, excerpt, content, slug } = Astro.props;
 ---
 
 <Layout
@@ -213,6 +231,21 @@ const { title, category, date, readTime, author, excerpt, content, slug } = Astr
       </div>
     </section>
 
+    <!-- Cover image -->
+    <section style="background: var(--gray-900); border-bottom: 1px solid var(--border);">
+      <div class="container" style="padding-top: clamp(2rem,4vw,4rem); padding-bottom: clamp(2rem,4vw,4rem);">
+        <div style="aspect-ratio: 16/7; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
+          <img
+            src={image}
+            alt={title}
+            loading="eager"
+            decoding="async"
+            style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
+          />
+        </div>
+      </div>
+    </section>
+
     <!-- Article body -->
     <article style="padding: clamp(3rem,6vw,6rem) 0; background: var(--black);">
       <div class="container article-body" style="max-width: 720px;" set:html={content} />
@@ -222,12 +255,17 @@ const { title, category, date, readTime, author, excerpt, content, slug } = Astr
     <section style="padding: clamp(3rem,6vw,6rem) 0; background: var(--gray-900); border-top: 1px solid var(--border);">
       <div class="container" style="max-width: 860px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
         <div style="display: flex; align-items: center; gap: 1.25rem;">
-          <div style="width: 48px; height: 48px; border-radius: 50%; background: var(--gray-800); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-family: var(--font-display); font-style: italic; font-size: 1.1rem; color: var(--gray-400);">
-            {author.charAt(0)}
+          <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; background: var(--gray-800);">
+            <img
+              src={authorPhoto}
+              alt={author}
+              style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;"
+              onerror="this.style.display='none'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.innerHTML='<span style=font-family:var(--font-display);font-style:italic;font-size:1.1rem;color:var(--gray-400)>' + this.alt.charAt(0) + '</span>';"
+            />
           </div>
           <div>
-            <div style="font-weight: 600; font-size: 0.9rem;">{author}</div>
-            <div class="label">Fazed Digital</div>
+            <div style="font-weight: 600; font-size: 0.9rem; color: var(--white);">{author}</div>
+            <div class="label">{authorRole} — Fazed Digital</div>
           </div>
         </div>
         <MagneticButton client:only="react" href="/blog" variant="outline" size="md">← More Articles</MagneticButton>
