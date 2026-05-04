@@ -70,7 +70,7 @@ export default function AboutSection() {
             background: 'var(--gray-900)', border: '1px solid var(--border)',
           }}>
             <img
-              src="https://fazeddigital.com/wp-content/uploads/2025/12/ambre-esteve-gdCwuKCuJWY-unsplash-scaled.jpg"
+              src="https://images.unsplash.com/photo-1702360174953-b9d72d5ddba2?auto=format&fit=crop&w=1200&q=80"
               alt="Fazed Digital creative studio"
               style={{
                 position: 'absolute', inset: 0,

@@ -9,6 +9,7 @@ const RESEND_TO = [
   'reancirl@gmail.com',
   'russeljessheyrana@gmail.com',
   'lordrynkartracydwight@gmail.com',
+  'justinjacobsumaya8@gmail.com',
   'info@fazeddigital.com',
 ];
 

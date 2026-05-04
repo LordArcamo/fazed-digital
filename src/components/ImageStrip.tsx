@@ -7,17 +7,17 @@ gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const panels = [
   {
-    src: 'https://fazeddigital.com/wp-content/uploads/2025/05/home1-highlight1.jpg',
+    src: 'https://images.unsplash.com/photo-1587428599384-f67a2092769a?auto=format&fit=crop&w=1400&q=80',
     label: 'Creative Direction',
     pos: 'center center',
   },
   {
-    src: 'https://fazeddigital.com/wp-content/uploads/2025/12/alex-lakas-hErWp7NHi0Y-unsplash-scaled.jpg',
+    src: 'https://images.unsplash.com/photo-1497091071254-cc9b2ba7c48a?auto=format&fit=crop&w=1400&q=80',
     label: 'Design & Identity',
     pos: 'center 30%',
   },
   {
-    src: 'https://fazeddigital.com/wp-content/uploads/2025/05/home1-highlight3.jpg',
+    src: 'https://images.unsplash.com/photo-1550439062-609e1531270e?auto=format&fit=crop&w=1400&q=80',
     label: 'Digital Strategy',
     pos: 'center center',
   },

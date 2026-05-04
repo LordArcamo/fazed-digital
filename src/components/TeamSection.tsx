@@ -151,7 +151,7 @@ export const team = [
     name: 'Reancirl Balaba',
     role: 'Co-Founder',
     bio: 'Co-architect of the Fazed vision. Shapes the agency\'s direction and ensures every client relationship is built on trust.',
-    photo: 'https://fazeddigital.com/wp-content/uploads/2026/04/117749302_4540601115965165_6039017566881807039_n-450x450.jpg',
+    photo: '',
   },
   {
     name: 'Russel Heyrana',
@@ -163,7 +163,7 @@ export const team = [
     name: 'Justin Sumaya',
     role: 'Head of Development',
     bio: 'Builds fast, accessible, pixel-perfect websites. Obsessed with performance, clean code, and Core Web Vitals.',
-    photo: 'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+    photo: '',
   },
 ];
 
