@@ -7,7 +7,8 @@
     "build": "storybook build --output-dir public/storybook && node scripts/fix-storybook.mjs && astro build",
     "preview": "astro preview",
     "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build --output-dir public/storybook && node scripts/fix-storybook.mjs"
+    "build-storybook": "storybook build --output-dir public/storybook && node scripts/fix-storybook.mjs",
+    "generate:og": "node scripts/generate-og.mjs"
   },
   "dependencies": {
     "@astrojs/react": "^3.6.0",
@@ -19,12 +20,14 @@
     "gsap": "^3.12.5",
     "lucide-react": "^1.11.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
   },
   "engines": {
     "node": "20.x"
   },
   "devDependencies": {
+    "@resvg/resvg-wasm": "^2.6.2",
+    "satori": "^0.26.0",
     "@storybook/addon-docs": "^10.3.5",
     "@storybook/addon-links": "^10.3.5",
     "@storybook/react-vite": "^10.3.5",
