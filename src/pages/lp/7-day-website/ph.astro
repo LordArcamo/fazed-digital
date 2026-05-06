@@ -1,13 +1,13 @@
 ---
-import LpLayout from '../../layouts/LpLayout.astro';
-import LpForm   from '../../components/lp/LpForm.tsx';
+import LpLayout from '../../../layouts/LpLayout.astro';
+import LpForm   from '../../../components/lp/LpForm.tsx';
 
 const schema = [
   {
     "@context": "https://schema.org",
     "@type": "Service",
     "name": "7-Day Website Design & Development",
-    "description": "Professional custom website design and development delivered in 7 days for small businesses. Starting at $499. Mobile-ready and SEO-optimized.",
+    "description": "Professional custom website design and development delivered in 7 days for Philippine businesses. Starting at ₱28,000. Mobile-ready and SEO-optimized.",
     "provider": {
       "@type": "Organization",
       "name": "Fazed Digital",
@@ -21,12 +21,12 @@ const schema = [
       }
     },
     "offers": [
-      { "@type": "Offer", "name": "Starter Website Package", "price": "499",  "priceCurrency": "USD", "availability": "https://schema.org/InStock", "description": "5-page professional website, mobile-responsive, basic SEO, contact form, 7-day delivery." },
-      { "@type": "Offer", "name": "Growth Website Package",  "price": "899",  "priceCurrency": "USD", "availability": "https://schema.org/InStock", "description": "8-page custom website, advanced SEO, blog setup, Google Analytics, 7-day delivery." },
-      { "@type": "Offer", "name": "Pro Website Package",     "price": "1499", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "description": "10+ page fully custom website, e-commerce ready, performance optimised, unlimited revisions, 7-day delivery." }
+      { "@type": "Offer", "name": "Starter Website Package", "price": "28000", "priceCurrency": "PHP", "availability": "https://schema.org/InStock", "description": "5-page professional website, mobile-responsive, basic SEO, contact form, 7-day delivery." },
+      { "@type": "Offer", "name": "Growth Website Package",  "price": "49000", "priceCurrency": "PHP", "availability": "https://schema.org/InStock", "description": "8-page custom website, advanced SEO, blog setup, Google Analytics, 7-day delivery." },
+      { "@type": "Offer", "name": "Pro Website Package",     "price": "85000", "priceCurrency": "PHP", "availability": "https://schema.org/InStock", "description": "10+ page fully custom website, e-commerce ready, performance optimised, unlimited revisions, 7-day delivery." }
     ],
     "serviceType": "Web Design and Development",
-    "areaServed": "Worldwide",
+    "areaServed": "Philippines",
     "hasOfferCatalog": {
       "@type": "OfferCatalog",
       "name": "Website Packages"
@@ -39,9 +39,10 @@ const schema = [
       { "@type": "Question", "name": "What do I need to provide to get started?", "acceptedAnswer": { "@type": "Answer", "text": "Just your business details, brand assets (logo if you have one), preferred colors or style references, and any content — text and images — for the site. We guide you through everything on Day 1 with a short brief form." } },
       { "@type": "Question", "name": "Is the 7-day website delivery actually guaranteed?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. As long as you provide all required assets and feedback within 24 hours during the review phase, we guarantee delivery in 7 business days. If we miss the deadline due to our side, you get a full refund of 20% of the project fee." } },
       { "@type": "Question", "name": "What platform will my website be built on?", "acceptedAnswer": { "@type": "Answer", "text": "We primarily build on WordPress (for easy self-management) or Astro (for maximum performance and SEO). We recommend the best fit based on your needs during the Day 1 kickoff call." } },
-      { "@type": "Question", "name": "What if I need more pages or custom features?", "acceptedAnswer": { "@type": "Answer", "text": "Additional pages are available at $79/page. Complex features like booking systems, membership portals, or custom e-commerce are scoped separately. We discuss everything upfront — no surprise charges." } },
-      { "@type": "Question", "name": "Do you offer ongoing website maintenance?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We offer monthly maintenance plans starting at $99/month covering updates, backups, security monitoring, uptime checks, and minor content changes." } },
-      { "@type": "Question", "name": "What if I'm not happy with the design?", "acceptedAnswer": { "@type": "Answer", "text": "Every package includes revision rounds — 2 for Starter, 3 for Growth, unlimited for Pro. We iterate until you're 100% happy. Our live portfolio is proof we deliver quality." } }
+      { "@type": "Question", "name": "What if I need more pages or custom features?", "acceptedAnswer": { "@type": "Answer", "text": "Additional pages are available at ₱4,500/page. Complex features like booking systems, membership portals, or custom e-commerce are scoped separately. We discuss everything upfront — no surprise charges." } },
+      { "@type": "Question", "name": "Do you offer ongoing website maintenance?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We offer monthly maintenance plans starting at ₱5,500/month covering updates, backups, security monitoring, uptime checks, and minor content changes." } },
+      { "@type": "Question", "name": "What if I'm not happy with the design?", "acceptedAnswer": { "@type": "Answer", "text": "Every package includes revision rounds — 2 for Starter, 3 for Growth, unlimited for Pro. We iterate until you're 100% happy. Our live portfolio is proof we deliver quality." } },
+      { "@type": "Question", "name": "Do you accept GCash, bank transfer, or other local payment methods?", "acceptedAnswer": { "@type": "Answer", "text": "Yes. We accept GCash, Maya, BPI/BDO bank transfer, and other major Philippine banks. A 50% downpayment is required to start, with the balance due upon launch." } }
     ]
   }
 ];
@@ -73,8 +74,8 @@ const testimonials = [
 const pricing = [
   {
     name: 'Starter',
-    price: '$499',
-    tagline: 'For new businesses getting online',
+    price: '₱28,000',
+    tagline: 'Para sa mga bagong negosyo',
     features: [
       '5 custom-designed pages',
       'Mobile-responsive layout',
@@ -88,8 +89,8 @@ const pricing = [
   },
   {
     name: 'Growth',
-    price: '$899',
-    tagline: 'Best for growing small businesses',
+    price: '₱49,000',
+    tagline: 'Best para sa lumalagong negosyo',
     features: [
       '8 custom-designed pages',
       'Custom design system',
@@ -104,8 +105,8 @@ const pricing = [
   },
   {
     name: 'Pro',
-    price: '$1,499',
-    tagline: 'For businesses ready to scale',
+    price: '₱85,000',
+    tagline: 'Para sa mga negosyong handa nang lumago',
     features: [
       '10+ custom pages',
       'Full brand integration',
@@ -154,19 +155,20 @@ const process = [
 ];
 
 const faqs = [
-  { q: 'What do I need to provide to get started?',            a: 'Just your business details, brand assets (logo if you have one), preferred colors or style references, and any content — text and images — for the site. We guide you through everything on Day 1 with a short brief form.' },
-  { q: 'Is the 7-day delivery actually guaranteed?',           a: 'Yes. As long as you provide all required assets and feedback within 24 hours during the review phase, we guarantee delivery in 7 business days. If we miss the deadline due to our side, you get a 20% discount on the project fee.' },
-  { q: 'What platform will my website be built on?',           a: 'We primarily build on WordPress (for easy self-management) or Astro (for maximum performance and SEO). We recommend the best fit based on your needs during the Day 1 kickoff.' },
-  { q: 'What if I need more pages or custom features?',        a: 'Additional pages are available at $79/page. Complex features like booking systems or membership portals are scoped separately — always discussed upfront with no surprise charges.' },
-  { q: 'Do you offer ongoing website maintenance?',            a: 'Yes. Monthly maintenance plans start at $99/month and cover updates, backups, security monitoring, and minor content changes.' },
-  { q: "What if I'm not happy with the design?",               a: "Every package includes revision rounds — 2 for Starter, 3 for Growth, unlimited for Pro. We iterate until you're 100% happy. Our live portfolio is proof we deliver quality." },
+  { q: 'What do I need to provide to get started?',                         a: 'Just your business details, brand assets (logo if you have one), preferred colors or style references, and any content — text and images — for the site. We guide you through everything on Day 1 with a short brief form.' },
+  { q: 'Is the 7-day delivery actually guaranteed?',                        a: 'Yes. As long as you provide all required assets and feedback within 24 hours during the review phase, we guarantee delivery in 7 business days. If we miss the deadline due to our side, you get a 20% discount on the project fee.' },
+  { q: 'What platform will my website be built on?',                        a: 'We primarily build on WordPress (for easy self-management) or Astro (for maximum performance and SEO). We recommend the best fit based on your needs during the Day 1 kickoff.' },
+  { q: 'What if I need more pages or custom features?',                     a: 'Additional pages are available at ₱4,500/page. Complex features like booking systems or membership portals are scoped separately — always discussed upfront with no surprise charges.' },
+  { q: 'Do you offer ongoing website maintenance?',                         a: 'Yes. Monthly maintenance plans start at ₱5,500/month and cover updates, backups, security monitoring, and minor content changes.' },
+  { q: "What if I'm not happy with the design?",                            a: "Every package includes revision rounds — 2 for Starter, 3 for Growth, unlimited for Pro. We iterate until you're 100% happy. Our live portfolio is proof we deliver quality." },
+  { q: 'What payment methods do you accept?',                               a: 'We accept GCash, Maya, BPI, BDO, UnionBank, and other major Philippine banks. A 50% downpayment is required to start, with the balance due upon launch.' },
 ];
 ---
 
 <LpLayout
-  title="Get a Professional Website in 7 Days | From $499 | Fazed Digital"
-  description="Professional custom websites for small businesses, delivered in 7 days. Starting at $499. Mobile-ready, SEO-optimized, and built to convert. Limited spots available."
-  canonical="https://fazeddigital.com/lp/7-day-website"
+  title="Magpaawa ng Website sa 7 Araw | Mula ₱28,000 | Fazed Digital"
+  description="Professional custom websites para sa mga negosyo sa Pilipinas — naihatid sa 7 araw. Mula ₱28,000. Mobile-ready, SEO-optimized, at built to convert. Limitadong slots."
+  canonical="https://fazeddigital.com/lp/7-day-website/ph"
   schema={schema}
 >
 
@@ -188,7 +190,7 @@ const faqs = [
         </span>
       </a>
       <a href="#get-started" class="lp-btn-outline" style="font-size:0.85rem; padding:0.55rem 1.1rem;">
-        Get Started →
+        Mag-inquire →
       </a>
     </div>
   </header>
@@ -198,7 +200,7 @@ const faqs = [
     <div class="lp-container" style="text-align:center; max-width:820px;">
 
       <div class="lp-reveal" style="display:inline-flex; align-items:center; gap:0.5rem; background:rgba(201,255,87,0.1); border:1px solid rgba(201,255,87,0.25); border-radius:2rem; padding:0.4rem 0.9rem; margin-bottom:2rem;">
-        <span style="font-size:0.7rem; font-family:var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--accent);">⚡ Fast-Track Web Package</span>
+        <span style="font-size:0.7rem; font-family:var(--font-mono); letter-spacing:0.12em; text-transform:uppercase; color:var(--accent);">🇵🇭 Philippine Pricing — Iligan City, PH</span>
       </div>
 
       <h1 class="lp-reveal" style="font-family:var(--font-display); font-size:clamp(2.8rem,7vw,5.5rem); font-weight:700; line-height:1; letter-spacing:-0.03em; color:var(--white); margin-bottom:1.5rem;">
@@ -206,14 +208,14 @@ const faqs = [
       </h1>
 
       <p class="lp-reveal" style="font-size:clamp(1rem,2vw,1.2rem); color:var(--gray-400); line-height:1.65; max-width:620px; margin:0 auto 2.5rem;">
-        We design, build, and launch professional websites for small businesses —
+        We design, build, and launch professional websites for Philippine businesses —
         fully custom, mobile-ready, and SEO-optimised.
-        <strong style="color:var(--white);">Starting at $499. Guaranteed.</strong>
+        <strong style="color:var(--white);">Starting at ₱28,000. Guaranteed.</strong>
       </p>
 
       <div class="lp-reveal" style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap; margin-bottom:3rem;">
-        <a href="#get-started" class="lp-btn-primary">Claim Your Spot →</a>
-        <a href="#pricing" class="lp-btn-outline">See Pricing</a>
+        <a href="#get-started" class="lp-btn-primary">Mag-inquire Ngayon →</a>
+        <a href="#pricing" class="lp-btn-outline">Tingnan ang Presyo</a>
       </div>
 
       <!-- Trust bar -->
@@ -234,7 +236,7 @@ const faqs = [
         </div>
         <div class="lp-trust-divider"></div>
         <div class="lp-trust-item">
-          <span class="lp-trust-num">$499</span>
+          <span class="lp-trust-num">₱28K</span>
           <span class="lp-trust-label">Starting Price</span>
         </div>
       </div>
@@ -246,9 +248,9 @@ const faqs = [
     <div class="lp-container">
       <div class="lp-reveal" style="text-align:center; margin-bottom:2.75rem;">
         <h2 style="font-family:var(--font-display); font-size:clamp(1.75rem,3.5vw,2.5rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.15;">
-          Why not just hire a<br/>regular agency?
+          Bakit hindi na lang mag-hire ng<br/>ibang agency?
         </h2>
-        <p style="color:var(--gray-500); font-size:0.9rem; margin-top:0.6rem;">Here's what you're actually signing up for.</p>
+        <p style="color:var(--gray-500); font-size:0.9rem; margin-top:0.6rem;">Ito ang katotohanan.</p>
       </div>
 
       <div class="comparison-grid lp-reveal">
@@ -257,7 +259,7 @@ const faqs = [
           <ul class="comparison-list">
             {[
               '6–10 week delivery timeline',
-              '$3,000–$15,000+ minimum budget',
+              '₱150,000–₱500,000+ minimum budget',
               'Hourly rates — surprise invoices',
               'Vague revision processes',
               'Multiple handoffs & delays',
@@ -276,13 +278,13 @@ const faqs = [
         <div class="comparison-col comparison-col--good">
           <div class="comparison-col-header">
             Fazed Digital
-            <span class="comparison-badge">That's us</span>
+            <span class="comparison-badge">Kami 'to</span>
           </div>
           <ul class="comparison-list">
             {[
               'Live in 7 days, guaranteed',
-              'Fixed price from $499',
-              'One flat fee — no surprises',
+              'Fixed price mula ₱28,000',
+              'One flat fee — walang sorpresa',
               'Structured 5-step process',
               'One dedicated team, direct line',
               'Full ownership — no lock-in',
@@ -306,8 +308,11 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3.5rem;">
         <div class="label" style="margin-bottom:1rem;">Simple, Transparent Pricing</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.1;">
-          Pick your package.<br/>We handle the rest.
+          Piliin ang package.<br/>Kami na ang bahala sa iba.
         </h2>
+        <p style="color:var(--gray-500); font-size:0.85rem; margin-top:0.75rem;">
+          Lahat ng presyo sa Philippine Peso. Tinatanggap: GCash, Maya, bank transfer.
+        </p>
       </div>
 
       <div class="pricing-grid">
@@ -338,15 +343,30 @@ const faqs = [
               ))}
             </ul>
             <a href="#get-started" class={tier.popular ? 'lp-btn-primary' : 'lp-btn-outline'} style="display:block; text-align:center;">
-              {tier.popular ? 'Get Started →' : 'Choose Plan →'}
+              {tier.popular ? 'Mag-inquire →' : 'Piliin Ito →'}
             </a>
           </article>
         ))}
       </div>
 
       <p class="lp-reveal" style="text-align:center; margin-top:2rem; color:var(--gray-500); font-size:0.85rem;">
-        Need something custom? <a href="mailto:info@fazeddigital.com" style="color:var(--accent);">Email us</a> and we'll scope it together. No commitment required.
+        May custom na kailangan? <a href="mailto:info@fazeddigital.com" style="color:var(--accent);">Mag-email sa amin</a> at iki-scope namin ito para sa iyo. Walang commitment.
       </p>
+    </div>
+  </section>
+
+  <!-- ─── PAYMENT METHODS ───────────────────────────────────── -->
+  <section class="lp-section" style="padding:clamp(2rem,4vw,3rem) 0; border-top:1px solid var(--border); border-bottom:1px solid var(--border); background:rgba(255,255,255,0.015);">
+    <div class="lp-container">
+      <div class="lp-reveal" style="text-align:center; margin-bottom:1.75rem;">
+        <div class="label" style="margin-bottom:0.5rem;">Accepted Payments</div>
+        <p style="color:var(--gray-500); font-size:0.875rem;">50% downpayment to start · Balance upon launch</p>
+      </div>
+      <div class="lp-reveal payment-methods">
+        {['GCash', 'Maya', 'BPI', 'BDO', 'UnionBank', 'Metrobank'].map(p => (
+          <div class="payment-badge">{p}</div>
+        ))}
+      </div>
     </div>
   </section>
 
@@ -356,7 +376,7 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3rem;">
         <div class="label" style="margin-bottom:1rem;">Client Reviews</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
-          Don't take our word for it.
+          Huwag kaming paniwalaan. Tingnan ang aming gawa.
         </h2>
       </div>
 
@@ -390,7 +410,7 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3.5rem;">
         <div class="label" style="margin-bottom:1rem;">How It Works</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
-          From brief to live in 7 days.
+          Mula brief hanggang live sa 7 araw.
         </h2>
       </div>
 
@@ -412,10 +432,10 @@ const faqs = [
   <div class="lp-mid-cta">
     <div class="lp-container" style="display:flex; align-items:center; justify-content:space-between; gap:1.5rem; flex-wrap:wrap;">
       <p style="margin:0; font-family:var(--font-display); font-size:1.15rem; font-weight:700; color:var(--white); letter-spacing:-0.02em;">
-        Convinced? Let's get you live in 7 days.
-        <span style="font-family:var(--font-body); font-weight:400; font-size:0.85rem; color:var(--gray-500); margin-left:0.6rem;">No commitment required.</span>
+        Convinced ka na? Gawing live ang website mo sa 7 araw.
+        <span style="font-family:var(--font-body); font-weight:400; font-size:0.85rem; color:var(--gray-500); margin-left:0.6rem;">Walang commitment required.</span>
       </p>
-      <a href="#get-started" class="lp-btn-primary" style="flex-shrink:0;">Claim Your Spot →</a>
+      <a href="#get-started" class="lp-btn-primary" style="flex-shrink:0;">Mag-inquire →</a>
     </div>
   </div>
 
@@ -425,7 +445,7 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3.5rem;">
         <div class="label" style="margin-bottom:1rem;">Why Choose Fazed Digital</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
-          Speed meets quality.
+          Bilis at kalidad. Sabay.
         </h2>
       </div>
 
@@ -433,23 +453,23 @@ const faqs = [
         {[
           {
             icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
-            title: '7x Faster',
-            body: 'The industry average is 6–8 weeks. We deliver in 7 days — without cutting corners on quality.',
+            title: '7x Mas Mabilis',
+            body: 'Ang industry average ay 6–8 linggo. Kami ay nagde-deliver sa 7 araw — nang hindi binababa ang kalidad.',
           },
           {
             icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>`,
-            title: 'Fixed Pricing',
-            body: 'No hourly rates, no scope creep surprises. One price, one timeline, everything included.',
+            title: 'Fixed na Presyo',
+            body: 'Walang hourly rates, walang scope creep. Isang presyo, isang timeline, lahat kasama.',
           },
           {
             icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>`,
             title: 'SEO-Ready',
-            body: 'Every page we build is optimised for search from day one — meta tags, schema, speed, and structure.',
+            body: 'Bawat page na ginagawa namin ay optimised para sa Google mula una pa — meta tags, schema, speed, at structure.',
           },
           {
             icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>`,
             title: 'Mobile-First',
-            body: 'Over 60% of web traffic is mobile. Every site we build looks and performs flawlessly on every device.',
+            body: 'Mahigit 60% ng web traffic ay galing sa mobile. Bawat site namin ay maganda at maayos sa lahat ng device.',
           },
         ].map(item => (
           <div class="lp-reveal why-card">
@@ -468,20 +488,21 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3rem;">
         <div class="label" style="margin-bottom:1rem;">Real Results</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
-          Sites we've shipped.
+          Mga website na naship na namin.
         </h2>
+        <p style="color:var(--gray-500); font-size:0.875rem; margin-top:0.75rem;">Iba't ibang industriya. Iisang kalidad.</p>
       </div>
 
       <div class="work-grid work-grid--4">
         {[
-          { img: '/images/work-aframing.jpg', title: 'A Framing Company', cat: 'Web Design + WordPress',        url: 'https://aframingcompany.com' },
-          { img: '/images/work-cleen.jpg',    title: 'Cleen & Green',     cat: 'Brand Identity + WordPress',    url: 'https://cleenandgreen.com' },
-          { img: '/images/work-crate.jpg',    title: 'CrateOnScene',      cat: 'MVP Platform Build (PWA)',       url: 'https://fazeddigital.com/work' },
-          { img: '/images/work-qldlaw.jpg',   title: 'QLD Law Group',     cat: 'Website + Web App + Mobile',    url: 'https://fazeddigital.com/work' },
-          { img: '/images/work-8drive.jpg',   title: '8Drive',            cat: 'Web App — Car Rental System',   url: 'https://fazeddigital.com/work' },
-          { img: '/images/work-canwell.jpg',  title: 'Canwell',           cat: 'Web Platform + Admin Portal',   url: 'https://fazeddigital.com/work' },
-          { img: '/images/work-uglq.jpg',     title: 'UGLQ',              cat: 'Membership Management Portal',  url: 'https://fazeddigital.com/work' },
-          { img: '/images/work-telecom.jpg',  title: 'The Telecom Shop',  cat: 'E-commerce Migration',          url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-aframing.jpg', title: 'A Framing Company', cat: 'Web Design + WordPress',       url: 'https://aframingcompany.com' },
+          { img: '/images/work-cleen.jpg',    title: 'Cleen & Green',     cat: 'Brand Identity + WordPress',   url: 'https://cleenandgreen.com' },
+          { img: '/images/work-crate.jpg',    title: 'CrateOnScene',      cat: 'MVP Platform Build (PWA)',      url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-qldlaw.jpg',   title: 'QLD Law Group',     cat: 'Website + Web App + Mobile',   url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-8drive.jpg',   title: '8Drive',            cat: 'Web App — Car Rental System',  url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-canwell.jpg',  title: 'Canwell',           cat: 'Web Platform + Admin Portal',  url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-uglq.jpg',     title: 'UGLQ',              cat: 'Membership Management Portal', url: 'https://fazeddigital.com/work' },
+          { img: '/images/work-telecom.jpg',  title: 'The Telecom Shop',  cat: 'E-commerce Migration',         url: 'https://fazeddigital.com/work' },
         ].map(w => (
           <a href={w.url} target="_blank" rel="noopener noreferrer" class="lp-reveal work-card" aria-label={`View ${w.title} project`}>
             <div class="work-card-img-wrap">
@@ -500,7 +521,7 @@ const faqs = [
 
       <div class="lp-reveal" style="text-align:center; margin-top:2.5rem;">
         <a href="https://fazeddigital.com/work" style="color:var(--gray-400); font-size:0.9rem; text-decoration:none; border-bottom:1px solid var(--border);">
-          See all our work →
+          Tingnan ang lahat ng aming gawa →
         </a>
       </div>
     </div>
@@ -512,7 +533,7 @@ const faqs = [
       <div class="lp-reveal" style="text-align:center; margin-bottom:3rem;">
         <div class="label" style="margin-bottom:1rem;">FAQ</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white);">
-          Common questions.
+          Mga madalas na tanong.
         </h2>
       </div>
 
@@ -538,23 +559,23 @@ const faqs = [
 
       <!-- Centered heading -->
       <div class="lp-reveal" style="text-align:center; max-width:640px; margin:0 auto 2.75rem;">
-        <div class="label" style="color:var(--accent); margin-bottom:1rem;">Limited Spots Available</div>
+        <div class="label" style="color:var(--accent); margin-bottom:1rem;">Limitadong Slots</div>
         <h2 style="font-family:var(--font-display); font-size:clamp(2rem,4vw,3rem); font-weight:700; letter-spacing:-0.025em; color:var(--white); line-height:1.1; margin-bottom:1.1rem;">
-          Ready to go live<br/>in 7 days?
+          Handa ka na bang<br/>mag-launch sa 7 araw?
         </h2>
         <p style="color:var(--gray-400); font-size:1rem; line-height:1.65; margin:0;">
-          Tell us about your project and we'll get back to you within one business day
-          with a confirmed start date. No commitment required.
+          Sabihin mo sa amin ang tungkol sa iyong project at babalik kami sa loob ng isang business day
+          na may confirmed start date. Walang commitment required.
         </p>
       </div>
 
       <!-- Trust pills row -->
       <div class="lp-reveal cta-pills">
         {[
-          '✓ No contracts or lock-ins',
-          '✓ Fixed price — no surprises',
-          '✓ 7-day delivery or 20% off',
-          '✓ Full ownership of your site',
+          '✓ Walang lock-in contract',
+          '✓ Fixed price — walang sorpresa',
+          '✓ 7-day delivery o 20% discount',
+          '✓ Full ownership ng iyong site',
         ].map(item => (
           <span class="cta-pill">{item}</span>
         ))}
@@ -567,7 +588,7 @@ const faqs = [
 
       <!-- Subtle email fallback -->
       <p class="lp-reveal" style="text-align:center; margin-top:1.75rem; font-size:0.82rem; color:var(--gray-600);">
-        Prefer email?&nbsp;
+        Mas gusto mag-email?&nbsp;
         <a href="mailto:info@fazeddigital.com" style="color:var(--gray-400); text-decoration:underline; text-underline-offset:3px;">info@fazeddigital.com</a>
       </p>
 
@@ -578,11 +599,12 @@ const faqs = [
   <footer style="border-top:1px solid var(--border); padding:1.5rem 0;">
     <div class="lp-container" style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:1rem;">
       <div style="font-size:0.8rem; color:var(--gray-600);">
-        © {new Date().getFullYear()} Fazed Digital. All rights reserved.
+        © {new Date().getFullYear()} Fazed Digital. All rights reserved. · Iligan City, Philippines
       </div>
-      <div style="display:flex; gap:1.5rem;">
+      <div style="display:flex; gap:1.5rem; flex-wrap:wrap;">
         <a href="https://fazeddigital.com" style="font-size:0.8rem; color:var(--gray-500); text-decoration:none;">Back to site</a>
         <a href="https://fazeddigital.com/work" style="font-size:0.8rem; color:var(--gray-500); text-decoration:none;">Our Work</a>
+        <a href="https://fazeddigital.com/lp/7-day-website" style="font-size:0.8rem; color:var(--gray-500); text-decoration:none;">USD Pricing</a>
         <a href="mailto:info@fazeddigital.com" style="font-size:0.8rem; color:var(--gray-500); text-decoration:none;">Contact</a>
       </div>
     </div>
@@ -634,7 +656,7 @@ const faqs = [
   function openFaq(item: HTMLDetailsElement) {
     const answer  = item.querySelector<HTMLElement>('.faq-answer')!;
     const chevron = item.querySelector<HTMLElement>('.faq-chevron');
-    item.open = true;                          // render content so scrollHeight is real
+    item.open = true;
     const target = answer.scrollHeight;
     gsap.fromTo(answer,
       { height: 0, opacity: 0 },
@@ -661,14 +683,12 @@ const faqs = [
       if (item.open) {
         closeFaq(item);
       } else {
-        // Close any open sibling first
         faqItems.forEach((other) => { if (other !== item && other.open) closeFaq(other); });
         openFaq(item);
       }
     });
   });
 
-  // Open first item without animation
   if (faqItems[0]) openFaq(faqItems[0]);
 </script>
 
@@ -761,6 +781,26 @@ const faqs = [
     background: var(--border);
   }
 
+  /* Payment methods */
+  .payment-methods {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+  .payment-badge {
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--gray-300);
+    background: rgba(255,255,255,0.03);
+    text-transform: uppercase;
+  }
+
   /* Pricing */
   .pricing-grid {
     display: grid;
@@ -805,7 +845,7 @@ const faqs = [
   .pricing-card-header { text-align: center; }
   .pricing-price {
     font-family: var(--font-display);
-    font-size: 3rem;
+    font-size: 2.6rem;
     font-weight: 700;
     color: var(--white);
     letter-spacing: -0.04em;
@@ -873,9 +913,7 @@ const faqs = [
     color: var(--gray-500);
     line-height: 1.55;
   }
-  .process-connector {
-    display: none;
-  }
+  .process-connector { display: none; }
 
   /* Why grid */
   .why-grid {
