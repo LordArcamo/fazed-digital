@@ -46,7 +46,7 @@ const PAGES = {
   'contact':      { label: 'Say Hello',                  title: 'Get In Touch',    desc: "Let's build something great together." },
   'blog':         { label: 'Insights & Resources',       title: 'Blog',            desc: 'Tips, trends, and stories from the Fazed Digital team.' },
   'lp-7day':      { label: '7-Day Website Package',      title: 'Live in 7 Days.', desc: 'Professional websites for small businesses. From $499.' },
-  'lp-7day-ph':   { label: '7-Day Website · PH Pricing', title: 'Live in 7 Days.', desc: 'Websites for Philippine businesses. From ₱19,999.' },
+  'lp-7day-ph':   { label: '7-Day Website · PH Pricing', title: 'Live in 7 Days.', desc: 'Websites for Philippine businesses. From PHP 19,999.' },
 };
 
 // ── Dot grid ──────────────────────────────────────────────────────────────────
