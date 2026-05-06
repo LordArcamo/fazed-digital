@@ -6,6 +6,7 @@ export interface Props {
   title: string;
   description: string;
   canonical?: string;
+  image?: string;
   schema?: object | object[];
 }
 
@@ -13,8 +14,11 @@ const {
   title,
   description,
   canonical = 'https://fazeddigital.com/lp/7-day-website',
+  image = '/og/lp-7day.png',
   schema,
 } = Astro.props;
+
+const ogImage = new URL(image, 'https://fazeddigital.com').toString();
 ---
 
 <!doctype html>
@@ -36,15 +40,20 @@ const {
   <meta property="og:url" content={canonical} />
   <meta property="og:title" content={title} />
   <meta property="og:description" content={description} />
-  <meta property="og:image" content="https://fazeddigital.com/og-image.jpg" />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={`${title} — Fazed Digital`} />
   <meta property="og:site_name" content="Fazed Digital" />
-  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale" content="en_PH" />
 
   <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:site" content="@fazeddigital" />
   <meta name="twitter:title" content={title} />
   <meta name="twitter:description" content={description} />
-  <meta name="twitter:image" content="https://fazeddigital.com/og-image.jpg" />
+  <meta name="twitter:image" content={ogImage} />
+  <meta name="twitter:image:alt" content={`${title} — Fazed Digital`} />
 
   <!-- Favicon -->
   <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
