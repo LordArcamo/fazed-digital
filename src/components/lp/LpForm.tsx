@@ -38,10 +38,16 @@ const INITIAL: FormData = {
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-const PACKAGES = [
-  { value: 'starter', name: 'Starter', price: '$499', tagline: 'New businesses getting online', features: ['5 custom pages', 'Mobile-responsive design', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
-  { value: 'growth',  name: 'Growth',  price: '$899', tagline: 'Best for growing small businesses', popular: true, features: ['8 custom pages', 'Custom design system', 'Advanced SEO', 'Blog + CMS setup', 'Google Analytics', '3 revision rounds', '7-day delivery'] },
-  { value: 'pro',     name: 'Pro',     price: '$1,499', tagline: 'For businesses ready to scale', features: ['10+ custom pages', 'Full brand integration', 'E-commerce ready', 'Performance < 2s', 'Unlimited revisions', 'Priority support', '7-day delivery'] },
+const PACKAGES_USD = [
+  { value: 'starter', name: 'Starter', price: '$499',    tagline: 'New businesses getting online',      features: ['5 custom pages', 'Mobile-responsive design', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+  { value: 'growth',  name: 'Growth',  price: '$899',    tagline: 'Best for growing small businesses',  popular: true, features: ['8 custom pages', 'Custom design system', 'Advanced SEO', 'Blog + CMS setup', 'Google Analytics', '3 revision rounds', '7-day delivery'] },
+  { value: 'pro',     name: 'Pro',     price: '$1,499',  tagline: 'For businesses ready to scale',      features: ['10+ custom pages', 'Full brand integration', 'E-commerce ready', 'Performance < 2s', 'Unlimited revisions', 'Priority support', '7-day delivery'] },
+];
+
+const PACKAGES_PHP = [
+  { value: 'starter', name: 'Starter', price: '₱19,999', tagline: 'New businesses getting online',      features: ['5 custom pages', 'Mobile-responsive design', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+  { value: 'growth',  name: 'Growth',  price: '₱34,999', tagline: 'Best for growing small businesses',  popular: true, features: ['8 custom pages', 'Custom design system', 'Advanced SEO', 'Blog + CMS setup', 'Google Analytics', '3 revision rounds', '7-day delivery'] },
+  { value: 'pro',     name: 'Pro',     price: '₱59,999', tagline: 'For businesses ready to scale',      features: ['10+ custom pages', 'Full brand integration', 'E-commerce ready', 'Performance < 2s', 'Unlimited revisions', 'Priority support', '7-day delivery'] },
 ];
 
 const INDUSTRIES = ['Restaurant & Food', 'Retail & Fashion', 'Professional Services', 'Healthcare & Wellness', 'Real Estate', 'E-commerce', 'Education', 'Construction & Trades', 'Beauty & Salon', 'Tech & Startups', 'Other'];
@@ -98,7 +104,8 @@ function StepHeading({ step, title, sub }: { step: number; title: string; sub: s
 }
 
 // ─── Main component ───────────────────────────────────────────────────────────
-export default function LpForm() {
+export default function LpForm({ variant = 'usd' }: { variant?: 'usd' | 'php' }) {
+  const PACKAGES = variant === 'php' ? PACKAGES_PHP : PACKAGES_USD;
   const wrapRef   = useRef<HTMLDivElement>(null);
   const stepRef   = useRef<HTMLDivElement>(null);
   const [step,    setStep]    = useState(1);
@@ -228,7 +235,7 @@ export default function LpForm() {
           We've received your brief and will reach out to <strong style={{ color: 'var(--white)' }}>{data.email}</strong> within one business day to confirm your start date.
         </p>
         <div style={{ marginTop: '0.5rem', padding: '1rem 1.5rem', background: 'var(--gray-900)', borderRadius: '0.625rem', border: '1px solid var(--border)', fontSize: '0.85rem', color: 'var(--gray-400)' }}>
-          📦 <strong style={{ color: 'var(--white)' }}>{PACKAGES.find(p => p.value === data.package)?.name}</strong> package · {PACKAGES.find(p => p.value === data.package)?.price}
+          📦 <strong style={{ color: 'var(--white)' }}>{PACKAGES.find((p: any) => p.value === data.package)?.name}</strong> package · {PACKAGES.find((p: any) => p.value === data.package)?.price}
         </div>
       </div>
     );
@@ -285,11 +292,11 @@ export default function LpForm() {
         )}
 
         <div ref={stepRef}>
-          {step === 1 && <Step1 data={data} set={set} />}
+          {step === 1 && <Step1 data={data} set={set} packages={PACKAGES} />}
           {step === 2 && <Step2 data={data} set={set} focus={focus} blur={blur} />}
           {step === 3 && <Step3 data={data} set={set} togglePage={togglePage} focus={focus} blur={blur} />}
           {step === 4 && <Step4 data={data} set={set} focus={focus} blur={blur} />}
-          {step === 5 && <Step5 data={data} set={set} focus={focus} blur={blur} />}
+          {step === 5 && <Step5 data={data} set={set} focus={focus} blur={blur} packages={PACKAGES} />}
         </div>
 
         {/* Navigation */}
@@ -343,12 +350,12 @@ export default function LpForm() {
 }
 
 // ─── Step 1: Package ──────────────────────────────────────────────────────────
-function Step1({ data, set }: { data: FormData; set: (f: keyof FormData, v: any) => void }) {
+function Step1({ data, set, packages }: { data: FormData; set: (f: keyof FormData, v: any) => void; packages: typeof PACKAGES_USD }) {
   return (
     <div>
       <StepHeading step={1} title="Choose your package." sub="Pick the plan that fits your business. You can always upgrade later." />
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-        {PACKAGES.map(pkg => {
+        {packages.map(pkg => {
           const active = data.package === pkg.value;
           return (
             <button key={pkg.value} type="button" onClick={() => set('package', pkg.value)} style={{
@@ -557,8 +564,8 @@ function Step4({ data, set, focus, blur }: { data: FormData; set: (f: keyof Form
 }
 
 // ─── Step 5: Review ───────────────────────────────────────────────────────────
-function Step5({ data, set, focus, blur }: { data: FormData; set: (f: keyof FormData, v: any) => void; focus: any; blur: any }) {
-  const pkg  = PACKAGES.find(p => p.value === data.package);
+function Step5({ data, set, focus, blur, packages }: { data: FormData; set: (f: keyof FormData, v: any) => void; focus: any; blur: any; packages: typeof PACKAGES_USD }) {
+  const pkg  = packages.find(p => p.value === data.package);
   const goal = GOALS.find(g => g.value === data.goal);
   const vibe = STYLE_VIBES.find(v => v.value === data.styleVibe);
 
