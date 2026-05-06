@@ -31,5 +31,5 @@ pnpm-debug.log*
 storybook-static/
 public/storybook/
 
-# local Claude settings (keep shared config out for now)
-.claude/settings.local.json
+# Claude Code (worktrees, launch config, local settings)
+.claude/
