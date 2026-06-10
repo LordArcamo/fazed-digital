@@ -5,4 +5,4 @@ Allow: /
 Disallow: /storybook/
 Disallow: /lp/
 
-Sitemap: https://fazeddigital.com/sitemap.xml
+Sitemap: https://fazeddigital.com/sitemap-index.xml

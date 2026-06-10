@@ -13,7 +13,7 @@ export interface Props {
 const {
   title = 'Fazed Digital — Bold Creative Agency',
   description = 'Fazed Digital builds bold identities that speak your story — visually and verbally. Web design, brand identity, SEO marketing, and digital product design.',
-  image = '/og-image.svg',
+  image = '/og/home.png',
   page = 'home',
   schema,
 } = Astro.props;
@@ -100,7 +100,7 @@ const canonical = new URL(Astro.url.pathname, Astro.site ?? 'https://fazeddigita
     "name": "Fazed Digital",
     "url": "https://fazeddigital.com",
     "logo": "https://fazeddigital.com/favicon.svg",
-    "image": "https://fazeddigital.com/og-image.svg",
+    "image": "https://fazeddigital.com/og/home.png",
     "email": "info@fazeddigital.com",
     "telephone": "+639221234567",
     "address": {

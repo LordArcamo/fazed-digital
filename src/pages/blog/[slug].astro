@@ -182,8 +182,9 @@ const { title, category, date, readTime, author, authorRole, authorPhoto, image,
         "url": "https://fazeddigital.com",
         "logo": { "@type": "ImageObject", "url": "https://fazeddigital.com/favicon.svg" }
       },
-      "datePublished": date,
-      "image": "https://fazeddigital.com/og-image.svg",
+      "datePublished": new Date(date).toISOString(),
+      "dateModified": new Date(date).toISOString(),
+      "image": image,
       "url": `https://fazeddigital.com/blog/${slug}`,
       "mainEntityOfPage": { "@type": "WebPage", "@id": `https://fazeddigital.com/blog/${slug}` },
       "keywords": category

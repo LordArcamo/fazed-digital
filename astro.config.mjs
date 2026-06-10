@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import react from '@astrojs/react';
+import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel/serverless';
 
 export default defineConfig({
@@ -7,7 +8,16 @@ export default defineConfig({
   output: 'hybrid',
   adapter: vercel({ functionPerRoute: false }),
 
-  integrations: [react()],
+  integrations: [
+    react(),
+    sitemap({
+      // Keep paid/landing pages and storybook out of the organic index
+      filter: (page) => !page.includes('/lp/') && !page.includes('/storybook/'),
+      changefreq: 'weekly',
+      priority: 0.7,
+      lastmod: new Date(),
+    }),
+  ],
   site: 'https://fazeddigital.com',
   compressHTML: true,
 
