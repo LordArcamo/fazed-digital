@@ -196,7 +196,7 @@ export default function ContactSection() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
               {[
                 { label: 'Email',    val: 'info@fazeddigital.com', href: 'mailto:info@fazeddigital.com' },
-                { label: 'Phone',    val: '+63 922 123 4567',        href: 'tel:+639221234567' },
+                { label: 'Phone',    val: '+63 906 825 3451',        href: 'tel:+639068253451' },
                 { label: 'Location', val: 'Iligan City, Lanao del Norte, PH' },
               ].map(({ label, val, href }) => (
                 <div key={label}>

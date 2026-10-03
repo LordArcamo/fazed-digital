@@ -210,6 +210,6 @@ Case study data is hardcoded in `src/pages/work/[slug].astro`. SVG mockup images
 ## Content Notes
 - Agency based in **Iligan City, Philippines**
 - Coordinates: `8.2280° N · 124.2452° E`
-- Contact: `info@fazeddigital.com` · `+63 922 123 4567`
+- Contact: `info@fazeddigital.com` · `+63 906 825 3451`
 - Business hours: Mon–Fri 8:30am–5:00pm
 - Blog posts and work case studies are currently hardcoded arrays (no CMS)
