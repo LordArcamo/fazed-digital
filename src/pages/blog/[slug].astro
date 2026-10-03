@@ -9,6 +9,40 @@ import MagneticButton from '../../components/MagneticButton';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'google-analytics-4-small-business',
+      title: "Google Analytics 4 for Small Businesses: What to Track and How to Set It Up",
+      category: 'Development',
+      date: '03 Oct 2026',
+      readTime: '4 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: 'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Most small businesses install Google Analytics and never look at it again. Here's how to set up GA4 properly and track the numbers that actually matter.",
+      content: `
+        <p>Most small businesses have Google Analytics installed on their website. Far fewer actually use it. They see the dashboard, feel overwhelmed by the data, and close the tab. GA4 — Google's current analytics platform — is more powerful than its predecessor, but it takes some setup to make it useful. Here is the practical guide to getting GA4 working for your business, from first install to a monthly review routine that takes less than 20 minutes.</p>
+        <h2>Why GA4 matters for your business</h2>
+        <p>In 2023, Google retired Universal Analytics, its previous platform. GA4 uses a different data model built on events rather than sessions, which means it tracks user behaviour in more detail and across devices more accurately. More importantly for small businesses: it is free, and it tells you where your customers are coming from, what they do on your site, and whether they take action. Without it, you are running a business with no feedback loop on your most important sales channel.</p>
+        <h2>How to set up GA4 in under 30 minutes</h2>
+        <p>Go to analytics.google.com and sign in with your Google account. Create a new GA4 property, enter your website URL, and set your time zone and currency to match your location. Under Data Collection, create a Web Data Stream and copy the Measurement ID — it starts with G- followed by a string of letters and numbers.</p>
+        <p>On WordPress, install the free Google Site Kit plugin and connect your Analytics account through it; it handles the tracking code automatically. On other platforms, paste the Global Site Tag into the head section of every page, or use Google Tag Manager to deploy it without touching code. Verify it is working: visit your own website, then check the Realtime report in GA4. If you see at least one active user, data is flowing correctly.</p>
+        <h2>The five reports that actually matter</h2>
+        <p>GA4 has dozens of reports. Most small businesses need five. <strong>Acquisition</strong> shows where visitors come from: organic search, social media, direct traffic, or referrals from other sites. <strong>Engagement</strong> shows which pages people read and how long they stay. <strong>Conversions</strong> tracks the specific actions you care about, such as form submissions or phone number clicks. <strong>Demographics</strong> reveals the location, age range, and device type of your visitors. And <strong>Realtime</strong> lets you watch live activity, useful when checking that a new campaign or post is driving traffic.</p>
+        <p>Everything else in GA4 is advanced segmentation that you will not need until your traffic volume justifies it. Start with these five and review them consistently before adding complexity.</p>
+        <h2>Setting up conversion tracking</h2>
+        <p>This is the step most small businesses skip, and it is the most important one. By default, GA4 automatically tracks some events — scrolls, outbound clicks, file downloads. But it does not know which events matter to your business.</p>
+        <p>If your goal is form submissions, mark your thank-you page as a conversion event or use Google Tag Manager to fire an event when the form submits. If it is phone calls, create a conversion event for clicks on your phone number link. In GA4, go to Configure, then Events, find the events relevant to your goals, and toggle them as conversions. This single step transforms raw website activity into actual business data.</p>
+        <h2>Common GA4 mistakes that skew your data</h2>
+        <p><strong>Not filtering your own traffic.</strong> Every time you visit your own website, you are counted as a user, which inflates numbers and distorts your data. In GA4, go to Admin, Data Streams, then Configure Tag Settings, and define your IP address as internal traffic to exclude it from reports.</p>
+        <p><strong>Installing analytics too late.</strong> GA4 has no retroactive capability — it collects data only from the moment it is installed. On a new site, add GA4 before launch so your baseline starts on day one. Installing it three months after launch means those first three months are gone forever.</p>
+        <p><strong>Watching sessions instead of conversions.</strong> Traffic numbers feel meaningful but rarely tell you whether the site is working. Focus on conversion rate — the percentage of visitors who take the action you want — rather than raw visitor counts. A site with 500 monthly visitors and a 4% conversion rate is more valuable than one with 2,000 visitors and a 0.5% rate.</p>
+        <h2>A 15-minute monthly review routine</h2>
+        <p>Open GA4 on the same day each month and check three things. First, where is traffic growing or declining compared to last month, and why? A spike in organic traffic often means a page is starting to rank on Google; a drop in direct traffic might mean your offline marketing has slowed. Second, which pages have the lowest engagement rates? A service page with a high bounce rate and low engagement usually signals a messaging or design problem worth addressing. Third, how many conversions happened, and which channels drove them?</p>
+        <p>Over time, this data shapes every decision: which content to produce, which pages to improve, which channels to invest in. A website without analytics is a guessing game. With 15 minutes a month and GA4 set up correctly, it becomes a system you can actually improve.</p>
+        <p>Every site built through our <a href="/lp/7-day-website">7-Day Website Package</a> includes GA4 installed and configured from day one, with conversion tracking set up for your contact form so you start collecting meaningful data immediately.</p>
+      `,
+    },
+    {
       slug: 'web-design-pricing-guide',
       title: "How Much Should a Website Cost? A Transparent Pricing Guide for Small Businesses",
       category: 'Strategy',
