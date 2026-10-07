@@ -9,6 +9,39 @@ import MagneticButton from '../../components/MagneticButton';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'website-accessibility-guide',
+      title: "Website Accessibility for Small Businesses: What It Is, Why It Matters, and How to Start",
+      category: 'Development',
+      date: '07 Oct 2026',
+      readTime: '5 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: 'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Inaccessible websites lock out 15% of potential customers and carry growing legal risk. Here's a practical accessibility guide for small business owners.",
+      content: `
+        <p>Accessibility is consistently the last thing on a small business owner's web design brief, usually because it is assumed to be a concern for large organisations or government agencies. That assumption is wrong, and it has a cost. Approximately 15% of the world's population lives with some form of disability — visual, hearing, motor or cognitive. When a website is inaccessible, that is not a technical abstraction: it is a real group of potential customers who cannot read your services, fill in your contact form, or find your phone number. Fixing that is not as complicated as it sounds. Most small business websites can address their most significant accessibility failures with a handful of targeted, low-cost improvements.</p>
+        <h2>What web accessibility actually means</h2>
+        <p>It is not only screen readers and blind users. Web accessibility covers a wide spectrum: users with low vision who increase browser text size, users with motor impairments who navigate with a keyboard instead of a mouse, users with cognitive disabilities who rely on clear and consistent layouts, and users who are temporarily impaired — a broken arm, bright sunlight on a phone screen, or a noisy environment where they cannot listen to audio. The governing technical standard is the Web Content Accessibility Guidelines (WCAG), currently at version 2.1. <strong>WCAG 2.1 Level AA is the practical target for most businesses</strong> — it is the level referenced by most legal frameworks and the level that developers, browsers, and assistive technology universally understand.</p>
+        <h2>The business case: beyond doing the right thing</h2>
+        <p>Serving 15% of potential customers better is reason enough. But accessible websites also rank better on Google. Alt text on images, clear heading structure, keyboard-navigable menus and fast load times are all signals Google uses to evaluate page quality. Many WCAG fixes overlap directly with core SEO fundamentals: descriptive links, logical page structure, legible text, and proper semantic HTML all help both search engines and assistive technology.</p>
+        <p>Accessibility improvements also benefit all users, not just those with disabilities. Subtitles help in loud environments. High-contrast text is easier to read in sunlight. Clear layouts are faster to scan for everyone. The legal risk is also growing: accessibility lawsuits and regulatory requirements are increasing across the US, Europe, and Australia, and the trend is not reversing.</p>
+        <h2>The five most common failures on small business websites</h2>
+        <p>Most accessibility audits on small business sites surface the same problems repeatedly. Fix these five and you will resolve the majority of real barriers.</p>
+        <p><strong>Missing alt text on images.</strong> Every meaningful image on your site needs an alt attribute describing its content. Decorative images should carry alt="" so screen readers skip them. An image of your product with no alt text is invisible to a visually impaired user — and to Google.</p>
+        <p><strong>Insufficient colour contrast.</strong> WCAG requires a contrast ratio of at least 4.5:1 between body text and its background. Many small business websites use light grey text on white — visually subtle, but failing the standard and hard to read for anyone with reduced vision. Test your text contrast with a free contrast checker before your site launches.</p>
+        <p><strong>Unlabelled form fields.</strong> A form input associated with a label only by visual proximity — not by HTML markup — has no accessible label for screen readers. Use proper label elements linked to their corresponding input fields so assistive technology can describe what each field is for.</p>
+        <p><strong>Vague link text.</strong> Links that read "click here" or "learn more" give no context to a user navigating by screen reader, which typically lists all links on a page independently of surrounding text. "Download the pricing guide" or "Book a free strategy call" describe the destination clearly and work in any context.</p>
+        <p><strong>No keyboard navigation.</strong> Every interactive element — menus, buttons, forms, modals — should be reachable and usable with the Tab key alone, with a visible focus indicator showing where the keyboard is. Try navigating your website without a mouse. If you cannot complete your contact form using only Tab, Enter and arrow keys, your site has a real barrier affecting a significant number of users.</p>
+        <h2>Free tools to find your issues right now</h2>
+        <p>You do not need specialist software to start. The <strong>WAVE Web Accessibility Evaluator</strong> is a free browser extension that overlays errors and warnings directly on your own site within seconds. <strong>Google Lighthouse</strong>, built into Chrome DevTools under the Audits tab, includes an accessibility score alongside its performance audit and gives specific, actionable recommendations. <strong>axe DevTools</strong> has a free browser extension version that surfaces WCAG 2.1 failures with clear explanations and links to fixes. And the keyboard test above costs nothing and reveals real issues immediately — no tools required.</p>
+        <h2>How to start without feeling overwhelmed</h2>
+        <p>Accessibility is a spectrum, not a binary. Do not wait until you can address every WCAG criterion before starting. <strong>Fix colour contrast and missing alt text first.</strong> These two issues alone account for the majority of WCAG failures on most small business sites, and both are quick to resolve without touching your site's code structure. Then address form labels and link text. Then test keyboard navigation and fix what is broken. That sequence handles the most critical barriers without requiring a full rebuild.</p>
+        <p>Build it into your process going forward. When a developer adds an image, they add alt text. When a designer picks a colour combination, they check the contrast ratio. Accessibility fails silently when it is treated as a periodic audit exercise rather than a standard practice on every new piece of work.</p>
+        <p>An accessible website is a better website — clearer to read, easier to navigate, faster to rank, and open to more potential customers. Every improvement you make extends your reach. Every site we build through our <a href="/lp/7-day-website">7-Day Website Package</a> ships with semantic HTML, proper alt text, accessible colour contrast, and keyboard-navigable components as standard — not as an add-on.</p>
+      `,
+    },
+    {
       slug: 'link-building-small-business',
       title: "Link Building for Small Businesses: How to Earn Backlinks That Actually Improve Your Rankings",
       category: 'SEO',
