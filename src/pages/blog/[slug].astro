@@ -9,6 +9,41 @@ import MagneticButton from '../../components/MagneticButton';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'schema-markup-small-business',
+      title: "Schema Markup for Small Businesses: How Structured Data Gets You More Clicks on Google",
+      category: 'SEO',
+      date: '10 Oct 2026',
+      readTime: '5 min read',
+      author: 'Russel Heyrana',
+      authorRole: 'Marketing Director',
+      authorPhoto: '/images/team-russel.jpeg',
+      image: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Most websites rank without rich results and lose clicks to lower-ranked competitors. Here's how schema markup works and which types actually move the needle for small businesses.",
+      content: `
+        <p>Most small business websites show up in Google as a plain blue link with a short description. Some show up with star ratings, FAQ dropdowns, or review counts directly in the search results. That second version earns significantly more clicks — an average of 20 to 30 percent more than a plain result, even when it ranks lower. The difference is schema markup: a small amount of structured data added to your website that tells Google exactly what your page contains. It does not replace solid SEO fundamentals. It amplifies them. And for small businesses, the types of schema that deliver the most impact are surprisingly straightforward to implement.</p>
+        <h2>What schema markup actually is</h2>
+        <p>Schema markup is code added to your website's HTML — in a format called JSON-LD — that labels your content for search engines. It is not visible to visitors; it is read by Google's crawlers. Think of it as a translation layer: instead of Google having to infer what "Mon–Fri 8:30–5:00" means, a LocalBusiness schema explicitly tells it these are your operating hours. Instead of guessing that the stars on your page are customer reviews, a Review schema confirms it. Google uses that precision to build rich results — the enhanced search listings that include stars, FAQs, prices, or event dates — which stand out visually against plain results and consistently earn higher click-through rates from the same ranking position.</p>
+        <h2>The five schema types that matter most for small businesses</h2>
+        <p>Not all schema types deliver real return for the effort. These five do.</p>
+        <p><strong>LocalBusiness</strong> schema is the highest priority for any business serving a specific area. It specifies your exact name, address, phone number, opening hours, and service area — the same signals Google uses for Map Pack ranking. Combining LocalBusiness schema with an optimised Google Business Profile strengthens your local authority across both organic results and maps.</p>
+        <p><strong>FAQ</strong> schema lets you mark up a question-and-answer section on your page. When Google picks it up, your search result expands to show two or three accordion-style FAQs directly beneath your listing — occupying significantly more screen space and addressing objections before the visitor clicks. A services page with three well-chosen questions (Is this available in your city? How long does it take? What does it cost?) can substantially improve qualified click-through rates.</p>
+        <p><strong>Review</strong> schema marks up the aggregate ratings from your page — your star score and review count — so they appear as stars directly in the search result. A result showing five stars and 47 reviews in Google attracts clicks that plain results simply do not.</p>
+        <p><strong>BreadcrumbList</strong> schema tells Google the hierarchy of your page within your site. This shows the URL as a navigational path in the result — "yoursite.com › services › web-design" — which communicates site structure and reassures visitors that they will land in the right place.</p>
+        <p><strong>Article</strong> schema is valuable for blog posts. It confirms the author, publication date, and content type, which supports inclusion in Google's Top Stories carousel and article rich results for relevant queries. If you publish regular content, this schema type compounds over time.</p>
+        <h2>How to add schema markup to your website</h2>
+        <p>The recommended method is JSON-LD: a script block added to the head section of your page HTML. It sits alongside your content invisibly and defines your business properties in a structured format Google reads reliably. You do not need to modify your visible page content at all.</p>
+        <p>On WordPress, the free Rank Math and Yoast SEO plugins generate LocalBusiness, Article, and FAQ schema automatically from your page content and plugin settings — no code required for most types. On a custom-built site, the JSON-LD block goes directly into the page template head. Google's own Structured Data Markup Helper lets you highlight elements on your live page and auto-generate schema code from them — a practical zero-code starting point for business owners without a developer on hand.</p>
+        <p><strong>One important constraint:</strong> only mark up content that genuinely appears on the page. Schema that describes content the page does not contain is a Google policy violation and can result in a manual penalty that removes your rich results entirely. If your FAQ schema lists questions not actually shown on the page, remove it before it goes live.</p>
+        <h2>Testing your schema before it goes live</h2>
+        <p>Google provides two free tools to validate your markup. The <strong>Rich Results Test</strong> (search.google.com/test/rich-results) takes a URL or a code snippet and tells you which rich result types your page qualifies for and whether any errors prevent them from displaying. The <strong>Schema Markup Validator</strong> (validator.schema.org) checks your code structure against the full schema.org specification and surfaces property-level errors.</p>
+        <p>Test both tools after any schema implementation. Common errors include missing required properties — LocalBusiness requires at minimum @type, name, address, and telephone — incorrectly formatted phone numbers (Google expects international format: +639068253451), and mismatched @type values. A schema block with errors earns no rich result at all, so fixing errors before the next Google crawl is essential.</p>
+        <h2>What to expect — and how long it takes</h2>
+        <p>Adding schema markup does not change your ranking position. It changes what your result looks like when it ranks. The typical timeline: Google re-crawls your updated pages within a few days to two weeks. Eligibility for rich results then shows in Google Search Console under the Enhancements tab — look for FAQ or Review result types appearing as new report entries. Most businesses see the enhanced display within four to six weeks of a correct, error-free implementation.</p>
+        <p>The impact on click-through rate can be significant. <strong>A page that gained FAQ rich results at rank four often generates as many clicks as the same page would at rank two without them.</strong> Schema is not a shortcut around building domain authority — it is the layer that makes your existing SEO investment work harder in the listings where the decision to click or keep scrolling is made in under two seconds.</p>
+        <p>Start with LocalBusiness schema on your homepage and primary service pages, then add FAQ schema to the pages where you already answer customer questions. Run the Rich Results Test on each one. Fix any errors. Then check your Search Console Enhancements reports monthly to confirm the rich results are appearing. It is one of the highest return-on-time SEO investments a small business can make. Every website we build through our <a href="/lp/7-day-website">7-Day Website Package</a> ships with LocalBusiness, BreadcrumbList, and Article schema correctly implemented from day one — so structured data works in your favour from the moment you launch.</p>
+      `,
+    },
+    {
       slug: 'brand-voice-guide',
       title: "Brand Voice for Small Businesses: How to Define How Your Business Communicates",
       category: 'Branding',
