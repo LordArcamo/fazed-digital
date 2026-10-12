@@ -9,6 +9,43 @@ import MagneticButton from '../../components/MagneticButton';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'web-hosting-small-business-guide',
+      title: "Web Hosting for Small Businesses: How to Choose the Right Plan and Protect Your SEO",
+      category: 'Development',
+      date: '12 Oct 2026',
+      readTime: '5 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: 'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Bad hosting silently kills your website speed, uptime, and search rankings. Here's how to choose a web host that actually supports your business goals.",
+      content: `
+        <p>The web hosting decision is one most small businesses make once and rarely revisit — until something goes wrong. A server outage on a Monday morning, a website that loads in seven seconds on mobile, or a hacked WordPress site that Google has flagged as unsafe: these are all hosting problems wearing different masks. Your choice of hosting provider directly affects your website's speed, reliability, and security — and through each of those, your SEO rankings and your ability to convert visitors. Making the right choice is not complicated once you understand what you are actually paying for.</p>
+        <h2>The four types of hosting and when each makes sense</h2>
+        <p><strong>Shared hosting</strong> is the entry level: your website shares server resources — CPU, memory, storage — with hundreds of other sites on the same machine. It is cheap (typically $2–8/month) and adequate for very low-traffic websites that do not need to perform. The problem is contention: when a neighbouring site on your shared server experiences a traffic spike, your site slows down too. Shared hosting also comes with less isolation from your neighbours' security issues.</p>
+        <p><strong>VPS (Virtual Private Server) hosting</strong> gives your website a dedicated slice of a server with guaranteed CPU and memory that do not fluctuate based on your neighbours. This is the right tier for most established small business websites — fast, reliable, and affordable at $15–40/month. <strong>VPS hosting is the practical sweet spot for most small businesses that are serious about performance.</strong></p>
+        <p><strong>Managed WordPress hosting</strong> (WP Engine, Kinsta, SiteGround's managed plans) handles all server maintenance, security updates, and performance tuning for you. More expensive at $20–60/month for entry plans, but it eliminates technical overhead entirely. If your site runs WordPress and your team has no in-house developer, this is the most practical choice.</p>
+        <p><strong>Cloud hosting</strong> (Google Cloud, AWS, DigitalOcean) scales automatically: resources expand during traffic spikes and contract when traffic drops. Technically the most flexible, but requires configuration knowledge. For most small businesses, managed VPS or managed WordPress hosting delivers better value with less complexity.</p>
+        <h2>The specs that actually matter</h2>
+        <p>Bandwidth limits, email account counts, and "unlimited" storage are marketing numbers. The specifications that actually affect your website's performance are different.</p>
+        <p><strong>Server response time (TTFB — Time to First Byte)</strong> measures how quickly the server starts sending data to a visitor's browser. A TTFB under 200ms is good; over 600ms is a problem that no amount of frontend optimisation can fully compensate for. Many budget shared hosts consistently return TTFBs of 800ms–2,000ms on basic plans.</p>
+        <p><strong>Uptime SLA</strong> tells you how much downtime the host guarantees. 99.9% uptime means roughly 8.7 hours of downtime per year; 99.99% means 52 minutes. Ask to see the host's historical uptime data — not just the promise in the brochure.</p>
+        <p><strong>Data centre location</strong> affects latency for your visitors. A server in Singapore serves a Philippine visitor significantly faster than one in New York. For businesses primarily serving Philippine customers, choose a host with data centres in Singapore, Tokyo, or Sydney. Vultr, DigitalOcean, and AWS all have Singapore nodes.</p>
+        <h2>How hosting directly affects your Google rankings</h2>
+        <p>Google's Core Web Vitals — the page experience signals that influence rankings — are directly affected by hosting quality. The Largest Contentful Paint metric, which measures how quickly your main content appears, is heavily influenced by server response time. You can implement every performance best practice correctly and still fail Core Web Vitals if your server itself is slow.</p>
+        <p>Uptime also matters for crawlability. Googlebot crawls your site periodically; if it encounters repeated server errors during those crawl windows, Google reduces its crawl frequency and may lower your site's ranking confidence. A site that is regularly inaccessible looks unreliable to Google's systems, not just to your visitors.</p>
+        <p><strong>HTTPS is a Google ranking signal</strong>, and every quality host now includes a free SSL certificate via Let's Encrypt. Any host that charges extra for SSL in 2026 is behind the times. Verify your certificate is active and renewing automatically — an expired SSL certificate takes your site offline without warning.</p>
+        <h2>Red flags in cheap hosting offers</h2>
+        <p>"Unlimited everything" is a marketing term, not a technical guarantee. Shared hosts enforce resource limits in their terms of service — exceed them and your account gets throttled or suspended. Read the terms before you sign.</p>
+        <p>No refund window is a meaningful signal. Reputable hosts offer a 30-day money-back guarantee because they are confident in their product. A host that offers no trial period has less confidence in yours. <strong>Support quality also degrades noticeably at the cheapest tier.</strong> Before committing, send a pre-sales support question and judge the response time and quality of the answer.</p>
+        <p>Location vagueness — "servers in the cloud" or "global servers" without specifics — often means overcrowded US-East infrastructure that serves Philippine visitors slowly. Ask directly: where are your servers, and what is the expected TTFB from Manila?</p>
+        <h2>What to budget — and Philippines-specific context</h2>
+        <p>For most small Philippine businesses, a managed WordPress plan or quality VPS from providers like SiteGround, Vultr, or DigitalOcean represents the right balance of performance and cost. Budget ₱800–2,500 per month (approximately $15–45) for a plan that genuinely performs. Below ₱400/month, you are almost certainly on infrastructure that will slow your site, hurt your SEO, and cost more in developer time fixing problems than you saved on hosting.</p>
+        <p>Local Philippine hosting providers can be cost-effective and offer local support, but evaluate them on the same technical criteria: TTFB benchmarks, uptime history, Singapore or Asia-Pacific data centres, and SSL included as standard. Do not choose based on price alone — the cheapest option almost always becomes the most expensive one when you factor in lost leads from a slow or unreliable site.</p>
+        <p>Hosting is infrastructure. Like a physical location for a brick-and-mortar shop, the quality of your foundation shapes everything built on top of it. Every site built through our <a href="/lp/7-day-website">7-Day Website Package</a> is deployed on quality hosting with Singapore data centres, SSL configured, and performance validated before handover — so your launch starts on solid ground.</p>
+      `,
+    },
+    {
       slug: 'website-navigation-design',
       title: "Website Navigation Design: How to Structure Your Menu So Visitors Never Get Lost",
       category: 'Design',
