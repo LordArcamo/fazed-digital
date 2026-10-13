@@ -395,16 +395,65 @@ const posts = [
   },
 ];
 
-const featured = posts.find(p => p.featured)!;
-const rest = posts.filter(p => !p.featured);
-const categories = ['All', ...new Set(posts.map(p => p.category))];
+// Author headshots (for card trust signals) — falls back to initials if missing
+const authorPhotos: Record<string, string> = {
+  'Lord Arcamo':     '/images/team-lord.jpeg',
+  'Russel Heyrana':  '/images/team-russel.jpeg',
+  'Justin Sumaya':   'https://fazeddigital.com/wp-content/uploads/2026/04/151652330_3908937289163068_8338977159966182887_n-450x450.jpg',
+  'Reancirl Balaba': 'https://fazeddigital.com/wp-content/uploads/2026/04/117749302_4540601115965165_6039017566881807039_n-450x450.jpg',
+};
+
+// Always feature the newest post and show the grid newest-first (freshness = attention + SEO)
+const sorted   = [...posts].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+const featured = sorted[0];
+const rest     = sorted.slice(1);
+const categories = ['All', ...new Set(sorted.map(p => p.category))];
+
+// ── JSON-LD: Blog + BlogPosting list (AI SEO / AEO — lets engines enumerate & cite posts) ──
+const blogSchema = {
+  "@context": "https://schema.org",
+  "@type": "Blog",
+  "name": "Fazed Digital Blog",
+  "description": "Practical insights on web design, brand identity, SEO, and digital strategy for small businesses in the Philippines and beyond.",
+  "url": "https://fazeddigital.com/blog",
+  "inLanguage": "en",
+  "publisher": {
+    "@type": "Organization",
+    "name": "Fazed Digital",
+    "url": "https://fazeddigital.com",
+    "logo": { "@type": "ImageObject", "url": "https://fazeddigital.com/favicon.svg" }
+  },
+  "blogPost": sorted.map(p => ({
+    "@type": "BlogPosting",
+    "headline": p.title,
+    "description": p.excerpt,
+    "url": `https://fazeddigital.com/blog/${p.slug}`,
+    "datePublished": new Date(p.date).toISOString(),
+    "dateModified": new Date(p.date).toISOString(),
+    "author": { "@type": "Person", "name": p.author, "worksFor": { "@type": "Organization", "name": "Fazed Digital" } },
+    "image": p.image,
+    "articleSection": p.category,
+    "keywords": p.category,
+    "mainEntityOfPage": { "@type": "WebPage", "@id": `https://fazeddigital.com/blog/${p.slug}` }
+  }))
+};
+
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fazeddigital.com" },
+    { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fazeddigital.com/blog" }
+  ]
+};
 ---
 
 <Layout
-  title="Blog — Insights on Design, SEO & Digital | Fazed Digital"
-  description="Practical insights on web design, brand identity, SEO, and digital strategy from the Fazed Digital team. No fluff, just useful thinking."
+  title="Blog — Web Design, SEO & Branding Insights | Fazed Digital"
+  description="Practical, no-fluff guides on web design, branding, SEO and digital strategy for small businesses in the Philippines. New insights from the Fazed Digital team every week."
   image="/og/blog.png"
   page="blog"
+  schema={[blogSchema, breadcrumbSchema]}
 >
   <Cursor client:only="react" />
   <Nav client:only="react" currentPath="/blog" />
@@ -454,8 +503,11 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
           <div style="aspect-ratio: 16/10; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
             <img
               src={featured.image}
-              alt={featured.title}
+              alt={`${featured.title} — ${featured.category} insights from Fazed Digital`}
+              width="800"
+              height="500"
               loading="eager"
+              fetchpriority="high"
               decoding="async"
               style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.6s ease;"
               onmouseover="this.style.transform='scale(1.04)'"
@@ -473,11 +525,26 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
             <p style="color: var(--gray-400); line-height: 1.7; margin-bottom: 2rem;">
               {featured.excerpt}
             </p>
-            <div style="display: flex; align-items: center; gap: 1.5rem;">
-              <span class="label">{featured.date}</span>
-              <span class="label">{featured.readTime}</span>
-              <span style="font-family: var(--font-body); font-size: 0.875rem; color: var(--white); font-weight: 500;">Read Article →</span>
+            <div style="display: flex; align-items: center; gap: 0.85rem; margin-bottom: 1.75rem;">
+              <span style="position: relative; width: 36px; height: 36px; border-radius: 50%; overflow: hidden; background: var(--gray-800); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border);">
+                <span style="font-family: var(--font-display); font-size: 0.85rem; font-style: italic; color: var(--accent);">{featured.author.charAt(0)}</span>
+                <img
+                  src={authorPhotos[featured.author]}
+                  alt={featured.author}
+                  width="36"
+                  height="36"
+                  loading="eager"
+                  decoding="async"
+                  onerror="this.style.display='none'"
+                  style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top;"
+                />
+              </span>
+              <div style="display: flex; flex-direction: column;">
+                <span style="font-size: 0.85rem; color: var(--white); font-weight: 600; line-height: 1.2;">{featured.author}</span>
+                <span class="label">{featured.date} · {featured.readTime}</span>
+              </div>
             </div>
+            <span style="font-family: var(--font-body); font-size: 0.9rem; color: var(--accent); font-weight: 600;">Read Article →</span>
           </div>
         </a>
       </div>
@@ -515,7 +582,9 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
               <div style="aspect-ratio: 16/9; border-radius: 0.5rem; overflow: hidden; border: 1px solid var(--gray-700);">
                 <img
                   src={post.image}
-                  alt={post.title}
+                  alt={`${post.title} — ${post.category} insights from Fazed Digital`}
+                  width="800"
+                  height="500"
                   loading="lazy"
                   decoding="async"
                   style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; transition: transform 0.5s ease;"
@@ -534,9 +603,24 @@ const categories = ['All', ...new Set(posts.map(p => p.category))];
               <p class="small" style="color: var(--gray-500); line-height: 1.65; flex-grow: 1;">
                 {post.excerpt}
               </p>
-              <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 1rem; border-top: 1px solid var(--border);">
-                <span class="label">{post.author}</span>
-                <span class="label">{post.readTime}</span>
+              <div style="display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+                <div style="display: flex; align-items: center; gap: 0.6rem; min-width: 0;">
+                  <span style="position: relative; width: 28px; height: 28px; border-radius: 50%; overflow: hidden; background: var(--gray-800); display: flex; align-items: center; justify-content: center; flex-shrink: 0; border: 1px solid var(--border);">
+                    <span style="font-family: var(--font-display); font-size: 0.7rem; font-style: italic; color: var(--accent);">{post.author.charAt(0)}</span>
+                    <img
+                      src={authorPhotos[post.author]}
+                      alt={post.author}
+                      width="28"
+                      height="28"
+                      loading="lazy"
+                      decoding="async"
+                      onerror="this.style.display='none'"
+                      style="position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center top;"
+                    />
+                  </span>
+                  <span style="font-family: var(--font-body); font-size: 0.78rem; color: var(--gray-300); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">{post.author}</span>
+                </div>
+                <span class="label" style="flex-shrink: 0;">{post.readTime}</span>
               </div>
             </a>
           ))}
