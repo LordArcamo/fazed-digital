@@ -12,6 +12,7 @@ const cols = {
     { label: 'SEO Marketing', href: '/services#seo' },
     { label: 'Product Design', href: '/services#product' },
     { label: 'Custom Systems', href: '/services#systems' },
+    { label: '7-Day Website', href: '/lp/7-day-website' },
   ],
   Company: [
     { label: 'About',   href: '/about' },
@@ -77,6 +78,20 @@ export default function Footer() {
             </p>
             <a href="mailto:info@fazeddigital.com" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.78rem', color: 'var(--accent)', letterSpacing: '0.06em' }}>
               info@fazeddigital.com
+            </a>
+            {/* 7-Day Website offer CTA */}
+            <a href="/lp/7-day-website"
+              style={{
+                display: 'inline-flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.4rem',
+                padding: '0.6rem 1rem', borderRadius: '100px',
+                border: '1px solid var(--accent)', width: 'fit-content',
+                fontFamily: 'var(--font-mono)', fontSize: '0.72rem', letterSpacing: '0.08em',
+                textTransform: 'uppercase', color: 'var(--accent)', transition: 'all 0.2s',
+              }}
+              onMouseEnter={e => { const t = e.currentTarget; t.style.background = 'var(--accent)'; t.style.color = 'var(--black)'; }}
+              onMouseLeave={e => { const t = e.currentTarget; t.style.background = 'transparent'; t.style.color = 'var(--accent)'; }}
+            >
+              ⚡ Website in 7 Days →
             </a>
           </div>
 

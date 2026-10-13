@@ -11,8 +11,8 @@ export default defineConfig({
   integrations: [
     react(),
     sitemap({
-      // Keep paid/landing pages and storybook out of the organic index
-      filter: (page) => !page.includes('/lp/') && !page.includes('/storybook/'),
+      // Keep only storybook out of the organic index (landing pages now indexable)
+      filter: (page) => !page.includes('/storybook/'),
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),

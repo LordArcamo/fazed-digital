@@ -9,6 +9,7 @@ import MarqueeSection from '../components/MarqueeSection';
 import StatsSection from '../components/StatsSection';
 import ServicesHeroAnim from '../components/ServicesHeroAnim';
 import ServiceIcon from '../components/ServiceIcon';
+import SevenDayBanner from '../components/SevenDayBanner.astro';
 
 const services = [
   {
@@ -194,6 +195,8 @@ const services = [
     ))}
 
     <StatsSection client:visible />
+
+    <SevenDayBanner />
 
     <!-- CTA strip -->
     <section style="padding: clamp(5rem,10vw,10rem) 0; background: var(--black); border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
