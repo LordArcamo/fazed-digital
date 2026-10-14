@@ -5,10 +5,13 @@ import { useGSAP } from '@gsap/react';
 
 gsap.registerPlugin(ScrollTrigger, useGSAP);
 
+const FOUNDED = 2022;
+const yearsInBusiness = new Date().getFullYear() - FOUNDED;
+
 const stats = [
   { value: 120, suffix: '+', label: 'Projects Delivered',  sub: 'Across 14 industries' },
   { value: 98,  suffix: '%', label: 'Client Satisfaction', sub: 'Based on project reviews' },
-  { value: 6,   suffix: ' yrs', label: 'In Business',      sub: 'Iligan City-based since 2018' },
+  { value: yearsInBusiness, suffix: ' yrs', label: 'In Business', sub: `Iligan City-based since ${FOUNDED}` },
   { value: 4,   suffix: 'x', label: 'Avg ROI Uplift',      sub: 'On SEO & web projects' },
 ];
 

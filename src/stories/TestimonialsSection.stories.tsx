@@ -9,7 +9,7 @@ const meta: Meta<typeof TestimonialsSection> = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: '3-card testimonials grid with star ratings, drawn quote-mark SVG, hover accent top bar, and a trust-stats row below. Cards fade-up on scroll via GSAP ScrollTrigger.',
+        component: '3-card client results grid. Each card shows a real outcome from a case study and links to it. Hover accent top bar; cards fade up on scroll via GSAP ScrollTrigger.',
       },
     },
   },

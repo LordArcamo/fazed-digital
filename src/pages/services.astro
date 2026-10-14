@@ -6,10 +6,8 @@ import Footer from '../components/Footer';
 import AnimatedText from '../components/AnimatedText';
 import MagneticButton from '../components/MagneticButton';
 import MarqueeSection from '../components/MarqueeSection';
-import StatsSection from '../components/StatsSection';
 import ServicesHeroAnim from '../components/ServicesHeroAnim';
 import ServiceIcon from '../components/ServiceIcon';
-import SevenDayBanner from '../components/SevenDayBanner.astro';
 
 const services = [
   {
@@ -194,10 +192,6 @@ const services = [
       </section>
     ))}
 
-    <StatsSection client:visible />
-
-    <SevenDayBanner />
-
     <!-- CTA strip -->
     <section style="padding: clamp(5rem,10vw,10rem) 0; background: var(--black); border-top: 1px solid var(--border); text-align: center; position: relative; overflow: hidden;">
       <div aria-hidden style="position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 80%, rgba(201,255,87,0.07) 0%, transparent 65%); pointer-events: none;"></div>
@@ -211,6 +205,12 @@ const services = [
         <MagneticButton client:visible href="/contact" variant="primary" size="lg">
           Get a Free Consultation →
         </MagneticButton>
+        <p style="font-family: var(--font-mono); font-size: 0.78rem; letter-spacing: 0.06em; color: var(--gray-500);">
+          Need it fast?
+          <a href="/lp/7-day-website" class="cta-alt-link">Launch in 7 days →</a>
+          <span aria-hidden style="margin: 0 0.5rem;">·</span>
+          <a href="/lp/7-day-website/ph" class="cta-alt-link">🇵🇭 Peso pricing</a>
+        </p>
       </div>
     </section>
   </main>
@@ -219,6 +219,8 @@ const services = [
 </Layout>
 
 <style>
+  .cta-alt-link { color: var(--accent); text-decoration: underline; text-underline-offset: 4px; transition: color 0.2s; }
+  .cta-alt-link:hover { color: var(--white); }
   @media (max-width: 860px) {
     section > .container > div { grid-template-columns: 1fr !important; }
     section > .container > div > div[style*="order: 2"] { order: 1 !important; }

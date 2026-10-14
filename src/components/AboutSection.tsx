@@ -83,7 +83,7 @@ export default function AboutSection() {
             {/* Subtle lime gradient at top */}
             <div style={{ position: 'absolute', inset: 0, background: 'linear-gradient(135deg, rgba(201,255,87,0.04) 0%, transparent 55%)' }} />
             <div style={{ position: 'absolute', bottom: '2rem', left: '2rem', right: '2rem' }}>
-              <div className="label" style={{ marginBottom: '0.4rem' }}>Est. 2018 — Iligan City, PH</div>
+              <div className="label" style={{ marginBottom: '0.4rem' }}>Est. 2022 — Iligan City, PH</div>
               <div style={{ fontFamily: 'var(--font-display)', fontWeight: 700, fontSize: '1.1rem' }}>
                 Fazed Digital
               </div>
