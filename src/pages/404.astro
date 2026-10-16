@@ -1,61 +1,31 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Cursor from '../components/Cursor';
-import Nav from '../components/Nav';
-import Footer from '../components/Footer';
-import MagneticButton from '../components/MagneticButton';
-import NotFoundAnim from '../components/NotFoundAnim';
+import Base from '../layouts/Base.astro';
 ---
-
-<Layout
-  title="404 — Page Not Found | Fazed Digital"
-  description="The page you're looking for doesn't exist. Head back to the Fazed Digital homepage."
-  page="404"
->
-  <Cursor client:only="react" />
-  <Nav client:only="react" />
-
-  <main style="min-height: 100svh; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: clamp(2rem,6vw,6rem); background: var(--black); text-align: center; position: relative; overflow: hidden;">
-    <!-- BG watermark -->
-    <div aria-hidden style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; user-select: none;">
-      <span style="font-family: var(--font-display); font-style: italic; font-size: clamp(20rem, 45vw, 55rem); font-weight: 600; color: transparent; -webkit-text-stroke: 1px rgba(255,255,255,0.025); line-height: 1; letter-spacing: -0.04em;">
-        404
-      </span>
+<Base title="404 — Page Not Found | Fazed Digital" description="The page you're looking for doesn't exist. Head back to the Fazed Digital homepage." formation="scatter" noindex>
+  <section class="nf" data-f="scatter" aria-labelledby="nf-h">
+    <div class="nf-radar" aria-hidden="true"></div>
+    <div class="nf-water" aria-hidden="true">404</div>
+    <div class="container nf-in">
+      <p class="mono">Error 404 · Signal lost · <span class="nf-dots">Searching…</span></p>
+      <h1 id="nf-h" class="t-d1">This page got lost in the ether.</h1>
+      <p class="t-body-l">The page you wanted doesn’t exist, has moved, or never existed in the first place. The rest of the network is fine. Pick a way back.</p>
+      <div class="nf-cta"><a class="btn btn--lime" href="/">Back to home <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="/work">See the work</a></div>
+      <nav aria-label="Quick links"><ul class="nf-links mono"><li><a href="/services">Services</a></li><li><a href="/about">About</a></li><li><a href="/blog">Blog</a></li><li><a href="/contact">Contact</a></li><li><a href="/lp/7-day-website">7-day website</a></li></ul></nav>
+      <p class="nf-help">Followed a broken link from our site? Tell us at <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a> and we’ll fix it.</p>
     </div>
-
-    <!-- Radar animation -->
-    <div aria-hidden style="position: absolute; left: 50%; top: 50%; transform: translate(-50%,-50%); width: min(80%, 480px); aspect-ratio: 1; pointer-events: none; opacity: 0.55; z-index: 0;">
-      <NotFoundAnim client:only="react" />
-    </div>
-
-    <div style="position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; gap: 1.75rem;">
-      <div class="label">Error 404</div>
-      <h1 style="font-family: var(--font-display); font-style: italic; font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; max-width: 16ch;">
-        This page got lost in the ether.
-      </h1>
-      <p class="body-lg" style="color: var(--gray-400); max-width: 36ch;">
-        The page you're looking for doesn't exist, was moved, or never existed
-        in the first place. Let's get you somewhere useful.
-      </p>
-      <div style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
-        <MagneticButton client:only="react" href="/" variant="primary" size="lg">← Go Home</MagneticButton>
-        <MagneticButton client:only="react" href="/work" variant="outline" size="lg">See Our Work</MagneticButton>
-      </div>
-      <div style="margin-top: 1rem; display: flex; gap: 2rem; flex-wrap: wrap; justify-content: center;">
-        {[
-          { label: 'About', href: '/about' },
-          { label: 'Services', href: '/services' },
-          { label: 'Blog', href: '/blog' },
-          { label: 'Contact', href: '/contact' },
-        ].map(l => (
-          <a href={l.href} class="label" style="color: var(--gray-500); transition: color 0.2s;"
-            onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
-            {l.label}
-          </a>
-        ))}
-      </div>
-    </div>
-  </main>
-
-  <Footer client:visible />
-</Layout>
+  </section>
+</Base>
+<style>
+  .nf { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: clip; padding-top: var(--header-h); }
+  .nf-radar { position: absolute; right: 8vw; top: 50%; width: min(44vw, 520px); aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%; border: 1px solid var(--gray-700); background: conic-gradient(from 0deg, rgba(201,255,87,.2), transparent 25%); animation: sweep 3.5s linear infinite; }
+  @keyframes sweep { to { transform: translateY(-50%) rotate(360deg); } }
+  .nf-water { position: absolute; right: 4vw; bottom: 4vh; font-family: var(--font-display); font-weight: 700; font-size: clamp(8rem, 26vw, 24rem); line-height: .8; color: transparent; -webkit-text-stroke: 1px var(--gray-700); user-select: none; }
+  .nf-in { position: relative; display: grid; gap: 1.5rem; justify-items: start; }
+  .nf h1 { max-width: 13ch; }
+  .nf-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .nf-links { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+  .nf-links a { display: inline-flex; min-height: 44px; align-items: center; color: var(--gray-300); }
+  .nf-links a:hover { color: var(--lime); }
+  .nf-help { color: var(--gray-400); }
+  @media (max-width: 767px) { .nf-radar { width: 80vw; right: 10vw; top: 26%; opacity: .5; } }
+</style>

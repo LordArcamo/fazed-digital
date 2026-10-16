@@ -1,0 +1,22 @@
+---
+import Base from './Base.astro';
+import { crumbs } from '../lib/schema';
+const { title, metaTitle, description, intro, path, updated = '16 October 2026' } = Astro.props;
+---
+<Base title={metaTitle} description={description} formation="lattice" schema={crumbs([[title, path]])}>
+  <article class="legal container">
+    <header class="lg-head"><h1 class="t-d1">{title}</h1><p class="mono">Last updated {updated}</p><p class="t-body-l">{intro}</p></header>
+    <div class="lg-body"><slot /></div>
+  </article>
+</Base>
+<style>
+  .legal { padding: calc(var(--header-h) + 120px) 0 var(--section); }
+  .lg-head { display: grid; gap: 1rem; max-width: 900px; margin-bottom: 72px; }
+  .lg-body { max-width: 68ch; font-size: var(--fs-article); line-height: 1.7; color: var(--gray-200); }
+  .lg-body :global(h2) { font-size: 1.6rem; margin: 2em 0 .6em; }
+  .lg-body :global(p + p), .lg-body :global(ul + p), .lg-body :global(p + ul) { margin-top: 1em; }
+  .lg-body :global(ul) { display: grid; gap: .4em; padding-left: 1.2rem; list-style: disc; }
+  .lg-body :global(a) { color: var(--white); text-decoration: underline; text-underline-offset: .2em; }
+  .lg-body :global(a:hover) { color: var(--lime); }
+  .lg-body :global(strong) { color: var(--white); }
+</style>

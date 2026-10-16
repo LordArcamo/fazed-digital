@@ -1,36 +1,9 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Cursor from '../components/Cursor';
-import Nav from '../components/Nav';
-import Footer from '../components/Footer';
+import Legal from '../layouts/Legal.astro';
 ---
-
-<Layout
-  title="Terms of Service — Fazed Digital"
-  description="Fazed Digital's terms of service governing the use of our website and services."
-  page="terms"
->
-  <Cursor client:only="react" />
-  <Nav client:only="react" currentPath="/terms" />
-
-  <main style="background: var(--black); min-height: 100svh;">
-    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,6rem); border-bottom: 1px solid var(--border);">
-      <div class="container" style="max-width: 800px;">
-        <div class="label" style="margin-bottom: 1.25rem;">Legal</div>
-        <h1 style="font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 5rem); font-weight: 600; line-height: 1; letter-spacing: -0.02em; margin-bottom: 1.5rem;">
-          Terms of Service
-        </h1>
-        <p class="body" style="color: var(--gray-400);">
-          Last updated: 1 January 2025
-        </p>
-      </div>
-    </section>
-
-    <section style="padding: clamp(3rem,6vw,6rem) 0;">
-      <div class="container legal-body" style="max-width: 800px;">
-
-        <h2>1. Acceptance of Terms</h2>
-        <p>By accessing and using the Fazed Digital website (fazeddigital.com) and engaging our services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website or services.</p>
+<Legal title="Terms of service" metaTitle="Terms of Service — Fazed Digital" description="Fazed Digital's terms of service governing the use of our website and services." intro="The ground rules for using this site and working with us." path="/terms">
+<h2>1. Acceptance of Terms</h2>
+        <p>By accessing and using the Fazed Digital website (www.fazeddigital.com) and engaging our services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our website or services.</p>
 
         <h2>2. Services</h2>
         <p>Fazed Digital provides creative and digital services including web design and development, brand identity design, SEO marketing, and product design. The specific scope, deliverables, timeline, and fees for each project are outlined in a separate Statement of Work or Service Agreement provided to each client.</p>
@@ -82,24 +55,4 @@ import Footer from '../components/Footer';
           <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a><br />
           <a href="tel:+639068253451">+63 906 825 3451</a>
         </p>
-      </div>
-    </section>
-  </main>
-
-  <Footer client:only="react" />
-</Layout>
-
-<style>
-  .legal-body h2 {
-    font-family: var(--font-display); font-style: italic; font-weight: 600;
-    font-size: clamp(1.25rem, 2vw, 1.75rem); letter-spacing: -0.01em;
-    color: var(--white); margin: 2.5rem 0 0.875rem;
-    padding-top: 2rem; border-top: 1px solid var(--border);
-  }
-  .legal-body h2:first-child { margin-top: 0; padding-top: 0; border-top: none; }
-  .legal-body p  { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; font-size: 0.975rem; }
-  .legal-body ul { color: var(--gray-400); line-height: 1.8; margin-bottom: 1rem; padding-left: 1.5rem; font-size: 0.975rem; }
-  .legal-body ul li { list-style: disc; margin-bottom: 0.3rem; }
-  .legal-body a  { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
-  .legal-body strong { color: var(--white); }
-</style>
+</Legal>

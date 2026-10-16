@@ -1,5 +1,4 @@
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react'; // TEMPORARY: old interior pages still use React islands (removed in T1 completion)
 import sitemap from '@astrojs/sitemap';
 import vercel from '@astrojs/vercel';
 import { threeSlim } from './src/field/three-plugin.mjs';
@@ -11,7 +10,6 @@ export default defineConfig({
   adapter: vercel(),
   trailingSlash: 'ignore',
   integrations: [
-    react(),
     sitemap({
       filter: (page) => !page.includes('/storybook/') && !page.includes('/_styleguide') && !page.includes('/_formations') && !page.includes('/404'),
       changefreq: 'weekly',
