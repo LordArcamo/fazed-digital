@@ -1,334 +1,94 @@
-<div align="center">
+# Fazed Digital: www.fazeddigital.com
 
-<br />
+Web design, branding and SEO studio in Iligan City, Philippines. This is the **NETWORK** redesign (branch `redesign-network`, local only): one persistent GPU dot field lives behind every page and forms the Fazed mark, the services pentagon, each client's screenshot, a globe with arcs to client countries, the team rings and one contact node.
 
-```
-███████╗ █████╗ ███████╗███████╗██████╗
-██╔════╝██╔══██╗╚══███╔╝██╔════╝██╔══██╗
-█████╗  ███████║  ███╔╝ █████╗  ██║  ██║
-██╔══╝  ██╔══██║ ███╔╝  ██╔══╝  ██║  ██║
-██║     ██║  ██║███████╗███████╗██████╔╝
-╚═╝     ╚═╝  ╚═╝╚══════╝╚══════╝╚═════╝
-         D I G I T A L
-```
+## Stack (exact versions, lockfile committed)
 
-**Creative & Digital Agency — Iligan City, Philippines**
+| Layer | Package | Why |
+|---|---|---|
+| Shell | `astro@7.4.0` + `@astrojs/vercel@11.0.15`, `@astrojs/sitemap@3.7.4` | Static output; the 2 `/api/*` routes are `prerender = false` (one `_render` function, `nodejs24.x`). `<ClientRouter />` keeps the canvas alive across pages (`transition:persist`). |
+| 3D | `three@0.186.1` (`WebGPURenderer` + TSL) | One node graph, compiled to WGSL on WebGPU or GLSL on the WebGL2 backend. |
+| Motion | `gsap@3.15.0` (ScrollTrigger), `lenis@1.3.27` | One clock: `gsap.ticker` drives Lenis and the field. |
+| Fonts | Clash Display (self-hosted, Fontshare kit), `@fontsource-variable/plus-jakarta-sans@5.3.0`, `@fontsource/space-mono@5.3.0` | See licences below. |
+| Build-time | `satori@0.26.0` + `@resvg/resvg-wasm@2.6.2` (OG, formation bake), `sharp@0.35.5`, `puppeteer-core@25.14.0`, `sirv-cli@3.0.1`, `typescript@6.0.3` | |
 
-[![Live](https://img.shields.io/badge/Live-fazeddigital.com-C9FF57?style=flat-square&labelColor=090909)](https://fazeddigital.com)
-[![Astro](https://img.shields.io/badge/Astro-4.x-FF5D01?style=flat-square&logo=astro&logoColor=white&labelColor=090909)](https://astro.build)
-[![React](https://img.shields.io/badge/React-18-61DAFB?style=flat-square&logo=react&logoColor=61DAFB&labelColor=090909)](https://react.dev)
-[![GSAP](https://img.shields.io/badge/GSAP-3.12-88CE02?style=flat-square&labelColor=090909)](https://gsap.com)
-[![Vercel](https://img.shields.io/badge/Deployed-Vercel-fff?style=flat-square&logo=vercel&logoColor=white&labelColor=090909)](https://vercel.com)
+Node: Vercel builds on **24.x** (`engines`). Locally, Node ≥ 22.22 is needed for Astro 7.4 (this machine's system Node is 22.16, so a Node 24 binary was used).
 
-<br />
+React, `@astrojs/react`, `@gsap/react`, `lucide-react` and Storybook are gone. Every component is an `.astro` file with vanilla TS.
 
-</div>
-
----
-
-## `>_ STACK`
-
-| Layer | Tool | Version | Notes |
-|---|---|---|---|
-| Framework | **Astro** | `4.x` | Hybrid SSG + SSR · `output: hybrid` |
-| UI Islands | **React** | `18.x` | Selective hydration via Astro islands |
-| Animation | **GSAP** + `@gsap/react` | `3.12.x` | ScrollTrigger · `useGSAP` · `quickTo` |
-| Styling | **CSS Variables** | — | No Tailwind · `src/styles/global.css` |
-| Deployment | **Vercel** | — | `@astrojs/vercel` · `functionPerRoute: false` |
-| Email | **Resend** | — | LP lead notifications to team |
-| CRM | **HubSpot Free** | — | Contact form via Forms API |
-| Spam | **reCAPTCHA v3** | — | Server-side score check |
-
----
-
-## `>_ GETTING STARTED`
+## Commands
 
 ```bash
-# Install dependencies
 npm install
-
-# Start dev server → http://localhost:4321
-npm run dev
-
-# Production build → dist/
-npm run build
-
-# Preview production build locally
-npm run preview
+npm run dev          # http://localhost:4351
+npm run build        # extract-posts → bake-formations → generate-og → gen-llms → astro build → lint-dist
+npm run preview:lh   # precompress + sirv the static output on :4352 (brotli/gzip, like Vercel) for Lighthouse
+npm run check        # astro check
 ```
 
----
+`npm run build` **fails** if the blog array contract breaks (`scripts/extract-posts.mjs`), or if the output contains an apex `https://fazeddigital.com` URL, a printed `[TBC` marker, or a "never claim" item from `copy/proof.md` §G (`scripts/lint-dist.mjs`).
 
-## `>_ ENVIRONMENT VARIABLES`
+## T0 spike result: GO on three/webgpu + TSL
 
-Copy `.env.example` → `.env` and fill in your values:
+Measured in `spike/` (`npx vite build --config spike/vite.config.mjs`), on an Apple M4 in headless Chrome with GPU flags:
 
-```bash
-# HubSpot — falls back to hardcoded GUID if not set
-HUBSPOT_FORM_GUID=c119e15a-357c-4bfb-9264-a1fb3f1a3389
-
-# Google reCAPTCHA v3 — check is SKIPPED if not set
-RECAPTCHA_SECRET_KEY=your_secret_key_here
-
-# Resend — required for LP lead email notifications
-RESEND_API_KEY=re_xxxxxxxxxxxx
-RESEND_FROM=Fazed Digital <onboarding@resend.dev>
-
-# Pending — LP HubSpot form (not yet created)
-# LP_FORM_GUID=
-```
-
-> Add all production values in **Vercel → Settings → Environment Variables**
-
----
-
-## `>_ API ROUTES`
-
-<details>
-<summary><strong>POST /api/contact</strong> — Main contact form</summary>
-
-<br />
-
-- Validates `name`, `email`, `message`
-- reCAPTCHA v3 soft-check (score threshold `0.3`)
-- Submits to HubSpot Forms API
-
-**Fields sent to HubSpot:**
-```
-firstname · lastname · email · message · service_interest
-```
-
-</details>
-
-<details>
-<summary><strong>POST /api/lp-submit</strong> — 7-Day Website LP form</summary>
-
-<br />
-
-- Validates `name` + `email` only
-- Sends branded HTML notification email via **Resend**
-- Full payload logged to Vercel — leads never lost even if email fails
-- HubSpot wiring **pending** (waiting for dedicated LP form GUID)
-
-**Notification recipients:**
-```
-reancirl@gmail.com
-russeljessheyrana@gmail.com
-lordrynkartracydwight@gmail.com
-info@fazeddigital.com
-```
-
-</details>
-
----
-
-## `>_ PAGES`
-
-```
-/                     Homepage
-├── /about            Company story + team
-├── /services         Service offerings
-├── /work             Portfolio grid
-│   └── /work/[01-04] Case studies
-├── /blog             Editorial
-│   └── /blog/[slug]  Blog post
-├── /contact          Contact form
-├── /lp
-│   └── /7-day-website  Landing page (multi-step form)
-└── /404              Not found
-```
-
----
-
-## `>_ ARCHITECTURE`
-
-### Hydration Strategy
-
-| Directive | Used For |
+| Criterion | Result |
 |---|---|
-| `client:only="react"` | Above-fold, renders immediately — `Cursor`, `Nav`, `Loader`, hero anims |
-| `client:idle` | Deferred to `requestIdleCallback` — `ScrollProgress` |
-| `client:visible` | Below-fold, hydrates on scroll — everything else |
+| (a) GL chunk ≤ 190 KB gz | Stock `three/webgpu`: 242 KB gz. With `src/field/three-plugin.mjs` it is **188.5 KB gz / 152 KB br** in the spike, and **192 KB gz / 156 KB br** in the site (the site chunk also holds the formations + controller, ~8 KB gz). See "Workarounds". |
+| (b) WebGL2 backend identical | `forceWebGL` frame vs the WebGPU frame: **0 px differ**. |
+| (c) first frame after chunk load | 204–257 ms cold, 85 ms warm, 104 ms at 4× CPU throttle. WebGL2 with a cold shader cache: 2.9 s once, then 62 ms. |
+| (d) main-thread compile | No long task during `compileAsync` (the only 4×-throttle task is the 85 ms chunk parse). |
+| (e) fps | 60 fps at T1 (61,440 points + compute spring) on both backends. |
+| (f) no-GPU → poster | SwiftShader routes to t0. **Note:** default headless Chrome on this Mac reports a real Metal GPU and renders GL; the perf watchdog covers slow headless cases. |
 
-> Never switch a below-fold component to `client:only` — defeats lazy hydration.
+### Workarounds (honest list)
+- `src/field/three-plugin.mjs` resolves `three/webgpu` to a minimal entry (`src/field/three-entry.js`, using `WebGPURenderer.Nodes` + `BasicNodeLibrary`) and `three/tsl` to `three/src/nodes/TSL.js`. It also stubs `XRManager`, `PMREMGenerator` and `ShadowNode` (no XR, env maps or lights are used). In dev, `optimizeDeps.exclude: ['three']` avoids two TSL copies.
+- `ColorManagement.enabled = false` + a linear output colour space, so alpha blending happens in sRGB numbers like CSS. That gives poster parity: GL dots land within 0.3 px of the CSS dots.
+- The canvas is transparent over a CSS lattice (`#field-root .lattice`). The lattice is the permanent ground, so the GL "lattice" formation sits exactly on the CSS dots.
+- The GPU probe runs in a Worker (OffscreenCanvas) and is cached per session. Creating a WebGL context on SwiftShader blocked the main thread for 1.8 s (it showed up as Lighthouse TBT).
+- ClientRouter replaces `<html>` attributes on every swap. `boot/main.ts` carries the runtime classes (`gl-live`, `lenis`, …) onto `newDocument`.
 
-### GSAP Patterns
+## Architecture
 
-```tsx
-// Always useGSAP with scope ref — never raw useEffect
-import { useGSAP } from '@gsap/react';
-useGSAP(() => { /* animations */ }, { scope: ref });
+- `src/layouts/Base.astro`: head and SEO (`@graph` ProfessionalService + WebSite, canonical on the www host), font preloads, inline boot flags, `<ClientRouter>`, the persisted `#field-root` (CSS lattice + canvas), cursor, skip link, Header/Footer (or the LP header/footer), consent banner.
+- `src/boot/main.ts` (pre-3D, ~8.5 KB gz incl. ClientRouter): header state, menu (focus trap, Esc, `inert`), consent (GA4 loads **only after "Accept analytics"**), and the route lifecycle. It loads `motion` at idle, and `gpu` → `field/controller` after `load`+idle on desktop or on the first interaction on mobile. Reading pages (`formation="none"`: blog posts, legal) load neither.
+- `src/field/`: `field.ts` (renderer, A/B/M instanced buffers, CPU snapshot for interrupted morphs, cursor links, arcs, WebGPU compute spring), `points.tsl.ts` (stateless morph + analytic curl + push + ripples + tilt; lattice/white/lime tone ramp; halo pass), `formations.ts` (lattice, mark, shot, pentagon + glyphs, globe, rings, node, path4, days7, wordmark, scatter), `controller.ts` (page → formation beats, hero scrub, wake, handshake, watchdog, `?record`), `tiers.ts`, `watchdog.ts`.
+- `src/motion/`: Lenis + ScrollTrigger, reveals, cursor node, magnetic CTAs, home choreography (services pin with 5 real step buttons, flood wipe, day nodes), work-index preview, case plates.
+- `src/data/`: `site.ts` (NAP, socials, computed `YEARS`), `proof.ts` (**the one editable file for stats, testimonials, flags and caps**), `cases.ts` (the `cases` array moved verbatim + `CASE_EXTRA`), `services.ts`, `team.ts`, `lp.ts`, `images.ts`.
+- `scripts/`: `bake-formations.mjs` (`public/formations/*.bin`: mark mask 0.65 KB br, shots 1.4–11 KB br, glyphs 5.9 KB, globe land bitmask 2.5 KB, wordmark), `extract-posts.mjs`, `generate-og.mjs` (53 OG images), `gen-llms.mjs`, `lint-dist.mjs`, `precompress.mjs`.
 
-// SVG group rotations — svgOrigin not transformOrigin
-gsap.to('#group', { rotation: 360, svgOrigin: '200 200', repeat: -1, ease: 'none' });
+### Field tiers and gate
+T1 61,440 points (desktop, ≥8 cores, ≥1024 px, compute spring on WebGPU) · T2 20,480 (mobile/other) · T3 8,192 (low memory/cores) · T0 poster (SwiftShader/llvmpipe/softpipe/"Basic Render"/WebGPU fallback adapter without WebGL2, `saveData`, `?gl=off`, init failure). `?gl=force` skips the checks. `?record` forces GL at T1, hides the cursor, uses `dt = 1/60`, and runs a scripted 30 s home scroll. The watchdog fires once (avg < 24 fps over 2 consecutive 4 s windows, ignoring 30 fps caps, the first 3 s and hidden tabs): it stops the loop, destroys Lenis, returns to poster mode and keeps the scroll position.
 
-// High-frequency events (mousemove) — always quickTo
-const xTo = gsap.quickTo(el, 'x', { duration: 0.38, ease: 'power2.out' });
-const yTo = gsap.quickTo(el, 'y', { duration: 0.38, ease: 'power2.out' });
-```
+## Blog contract (nightly 1:05 AM routine)
+The two `const posts = [` arrays stay in `src/pages/blog/index.astro` and `src/pages/blog/[slug].astro`, **byte-identical** (verified against HEAD). Only the imports above them and the template below them changed. At render:
+- author photos are mapped locally (`src/lib/authors.ts`; `wp-content` URLs are ignored).
+- `content` links are rewritten from the apex to `https://www.fazeddigital.com`.
+- H2s get ids for the TOC.
+- covers are generative SVG from `slug` × `category`.
 
----
+Category hubs live at `/blog/category/{seo,branding,design,development,strategy}`. **Tell the routine:** use `/images/team/{lord,russel}.jpeg` for author photos, keep `excerpt` ≤ 155 chars (16 of 37 are longer today), and keep every field (the build fails otherwise).
 
-## `>_ DESIGN TOKENS`
+## Licences
+- **Clash Display** (Indian Type Foundry, Fontshare). The ITF FFL in the kit says: *"You may self-host the Font Software on your own servers or infrastructure for use on your own websites"* (§01). It forbids modification, subsetting and format conversion (§02). So the **unmodified** kit woff2 files are self-hosted in `public/fonts/clash/` with `LICENSE`, and the unmodified kit woff files sit in `scripts/fonts/` for OG rendering. Conclusion: **self-hosting is permitted.**
+- Plus Jakarta Sans and Space Mono: SIL OFL 1.1 (via Fontsource).
+- Natural Earth 110 m land: public domain. More in `CREDITS.md`.
 
-```css
-/* Colors */
---black:        #090909
---white:        #F5F4F0
---accent:       #C9FF57   /* electric lime */
---accent-dark:  #9FCC2E
-
-/* Typography */
---font-display: 'Clash Display'      /* Fontshare */
---font-body:    'Plus Jakarta Sans'  /* Google Fonts */
---font-mono:    'Space Mono'         /* Google Fonts */
-
-/* Layout */
---radius:       0.875rem
---container:    1340px
-```
-
-> Never hardcode hex values or font names in components — always reference variables.
-
----
-
-## `>_ KEY COMPONENTS`
-
-<details>
-<summary>Show all components</summary>
-
-<br />
-
-| Component | Purpose |
+## Copy mapping (`../copy/*.md` → code)
+| Copy file / section ids | Where |
 |---|---|
-| `HeroSection` | Homepage hero — particles + orbital SVG + scramble text |
-| `ParticleCanvas` | Canvas particle network — max 50 dots, O(n²) connections |
-| `HeroGraphic` | Orbital sphere SVG — `<animateMotion>` + mouse parallax |
-| `ServicesSection` | 6 service cards with animated `ServiceIcon` |
-| `ProcessSection` | 4-step process — animated GSAP connector line |
-| `WorkSection` | Portfolio preview grid (4 client projects) |
-| `StatsSection` | Animated counters |
-| `TestimonialsSection` | Client testimonials |
-| `ContactSection` | Contact form + reCAPTCHA v3 |
-| `MarqueeSection` | Scrolling ticker — used on all pages |
-| `MagneticButton` | GSAP magnetic hover — `quickTo` on mousemove |
-| `AnimatedText` | Word-by-word reveal on scroll |
-| `Cursor` | Custom cursor — event delegation + `quickTo` |
-| `Loader` | Page load sequence (~1.4s total) |
-| `ScrollProgress` | Top-of-page progress bar |
-| `LpForm` | 5-step multi-step brief wizard (LP page only) |
-| `Footer` | Site footer with nav + contact info |
+| home.md HOME-01…09 + answers (H1 option **B** "Built in Iligan. / Live worldwide.") | `src/pages/index.astro`, `src/data/{services,proof,team}.ts` |
+| services.md SERV-HERO, SERV-01…05, SERV-FAQ, SERV-CTA | `src/pages/services.astro`, `src/data/services.ts` (`chapters`, `serviceFaq`) |
+| work.md WORK-*, CASE-* (8 cases) | `src/pages/work.astro`, `src/pages/work/[slug].astro`, `src/data/cases.ts` (`CASE_EXTRA`) |
+| about.md ABOUT-* | `src/pages/about.astro` |
+| contact.md CONTACT-* | `src/pages/contact.astro`, `src/components/ContactForm.astro` |
+| lp-7-day-usd.md / lp-7-day-ph.md LP-* | `src/components/Lp.astro`, `src/data/lp.ts`, `src/components/LpForm.astro` |
+| blog-index.md BLOG-* | `src/components/BlogList.astro`, `src/pages/blog/*`, `src/lib/cover.ts` |
+| global.md GLOBAL-* | `Header.astro`, `Footer.astro`, `CookieBanner.astro`, `Base.astro` |
+| not-found.md | `src/pages/404.astro` |
+| seo-strategy.md (titles, descriptions, schema, hubs, llms.txt) | page frontmatter, `src/lib/schema.ts`, `scripts/gen-llms.mjs` |
 
-</details>
+**Kept current wording** (MUST-KEEP until the user approves the proposed lines): the H1s on /services, /work, /about, /contact, /blog, /404 and the LPs. Proposed titles and ≤155-char descriptions are applied. Placeholders that render as clearly marked placeholders while their flag in `proof.ts` is `false`: `LP_REVIEWS_REAL` (LP reviews) and `CASE_METRICS_REAL` (case metrics).
 
----
-
-## `>_ WORK CASE STUDIES`
-
-Hardcoded in `src/pages/work/[slug].astro` · SVG mockups in `public/images/`
-
-| Slug | Client | Services | Year |
-|---|---|---|---|
-| `01` | A Framing Company | Web Design + WordPress | 2024 |
-| `02` | Cleen & Green | Brand Identity + WordPress | 2025 |
-| `03` | CrateOnScene | MVP Platform — PWA | 2024 |
-| `04` | The Telecom Shop | E-commerce Migration (Magento → PrestaShop) | 2024 |
-
----
-
-## `>_ INTEGRATIONS`
-
-<details>
-<summary><strong>HubSpot</strong></summary>
-
-<br />
-
-- **Portal ID:** `244473168`
-- **Form:** `c119e15a-357c-4bfb-9264-a1fb3f1a3389` (Fazed Digital Main Contact Form)
-- **API:** Public Forms Submission API — no auth token needed
-- **Custom properties to create** (Settings → Properties → Contacts):
-
-```
-website_package     · business_industry  · project_goal
-website_style       · pages_needed       · referral_source
-```
-
-</details>
-
-<details>
-<summary><strong>reCAPTCHA v3</strong></summary>
-
-<br />
-
-- **Site key (public):** `6LdYgc0sAAAAAJy0R-ZRG3VKjadhIoWs_-9VOZ1x`
-- **Secret key:** `RECAPTCHA_SECRET_KEY` in Vercel env vars
-- **Score threshold:** `0.3` on `/api/contact`
-- **Required:** Add `fazeddigital.com` to allowed domains at [google.com/recaptcha/admin](https://google.com/recaptcha/admin)
-
-</details>
-
-<details>
-<summary><strong>Resend</strong></summary>
-
-<br />
-
-- LP form triggers a branded HTML email to the full team on every submission
-- Set `RESEND_API_KEY` in Vercel
-- Soft-fail: if email send fails, lead is still logged to Vercel function logs
-
-</details>
-
----
-
-## `>_ PERFORMANCE RULES`
-
-| Rule | Why |
-|---|---|
-| No `@import` in `global.css` | Fonts load async via Layout.astro — CSS `@import` is render-blocking |
-| `functionPerRoute: false` | Bundles all routes into 1 serverless fn — stays within Vercel Hobby limit (12) |
-| Node `20.x` via `engines` in `package.json` | Forces Vercel to write `nodejs20.x` runtime — Node 18 EOL'd Apr 2025 |
-| `ParticleCanvas` capped at 50 particles | O(n²) loop — 50 pts = 1,225 checks/frame vs 4,005 at 90 pts |
-| `quickTo` on `MagneticButton` + `Cursor` | No new tween allocated per mousemove pixel |
-| `Loader` ≤ 1.5s | Hero animation delay set to 1.3s to match |
-
----
-
-## `>_ TODO`
-
-```
-[ ] Create LP HubSpot form → set LP_FORM_GUID env var in Vercel
-[ ] Create 6 custom HubSpot contact properties
-[ ] Add fazeddigital.com to reCAPTCHA allowed domains
-[ ] Set RESEND_API_KEY in Vercel
-[ ] Re-enable reCAPTCHA hard block on /api/contact once domain is verified
-[ ] Stripe setup + /api/checkout endpoint
-```
-
----
-
-## `>_ DEPLOYMENT`
-
-Push to `main` → Vercel auto-deploys.
-
-```
-Adapter:  @astrojs/vercel/serverless  (v7.8.2)
-Runtime:  nodejs20.x
-Output:   hybrid (SSG + serverless)
-```
-
----
-
-<div align="center">
-
-<br />
-
-```
-8.2280° N · 124.2452° E · Iligan City, Philippines
-info@fazeddigital.com · fazeddigital.com
-```
-
-*Built by **Lord Arcamo** — Founder, Fazed Digital.*
-
-<br />
-
-</div>
+## Known gaps / next
+See `../media/build/PROGRESS.md` for the latest state and the exact next step.
