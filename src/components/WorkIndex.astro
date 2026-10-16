@@ -7,11 +7,11 @@ import { workImages } from '../data/images';
 const { services = false } = Astro.props;
 ---
 <div class:list={['windex', { 'windex--svc': services }]} data-windex>
-  <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span>What we built</span>{services && <span class="w-svc">Services</span>}</div>
+  <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span class="h-built">What we built</span>{services && <span class="w-svc">Services</span>}</div>
   <ul>
     {caseIndex.map((c) => (
       <li class="wli" data-disc={c.discipline.join(' ')}>
-        <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cursor={`CASE ${c.slug} →`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
+        <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cap={`CASE ${c.slug} · ${c.title}`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
           <span class="mono w-n">{c.slug}</span>
           <span class="w-client">{c.title}</span>
           <span class="w-sector">{c.sector}</span>
@@ -24,7 +24,7 @@ const { services = false } = Astro.props;
       </li>
     ))}
   </ul>
-  <div class="wprev" aria-hidden="true" data-wprev><span class="wprev-scan"></span></div>
+  <div class="wprev" aria-hidden="true" data-wprev><span class="wprev-scan"></span><span class="wprev-cap mono" data-wcap></span></div>
 </div>
 <script>
   import { initWorkIndex } from '../motion/workindex';
@@ -39,16 +39,18 @@ const { services = false } = Astro.props;
   a.wrow:hover .w-client, a.wrow:focus-visible .w-client, a.wrow.is-on .w-client { background-size: 100% 100%; color: var(--black); }
   a.wrow:hover, a.wrow:focus-visible { color: var(--white); }
   .w-thumb { display: none; }
-  .windex.has-on .w-year, .windex.has-on .w-built { opacity: .12; }
-  .w-year, .w-built { transition: opacity .25s; }
-  .wprev { position: absolute; right: 0; top: 0; width: 420px; aspect-ratio: 16 / 10; pointer-events: none; opacity: 0; transition: opacity .25s, transform .4s var(--ease-out); z-index: 2; border: 1px solid var(--gray-700); overflow: hidden; }
+  /* the preview lives in a fixed slot over the right-hand columns, which step out while it shows: never over live text */
+  .w-built, .w-svc, .wrow--head .h-built, .wrow--head .w-svc { transition: opacity .2s; }
+  .windex.has-on .w-built, .windex.has-on .w-svc, .windex.has-on .h-built { opacity: 0; }
+  .wprev { position: fixed; right: var(--lattice-x); top: 50%; width: min(400px, 30vw); aspect-ratio: 16 / 10; translate: 0 -50%; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 2; border: 1px solid var(--gray-700); overflow: hidden; }
   .wprev.is-on { opacity: 1; }
-  .wprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .35s; }
+  .wprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .12s; }
   .wprev :global(img.is-on) { opacity: 1; }
   :global(html.gl-live) .wprev { border-color: transparent; }
-  :global(html.gl-live) .wprev :global(img.is-on) { transition-delay: .6s; }
-  .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; }
-  .wprev.is-on .wprev-scan { animation: scan .6s var(--ease-io) both; }
+  :global(html.gl-live) .wprev :global(img.is-on) { transition: opacity .25s .3s; }
+  .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; z-index: 1; }
+  .wprev.is-on .wprev-scan { animation: scan .5s var(--ease-io) both; }
+  .wprev-cap { position: absolute; left: 0; bottom: 0; z-index: 1; padding: 6px 10px; background: var(--lime); color: var(--black); font-size: 11px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; }
   @keyframes scan { 0% { opacity: 1; top: 0; } 90% { opacity: 1; } 100% { opacity: 0; top: 100%; } }
   @media (max-width: 1023px) {
     .wrow, .windex--svc .wrow { grid-template-columns: 2.5rem 1fr; row-gap: .35rem; }

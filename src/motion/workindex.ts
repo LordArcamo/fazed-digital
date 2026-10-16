@@ -1,48 +1,52 @@
-// Work index preview (home §4 + /work): frame follows the cursor y, hover/focus parity,
-// row thumbnail cloned into the frame, fz:shot → the field resolves the screenshot from dots.
+// Work index preview (home §4 + /work): a fixed slot over the right-hand columns (which step out
+// while it shows), hover/focus parity, the row's own <picture> cloned into the slot, and
+// fz:shot → the field resolves the screenshot from dots in ≤0.6s before the real image fades in.
+// Scrolling hides it; when the scroll settles, the row under the pointer comes back.
 const emit = (type: string, detail?: unknown) => document.dispatchEvent(new CustomEvent(type, { detail }));
 export function initWorkIndex() {
   const wi = document.querySelector<HTMLElement>('[data-windex]');
   const prev = document.querySelector<HTMLElement>('[data-wprev]');
   if (!wi || !prev || wi.dataset.bound || !matchMedia('(min-width: 1024px)').matches) return;
   wi.dataset.bound = '1';
-  /* §4 work index: preview frame follows the cursor y, hover/focus parity */
-  {
-    const yTo = (y: number) => { prev.style.transform = `translate3d(0, ${y.toFixed(1)}px, 0)`; }; // CSS transition = quickTo 0.4s (no gsap in the pre-3D bundle)
-    let on: string | null = null;
-    const activate = (row: HTMLElement | null, ev?: PointerEvent) => {
-      const id = row?.dataset.shot ?? null;
-      if (row) {
-        const wr = wi.getBoundingClientRect(), rr = row.getBoundingClientRect();
-        const y = (ev ? ev.clientY : rr.top + rr.height / 2) - wr.top - prev.offsetHeight / 2;
-        yTo(Math.max(0, Math.min(wr.height - prev.offsetHeight, y)));
-      }
-      if (id === on) return;
-      on = id;
-      wi.querySelectorAll('.wrow').forEach((r) => r.classList.toggle('is-on', r === row));
-      prev.classList.toggle('is-on', !!id);
-      wi.classList.toggle('has-on', !!id);
-      // the preview reuses the row's own <picture> (cloned once), so there is one image set in the HTML
-      if (row && id && !prev.querySelector(`[data-for="${id}"]`)) {
-        const pic = row.querySelector('picture')?.cloneNode(true) as HTMLElement | undefined;
-        if (pic) { pic.dataset.for = id; pic.querySelector('img')?.setAttribute('alt', ''); pic.querySelector('img')?.setAttribute('loading', 'eager'); prev.prepend(pic); }
-      }
-      prev.querySelectorAll<HTMLElement>('[data-for]').forEach((p) => {
-        const img = p.querySelector('img') ?? p;
-        img.classList.toggle('is-on', p.dataset.for === id);
-      });
-      // let the scan restart
-      const scan = prev.querySelector<HTMLElement>('.wprev-scan');
-      if (scan) { scan.style.animation = 'none'; void scan.offsetWidth; scan.style.animation = ''; }
-      emit('fz:shot', id ? { id, el: prev } : null);
-    };
-    const move = (e: PointerEvent) => activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow'), e);
-    const leave = () => activate(null);
-    const focus = (e: FocusEvent) => activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow'));
-    wi.addEventListener('pointermove', move);
-    wi.addEventListener('pointerleave', leave);
-    wi.addEventListener('focusin', focus);
-    wi.addEventListener('focusout', leave);
-  }
-
+  const cap = prev.querySelector<HTMLElement>('[data-wcap]');
+  let on: string | null = null;
+  let px = -1, py = -1, st = 0;
+  const activate = (row: HTMLElement | null) => {
+    const id = row?.dataset.shot ?? null;
+    if (id === on) return;
+    on = id;
+    wi.querySelectorAll('.wrow').forEach((r) => r.classList.toggle('is-on', r === row));
+    prev.classList.toggle('is-on', !!id);
+    wi.classList.toggle('has-on', !!id);
+    if (cap && row) cap.textContent = `${row.dataset.cap} →`;
+    if (row) clone(row);
+    prev.querySelectorAll<HTMLElement>('[data-for]').forEach((p) => (p.querySelector('img') ?? p).classList.toggle('is-on', p.dataset.for === id));
+    const scan = prev.querySelector<HTMLElement>('.wprev-scan');
+    if (scan) { scan.style.animation = 'none'; void scan.offsetWidth; scan.style.animation = ''; }
+    emit('fz:shot', id ? { id, el: prev } : null);
+  };
+  // the slot reuses each row's own <picture> (one image set in the HTML), cloned on first intent
+  const clone = (row: HTMLElement) => {
+    const id = row.dataset.shot;
+    if (!id || prev.querySelector(`[data-for="${id}"]`)) return;
+    const pic = row.querySelector('picture')?.cloneNode(true) as HTMLElement | undefined;
+    if (!pic) return;
+    pic.dataset.for = id;
+    const img = pic.querySelector('img');
+    if (img) { img.classList.remove('w-thumb'); img.alt = ''; img.loading = 'eager'; img.decoding = 'async'; }
+    prev.prepend(pic);
+  };
+  wi.addEventListener('pointerenter', () => wi.querySelectorAll<HTMLElement>('a.wrow').forEach(clone), { once: true });
+  const rowAt = (x: number, y: number) => (document.elementFromPoint(x, y) as HTMLElement | null)?.closest<HTMLElement>('a.wrow') ?? null;
+  wi.addEventListener('pointermove', (e) => { px = e.clientX; py = e.clientY; activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow')); });
+  wi.addEventListener('pointerleave', () => { px = -1; activate(null); });
+  wi.addEventListener('focusin', (e) => activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow')));
+  wi.addEventListener('focusout', (e) => { if (!wi.contains((e as FocusEvent).relatedTarget as Node)) activate(null); });
+  const onScroll = () => {
+    if (on && !wi.contains(document.activeElement)) activate(null);
+    clearTimeout(st);
+    st = window.setTimeout(() => { if (px >= 0 && wi.isConnected) activate(rowAt(px, py)); }, 160);
+  };
+  addEventListener('scroll', onScroll, { passive: true });
+  document.addEventListener('astro:before-swap', () => { removeEventListener('scroll', onScroll); clearTimeout(st); }, { once: true });
 }

@@ -315,7 +315,8 @@ export async function start(g: Gate, flags: Flags) {
       if (!d) { morph(F.lattice(view(), n), 0.6, 'power2.out'); return; }
       const s = await shot(d.id);
       const r = rectOf(d.el)!;
-      morph(F.shot(`shot-${d.id}`, r, s, n, view(), spec.densify), 0.6, 'power2.out', [r.left + r.width / 2, r.top]);
+      // the hover plate resolves fast and crisp: one grid-aligned dot per cell (no jitter), 0.45s
+      morph(F.shot(`shot-${d.id}`, r, s, n, view(), 1), 0.45, 'power3.out', [r.left + r.width / 2, r.top]);
     }) as EventListener);
     on('fz:person', ((e: CustomEvent) => {
       person = e.detail;
