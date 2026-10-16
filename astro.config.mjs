@@ -32,7 +32,7 @@ export default defineConfig({
   prefetch: { defaultStrategy: 'hover' },
   vite: {
     plugins: [threeSlim()],
-    build: { target: 'es2022', chunkSizeWarningLimit: 800 },
+    build: { target: 'es2022', chunkSizeWarningLimit: 800, sourcemap: !!process.env.MAP },
     server: { port: 4351, strictPort: true },
     // three is resolved to src-level modules by threeSlim; pre-bundling would duplicate the TSL core
     optimizeDeps: { exclude: ['three'] },

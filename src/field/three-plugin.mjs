@@ -4,12 +4,13 @@
 //  2. three/tsl → three/src/nodes/TSL.js (named re-exports, tree-shakable)
 //  3. three/src/nodes/** modules that don't register chaining methods are marked
 //     side-effect-free (three's package.json flags the whole folder as side-effectful)
-//  4. XRManager + PMREMGenerator → stubs (no WebXR, no environment maps in the field)
+//  4. XRManager + PMREMGenerator + ShadowNode → stubs (no WebXR, env maps or lights in the field)
 import { fileURLToPath } from 'node:url';
 const three = fileURLToPath(new URL('../../node_modules/three/src/', import.meta.url));
 const entry = fileURLToPath(new URL('./three-entry.js', import.meta.url));
 const xrStub = fileURLToPath(new URL('./stubs/XRManager.js', import.meta.url));
 const pmremStub = fileURLToPath(new URL('./stubs/PMREMGenerator.js', import.meta.url));
+const shadowStub = fileURLToPath(new URL('./stubs/ShadowNode.js', import.meta.url));
 export function threeSlim() {
   return {
     name: 'three-slim',
@@ -19,6 +20,7 @@ export function threeSlim() {
       if (id === 'three/tsl') return three + 'nodes/TSL.js';
       if (id === './XRManager.js' && importer && importer.includes('/three/src/renderers/common/')) return xrStub;
       if (id.endsWith('/renderers/common/extras/PMREMGenerator.js') && importer && importer.includes('/three/src/nodes/pmrem/')) return pmremStub;
+      if ((id === './ShadowNode.js' && importer?.includes('/three/src/nodes/lighting/')) || (id === './lighting/ShadowNode.js' && importer?.includes('/three/src/nodes/'))) return shadowStub;
       return null;
     },
     transform(code, id) {
