@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { NAP, SOCIALS } from '../data/site';
-const { current = '' } = Astro.props;
+const { current = '', lp = false } = Astro.props;
 const links = [
   { href: '/work', label: 'Work' }, { href: '/services', label: 'Services' }, { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' }, { href: '/contact', label: 'Contact' },
@@ -18,6 +18,7 @@ const menu = [
 <header class="hdr" id="hdr">
   <div class="hdr-in container">
     <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>
+    {lp ? <a href="#get-started" class="btn btn--lime hdr-lp" data-magnetic>Get started <span class="arrow" aria-hidden="true">→</span></a> : <>
     <nav class="hdr-nav" aria-label="Primary">
       <ul>
         {links.map((l) => <li><a href={l.href} class="hdr-link" aria-current={current === l.href ? 'page' : undefined}>{l.label}</a></li>)}
@@ -25,9 +26,10 @@ const menu = [
     </nav>
     <a href="/lp/7-day-website" class="btn btn--lime hdr-cta" data-magnetic data-cursor="GO →">Get live in 7 days</a>
     <button class="hdr-menu" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="hdr-menu-l">Menu</span><span class="hdr-burger" aria-hidden="true"><i></i><i></i></span></button>
+    </>}
   </div>
 </header>
-<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+{!lp && <div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
   <div class="menu-in container">
     <nav aria-label="Menu">
       <ol class="menu-list">
@@ -44,7 +46,7 @@ const menu = [
     </dl>
     <p class="mono menu-esc" aria-hidden="true">ESC TO CLOSE</p>
   </div>
-</div>
+</div>}
 <style>
   .hdr { position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); transition: height .2s, background-color .2s, border-color .2s; border-bottom: 1px solid transparent; }
   :global(html.scrolled) .hdr { height: 60px; background: rgba(9, 9, 9, .92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--gray-700); }
@@ -56,6 +58,7 @@ const menu = [
   .hdr-link:hover, .hdr-link[aria-current='page'] { color: var(--white); }
   .hdr-link[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 4px; height: 4px; border-radius: 50%; background: var(--lime); transform: translateX(-50%); }
   .hdr-cta { min-height: 44px; font-size: .95rem; }
+  .hdr-lp { margin-left: auto; min-height: 44px; }
   .hdr-menu { display: none; margin-left: auto; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; gap: .7rem; padding: 0 .5rem; color: var(--white); font-weight: 600; }
   .hdr-burger { display: inline-flex; flex-direction: column; gap: 6px; width: 22px; }
   .hdr-burger i { display: block; height: 1.5px; background: currentColor; transition: transform .3s var(--ease-out); }

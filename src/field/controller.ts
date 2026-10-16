@@ -153,6 +153,13 @@ export async function start(g: Gate, flags: Flags) {
         const r = rectOf(frame)!;
         return attach(F.shot(`shot-${id}`, r, s, n, v, spec.densify), frame);
       }
+      case 'days7': {
+        const a = within(el, '[data-days-anchor]');
+        const r = rectOf(a);
+        if (!r) return null;
+        const isHero = !!a?.classList.contains('poster-days');
+        return attach(F.days7(r, n, v, isHero ? -1 : 7, isHero ? r.top + 5 : r.top), a);
+      }
       case 'scatter': return F.scatter(n, v);
       case 'flood': return F.lattice(v, n);
       default: return F.lattice(v, n);

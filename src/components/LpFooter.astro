@@ -1,0 +1,21 @@
+---
+import { BUILD_YEAR } from '../data/site';
+const { variant = 'usd' } = Astro.props;
+---
+<footer class="lpft page" id="footer">
+  <div class="container lpft-in">
+    <p class="mono">© {BUILD_YEAR} Fazed Digital · {variant === 'php' ? 'Iligan City, Lanao del Norte, Philippines' : 'Iligan City, Philippines'}</p>
+    <nav aria-label="Footer"><ul>
+      <li><a href="/">Back to site</a></li><li><a href="/work">Our work</a></li>
+      <li>{variant === 'php' ? <a href="/lp/7-day-website">USD pricing ($)</a> : <a href="/lp/7-day-website/ph">See peso pricing (₱)</a>}</li>
+      <li><a href="/contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><button type="button" data-cookie-settings>Cookie settings</button></li>
+    </ul></nav>
+  </div>
+</footer>
+<style>
+  .lpft { border-top: 1px solid var(--gray-700); padding: 32px 0 48px; }
+  .lpft-in { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 1rem; align-items: center; }
+  .lpft ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+  .lpft a, .lpft button { display: inline-flex; min-height: 44px; align-items: center; color: var(--gray-300); }
+  .lpft a:hover, .lpft button:hover { color: var(--lime); }
+</style>

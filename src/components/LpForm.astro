@@ -1,0 +1,127 @@
+---
+// Vanilla port of components/lp/LpForm.tsx: same 5 steps, same values, same /api/lp-submit payload.
+// Copy: copy/lp-7-day-usd.md [LP-FORM] (+ PH overrides). currentWebsite / facebookPage are folded into
+// `notes` client-side so the API payload shape is unchanged.
+const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
+const php = variant === 'php';
+const P = php ? { starter: '₱19,999', growth: '₱34,999', pro: '₱59,999' } : { starter: '$499', growth: '$899', pro: '$1,499' };
+const packages = [
+  { value: 'starter', name: 'Starter', price: P.starter, tag: 'New businesses getting online', feats: ['5 custom pages', 'Mobile-responsive design', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+  { value: 'growth', name: 'Growth', price: P.growth, tag: 'Growing small businesses', popular: true, feats: ['8 custom pages', 'Custom design system', 'Advanced SEO', 'Blog + CMS setup', 'Google Analytics', '3 revision rounds', '7-day delivery'] },
+  { value: 'pro', name: 'Pro', price: P.pro, tag: 'Businesses ready to scale', feats: ['10+ custom pages', 'Full brand integration', 'E-commerce ready', 'Performance < 2s', 'Unlimited revisions', 'Priority support', '7-day delivery'] },
+];
+const industries = ['Restaurant & Food', 'Retail & Fashion', 'Professional Services', 'Healthcare & Wellness', 'Real Estate', 'E-commerce', 'Education', 'Construction & Trades', 'Beauty & Salon', 'Tech & Startups', 'Other'];
+const goals = [['leads', 'Get more leads & enquiries'], ['sell', 'Sell products online'], ['credibility', 'Build credibility & trust'], ['replace', 'Replace an outdated website'], ['launch', 'Launch a new business'], ['other', 'Something else']];
+const styles = [['minimal', 'Minimal & clean', 'Whitespace, simple typography'], ['bold', 'Bold & vibrant', 'Strong colours, high energy'], ['corporate', 'Corporate & professional', 'Formal, trustworthy, polished'], ['playful', 'Playful & fun', 'Friendly, colourful, approachable']];
+const pages = ['Home', 'About', 'Services', 'Contact', 'Blog', 'Gallery', 'Portfolio', 'FAQ', 'Team', 'Testimonials', 'Pricing', 'Shop / Store'];
+const referrals = php ? ['Facebook / Instagram', 'Google Search', 'TikTok', 'Referred by a friend', 'LinkedIn', 'Other'] : ['Google Search', 'Facebook / Instagram', 'TikTok', 'Referred by a friend', 'LinkedIn', 'Other'];
+const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You can upgrade later.'], ['Business', 'Tell us about your business.', 'The more context you give, the better we can tailor the site.'], ['Style', 'How should it feel?', 'Help us nail the look before Day 2.'], ['Contact', 'Where do we reach you?', 'We’ll send your brief and start date here.'], ['Review', 'Check your brief.', 'Look right? Send it and we’ll reply within one business day.']];
+---
+<div class="lpf" data-lp-form data-variant={variant}>
+  <ol class="lpf-rail" aria-label="Form progress">{steps.map(([l], i) => <li data-rail={i + 1} aria-current={i === 0 ? 'step' : undefined}><span class="mono">0{i + 1}</span> {l}</li>)}</ol>
+  <form novalidate>
+    <fieldset class="lpf-step" data-step="1">
+      <legend><span class="mono">Step 1 of 5</span><span class="t-h3">{steps[0][1]}</span><span class="lpf-sub">{steps[0][2]}</span></legend>
+      <div class="lpf-pk">{packages.map((p) => (
+        <label class="lpf-card">
+          <input type="radio" name="package" value={p.value} />
+          <span class="lpf-card-b">{p.popular && <span class="mono lpf-pop">Most popular</span>}<span class="lpf-name">{p.name}</span><span class="lpf-price">{p.price}</span><span class="lpf-tag">{p.tag}</span><span class="lpf-feats">{p.feats.join(' · ')}</span></span>
+        </label>
+      ))}</div>
+    </fieldset>
+    <fieldset class="lpf-step" data-step="2" hidden>
+      <legend><span class="mono">Step 2 of 5</span><span class="t-h3">{steps[1][1]}</span><span class="lpf-sub">{steps[1][2]}</span></legend>
+      <div class="lpf-grid">
+        <div class="f"><label for="lp-bn">Business name</label><input id="lp-bn" name="businessName" autocomplete="organization" placeholder="e.g. Sunrise Coffee Co." /></div>
+        <div class="f"><label for="lp-ind">Industry</label><select id="lp-ind" name="industry"><option value="">Select your industry…</option>{industries.map((x) => <option>{x}</option>)}</select></div>
+        <div class="f f--wide"><label for="lp-cw">Current website (if any)</label><input id="lp-cw" name="currentWebsite" type="url" autocomplete="url" placeholder="https://yoursite.com" /></div>
+        {php && <div class="f f--wide"><label for="lp-fb">Your Facebook page (optional)</label><input id="lp-fb" name="facebookPage" placeholder="facebook.com/yourbusiness" aria-describedby="lp-fb-h" /><p class="f-h" id="lp-fb-h">We’ll pull your photos and details from it to save you time.</p></div>}
+        <fieldset class="f f--wide lpf-opts"><legend>Main goal for your new site</legend>{goals.map(([v, l]) => <label class="lpf-opt"><input type="radio" name="goal" value={v} /><span>{l}</span></label>)}</fieldset>
+      </div>
+    </fieldset>
+    <fieldset class="lpf-step" data-step="3" hidden>
+      <legend><span class="mono">Step 3 of 5</span><span class="t-h3">{steps[2][1]}</span><span class="lpf-sub">{steps[2][2]}</span></legend>
+      <fieldset class="lpf-opts lpf-opts--2"><legend>Style</legend>{styles.map(([v, l, d]) => <label class="lpf-opt"><input type="radio" name="styleVibe" value={v} /><span>{l}<small>{d}</small></span></label>)}</fieldset>
+      <fieldset class="lpf-opts lpf-opts--pages"><legend>Pages you need</legend>{pages.map((pg) => <label class="lpf-opt lpf-opt--chip"><input type="checkbox" name="pagesNeeded" value={pg} checked={['Home', 'About', 'Contact'].includes(pg)} /><span>{pg}</span></label>)}</fieldset>
+      <div class="lpf-grid">
+        <div class="f"><label for="lp-bc">Brand colours (optional)</label><input id="lp-bc" name="brandColors" placeholder="e.g. Navy blue, gold and white" /></div>
+        <div class="f"><label for="lp-iu">Sites you like (optional, paste links)</label><textarea id="lp-iu" name="inspirationUrls" rows="2" placeholder="Paste links to websites you like the look of…"></textarea></div>
+      </div>
+    </fieldset>
+    <fieldset class="lpf-step" data-step="4" hidden>
+      <legend><span class="mono">Step 4 of 5</span><span class="t-h3">{steps[3][1]}</span><span class="lpf-sub">{steps[3][2]}</span></legend>
+      <div class="lpf-grid">
+        <div class="f"><label for="lp-n">Your name</label><input id="lp-n" name="name" autocomplete="name" placeholder="Jane Smith" /></div>
+        <div class="f"><label for="lp-e">Email address</label><input id="lp-e" name="email" type="email" autocomplete="email" placeholder="jane@yourbusiness.com" /></div>
+        <div class="f"><label for="lp-p">Phone (optional)</label><input id="lp-p" name="phone" type="tel" autocomplete="tel" placeholder={php ? '+63 9XX XXX XXXX' : '+1 555 000 0000'} /></div>
+        <div class="f"><label for="lp-r">How did you hear about us?</label><select id="lp-r" name="referral"><option value="">Choose one…</option>{referrals.map((x) => <option>{x}</option>)}</select></div>
+        <div class="f f--wide"><label for="lp-no">Anything else we should know? (optional)</label><textarea id="lp-no" name="notes" rows="3" placeholder="Special requirements, launch deadline, anything else…"></textarea></div>
+      </div>
+    </fieldset>
+    <fieldset class="lpf-step" data-step="5" hidden>
+      <legend><span class="mono">Step 5 of 5</span><span class="t-h3">{steps[4][1]}</span><span class="lpf-sub">{steps[4][2]}</span></legend>
+      <dl class="lpf-review" data-review></dl>
+    </fieldset>
+    <p class="lpf-err" role="alert" aria-live="assertive"></p>
+    <div class="lpf-nav">
+      <button type="button" class="btn btn--ghost" data-back hidden>← Back</button>
+      <button type="button" class="btn btn--lime" data-next>Continue <span class="arrow" aria-hidden="true">→</span></button>
+      <button type="submit" class="btn btn--lime" data-submit hidden data-cursor="SEND"><span class="lpf-label">Send my 7-day brief</span> <span class="arrow" aria-hidden="true">→</span></button>
+    </div>
+    <p class="lpf-fine">Protected by reCAPTCHA. Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply. Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
+  </form>
+  <div class="lpf-ok" hidden><h3 class="t-d2" tabindex="-1">Brief received. You’re in the queue.</h3><p class="lpf-ok-b"></p></div>
+</div>
+<script>
+  import { initLpForms } from '../forms/lp';
+  document.addEventListener('astro:page-load', initLpForms);
+  initLpForms();
+</script>
+<style>
+  .lpf { background: var(--gray-900); border: 1px solid var(--gray-700); padding: clamp(1.25rem, 3vw, 2.5rem); }
+  .lpf-rail { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; margin-bottom: 2rem; }
+  .lpf-rail li { font-size: .85rem; color: var(--gray-400); border-top: 2px solid var(--gray-700); padding-top: .6rem; }
+  .lpf-rail li[aria-current='step'], .lpf-rail li.is-done { color: var(--white); border-top-color: var(--lime); }
+  fieldset { border: 0; min-width: 0; }
+  .lpf-step > legend { display: grid; gap: .35rem; margin-bottom: 1.5rem; }
+  .lpf-step > legend .mono { color: var(--lime); }
+  .lpf-sub { color: var(--gray-400); }
+  .lpf-pk { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  .lpf-card { position: relative; cursor: pointer; }
+  .lpf-card input, .lpf-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+  .lpf-card-b { display: grid; gap: .4rem; padding: 1.25rem; border: 1px solid var(--gray-700); background: var(--gray-800); height: 100%; transition: border-color .2s; }
+  .lpf-card input:checked + .lpf-card-b { border-color: var(--lime); box-shadow: inset 0 0 0 1px var(--lime); }
+  .lpf-card input:focus-visible + .lpf-card-b, .lpf-opt input:focus-visible + span { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .lpf-pop { color: var(--lime); }
+  .lpf-name { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 1.25rem; }
+  .lpf-price { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 2rem; line-height: 1; }
+  .lpf-tag { color: var(--gray-300); font-size: .95rem; }
+  .lpf-feats { color: var(--gray-400); font-size: .85rem; }
+  .lpf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem var(--gutter); }
+  .f { display: flex; flex-direction: column; gap: .35rem; }
+  .f--wide { grid-column: 1 / -1; }
+  .f label, .lpf-opts > legend { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gray-300); }
+  .lpf-opts > legend { margin-bottom: .6rem; }
+  .f input, .f select, .f textarea { width: 100%; min-height: 48px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--white); padding: .8rem 1rem; border-radius: 0; font-size: 1rem; }
+  .f input::placeholder, .f textarea::placeholder { color: var(--gray-400); }
+  .f input:focus-visible, .f select:focus-visible, .f textarea:focus-visible { border-color: var(--lime); outline-offset: 0; }
+  .f-h { font-size: .85rem; color: var(--gray-400); }
+  .lpf-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-bottom: 1.25rem; }
+  .lpf-opts--2 { grid-template-columns: 1fr 1fr; }
+  .lpf-opts--pages { display: flex; flex-wrap: wrap; }
+  .lpf-opt { position: relative; cursor: pointer; }
+  .lpf-opt span { display: grid; gap: .2rem; min-height: 48px; align-content: center; padding: .6rem 1rem; border: 1px solid var(--gray-700); background: var(--gray-800); color: var(--gray-200); transition: border-color .2s; }
+  .lpf-opt small { color: var(--gray-400); font-size: .8rem; }
+  .lpf-opt--chip span { border-radius: 999px; min-height: 44px; padding: 0 1rem; }
+  .lpf-opt input:checked + span { border-color: var(--lime); color: var(--white); box-shadow: inset 0 0 0 1px var(--lime); }
+  .lpf-review { display: grid; grid-template-columns: 10rem 1fr; gap: .6rem 1rem; }
+  .lpf-review dt { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gray-400); }
+  .lpf-review dd { color: var(--gray-200); }
+  .lpf-err { color: #ffb3a8; min-height: 1.5em; margin-top: 1rem; }
+  .lpf-nav { display: flex; gap: .75rem; justify-content: flex-end; margin-top: .5rem; }
+  .lpf-nav [hidden] { display: none; }
+  .lpf-fine { font-size: .85rem; color: var(--gray-400); margin-top: 1.25rem; }
+  .lpf-ok[hidden], .lpf form[hidden], .lpf-step[hidden] { display: none; }
+  .lpf-ok { display: grid; gap: 1rem; }
+  @media (max-width: 767px) { .lpf-pk, .lpf-grid, .lpf-opts, .lpf-opts--2 { grid-template-columns: 1fr; } .lpf-rail { font-size: .7rem; } .lpf-rail li { font-size: .7rem; } .lpf-review { grid-template-columns: 1fr; } }
+</style>

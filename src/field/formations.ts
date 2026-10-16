@@ -310,3 +310,16 @@ export function scatter(n: number, v: View, count = 2400): Formation {
   for (let i = 0; i < count; i++) pts.push([r() * v.w, r() * v.h, 0, 0.3 + r() * 0.8, 0.8]);
   return pack('scatter', pts, n, v, 2, [v.w / 2, v.h / 2]);
 }
+
+/* ── days7: 7 nodes on one line (the 7-day timeline); `lit` = how many days are lit ── */
+export function days7(rect: { left: number; top: number; width: number; height: number }, n: number, v: View, lit = 7, y?: number): Formation {
+  const pts: Pt[] = [];
+  const cy = y ?? rect.top + 5, x0 = rect.left + 5, x1 = rect.left + rect.width - rect.width / 7 + 5;
+  line(pts, { x: x0, y: cy }, { x: x1, y: cy }, 5, 0.5, 0.8);
+  for (let d = 0; d < 7; d++) {
+    const x = x0 + ((x1 - x0) * d) / 6;
+    const on = lit < 0 ? d === 6 : d < lit; // lit < 0 → only Day 7 (hero)
+    cluster(pts, { x, y: cy }, on ? (d === 6 ? 9 : 6) : 5, d === 6 ? 90 : 40, on ? 2 : 1, 70 + d);
+  }
+  return pack('days7', pts, n, v, 2.2, [x0, cy]);
+}

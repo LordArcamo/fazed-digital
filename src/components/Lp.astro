@@ -1,0 +1,239 @@
+---
+// 7-day website landing page (USD + PHP variants). Copy: copy/lp-7-day-usd.md, copy/lp-7-day-ph.md,
+// copy/answers-2026-10-16.md (#3 "7 business days" + "20% off", #4 placeholder reviews, #7 caps,
+// #21 payment methods, #23 in-person, #25 Facebook content).
+import { Picture } from 'astro:assets';
+import Faq from './Faq.astro';
+import LpForm from './LpForm.astro';
+import { caseIndex } from '../data/cases';
+import { workImages } from '../data/images';
+import { lpFaq } from '../data/lp';
+import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, prices, capsCopy } from '../data/proof';
+const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
+const php = variant === 'php';
+const P = php ? prices.php : prices.usd;
+const plans = [
+  { id: 'starter', name: 'Starter', price: P.starter, for: 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+  { id: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', popular: true, rows: ['8 custom-designed pages', 'Custom design system', 'Advanced on-page SEO', 'Blog + CMS setup · Google Analytics + Search Console', '3 revision rounds', '7-day delivery'] },
+  { id: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: ['10+ custom pages', 'Full brand integration', 'Performance optimised (under 2s load)', 'E-commerce ready · Priority support', 'Unlimited revisions', '7-day delivery'] },
+];
+const pain = [
+  ['6–10 week delivery', 'Live in 7 days'],
+  [php ? '₱150,000–₱500,000+ minimum budget' : '$3,000–$15,000+ minimum budget', `Fixed price from ${P.starter}`],
+  ['Hourly rates and surprise invoices', 'One flat fee. No surprises.'],
+  ['Vague revision process', '2, 3 or unlimited revision rounds, agreed upfront'],
+  ['Multiple hand-offs and delays', 'One team, a direct line'],
+  ['Lock-in contracts', 'You own it all. No lock-in.'],
+];
+const process = [
+  ['Day 1', 'Kickoff & brief', 'You fill in a short brief and send your logo, photos and references. We confirm goals and the timeline.'],
+  ['Day 2–3', 'Design', 'We design your custom mockups. You review and send feedback within 24 hours.'],
+  ['Day 4–5', 'Build', 'We build the full site: mobile-first, fast-loading and set up for search.'],
+  ['Day 6', 'Review & revise', 'You test it on our staging link. We make the final changes.'],
+  ['Day 7', 'Launch', 'Your site goes live. We connect the domain, set up hosting and hand everything over.'],
+];
+const why = [
+  ['7x faster', 'The industry average is 6–8 weeks. We deliver in 7 days without cutting corners.'],
+  ['Fixed price', 'No hourly rates, no scope-creep surprises. One price, one timeline, everything listed.'],
+  ['Ready for Google', 'Every page ships with meta tags, schema, clean structure and fast load times.'],
+  ['Mobile-first', 'Most people will meet your business on a phone first, so we design for the phone first.'],
+];
+const guarantee = 'We’ll launch your site in 7 business days, as long as we have your content and assets on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.';
+const faq = lpFaq(php);
+---
+<div class="lp" data-lp={variant}>
+  <section class="lp-hero" data-f="days7" aria-labelledby="lp-h">
+    <div class="container lp-hero-in">
+      <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Fast-track website · Fixed price · USD'}</p>
+      <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
+      <p class="t-body-l lp-deck">{php ? 'We design, build and launch professional websites for Philippine businesses: fully custom, mobile-ready and set up for Google.' : 'We design, build and launch professional websites for small businesses: fully custom, mobile-ready and set up for Google.'} <strong>{php ? 'From ₱19,999, fixed price. Pay via GCash, Maya or bank.' : 'From $499, fixed price. You own everything.'}</strong></p>
+      <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
+      <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}</em></li>)}</ol>
+      <dl class="lp-trust">
+        {lpTrust.map((t) => <div><dt class="mono">{t.label}</dt><dd>{t.value}</dd></div>)}
+        <div><dt class="mono">Starting price</dt><dd>{P.starter}</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  {php && (
+    <section class="section container lp-local" aria-labelledby="loc-h">
+      <p class="mono">Facebook + website</p>
+      <h2 id="loc-h" class="t-d2">Your Facebook page is rented. <span class="dim">Your website is yours.</span></h2>
+      <ul class="lp-3">
+        <li><h3 class="t-h3">Get found on Google.</h3><p>When someone searches “catering in Cagayan de Oro”, Google shows websites and Business Profiles, not Facebook posts.</p></li>
+        <li><h3 class="t-h3">Look established.</h3><p>Corporate clients and overseas buyers check for a proper website (and a real business email) before they message.</p></li>
+        <li><h3 class="t-h3">Keep Messenger.</h3><p>We add a chat button so customers can still message you the way they like.</p></li>
+      </ul>
+      <a class="link" href="/blog/facebook-page-vs-website">Read: Facebook page vs website</a>
+    </section>
+  )}
+
+  <section class="section container lp-pain" aria-labelledby="pain-h">
+    <h2 id="pain-h" class="t-d2">Why not just hire a regular agency?</h2>
+    <p>Here’s what you’re usually signing up for.</p>
+    <table class="lp-table">
+      <thead><tr><th scope="col" class="mono">Typical agency</th><th scope="col" class="mono">Fazed Digital · that’s us</th></tr></thead>
+      <tbody>{pain.map(([a, b]) => <tr><td><span aria-hidden="true">✕</span> {a}</td><td><span aria-hidden="true">✓</span> {b}</td></tr>)}</tbody>
+    </table>
+  </section>
+
+  <section class="section container lp-price" id="pricing" aria-labelledby="pr-h">
+    <p class="mono">Simple, fixed pricing · {php ? 'PHP' : 'USD'}</p>
+    <h2 id="pr-h" class="t-d2">Pick a package. <span class="dim">We handle the rest.</span></h2>
+    {php && <p>All prices in Philippine peso. Pay via GCash, Maya or bank transfer.</p>}
+    <ul class="lp-plans">
+      {plans.map((p) => (
+        <li class:list={['plan', { 'plan--pop': p.popular }]} aria-label={`${p.name} package, ${p.price}`}>
+          {p.popular && <p class="mono plan-pop">Most popular</p>}
+          <h3 class="t-h3">{p.name}</h3>
+          <p class="plan-price">{p.price}</p>
+          <p class="plan-for">{p.for}</p>
+          <ul class="plan-rows">{p.rows.map((r) => <li>{r}</li>)}</ul>
+          <a class:list={['btn', p.popular ? 'btn--lime' : 'btn--ghost']} href="#get-started" data-choose={p.id}>Choose {p.name} <span class="arrow" aria-hidden="true">→</span></a>
+        </li>
+      ))}
+    </ul>
+    <p class="lp-note">Need something custom? <a class="link" href="mailto:info@fazeddigital.com">Email us</a> and we’ll scope it together. No commitment.</p>
+    <p class="lp-note mono">Extra pages {P.page} each · Maintenance from {P.care} · Booking systems, portals and custom e-commerce are scoped separately.</p>
+  </section>
+
+  {php && (
+    <section class="section container lp-pay" aria-labelledby="pay-h">
+      <p class="mono">Accepted payments</p>
+      <h2 id="pay-h" class="t-h3">Pay the way you already do.</h2>
+      <ul class="lp-chips">{['GCash', 'Maya', 'BPI', 'Metrobank', 'Wise'].map((x) => <li class="chip">{x}</li>)}</ul>
+    </section>
+  )}
+
+  <section class="section container lp-reviews" aria-labelledby="rv-h">
+    <p class="mono">Client reviews</p>
+    <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
+    {LP_REVIEWS_REAL && lpTestimonials.length
+      ? <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
+      : <ul class="lp-3 lp-ph" data-placeholder>{[1, 2, 3].map((n) => <li><p class="mono">Placeholder · review {n}</p><p>Client review coming soon. We only publish reviews clients have approved.</p></li>)}</ul>}
+    <p>Meanwhile, see the work for yourself: <a class="link" href="/work">8 live projects</a>.</p>
+  </section>
+
+  <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
+    <p class="mono">How it works · 7 days · 5 steps</p>
+    <h2 id="pc-h" class="t-d2">From brief to live in 7 days.</h2>
+    <ol class="lp-steps" data-days-anchor>{process.map(([d, t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><span class="mono">{d}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+  </section>
+
+  <section class="section container lp-guar" aria-labelledby="g-h">
+    <h2 id="g-h" class="t-d2">The 7-day promise</h2>
+    <p class="t-body-l">{guarantee}</p>
+  </section>
+
+  <section class="lp-mid on-lime" aria-label="Get started">
+    <div class="container lp-mid-in">
+      <p class="t-h3">Ready? Let’s get you live in 7 days.</p>
+      <p>No commitment until you approve the quote.</p>
+      <a class="btn btn--black" href="#get-started">Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+  </section>
+
+  <section class="section container lp-why" aria-labelledby="w-h">
+    <h2 id="w-h" class="t-d2">Speed meets quality.</h2>
+    <ul class="lp-4">{why.map(([t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ul>
+  </section>
+
+  <section class="section container lp-work" aria-labelledby="lw-h">
+    <p class="mono">Real work · 08 live projects</p>
+    <h2 id="lw-h" class="t-d2">Sites we’ve shipped.</h2>
+    <p>From 5-week MVPs to 14-week platforms. The same team builds your 7-day site.</p>
+    <ul class="lp-tiles">
+      {caseIndex.map((c) => <li><a href={`/work/${c.slug}`} data-cursor={`CASE ${c.slug} →`}><Picture src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 25vw" alt={`${c.title} website screenshot`} loading="lazy" decoding="async" /><span class="mono">{c.sector}</span><span class="tile-t">See the {c.title} project</span></a></li>)}
+    </ul>
+    <a class="link" href="/work">See all our work →</a>
+  </section>
+
+  <section class="section container lp-faq" aria-labelledby="fq-h">
+    <h2 id="fq-h" class="t-d2">Common questions.</h2>
+    <Faq items={faq} id={`lpfaq-${variant}`} />
+  </section>
+
+  <section class="section container lp-form" id="get-started" aria-labelledby="gs-h">
+    <div class="lp-form-side">
+      <p class="mono lp-cap">{capsCopy.sevenDay}</p>
+      <h2 id="gs-h" class="t-d2">Ready to go live <span class="dim">in 7 days?</span></h2>
+      <p>Tell us about your project. We’ll reply within one business day with a confirmed start date. No commitment until you approve.</p>
+      {php && <p>Already have a Facebook page? Add it in Step 2 and we’ll pull your photos and details from it to save you time.</p>}
+      <ul class="lp-pills">{['No lock-in contracts', 'Fixed price, no surprises', '7 business days or 20% off', 'You own your site'].map((x) => <li><span aria-hidden="true">✓</span> {x}</li>)}</ul>
+    </div>
+    <LpForm variant={variant} />
+  </section>
+</div>
+<style>
+  .lp-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h) + 72px) 0 72px; }
+  .lp-hero-in { display: grid; gap: 1.5rem; }
+  .lp-hero h1 { max-width: 12ch; }
+  .lp-deck { max-width: 52ch; }
+  .lp-deck strong { color: var(--white); }
+  .lp-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .lp-days { display: grid; grid-template-columns: repeat(7, 1fr); max-width: 760px; margin-top: 2rem; position: relative; }
+  .lp-days::before { content: ''; position: absolute; left: 5px; right: 5px; top: 5px; height: 1px; background: var(--gray-700); }
+  .lp-days li { display: grid; gap: .5rem; position: relative; }
+  .lp-days span { width: 11px; height: 11px; border-radius: 50%; background: var(--gray-700); border: 1px solid var(--gray-500); }
+  .lp-days li.lit span { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
+  .lp-days em { font-style: normal; font-size: .65rem; }
+  :global(html.gl-live) .poster-days span { visibility: hidden; }
+  :global(html.gl-live) .lp-days::before { opacity: 0; }
+  .lp-trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); max-width: 900px; margin-top: 1.5rem; border-top: 1px solid var(--gray-700); padding-top: 1.25rem; }
+  .lp-trust dd { font-family: var(--font-display); font-weight: 600; font-size: 2rem; color: var(--white); line-height: 1; margin-top: .4rem; }
+  .lp-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin: 2rem 0; }
+  .lp-3 li { display: grid; gap: .6rem; align-content: start; padding-top: 1.25rem; border-top: 1px solid var(--gray-700); }
+  .lp-local, .lp-pain, .lp-price, .lp-pay, .lp-reviews, .lp-proc, .lp-guar, .lp-why, .lp-work, .lp-faq { display: grid; gap: 1.25rem; }
+  .lp-table { width: 100%; max-width: 1000px; border-collapse: collapse; margin-top: 1.5rem; }
+  .lp-table th { text-align: left; font-weight: 400; padding: .75rem 1rem .75rem 0; border-bottom: 1px solid var(--gray-700); }
+  .lp-table th:last-child { color: var(--lime); }
+  .lp-table td { padding: 1rem 1rem 1rem 0; border-bottom: 1px solid var(--gray-700); vertical-align: top; width: 50%; }
+  .lp-table td:first-child { color: var(--gray-400); }
+  .lp-table td:last-child { color: var(--white); }
+  .lp-table td:last-child span { color: var(--lime); }
+  .lp-plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: 1.5rem; align-items: stretch; }
+  .plan { display: grid; gap: .75rem; align-content: start; padding: 2rem; border: 1px solid var(--gray-700); background: rgba(17, 17, 17, .85); }
+  .plan--pop { border-color: var(--lime); }
+  .plan-pop { color: var(--lime); }
+  .plan-price { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.5rem, 4vw, 3.5rem); color: var(--white); line-height: 1; }
+  .plan-for { color: var(--gray-400); }
+  .plan-rows { display: grid; gap: .5rem; margin: .5rem 0 1rem; }
+  .plan-rows li { padding-left: 1.3rem; position: relative; color: var(--gray-200); }
+  .plan-rows li::before { content: ''; position: absolute; left: 0; top: .6em; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+  .plan .btn { justify-self: start; margin-top: auto; }
+  .lp-note { color: var(--gray-300); }
+  .lp-chips, .lp-pills { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .lp-chips .chip { color: var(--gray-200); min-height: 40px; }
+  .lp-ph li { border: 1px dashed var(--gray-500); padding: 1.25rem; border-top-style: dashed; }
+  .lp-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gutter); margin-top: 2rem; }
+  .lp-steps li, .lp-4 li { display: grid; gap: .6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); position: relative; }
+  .lp-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); }
+  .lp-steps .mono { color: var(--lime); }
+  .lp-guar p { max-width: 62ch; }
+  .lp-mid { background: var(--lime); padding: 72px 0; }
+  .lp-mid, .lp-mid :global(*) { color: var(--black); }
+  .lp-mid-in { display: grid; gap: .75rem; justify-items: start; }
+  .lp-mid .btn--black, .lp-mid .btn--black :global(*) { color: var(--lime); }
+  .lp-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: 1.5rem; }
+  .lp-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin: 1.5rem 0; }
+  .lp-tiles a { display: grid; gap: .4rem; }
+  .lp-tiles :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); transition: border-color .2s; }
+  .lp-tiles a:hover :global(img), .lp-tiles a:focus-visible :global(img) { border-color: var(--lime); }
+  .tile-t { color: var(--white); font-weight: 600; }
+  .lp-faq > :global(.faq) { max-width: 1000px; }
+  .lp-form { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
+  .lp-form-side { grid-column: 1 / span 4; display: grid; gap: 1.25rem; align-content: start; }
+  .lp-form > :global(.lpf) { grid-column: 6 / span 7; }
+  .lp-cap { color: var(--lime); }
+  .lp-pills { display: grid; gap: .6rem; }
+  .lp-pills span { color: var(--lime); }
+  @media (max-width: 1023px) {
+    .lp-trust { grid-template-columns: 1fr 1fr; }
+    .lp-3, .lp-plans { grid-template-columns: 1fr; }
+    .lp-steps { grid-template-columns: 1fr 1fr; }
+    .lp-4, .lp-tiles { grid-template-columns: 1fr 1fr; }
+    .lp-form > * { grid-column: 1 / -1 !important; }
+  }
+  @media (max-width: 599px) { .lp-steps, .lp-4, .lp-tiles { grid-template-columns: 1fr; } .lp-days em { display: none; } }
+</style>
