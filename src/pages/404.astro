@@ -16,6 +16,7 @@ import Base from '../layouts/Base.astro';
   </section>
 </Base>
 <style>
+  .nf .t-body-l, .nf-help { max-width: 60ch; }
   .nf { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: clip; padding-top: var(--header-h); }
   .nf-radar { position: absolute; right: 8vw; top: 50%; width: min(44vw, 520px); aspect-ratio: 1; transform: translateY(-50%); border-radius: 50%; border: 1px solid var(--gray-700); background: conic-gradient(from 0deg, rgba(201,255,87,.2), transparent 25%); animation: sweep 3.5s linear infinite; }
   @keyframes sweep { to { transform: translateY(-50%) rotate(360deg); } }

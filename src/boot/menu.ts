@@ -35,7 +35,8 @@ function set(open: boolean) {
   btn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
   for (const id of ['main', 'footer']) document.getElementById(id)?.toggleAttribute('inert', open);
   if (open) { bus.lenis?.stop(); menu.querySelector<HTMLElement>('.menu-link')?.focus({ preventScroll: true }); }
-  else { bus.lenis?.start(); (vis(back) && back !== document.body ? back : vis(btn) ? btn : null)?.focus({ preventScroll: true }); }
+  // rail + M key: the menu button is hidden, so focus falls back to <main>, never <body>
+  else { bus.lenis?.start(); (vis(back) && back !== document.body ? back : vis(btn) ? btn : document.getElementById('main'))?.focus({ preventScroll: true }); }
 }
 
 export function initMenu() {

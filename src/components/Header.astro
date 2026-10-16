@@ -31,7 +31,7 @@ const cur = menu.find((m) => m.href === current);
     <nav class="sd sd-m" id="sd" aria-label="Primary">
       <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
       <span class="sd-div" aria-hidden="true"></span>
-      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span><span class="sd-idx" aria-hidden="true">{cur ? cur.n : '--'}/06</span></button>
+      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span>{cur && <span class="sd-idx" aria-hidden="true">{cur.n}/06</span>}</button>
       <div class="sd-lw">
       <span class="sd-goo" aria-hidden="true"><i class="sd-b sd-b1"></i><i class="sd-b sd-b2"></i></span>
       <ul class="sd-list" id="sd-list">
@@ -67,7 +67,11 @@ const cur = menu.find((m) => m.href === current);
   </div>
 </div>}
 <style>
-  .hdr { position: absolute; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); }
+  .hdr { position: absolute; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); view-transition-name: hdr; }
+  /* router: the header/dock swaps instantly instead of crossfading (old docked capsule + new rail were both visible at 80–200ms) */
+  .sd { view-transition-name: sd; } .sd-lp { view-transition-name: sdlp; }
+  :global(::view-transition-old(hdr)), :global(::view-transition-old(sd)), :global(::view-transition-old(sdlp)) { animation: none; opacity: 0; }
+  :global(::view-transition-new(hdr)), :global(::view-transition-new(sd)), :global(::view-transition-new(sdlp)) { animation: none; }
   .hdr-in { height: 100%; display: flex; align-items: center; }
   .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; flex: none; }
   .hdr-lp { margin-left: auto; min-height: 44px; }

@@ -56,7 +56,7 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
       <h1 class="t-d1 c-h1">{c.title}</h1>
       <p class="t-d2 c-sub">{c.resultHeadline}</p>
       <div class="c-actions">
-        {c.liveLabel ? <a class="btn btn--lime" href={c.liveUrl} target="_blank" rel="noopener" data-cursor="OPEN ↗">{c.liveLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a> : <span class="chip">Private system · shown with permission</span>}
+        {c.liveLabel ? <a class="btn btn--lime" href={c.liveUrl} target="_blank" rel="noopener" data-cursor="OPEN ↗">{c.liveLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a> : <span class="chip c-priv">Private system · shown with permission</span>}
         <a class="btn btn--ghost" href="/work">← All work</a>
       </div>
     </header>
@@ -121,6 +121,7 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
   </article>
 </Base>
 <style>
+  @media (max-width: 599px) { .c-priv { border-radius: 12px; padding-block: .45rem; line-height: 1.5; } } /* wraps to 2 lines at 390: a 999px pill turned into a lozenge */
   .c-hero { padding-top: calc(var(--header-h) + 72px); display: grid; gap: 1.25rem; }
   .crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
   .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }

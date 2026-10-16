@@ -57,6 +57,8 @@ export function initContactForms() {
         if (out) out.textContent = e[k] ?? '';
       }
       if (Object.keys(e).length) {
+        const n = Object.keys(e).length;
+        sum.textContent = n === 1 ? 'One field needs attention. It’s highlighted below.' : 'A couple of fields need attention. They’re highlighted below.';
         sum.hidden = false;
         form.querySelector<HTMLElement>(`[name=${Object.keys(e)[0]}]`)?.focus();
         return;

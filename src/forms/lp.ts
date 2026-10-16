@@ -1,6 +1,7 @@
 // LP multi-step form (port of LpForm.tsx). Same validation order, same payload to /api/lp-submit.
 import { captcha, loadRecaptcha } from './contact';
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const STYLE: Record<string, string> = { minimal: 'Minimal & clean', bold: 'Bold & vibrant', corporate: 'Corporate & professional', playful: 'Playful & fun' };
 const GOAL: Record<string, string> = { leads: 'Get more leads & enquiries', sell: 'Sell products online', credibility: 'Build credibility & trust', replace: 'Replace an outdated website', launch: 'Launch a new business', other: 'Something else' };
 
 export function lpPayload(form: HTMLFormElement) {
@@ -44,7 +45,7 @@ export function initLpForms() {
     const review = () => {
       const p = lpPayload(form);
       const pk = form.querySelector<HTMLInputElement>(`input[name=package][value="${p.package}"]`)?.closest('label')?.querySelector('.lpf-name')?.textContent ?? p.package;
-      const rows: [string, string][] = [['Package', pk], ['Business', `${p.businessName} · ${p.industry}`], ['Goal', GOAL[p.goal] ?? p.goal], ['Style', p.styleVibe], ['Pages', p.pagesNeeded.join(', ')], ['Contact', `${p.name} · ${p.email}${p.phone ? ' · ' + p.phone : ''}`]];
+      const rows: [string, string][] = [['Package', pk], ['Business', `${p.businessName} · ${p.industry}`], ['Goal', GOAL[p.goal] ?? p.goal], ['Style', STYLE[p.styleVibe] ?? p.styleVibe], ['Pages', p.pagesNeeded.join(', ')], ['Contact', `${p.name} · ${p.email}${p.phone ? ' · ' + p.phone : ''}`]];
       const dl = root.querySelector('[data-review]')!;
       dl.replaceChildren(...rows.flatMap(([k, v]) => { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v || '—'; return [dt, dd]; }));
     };

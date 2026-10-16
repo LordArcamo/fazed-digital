@@ -1216,7 +1216,8 @@ const schema = [
   .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }
   .crumbs a { color: var(--gray-300); min-height: 44px; display: inline-flex; align-items: center; }
   .crumbs a:hover { color: var(--lime); }
-  .crumb-cur { color: var(--gray-400); max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .crumb-cur { color: var(--gray-400); max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 44px; display: inline-block; line-height: 44px; }
+  @media (max-width: 767px) { .crumb-cur { display: none; } .crumbs li:nth-last-child(2)::after { display: none; } } /* the H1 sits right below */
   .p-cat { color: var(--lime); }
   .p-h1 { max-width: 22ch; }
   .p-deck { max-width: 60ch; }

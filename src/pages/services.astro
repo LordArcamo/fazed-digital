@@ -138,6 +138,7 @@ const schema = [
   .chap-proof ul { display: grid; gap: 1.25rem; }
   .chap-proof li { display: grid; gap: .3rem; padding-left: 1rem; border-left: 1px solid var(--gray-700); }
   .chap-proof .link { justify-self: start; }
+  @media (max-width: 1023px) { .chap-proof .link { padding-block: 8px; } } /* standalone row: 29 → 45px tap height */
   .chap-time, .chap-read { color: var(--gray-300); }
   .chap-time .mono, .chap-read .mono { margin-right: .75rem; }
   .chap-cta { justify-self: start; }
