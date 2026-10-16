@@ -21,7 +21,7 @@ const schema = [
   <section class="w-hero" data-f="lattice" aria-labelledby="w-h">
     <div class="container w-hero-in">
       <p class="mono">Selected work · 08 cases · {String(countries.length).padStart(2, '0')} countries · 2024–2025</p>
-      <h1 id="w-h" class="t-d2">Projects we’re proud of.</h1>
+      <h1 id="w-h" class="t-d2"><span class="h-l1">Live sites.</span> <span class="h-l2">Real businesses.</span></h1>
       <p class="t-body-l w-deck">Websites, brands, platforms and portals for a framing contractor in Utah, a law firm in Queensland, a cleaning brand at home and five more. Every one is live.</p>
     </div>
   </section>
@@ -71,9 +71,12 @@ const schema = [
 <style>
   /* the index is the hero: a compact D2 head, the table starts in the first viewport */
   .w-hero { position: relative; padding: calc(var(--header-h) + 64px) 0 24px; }
-  .w-hero-in { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 52ch); align-items: end; gap: 1rem var(--gutter); }
+  .w-hero-in { display: grid; grid-template-columns: auto minmax(0, 52ch); align-items: end; gap: 1rem var(--gutter); }
   .w-hero-in > .mono { grid-column: 1 / -1; }
-  .w-hero h1 { max-width: 14ch; }
+  .w-hero h1 { max-width: none; }
+  /* two-line rhythm like home: line 2 in gray-400 */
+  .w-hero h1 .h-l1, .w-hero h1 .h-l2 { display: block; } .w-hero h1 .h-l2 { color: var(--gray-400); }
+  @media (min-width: 768px) { .w-hero h1 .h-l1, .w-hero h1 .h-l2 { white-space: nowrap; } }
   @media (max-width: 1023px) { .w-hero-in { grid-template-columns: 1fr; } }
   .w-deck { max-width: 52ch; }
   .w-list { padding-top: 16px; }

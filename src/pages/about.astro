@@ -34,7 +34,7 @@ const schema = [
     <svg class="poster-art a-poster" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#F5F4F0" stroke-opacity=".35" stroke-dasharray="1 3"><ellipse cx="100" cy="100" rx="36" ry="17" /><ellipse cx="100" cy="100" rx="56" ry="26" /><ellipse cx="100" cy="100" rx="80" ry="38" /></g><circle cx="100" cy="100" r="3" fill="#C9FF57" /><circle cx="160" cy="125" r="3" fill="#F5F4F0" /><circle cx="60" cy="80" r="3" fill="#F5F4F0" /><circle cx="130" cy="78" r="3" fill="#F5F4F0" /><circle cx="44" cy="118" r="3" fill="#F5F4F0" /></svg>
     <div class="container a-hero-in">
       <p class="mono">About · Iligan City, Lanao del Norte · Est. 2022</p>
-      <h1 id="a-h" class="t-d1">We make bold brands for ambitious people.</h1>
+      <h1 id="a-h" class="t-d1"><span class="h-l1">Small studio.</span> <span class="h-l2">Serious reach.</span></h1>
       <p class="t-body-l a-deck">Fazed Digital started in Iligan City in 2022 with one belief: small and mid-sized businesses deserve agency-level design and strategy, without the agency-sized price tag or attitude.</p>
       <a class="btn btn--ghost" href="/work">See the work</a>
     </div>
@@ -116,7 +116,9 @@ const schema = [
   .a-rings-anchor { position: absolute; left: 88vw; top: 58%; width: 8vw; height: 20vh; transform: translate(-50%, -50%); }
   .a-poster { position: absolute; left: calc(88vw - 87.5vh); top: 58%; width: 175vh; max-width: none; transform: translateY(-50%); }
   .a-hero-in { display: grid; gap: 1.5rem; justify-items: start; }
-  .a-hero h1 { max-width: 12ch; }
+  .a-hero h1 { max-width: none; }
+  /* two-line rhythm like home: line 2 in gray-400 */
+  .a-hero h1 .h-l1, .a-hero h1 .h-l2 { display: block; } .a-hero h1 .h-l2 { color: var(--gray-400); }
   .a-deck { max-width: 44ch; }
   .a-story, .a-values { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .a-story > div:first-child, .a-values > div { grid-column: 1 / span 5; display: grid; gap: 1rem; align-content: start; }

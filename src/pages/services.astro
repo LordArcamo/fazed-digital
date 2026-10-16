@@ -33,7 +33,7 @@ const schema = [
     </svg>
     <div class="container s-hero-in">
       <p class="mono">What we do · 05 services · 01 system</p>
-      <h1 id="s-h" class="t-d1">Services that move the needle.</h1>
+      <h1 id="s-h" class="t-d1"><span class="h-l1">Five services.</span> <span class="h-l2">One connected brand.</span></h1>
       <p class="t-body-l s-deck">Brand, website, search, product and systems, built by one team so they actually fit together. Hire us for one piece, or let us connect the lot.</p>
       <div class="s-cta">
         <a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a>
@@ -99,7 +99,11 @@ const schema = [
   .s-hero { --R: min(27vw, 47.25vh); --cy: 54vh; position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; padding-top: var(--header-h); text-align: center; overflow: hidden; }
   .s-poster { position: absolute; width: calc(var(--R) * 2.5); left: 50%; top: var(--cy); transform: translate(-50%, -50%); }
   .s-hero-in { position: relative; display: grid; gap: 1.5rem; justify-items: center; }
-  .s-hero h1 { max-width: 13ch; }
+  .s-hero h1 { max-width: none; }
+  /* two-line rhythm like home: line 2 in gray-400 */
+  .s-hero h1 .h-l1, .s-hero h1 .h-l2 { display: block; } .s-hero h1 .h-l2 { color: var(--gray-400); }
+  .s-hero h1 .h-l1, .s-hero h1 .h-l2 { white-space: nowrap; }
+  @media (max-width: 767px) { .s-hero h1 { font-size: min(9vw, 3rem); } } /* "One connected brand." stays one line at 375/390 */
   .s-deck { max-width: 44ch; }
   .s-cta { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
   .s-jump a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
