@@ -1,9 +1,9 @@
 // Pre-3D entry (budget ≤12KB gz): header state, menu, consent, route lifecycle,
 // then the motion chunk at idle and the GL chunk after load (desktop) / first interaction (mobile).
 import { readFlags } from './flags';
-import { initMenu } from './menu';
+import { initMenu, bindMenuOnce } from './menu';
 import { initCookies } from './cookies';
-import { initNav, dockState } from './nav';
+import { initNav, dockState, bindNavOnce } from './nav';
 import { bus } from '../lib/bus';
 
 const flags = readFlags();
@@ -17,7 +17,7 @@ let lastY = scrollY;
 const onScroll = () => {
   if (ticking) return;
   ticking = true;
-  requestAnimationFrame(() => { const y = scrollY; html.classList.toggle('scrolled', y > 24); dockState(y, lastY); lastY = y; ticking = false; });
+  requestAnimationFrame(() => { const y = scrollY; dockState(y, lastY); lastY = y; ticking = false; });
 };
 addEventListener('scroll', onScroll, { passive: true });
 
@@ -40,6 +40,8 @@ const loadGL = () => (gl ??= (async () => {
 })().catch((e) => { console.warn('[field] off:', e?.message || e); html.dataset.gl = 't0'; return null; }));
 
 function boot() {
+  bindMenuOnce();
+  bindNavOnce();
   initMenu();
   initCookies();
   const mobile = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
@@ -65,7 +67,6 @@ let lastBody: HTMLElement | null = null;
 function onPage() {
   if (document.body === lastBody) return;
   lastBody = document.body;
-  html.classList.toggle('scrolled', scrollY > 24);
   lastY = scrollY; dockState(scrollY, scrollY + 1);
   initNav();
   if (first) { first = false; boot(); }
@@ -81,7 +82,7 @@ function onPage() {
 }
 document.addEventListener('astro:page-load', onPage);
 // ClientRouter swaps <html> attributes for the incoming document's: carry the runtime state over
-const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'is-docked', 'dock-min', 'dock-hide', 'lp-dock', 'cur-on', 'cur-off'];
+const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'is-docked', 'dock-min', 'dock-hide', 'lp-dock', 'cur-on', 'cur-off'];
 document.addEventListener('astro:before-swap', (e: any) => {
   const nd = e.newDocument?.documentElement as HTMLElement | undefined;
   if (nd) {
