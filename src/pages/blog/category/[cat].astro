@@ -1,0 +1,26 @@
+---
+// Category hubs (copy/seo-strategy.md §7): derived from the existing `category` field only.
+import Base from '../../../layouts/Base.astro';
+import BlogList from '../../../components/BlogList.astro';
+import posts from '../../../data/.generated/posts.json';
+import { HUBS, catSlug } from '../../../lib/cover';
+import { SITE_URL } from '../../../data/site';
+import { crumbs } from '../../../lib/schema';
+export function getStaticPaths() {
+  return [...new Set(posts.map((p) => p.category))].map((c) => ({ params: { cat: catSlug(c) }, props: { cat: c } }));
+}
+const { cat } = Astro.props;
+const list = posts.filter((p) => p.category === cat);
+const pillar = HUBS[cat]?.pillar;
+const ordered = [...list.filter((p) => p.slug === pillar), ...list.filter((p) => p.slug !== pillar)];
+const cats = ['SEO', 'Branding', 'Design', 'Development', 'Strategy'].filter((c) => posts.some((p) => p.category === c));
+const latest = new Date(list[0].date).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }).toUpperCase();
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'CollectionPage', name: `${cat} guides`, url: `${SITE_URL}/blog/category/${catSlug(cat)}`, hasPart: ordered.map((p) => ({ '@type': 'BlogPosting', headline: p.title, url: `${SITE_URL}/blog/${p.slug}` })) },
+  crumbs([['Blog', '/blog'], [cat, `/blog/category/${catSlug(cat)}`]]),
+];
+const desc = `${HUBS[cat]?.intro ?? ''} Practical ${cat.toLowerCase()} guides from Fazed Digital.`;
+---
+<Base title={`${cat} Guides for Small Business | Fazed Digital Blog`} description={desc.length > 155 ? desc.slice(0, desc.lastIndexOf(' ', 152)) + '…' : desc} formation="lattice" schema={schema} current="/blog">
+  <BlogList posts={ordered} featured={ordered[0]} rest={ordered.slice(1)} cats={cats} latest={latest} hub={cat} />
+</Base>

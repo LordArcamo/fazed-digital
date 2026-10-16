@@ -44,6 +44,7 @@ function boot() {
   if (flags.record) { loadMotion(); loadGL(); return; }
   idle(loadMotion);
   if (flags.gl === 'off') return;
+  if (html.dataset.formation === 'none' && flags.gl !== 'force') return; // reading pages: no GL on a cold load
   if (mobile) {
     const go = () => { ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => removeEventListener(t, go)); loadGL(); };
     ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => addEventListener(t, go, { passive: true, once: true }));
@@ -66,6 +67,7 @@ function onPage() {
   else {
     initMenu();
     initCookies();
+    if (!gl && flags.gl !== 'off' && html.dataset.formation !== 'none') idle(loadGL, 2000);
     const ann = document.getElementById('route-announcer');
     if (ann) ann.textContent = `${document.title.split('|')[0].trim()} loaded`;
   }

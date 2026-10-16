@@ -1,0 +1,7 @@
+---
+import { coverDots } from '../lib/cover';
+const { slug, category, size = 64, class: cls = '' } = Astro.props;
+const dots = coverDots(slug, category);
+---
+<svg class:list={['cover', cls]} viewBox="0 0 64 64" width={size} height={size} aria-hidden="true" focusable="false"><rect width="64" height="64" fill="#111" />{dots.map((d) => <circle cx={d.x} cy={d.y} r={d.r} fill={d.lit ? '#C9FF57' : '#F5F4F0'} fill-opacity={d.lit ? 1 : 0.5} />)}</svg>
+<style>.cover { display: block; width: 100%; height: auto; }</style>

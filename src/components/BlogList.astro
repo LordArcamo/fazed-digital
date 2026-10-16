@@ -1,0 +1,89 @@
+---
+import BlogCover from './BlogCover.astro';
+import OfferCard from './OfferCard.astro';
+import { authorPhoto, initials } from '../lib/authors';
+import { HUBS, SERVICE_FOR, catSlug } from '../lib/cover';
+type P = { slug: string; title: string; excerpt: string; category: string; date: string; readTime: string; author: string };
+const { posts, featured, rest, cats, latest, hub = null } = Astro.props as { posts: P[]; featured: P; rest: P[]; cats: string[]; latest: string; hub?: string | null };
+const counts = Object.fromEntries(cats.map((c) => [c, posts.filter((p) => p.category === c).length]));
+---
+<section class="b-hero" data-f="lattice" aria-labelledby="b-h">
+  <div class="container b-hero-in">
+    {hub ? <nav class="crumbs mono" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog">Blog</a></li><li aria-current="page">{hub}</li></ol></nav> : null}
+    <p class="mono">Insights · {posts.length} guides · Updated {latest}</p>
+    <h1 id="b-h" class="t-d1">{hub ? `${hub} guides for small business owners.` : 'Ideas that move brands forward.'}</h1>
+    <p class="t-body-l b-deck">{hub ? HUBS[hub]?.intro : 'Plain-English guides on websites, search, branding and strategy, written by the team that does this work every day. No fluff, no gatekeeping.'}</p>
+    {hub && SERVICE_FOR[hub] && <p>Need help with this? See our <a class="link" href={SERVICE_FOR[hub].href}>{SERVICE_FOR[hub].label}</a> {SERVICE_FOR[hub].href.startsWith('/services') ? 'service' : 'package'}.</p>}
+  </div>
+</section>
+<section class="b-body container">
+  <nav class="b-filter" aria-label="Filter guides by topic">
+    <a class="chip b-chip" href="/blog" aria-current={!hub ? 'page' : undefined}>All <span>{hub ? '' : posts.length}</span></a>
+    {cats.map((c) => <a class="chip b-chip" href={`/blog/category/${catSlug(c)}`} aria-current={hub === c ? 'page' : undefined}>{c} {!hub && <span>{counts[c]}</span>}</a>)}
+  </nav>
+  <a class="b-feat" href={`/blog/${featured.slug}`}>
+    <BlogCover slug={featured.slug} category={featured.category} size={480} class="b-feat-cover" />
+    <div class="b-feat-t">
+      <p class="mono">Featured · {featured.category}</p>
+      <h2 class="t-d2">{featured.title}</h2>
+      <p>{featured.excerpt}</p>
+      <p class="mono">{featured.date} · {featured.readTime} · by {featured.author}</p>
+      <span class="b-read">Read the guide <span aria-hidden="true">→</span></span>
+    </div>
+  </a>
+  <ul class="b-list">
+    {rest.map((p) => {
+      const ph = authorPhoto(p.author);
+      return (
+        <li>
+          <a class="b-row" href={`/blog/${p.slug}`}>
+            <BlogCover slug={p.slug} category={p.category} size={96} class="b-row-cover" />
+            <div class="b-row-t">
+              <p class="mono">{p.category} · {p.readTime}</p>
+              <h3 class="b-row-h">{p.title}</h3>
+              <p class="b-row-x">{p.excerpt}</p>
+            </div>
+            <div class="b-row-a">
+              {ph ? <img src={ph} alt="" width="32" height="32" loading="lazy" decoding="async" /> : <span class="b-init mono" aria-hidden="true">{initials(p.author)}</span>}
+              <span class="mono">{p.author}<br />{p.date}</span>
+            </div>
+          </a>
+        </li>
+      );
+    })}
+  </ul>
+  {rest.length === 0 && <p>No guides on this topic yet. New ones land most weeks.</p>}
+  <div class="b-offer"><OfferCard /></div>
+</section>
+<style>
+  .b-hero { padding: calc(var(--header-h) + 120px) 0 72px; }
+  .b-hero-in { display: grid; gap: 1.25rem; }
+  .b-hero h1 { max-width: 14ch; }
+  .b-deck { max-width: 52ch; }
+  .crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
+  .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }
+  .crumbs a { color: var(--gray-300); min-height: 44px; display: inline-flex; align-items: center; }
+  .b-body { padding-bottom: var(--section); }
+  .b-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 3rem; }
+  .b-chip { min-height: 44px; gap: .4rem; color: var(--gray-300); }
+  .b-chip span { color: var(--gray-400); }
+  .b-chip[aria-current='page'] { background: var(--lime); color: var(--black); border-color: var(--lime); }
+  .b-chip[aria-current='page'] span { color: var(--black); }
+  .b-feat { display: grid; grid-template-columns: 5fr 7fr; gap: calc(var(--gutter) * 2); align-items: center; padding-bottom: 72px; border-bottom: 1px solid var(--gray-700); }
+  .b-feat :global(.b-feat-cover) { border: 1px solid var(--gray-700); }
+  .b-feat-t { display: grid; gap: 1rem; }
+  .b-feat h2 { transition: color .2s; }
+  .b-feat:hover h2, .b-feat:focus-visible h2 { color: var(--lime); }
+  .b-read { color: var(--lime); font-weight: 600; }
+  .b-list li { border-bottom: 1px solid var(--gray-700); }
+  .b-row { display: grid; grid-template-columns: 96px 1fr 180px; gap: var(--gutter); align-items: center; padding: 1.5rem 0; }
+  .b-row-t { display: grid; gap: .4rem; }
+  .b-row-h { font-size: var(--fs-h3); line-height: 1.15; transition: color .2s; }
+  .b-row:hover .b-row-h, .b-row:focus-visible .b-row-h { color: var(--lime); }
+  .b-row-x { color: var(--gray-400); display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .b-row-a { display: flex; gap: .75rem; align-items: center; }
+  .b-row-a img, .b-init { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; flex: none; }
+  .b-init { border: 1px solid var(--lime); color: var(--lime); display: inline-flex; align-items: center; justify-content: center; font-size: 10px; letter-spacing: .05em; }
+  .b-offer { margin-top: 96px; }
+  @media (max-width: 1023px) { .b-feat { grid-template-columns: 1fr; } .b-row { grid-template-columns: 72px 1fr; } .b-row-a { display: none; } }
+</style>

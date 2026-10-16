@@ -243,6 +243,10 @@ export async function start(g: Gate, flags: Flags) {
     listeners = [];
     beat = '';
     const pageF = html.dataset.formation || 'lattice';
+    // reading pages: the field fades out and stops rendering; any other page brings it back
+    paused = false;
+    if (pageF === 'none') { gsap.to(canvas, { opacity: 0, duration: bus.rm ? 0 : 0.6, onComplete: () => { paused = html.dataset.formation === 'none'; } }); return; }
+    gsap.to(canvas, { opacity: 1, duration: 0.4, clearProps: 'opacity' });
     const hero = document.querySelector('[data-f="mark"]');
     if (hero) {
       markF = build('mark');
@@ -343,7 +347,7 @@ export async function start(g: Gate, flags: Flags) {
   }, { passive: true });
 
   function loop(_time: number, deltaMs: number) {
-    if (document.hidden) return;
+    if (document.hidden || paused) return;
     const dt = record ? 1 / 60 : Math.min(0.1, deltaMs / 1000);
     simT += dt;
     const t = record ? simT : (performance.now() - t0) / 1000;
@@ -380,6 +384,7 @@ export async function start(g: Gate, flags: Flags) {
     if (!record) watchdog.frame(deltaMs, t);
   }
   let lastPulse = -1;
+  let paused = false;
   const wake = { depth: 0 };
 
   addEventListener('resize', () => {

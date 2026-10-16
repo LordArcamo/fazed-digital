@@ -1,10 +1,12 @@
 ---
-import Layout from '../../layouts/Layout.astro';
-import Cursor from '../../components/Cursor';
-import Nav from '../../components/Nav';
-import Footer from '../../components/Footer';
-import AnimatedText from '../../components/AnimatedText';
-import MagneticButton from '../../components/MagneticButton';
+import Base from '../../layouts/Base.astro';
+import BlogCover from '../../components/BlogCover.astro';
+import OfferCard from '../../components/OfferCard.astro';
+import postsIndex from '../../data/.generated/posts.json';
+import { SITE_URL } from '../../data/site';
+import { crumbs, ORG_REF } from '../../lib/schema';
+import { authorPhoto, authorId, initials } from '../../lib/authors';
+import { SERVICE_FOR, catSlug } from '../../lib/cover';
 
 export function getStaticPaths() {
   const posts = [
@@ -1128,166 +1130,127 @@ export function getStaticPaths() {
       `,
     },
   ];
-
   return posts.map(p => ({ params: { slug: p.slug }, props: p }));
 }
 
-const { title, category, date, readTime, author, authorRole, authorPhoto, image, excerpt, content, slug } = Astro.props;
+// ── everything below is template code (the array above is the nightly routine's contract) ──
+const { title, category, date, readTime, author, authorRole, authorPhoto: photoField, excerpt, content, slug } = Astro.props;
+const photo = authorPhoto(author, photoField);
+// content: normalise apex links to the www host, give every H2 an id for the TOC
+const toc: { id: string; text: string }[] = [];
+const used = new Set<string>();
+const html = String(content)
+  .replaceAll('https://fazeddigital.com', 'https://www.fazeddigital.com')
+  .replace(/<h2>(.*?)<\/h2>/g, (_m, inner) => {
+    const text = String(inner).replace(/<[^>]+>/g, '');
+    let id = text.toLowerCase().replace(/&[a-z]+;/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'section';
+    while (used.has(id)) id += '-2';
+    used.add(id);
+    toc.push({ id, text });
+    return `<h2 id="${id}">${inner}</h2>`;
+  });
+const all = (postsIndex as { slug: string; title: string; category: string; date: string; readTime: string }[]);
+const sameCat = all.filter((p) => p.category === category && p.slug !== slug);
+const idx = all.findIndex((p) => p.slug === slug);
+const related = [...sameCat].sort((a, b) => Math.abs(all.indexOf(a) - idx) - Math.abs(all.indexOf(b) - idx)).slice(0, 3);
+const svc = SERVICE_FOR[category];
+const pageTitle = title.length > 44 ? title : `${title} | Fazed Digital`;
+const iso = new Date(date).toISOString();
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Article', headline: title, description: excerpt,
+    author: { '@type': 'Person', name: author, jobTitle: authorRole, url: `${SITE_URL}/about#${authorId(author)}`, worksFor: ORG_REF },
+    publisher: ORG_REF, datePublished: iso, dateModified: iso,
+    image: `${SITE_URL}/og/blog/${slug}.png`, url: `${SITE_URL}/blog/${slug}`,
+    mainEntityOfPage: { '@type': 'WebPage', '@id': `${SITE_URL}/blog/${slug}` },
+    articleSection: category, keywords: category, inLanguage: 'en',
+  },
+  crumbs([['Blog', '/blog'], [category, `/blog/category/${catSlug(category)}`], [title, `/blog/${slug}`]]),
+];
 ---
-
-<Layout
-  title={`${title} | Fazed Digital`}
-  description={excerpt}
-  page="blog"
-  schema={[
-    {
-      "@context": "https://schema.org",
-      "@type": "Article",
-      "headline": title,
-      "description": excerpt,
-      "author": { "@type": "Person", "name": author, "worksFor": { "@type": "Organization", "name": "Fazed Digital" } },
-      "publisher": {
-        "@type": "Organization",
-        "name": "Fazed Digital",
-        "url": "https://fazeddigital.com",
-        "logo": { "@type": "ImageObject", "url": "https://fazeddigital.com/favicon.svg" }
-      },
-      "datePublished": new Date(date).toISOString(),
-      "dateModified": new Date(date).toISOString(),
-      "image": image,
-      "url": `https://fazeddigital.com/blog/${slug}`,
-      "mainEntityOfPage": { "@type": "WebPage", "@id": `https://fazeddigital.com/blog/${slug}` },
-      "keywords": category
-    },
-    {
-      "@context": "https://schema.org",
-      "@type": "BreadcrumbList",
-      "itemListElement": [
-        { "@type": "ListItem", "position": 1, "name": "Home", "item": "https://fazeddigital.com" },
-        { "@type": "ListItem", "position": 2, "name": "Blog", "item": "https://fazeddigital.com/blog" },
-        { "@type": "ListItem", "position": 3, "name": title, "item": `https://fazeddigital.com/blog/${slug}` }
-      ]
-    }
-  ]}
->
-  <Cursor client:only="react" />
-  <Nav client:only="react" currentPath="/blog" />
-
-  <main>
-    <!-- Hero -->
-    <section style="padding-top: 9rem; padding-bottom: clamp(3rem,6vw,5rem); background: var(--black); border-bottom: 1px solid var(--border);">
-      <div class="container" style="max-width: 860px;">
-        <a href="/blog" style="display: inline-flex; align-items: center; gap: 0.5rem; color: var(--gray-500); font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 2rem; transition: color 0.2s;"
-          onmouseover="this.style.color='var(--white)'" onmouseout="this.style.color='var(--gray-500)'">
-          ← Back to Blog
-        </a>
-        <div style="display: flex; gap: 1rem; align-items: center; margin-bottom: 1.75rem; flex-wrap: wrap;">
-          <span style="font-family: var(--font-mono); font-size: 0.68rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gray-500); border: 1px solid var(--border); padding: 0.25rem 0.65rem; border-radius: 4px;">
-            {category}
-          </span>
-          <span class="label">{date}</span>
-          <span class="label">{readTime}</span>
-          <span class="label">By {author}</span>
-        </div>
-        <AnimatedText
-          client:only="react"
-          text={title}
-          as="h1"
-          className="display-md"
-          style={{ marginBottom: '1.75rem' }}
-        />
-        <p class="body-lg" style="color: var(--gray-400); max-width: 52ch;">
-          {excerpt}
-        </p>
+<Base title={pageTitle} description={excerpt} image={`/og/blog/${slug}.png`} formation="none" schema={schema} current="/blog">
+  <div class="progress" aria-hidden="true"><span></span></div>
+  <article class="post">
+    <header class="container p-head">
+      <nav class="crumbs mono" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/blog">Blog</a></li><li><a href={`/blog/category/${catSlug(category)}`}>{category}</a></li><li aria-current="page" class="crumb-cur">{title}</li></ol></nav>
+      <p class="mono p-meta"><span class="p-cat">{category}</span> · <time datetime={iso}>{date}</time> · {readTime} · by {author}</p>
+      <h1 class="t-d2 p-h1">{title}</h1>
+      <p class="t-body-l p-deck">{excerpt}</p>
+      <div class="p-cover"><BlogCover slug={slug} category={category} size={1200} /></div>
+    </header>
+    <div class="container p-grid">
+      {toc.length > 2 && (
+        <nav class="toc" aria-label="On this page">
+          <p class="mono">On this page</p>
+          <ol>{toc.map((t) => <li><a href={`#${t.id}`}>{t.text}</a></li>)}</ol>
+        </nav>
+      )}
+      <div class="p-body">
+        <div class="prose" set:html={html} />
+        {svc && <p class="p-svc">Need help with this? See our <a class="link" href={svc.href}>{svc.label}</a> {svc.href.startsWith('/services') ? 'service' : 'package'}.</p>}
+        <aside class="author" aria-label="About the author">
+          {photo ? <img src={photo} alt={`${author}, ${authorRole} at Fazed Digital`} width="64" height="64" loading="lazy" decoding="async" /> : <span class="a-init mono" aria-hidden="true">{initials(author)}</span>}
+          <p>Written by <a class="link" href={`/about#${authorId(author)}`}>{author}</a>, {authorRole} at Fazed Digital.</p>
+        </aside>
+        <OfferCard heading="Ready to put this into practice?" body="Get a professional website live in 7 days. It’s custom, mobile-ready and set up for Google from day one, built by the team who wrote this guide." />
       </div>
-    </section>
-
-    <!-- Cover image -->
-    <section style="background: var(--gray-900); border-bottom: 1px solid var(--border);">
-      <div class="container" style="padding-top: clamp(2rem,4vw,4rem); padding-bottom: clamp(2rem,4vw,4rem);">
-        <div style="aspect-ratio: 16/7; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border);">
-          <img
-            src={image}
-            alt={title}
-            loading="eager"
-            decoding="async"
-            style="width: 100%; height: 100%; object-fit: cover; object-position: center; display: block;"
-          />
-        </div>
-      </div>
-    </section>
-
-    <!-- Article body -->
-    <article style="padding: clamp(3rem,6vw,6rem) 0; background: var(--black);">
-      <div class="container article-body" style="max-width: 720px;" set:html={content} />
-    </article>
-
-    <!-- Landing page CTA -->
-    <section style="padding: 0 0 clamp(3rem,6vw,6rem); background: var(--black);">
-      <div class="container" style="max-width: 860px;">
-        <div class="blog-cta">
-          <div class="label" style="color: var(--accent); margin-bottom: 1rem;">7-Day Website Package</div>
-          <h2 class="blog-cta-title">Ready to put this into practice? Get a professional website live in 7 days.</h2>
-          <p class="blog-cta-copy">Custom-designed, mobile-ready and SEO-optimised from day one. Fixed price, no surprises, built by the team who wrote this article.</p>
-          <div style="display: flex; gap: 1rem; flex-wrap: wrap; align-items: center;">
-            <MagneticButton client:visible href="/lp/7-day-website" variant="primary" size="md">See the 7-Day Package →</MagneticButton>
-            <a href="/lp/7-day-website/ph" class="blog-cta-link">Philippine pricing (from ₱19,999)</a>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Author + CTA -->
-    <section style="padding: clamp(3rem,6vw,6rem) 0; background: var(--gray-900); border-top: 1px solid var(--border);">
-      <div class="container" style="max-width: 860px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 2rem;">
-        <div style="display: flex; align-items: center; gap: 1.25rem;">
-          <div style="width: 52px; height: 52px; border-radius: 50%; overflow: hidden; border: 1px solid var(--border); flex-shrink: 0; background: var(--gray-800);">
-            <img
-              src={authorPhoto}
-              alt={author}
-              style="width: 100%; height: 100%; object-fit: cover; object-position: center top; display: block;"
-              onerror="this.style.display='none'; this.parentElement.style.display='flex'; this.parentElement.style.alignItems='center'; this.parentElement.style.justifyContent='center'; this.parentElement.innerHTML='<span style=font-family:var(--font-display);font-style:italic;font-size:1.1rem;color:var(--gray-400)>' + this.alt.charAt(0) + '</span>';"
-            />
-          </div>
-          <div>
-            <div style="font-weight: 600; font-size: 0.9rem; color: var(--white);">{author}</div>
-            <div class="label">{authorRole} — Fazed Digital</div>
-          </div>
-        </div>
-        <MagneticButton client:only="react" href="/blog" variant="outline" size="md">← More Articles</MagneticButton>
-      </div>
-    </section>
-  </main>
-
-  <Footer client:only="react" />
-</Layout>
-
+    </div>
+    {related.length > 0 && (
+      <section class="container related" aria-labelledby="rel-h">
+        <h2 id="rel-h" class="t-h3">More on {category}</h2>
+        <ul>{related.map((p) => <li><a href={`/blog/${p.slug}`}><BlogCover slug={p.slug} category={p.category} size={64} /><span class="mono">{p.readTime}</span><span class="rel-t">{p.title}</span></a></li>)}</ul>
+        <a class="link" href={`/blog/category/${catSlug(category)}`}>All {category} guides</a>
+      </section>
+    )}
+  </article>
+</Base>
 <style>
-  .article-body { color: var(--gray-300); }
-  .article-body p  { font-size: 1.0625rem; line-height: 1.85; margin-bottom: 1.5rem; }
-  .article-body h2 {
-    font-family: var(--font-display); font-style: italic; font-weight: 600;
-    font-size: clamp(1.4rem, 2.5vw, 2rem); letter-spacing: -0.01em;
-    color: var(--white); margin: 3rem 0 1.25rem;
-    padding-top: 2rem; border-top: 1px solid var(--border);
+  .progress { position: fixed; top: 0; left: 0; right: 0; height: 2px; z-index: 70; pointer-events: none; }
+  .progress span { display: block; height: 100%; transform-origin: 0 50%; transform: scaleX(0); background-image: radial-gradient(circle, var(--lime) 1px, transparent 1.2px); background-size: 4px 2px; }
+  @supports (animation-timeline: scroll()) {
+    .progress span { animation: grow linear both; animation-timeline: scroll(root); }
   }
-  .article-body strong { color: var(--white); font-weight: 600; }
-  .article-body a { color: var(--white); text-decoration: underline; text-underline-offset: 3px; }
-  .article-body a:hover { color: var(--accent); }
-  .blog-cta {
-    border: 1px solid var(--border); border-radius: var(--radius);
-    background: var(--gray-900); padding: clamp(2rem,5vw,3.5rem);
-    border-left: 3px solid var(--accent);
-  }
-  .blog-cta-title {
-    font-family: var(--font-display); font-weight: 600; color: var(--white);
-    font-size: clamp(1.5rem, 3vw, 2.25rem); line-height: 1.15; letter-spacing: -0.02em;
-    margin-bottom: 1rem; max-width: 24ch;
-  }
-  .blog-cta-copy { color: var(--gray-400); font-size: 1rem; line-height: 1.7; margin-bottom: 1.75rem; max-width: 52ch; }
-  .blog-cta-link {
-    color: var(--gray-400); font-family: var(--font-mono); font-size: 0.75rem;
-    letter-spacing: 0.08em; text-transform: uppercase; text-decoration: underline; text-underline-offset: 4px;
-  }
-  .blog-cta-link:hover { color: var(--white); }
+  @keyframes grow { to { transform: scaleX(1); } }
+  .p-head { padding-top: calc(var(--header-h) + 72px); display: grid; gap: 1.25rem; max-width: 1000px; }
+  .crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
+  .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }
+  .crumbs a { color: var(--gray-300); min-height: 44px; display: inline-flex; align-items: center; }
+  .crumbs a:hover { color: var(--lime); }
+  .crumb-cur { color: var(--gray-400); max-width: 40ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; }
+  .p-cat { color: var(--lime); }
+  .p-h1 { max-width: 22ch; }
+  .p-deck { max-width: 60ch; }
+  .p-cover { margin-top: 2rem; aspect-ratio: 21 / 9; overflow: hidden; border: 1px solid var(--gray-700); }
+  .p-cover :global(svg) { width: 100%; height: 100%; object-fit: cover; }
+  .p-grid { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); padding-block: 96px var(--section); }
+  .toc { grid-column: 1 / span 3; position: sticky; top: calc(var(--header-h) + 24px); align-self: start; display: grid; gap: .75rem; }
+  .toc ol { display: grid; gap: .1rem; border-left: 1px solid var(--gray-700); }
+  .toc a { display: block; padding: .45rem 0 .45rem 1rem; color: var(--gray-400); font-size: .9rem; line-height: 1.35; margin-left: -1px; border-left: 1px solid transparent; }
+  .toc a:hover, .toc a:focus-visible { color: var(--white); border-left-color: var(--lime); }
+  .p-body { grid-column: 5 / span 8; display: grid; gap: 3rem; max-width: 64ch; }
+  .prose { font-size: var(--fs-article); line-height: 1.7; color: var(--gray-200); hanging-punctuation: first; }
+  .prose :global(p + p), .prose :global(p + ul), .prose :global(ul + p), .prose :global(p + ol), .prose :global(ol + p) { margin-top: 1.1em; }
+  .prose :global(h2) { font-size: clamp(1.6rem, 2.6vw, 2.2rem); line-height: 1.1; margin: 2.2em 0 .7em; scroll-margin-top: 96px; }
+  .prose :global(h3) { font-size: 1.3rem; margin: 1.6em 0 .5em; }
+  .prose :global(strong) { color: var(--white); }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.25rem; display: grid; gap: .5em; }
+  .prose :global(ul) { list-style: none; }
+  .prose :global(ul li) { position: relative; }
+  .prose :global(ul li)::before { content: ''; position: absolute; left: -1.1rem; top: .7em; width: 5px; height: 5px; border-radius: 50%; background: var(--lime); }
+  .prose :global(ol) { list-style: decimal; }
+  .prose :global(a) { color: var(--white); text-decoration: underline; text-decoration-color: var(--gray-500); text-underline-offset: .2em; background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0 100%; background-repeat: no-repeat; transition: background-size .25s, color .2s; }
+  .prose :global(a:hover), .prose :global(a:focus-visible) { background-size: 100% 100%; color: var(--black); }
+  .prose :global(blockquote) { border-left: 2px solid var(--lime); padding-left: 1.25rem; color: var(--white); margin: 1.5em 0; }
+  .p-svc { color: var(--gray-300); border-top: 1px solid var(--gray-700); padding-top: 1.5rem; }
+  .author { display: flex; gap: 1rem; align-items: center; }
+  .author img, .a-init { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: top; flex: none; }
+  .a-init { border: 1.5px solid var(--lime); color: var(--lime); display: inline-flex; align-items: center; justify-content: center; }
+  .related { padding-bottom: var(--section); display: grid; gap: 1.5rem; }
+  .related ul { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  .related a:not(.link) { display: grid; grid-template-columns: 64px 1fr; column-gap: 1rem; row-gap: .25rem; padding: 1.25rem; border: 1px solid var(--gray-700); height: 100%; }
+  .related a:not(.link) :global(svg) { grid-row: span 2; }
+  .related a:not(.link):hover { border-color: var(--lime); }
+  .rel-t { color: var(--white); font-family: var(--font-display); font-weight: 600; line-height: 1.2; }
+  .related > .link { justify-self: start; }
+  @media (max-width: 1023px) { .toc { display: none; } .p-body { grid-column: 1 / -1; } .related ul { grid-template-columns: 1fr; } }
 </style>
