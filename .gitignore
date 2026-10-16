@@ -33,3 +33,6 @@ public/storybook/
 
 # Claude Code (worktrees, launch config, local settings)
 .claude/
+spike/dist/
+scripts/.cache/
+src/data/.generated/
