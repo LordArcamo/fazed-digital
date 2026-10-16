@@ -109,12 +109,20 @@ html.js-motion .rv.rv-in { opacity: 1; transform: none; transition: opacity .7s 
 html.cur-on #cursor { opacity: 1; }
 html.cur-off #cursor, html.record #cursor { opacity: 0 !important; }
 .cur-dot { position: absolute; width: 10px; height: 10px; margin: -5px 0 0 -5px; border-radius: 50%; background: var(--lime); }
-.cur-ring { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; border: 1px solid var(--lime-25); display: flex; align-items: center; justify-content: center; transition: width .25s var(--ease-out), height .25s var(--ease-out), margin .25s var(--ease-out), background-color .25s; }
+.cur-ring { position: absolute; width: 28px; height: 28px; margin: -14px 0 0 -14px; border-radius: 50%; border: 1px solid var(--lime-25); display: flex; align-items: center; justify-content: center; transition: width .25s var(--ease-out), height .25s var(--ease-out), margin .25s var(--ease-out), border-color .25s, background-color .25s, translate .25s var(--ease-out); }
+.cur-dot { transition: opacity .2s, scale .2s; }
 .cur-label { font-family: var(--font-mono); font-size: 10px; letter-spacing: .12em; color: var(--black); white-space: nowrap; opacity: 0; transition: opacity .2s; }
-html.cur-big .cur-ring { width: 56px; height: 56px; margin: -28px 0 0 -28px; background: var(--lime); border-color: var(--lime); }
-html.cur-big.cur-txt .cur-ring { width: auto; min-width: 56px; height: 32px; margin: -16px 0 0 0; padding: 0 12px; border-radius: 999px; }
-html.cur-big .cur-label { opacity: 1; }
-html.cur-big .cur-dot { opacity: 0; }
+/* links: a small hollow ring, never a filled disc over the label */
+html.cur-big .cur-ring { width: 18px; height: 18px; margin: -9px 0 0 -9px; border-color: var(--lime); }
+html.cur-big .cur-dot { scale: .4; opacity: 0; }
+/* labelled targets: an offset chip below-right of the pointer (flips near the edges) */
+html.cur-big.cur-txt .cur-ring { width: auto; height: 26px; margin: 22px 0 0 16px; padding: 0 10px; border-radius: 999px; background: var(--lime); border-color: var(--lime); }
+html.cur-big.cur-txt.cur-fx .cur-ring { margin-left: -16px; translate: -100% 0; }
+html.cur-big.cur-txt.cur-fy .cur-ring { margin-top: -48px; }
+html.cur-big.cur-txt .cur-label { opacity: 1; }
+/* nav, dock, menu: the cursor steps aside (the nav draws its own node + line) */
+html.cur-nav #cursor { opacity: 0; }
+@media (forced-colors: active) { #cursor { display: none; } }
 /* SIGNAL DOCK: keep focus targets and the last CTA clear of the dock */
 html.is-docked { scroll-padding-bottom: 104px; }
 @media (max-width: 1023px) { html { scroll-padding-bottom: 104px; } main.page { padding-bottom: 96px; } }
