@@ -438,6 +438,8 @@ export async function start(g: Gate, flags: Flags) {
     } else {
       u.uTilt.value.set(0, 0);
     }
+    // lab frames and the pipeline read as drawn lines: the curl drift eases to 1.5 there (4 everywhere else, as before)
+    if (t > 2 && !bus.rm) u.uCurl.value += ((beat === 'slate' || beat === 'pipeline8' ? 1.5 : 4) - u.uCurl.value) * 0.05;
     if (beat === 'slate' && !bus.rm && innerWidth >= 768) {
       slateT += dt;
       if (slateT > 4.2 && performance.now() / 1000 > slateHold) {

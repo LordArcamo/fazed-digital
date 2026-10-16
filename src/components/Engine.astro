@@ -63,7 +63,7 @@ const crew = [
           <span class="mono st-i">{String(i + 1).padStart(2, '0')}<span class="st-im"> · {s.t}</span></span>
           <h3 class="st-t"><span class="st-td">{s.t}</span><span class="st-tm">{s.l.replace(/\.$/, '')}</span></h3>
           <p class="st-s">{s.s}</p>
-          <p class="st-who">{s.l} <em>{s.who}</em></p>
+          <p class="st-who"><span class="st-wl">{s.l} </span><em>{s.who}</em></p>
           {s.gate && (
             <p class="gate" style={`--gx:${i === 7 ? 50 : 100}%`}><i class="gate-d" data-gate aria-hidden="true"></i><span class="mono gate-k">Human gate · </span><span class="mono gate-t">{s.gate}</span></p>
           )}
@@ -108,7 +108,8 @@ const crew = [
   .st-n { position: absolute; left: 50%; top: 300px; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; border: 1px solid var(--gray-400); background: var(--black); transition: background-color .3s, border-color .3s, box-shadow .3s; }
   .st--ship .st-n { border-radius: 1px; rotate: 45deg; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; }
   .st-i { font-size: 11px; }
-  .st-im, .st-tm, .st-who { display: none; }
+  .st-im, .st-tm { display: none; }
+  .st-who { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .st-t { font-size: clamp(1rem, 1.45vw, 1.3rem); line-height: 1.1; color: var(--gray-300); transition: color .3s; }
   .st-s { font-size: .85rem; line-height: 1.35; color: var(--gray-400); }
   .st.is-lit .st-n, :global(html:not(.js)) .st-n { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 5px var(--lime-12); }
@@ -136,15 +137,15 @@ const crew = [
   .crew dd { font-size: .92rem; line-height: 1.5; }
   /* 768–1023: horizontal spine, labels alternate above/below, agents + links step out (the crew list carries them) */
   @media (max-width: 1023px) {
-    .eng-band { height: 420px; }
+    .eng-band { height: 410px; }
     .eng-links, .eng-agents { display: none; }
     .pipe::before, .st-n, .gate { top: 150px; }
     .st { padding-top: 174px; }
     .st:nth-child(even) { padding-top: 0; height: 132px; align-content: end; }
     .st:nth-child(even) .st-s { order: 3; }
-    .gate { height: 220px; }
-    .gate-t { top: 196px; }
-    .eng-ppl { top: 360px; }
+    .gate { height: 160px; }
+    .gate-t { top: 136px; }
+    .eng-ppl { top: 330px; }
     .eng-legend { margin-top: 2rem; }
     .crew { grid-template-columns: 1fr 1fr; }
   }
@@ -160,7 +161,8 @@ const crew = [
     .st-im, .st-tm { display: inline; }
     .st-td, .st-s { display: none; }
     .st-t { font-size: 1.2rem; color: var(--gray-300); }
-    .st-who { display: block; font-size: .92rem; line-height: 1.45; color: var(--gray-400); }
+    .st-wl { display: none; }
+    .st-who { position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: normal; display: block; font-size: .92rem; line-height: 1.45; color: var(--gray-400); }
     .st-who em { font-style: normal; }
     .gate { position: relative; left: auto; width: auto; height: auto; margin-top: 1.1rem; padding-left: 0; display: flex; flex-wrap: wrap; gap: 0 .4em; }
     .gate-d { left: calc(-2rem + 1px); top: 4px; width: 9px; height: 9px; rotate: 0deg; scale: 1; border-radius: 1px; }

@@ -45,7 +45,9 @@ export function initWorkIndex() {
   wi.addEventListener('focusin', (e) => activate((e.target as HTMLElement).closest<HTMLElement>(R)));
   wi.addEventListener('focusout', (e) => { if (!wi.contains((e as FocusEvent).relatedTarget as Node)) activate(null); });
   const onScroll = () => {
-    if (on && !wi.contains(document.activeElement)) activate(null);
+    // a focused row keeps its plate while the list is on screen; once the list leaves, the plate goes
+    const r = wi.getBoundingClientRect();
+    if (on && (!wi.contains(document.activeElement) || r.bottom < 0 || r.top > innerHeight)) activate(null);
     clearTimeout(st);
     st = window.setTimeout(() => { if (px >= 0 && wi.isConnected) activate(rowAt(px, py)); }, 160);
   };

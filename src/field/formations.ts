@@ -389,7 +389,8 @@ export function slate(lead: R4 | null, frames: SlateFrame[], active: Shot | null
   for (const f of frames) {
     outline(pts, f.r, f.kind === 'queued' ? 0.3 : 0.62);
     const s = bins.get(f.id);
-    if (f.kind === 'img' && s) silPts(pts, fit({ left: f.r.left + 2, top: f.r.top + 2, width: f.r.width - 4, height: f.r.height - 4 }, s), s, miniStep, false);
+    const k = lead ? 6 : 3; // inside the outline, like the CSS poster
+    if (f.kind === 'img' && s) silPts(pts, fit({ left: f.r.left + k, top: f.r.top + k, width: f.r.width - 2 * k, height: f.r.height - 2 * k }, s), s, miniStep, false);
     if (f.kind === 'research') {
       const c = { x: f.r.left + f.r.width / 2, y: f.r.top + f.r.height / 2 };
       cluster(pts, c, 4, 60, 2, 55);

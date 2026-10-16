@@ -4,6 +4,7 @@
 import { Picture } from 'astro:assets';
 import { caseIndex } from '../data/cases';
 import { workImages } from '../data/images';
+import IndexPreview from './IndexPreview.astro';
 const { services = false } = Astro.props;
 ---
 <div class:list={['windex', { 'windex--svc': services }]} data-windex>
@@ -26,11 +27,7 @@ const { services = false } = Astro.props;
   </ul>
   <div class="wprev" aria-hidden="true" data-wprev><span class="wprev-scan"></span><span class="wprev-cap mono" data-wcap></span></div>
 </div>
-<script>
-  import { initWorkIndex } from '../motion/workindex';
-  document.addEventListener('astro:page-load', initWorkIndex);
-  initWorkIndex();
-</script>
+<IndexPreview />
 <style>
   .windex { position: relative; margin-bottom: 3rem; }
   .wrow { display: grid; grid-template-columns: 4rem 2.2fr 1.4fr 1.1fr .6fr 2fr; gap: var(--gutter); align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--gray-700); min-height: 64px; position: relative; color: var(--gray-300); transition: color .2s, padding .3s var(--ease-out); }

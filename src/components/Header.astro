@@ -301,9 +301,11 @@ const cur = menu.find((m) => m.href === current);
     .menu-st { display: none; }
   }
   @media (max-width: 1023px) and (max-height: 700px) { .menu-link { min-height: 48px; } .menu-label { font-size: 32px; } }
+  /* ≤399: the clock strip stays on one line (it wrapped into the first menu row at 375) */
+  @media (max-width: 399px) { .menu-tel { white-space: nowrap; letter-spacing: .05em; } }
   /* 8 rows on short phones (375×667): 44px rows and email + phone on one row keep the last link clear of the open dock */
   @media (max-width: 1023px) and (max-height: 720px) {
-    .menu { padding-top: 56px; }
+    .menu { padding-top: 60px; }
     .menu-in { gap: 1rem; }
     .menu-link { min-height: 44px; }
     .menu-label { font-size: 30px; }

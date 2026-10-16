@@ -1,0 +1,8 @@
+---
+// One script for both hover indexes (/work + home: fz:shot, /lab: fz:lab), so the module stays a single inlined script.
+---
+<script>
+  import { initWorkIndex } from '../motion/workindex';
+  document.addEventListener('astro:page-load', initWorkIndex);
+  initWorkIndex();
+</script>

@@ -77,7 +77,7 @@ const shipped = pad2(labShipped.length);
   <section class="section l-index" id="index" data-f="lab" aria-labelledby="li-h">
     <div class="container">
       <h2 id="li-h" class="sr-only">Lab index</h2>
-      <p class="mono l-honest"><span class="l-dot" aria-hidden="true"></span>Concept sites · fictional brands · Not client work · {shipped} shipped · {pad2(labUpcoming.length)} queued</p>
+      <p class="mono l-honest"><span class="l-dot" aria-hidden="true"></span>Concept sites · fictional brands · Not client work<span class="l-hc"> · {shipped} shipped · {pad2(labUpcoming.length)} queued</span></p>
       <LabIndex />
     </div>
   </section>
@@ -124,12 +124,12 @@ const shipped = pad2(labShipped.length);
     const band = document.querySelector<HTMLElement>('[data-pipe-band]');
     if (!sheet || !band || sheet.dataset.bound) return;
     sheet.dataset.bound = '1';
-    const now = sheet.querySelector('[data-slate-now]'), poster = sheet.querySelector<HTMLImageElement>('[data-slate-poster]');
+    const now = sheet.querySelector('[data-slate-now]'), poster = sheet.querySelector<HTMLElement>('[data-slate-poster]');
     const show = (id: string) => {
       const a = sheet.querySelector<HTMLElement>(`[data-slate-frame="${id}"]`);
       if (!a?.dataset.img) return;
       if (now) now.textContent = a.dataset.name!;
-      if (poster) poster.src = `/formations/lab-${id}-poster.webp`;
+      if (poster) poster.style.backgroundImage = `url(/formations/lab-${id}-poster.webp)`;
       sheet.querySelectorAll('.sl-f').forEach((f) => f.classList.toggle('is-now', f.contains(a)));
     };
     const pick = (e: Event) => (e.target as HTMLElement).closest<HTMLElement>('[data-slate-frame][data-img]');
@@ -172,10 +172,15 @@ const shipped = pad2(labShipped.length);
 <style>
   /* L1: text 5/12, sheet 7/12 (right edge = container), vertically centred in the first viewport */
   .l-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h) + 32px) 0 48px; }
-  .l-hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 2rem var(--gutter); align-items: center; }
+  /* top-aligned with a fixed offset (not centred): a font swap in the copy can never move it (CLS 0) */
+  .l-hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 2rem var(--gutter); align-items: start; }
+  @media (min-width: 1024px) { .l-copy { margin-top: clamp(16px, 5vw, 84px); } }
   .l-copy { display: grid; gap: 1.5rem; justify-items: start; align-content: center; }
   .l-copy > .mono { margin-bottom: -.25rem; }
-  .l-h1 { font-size: clamp(2.75rem, 5.4vw, 5.75rem); line-height: .92; letter-spacing: -.03em; max-width: none; }
+  /* the eyebrow's line count never depends on the font swap (CLS 0): one line ≥1280, two reserved below */
+  @media (min-width: 1280px) { .l-copy > .mono { white-space: nowrap; letter-spacing: .1em; } }
+  @media (min-width: 1024px) and (max-width: 1279px) { .l-copy > .mono { min-height: 3.2em; } }
+  .l-h1 { font-size: clamp(2.75rem, 5.4vw, 5.2rem); line-height: .92; letter-spacing: -.03em; max-width: none; }
   .l-h1 .h-l1, .l-h1 .h-l2 { display: block; white-space: nowrap; } .l-h1 .h-l2 { color: var(--gray-400); }
   .l-deck { max-width: 44ch; }
   .l-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
@@ -196,9 +201,9 @@ const shipped = pad2(labShipped.length);
   }
   /* L2 sits close under the hero (96 desktop), like /work */
   .l-index { padding-top: 96px; }
-  .l-honest { display: flex; align-items: center; gap: .7rem; margin-bottom: .5rem; color: var(--gray-300); }
-  .l-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
-  @media (max-width: 767px) { .l-index { padding-top: 48px; } }
+  .l-honest { margin-bottom: .5rem; color: var(--gray-300); }
+  .l-dot { display: inline-block; width: 6px; height: 6px; margin-right: .7rem; vertical-align: 1px; border-radius: 50%; background: var(--lime); }
+  @media (max-width: 767px) { .l-index { padding-top: 48px; } .l-hc { display: none; } }
   /* L3 */
   .l-engine { padding-bottom: 96px; }
   .le-head { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 1.5rem var(--gutter); align-items: end; }

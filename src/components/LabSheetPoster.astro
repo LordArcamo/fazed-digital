@@ -12,7 +12,7 @@ const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labIma
 <div class="slate" data-slate-anchor data-imaged={labImaged.join(' ')} aria-label={`Contact sheet: ${labShipped.length} of ${LAB_TOTAL} concept sites shipped`} role="group">
   <div class="sl-lead" data-slate-lead aria-hidden="true">
     <span class="poster-art sl-ol"></span>
-    {lead && <img class="poster-art sl-img sl-img--lead" src={`/formations/lab-${lead}-poster.webp`} alt="" width="181" height="113" decoding="async" fetchpriority="low" data-slate-poster />}
+    {lead && <span class="poster-art sl-img sl-img--lead" style={`background-image:url(/formations/lab-${lead}-poster.webp)`} data-slate-poster></span>}
   </div>
   <p class="sl-st mono" aria-hidden="true"><span class="sl-now"><i></i>Now: <b data-slate-now>{leadItem ? `${leadItem.n} ${leadItem.brand}` : ''}</b></span><span class="sl-count">Shipped {pad2(labShipped.length)} · Queued {pad2(labUpcoming.length)}</span></p>
   <ol class="sl-grid">
@@ -42,10 +42,13 @@ const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labIma
   .sl-ol { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 3px 3px, var(--gray-400) .9px, transparent 1.4px) 0 0 / 6px 6px; padding: 6px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; opacity: .75; }
   .sl-f--queued .sl-ol, .sl-f--text .sl-ol { opacity: .35; }
   /* the matte, masked into the field's grid (181×113 cells in the lead, every 3rd cell in a mini) */
-  .sl-img { position: absolute; display: block; max-width: none; opacity: .62; image-rendering: auto; --mx: calc(100% / 181); --my: calc(100% / 113);
-    -webkit-mask: radial-gradient(circle at center, #000 38%, transparent 52%) 0 0 / var(--mx) var(--my); mask: radial-gradient(circle at center, #000 38%, transparent 52%) 0 0 / var(--mx) var(--my); }
+  /* the lead is a background (it is meant to be a 181×113 matte scaled up, not a photo) */
+  .sl-img--lead { background: 0 0 / 100% 100% no-repeat; }
+  .sl-img { position: absolute; display: block; max-width: none; opacity: .92; filter: brightness(1.25); image-rendering: auto; --mx: calc(100% / 181); --my: calc(100% / 113); --d: 46%;
+    -webkit-mask: radial-gradient(circle at center, #000 var(--d), transparent calc(var(--d) + 14%)) 0 0 / var(--mx) var(--my); mask: radial-gradient(circle at center, #000 var(--d), transparent calc(var(--d) + 14%)) 0 0 / var(--mx) var(--my); }
   .sl-img--lead { top: 3px; bottom: 3px; height: calc(100% - 6px); width: auto; aspect-ratio: 181 / 113; left: 50%; translate: -50% 0; }
-  .sl-box .sl-img { inset: 2px; width: calc(100% - 4px); height: calc(100% - 4px); --mx: calc(300% / 181); --my: calc(300% / 113); }
+  .sl-box .sl-img { --i: 6px; top: var(--i); height: calc(100% - 2 * var(--i)); width: auto; max-width: calc(100% - 2 * var(--i)); aspect-ratio: 181 / 113; left: 50%; translate: -50% 0; --mx: calc(300% / 181); --my: calc(300% / 113); --d: 52%; }
+  @media (max-width: 767px) { .sl-box .sl-img { --i: 3px; --mx: calc(500% / 181); --my: calc(500% / 113); } }
   .sl-st { display: flex; justify-content: space-between; gap: 1rem; margin: 22px 0 10px; font-size: 11px; white-space: nowrap; }
   .sl-now { color: var(--lime); display: inline-flex; align-items: center; gap: .6em; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   .sl-now b { font-weight: 400; color: var(--lime); }
@@ -63,8 +66,7 @@ const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labIma
   a.sl-a:focus-visible { outline-offset: 4px; border-radius: 2px; }
   .is-now .sl-ol { opacity: 1; }
   .sl-node { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
-  @media (prefers-reduced-motion: no-preference) { .sl-node { animation: slPulse 2.4s var(--ease-out) infinite; } }
-  @keyframes slPulse { 0% { box-shadow: 0 0 0 0 var(--lime-25); } 70%, 100% { box-shadow: 0 0 0 14px rgba(201, 255, 87, 0); } }
+  /* static in the poster (an endless CSS pulse kept the first viewport repainting); the live field pulses it */
   .sl-txt { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10px; color: var(--gray-400); }
   /* 1024–1279: numbers only; the name shows on hover/focus (and in the title) */
   @media (min-width: 1024px) and (max-width: 1279px) {
