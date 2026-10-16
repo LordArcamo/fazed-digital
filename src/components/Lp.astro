@@ -181,7 +181,9 @@ const faq = lpFaq(php);
   :global(html.gl-live) .poster-days span { visibility: hidden; }
   :global(html.gl-live) .lp-days::before { opacity: 0; }
   .lp-trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); max-width: 900px; margin-top: 1.5rem; border-top: 1px solid var(--gray-700); padding-top: 1.25rem; }
-  .lp-trust dd { font-family: var(--font-display); font-weight: 600; font-size: 2rem; color: var(--white); line-height: 1; margin-top: .4rem; }
+  /* data, not hero claims: the trust figures are set in mono, on one baseline */
+  .lp-trust > div { display: flex; flex-direction: column; justify-content: space-between; }
+  .lp-trust dd { font-family: var(--font-mono); font-weight: 700; font-size: 1.5rem; letter-spacing: .02em; font-variant-numeric: tabular-nums; color: var(--white); line-height: 1; margin-top: .5rem; }
   .lp-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin: 2rem 0; }
   .lp-3 li { display: grid; gap: .6rem; align-content: start; padding-top: 1.25rem; border-top: 1px solid var(--gray-700); }
   .lp-local, .lp-pain, .lp-price, .lp-pay, .lp-reviews, .lp-proc, .lp-guar, .lp-why, .lp-work, .lp-faq { display: grid; gap: 1.25rem; }

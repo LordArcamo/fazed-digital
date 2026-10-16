@@ -65,8 +65,10 @@ p { text-wrap: pretty; }
 }
 .btn--lime { background: var(--lime); color: var(--black); }
 .btn--lime:hover { background: var(--lime-dark); }
-.btn--ghost { border: 1px solid var(--gray-500); color: var(--white); }
+.btn--ghost { border: 1px solid var(--gray-400); color: var(--white); }
+.btn--ghost::before { content: ''; flex: none; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--gray-400); transition: background-color .2s, border-color .2s; }
 .btn--ghost:hover { border-color: var(--white); }
+.btn--ghost:hover::before, .btn--ghost:focus-visible::before { background: var(--white); border-color: var(--white); }
 .btn--black { background: var(--black); color: var(--lime); }
 .btn--black:hover { background: var(--gray-800); }
 .btn .arrow { transition: transform .2s var(--ease-out); }

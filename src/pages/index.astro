@@ -41,7 +41,7 @@ const schema = {
     <section class="hero" id="top" data-f="mark" aria-labelledby="hero-h">
       <MarkPoster />
       <div class="container hero-in">
-        <p class="mono hero-strip">Iligan City, PH · {NAP.coords} · Est. 2022</p>
+        <p class="mono hero-strip"><span class="hs-d">Iligan City, PH · {NAP.coords} · Est. 2022</span><span class="hs-m" aria-hidden="true">Iligan, PH · {NAP.coords.split(" N")[0]} N · Est. 2022</span></p>
         <h1 id="hero-h" class="hero-h"><span class="hero-l1">Built in Iligan.</span> <span class="hero-l2">Live worldwide.</span></h1>
         <p class="t-body-l hero-deck">Websites, brands and web apps for owners who want to be found, trusted and chosen. Made in the Philippines, shipped to the USA, Australia and home.</p>
         <div class="hero-cta">
@@ -207,7 +207,8 @@ const schema = {
   /* HERO */
   .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: clip; }
   .hero-in { position: relative; z-index: 1; padding-top: calc(var(--header-h) + 24px); padding-bottom: 72px; }
-  .hero-strip { margin-bottom: 1.75rem; }
+  .hero-strip { margin-bottom: 1.75rem; white-space: nowrap; }
+  .hs-m { display: none; }
   .hero-h { font-size: clamp(3rem, 6.5vw, 7rem); line-height: .88; letter-spacing: -.035em; font-weight: 600; max-width: 60%; }
   .hero-l1, .hero-l2 { display: block; white-space: nowrap; }
   .hero-l2 { color: var(--gray-400); }
@@ -217,11 +218,13 @@ const schema = {
   @media (max-width: 1023px) {
     .hero { align-items: flex-end; }
     /* SIGNAL DOCK: CTAs clear the 64px mobile dock and the compact cookie sheet */
-    .hero-in { padding-top: 34svh; padding-bottom: 156px; }
+    .hero-in { padding-top: 34svh; padding-bottom: calc(136px + env(safe-area-inset-bottom)); }
     .hero-h { font-size: clamp(2.4rem, 11.6vw, 4.6rem); max-width: none; }
     .hero-strip { margin-bottom: 1rem; font-size: .7rem; letter-spacing: .1em; }
+    .hs-d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .hs-m { display: inline; }
     .hero-deck { margin-top: 1.25rem; font-size: 1.0625rem; }
     .hero-cue { display: none; }
+    .hero-cta { flex-wrap: nowrap; gap: .5rem; } .hero-cta .btn { padding: 0 1rem; }
   }
 
   /* UNFOLD */

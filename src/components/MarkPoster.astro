@@ -7,9 +7,10 @@ import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark
 const [vx, vy, vw, vh] = MARK_VIEWBOX;
 const t = `scale(${(1 / vw).toFixed(7)} ${(1 / vh).toFixed(7)}) translate(${-vx} ${-vy}) ${MARK_TRANSFORM}`;
 ---
-<div class="poster-art mark-poster" id="mark-poster" aria-hidden="true"></div>
+<div class="poster-art mark-poster" id="mark-poster" aria-hidden="true">{[0, 1, 2].map((k) => <i class={`mp-l mp-l${k}`}></i>)}</div>
 <svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
   <clipPath id="mark-clip" clipPathUnits="objectBoundingBox">{MARK_PATHS.map((d) => <path transform={t} d={d} />)}</clipPath>
+  {MARK_PATHS.map((d, k) => <clipPath id={`mark-clip-${k}`} clipPathUnits="objectBoundingBox"><path transform={t} d={d} /></clipPath>)}
 </svg>
 <style>
   .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
@@ -20,7 +21,14 @@ const t = `scale(${(1 / vw).toFixed(7)} ${(1 / vh).toFixed(7)}) translate(${-vx}
     clip-path: url(#mark-clip);
     pointer-events: none;
   }
+  /* lime top faces, same rule as the GL mark (formations.mark: the top 30% by luma = height + plane depth),
+     baked per plane as a height cut: plane 1 above 17.3%, plane 2 above 31.6%, plane 3 above 45.9% */
+  .mp-l { position: absolute; inset: 0; background-image: radial-gradient(circle at center, var(--lime) 1.1px, transparent 1.6px); background-size: 4px 4px; }
+  .mp-l0 { clip-path: url(#mark-clip-0); -webkit-mask: linear-gradient(#000 17.3%, transparent 17.3%); mask: linear-gradient(#000 17.3%, transparent 17.3%); }
+  .mp-l1 { clip-path: url(#mark-clip-1); -webkit-mask: linear-gradient(#000 31.6%, transparent 31.6%); mask: linear-gradient(#000 31.6%, transparent 31.6%); }
+  .mp-l2 { clip-path: url(#mark-clip-2); -webkit-mask: linear-gradient(#000 45.9%, transparent 45.9%); mask: linear-gradient(#000 45.9%, transparent 45.9%); }
   @media (max-width: 1023px) {
-    .mark-poster { height: 34svh; left: 50%; top: 26svh; }
+    /* the mark fills the space above the hero copy and never runs into the coords strip */
+    .mark-poster { height: clamp(110px, calc(100svh - 566px), 46svh); left: 50%; top: 76px; transform: translate(-50%, 0); }
   }
 </style>
