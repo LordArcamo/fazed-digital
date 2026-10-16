@@ -120,7 +120,7 @@ const schema = [
     .s-jump { margin-top: 1.5rem; }
     .s-jump ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1rem; padding: 0 var(--side); }
   }
-  .chap { padding-block: var(--section) 0; }
+  .chap { padding-block: clamp(96px, 12vh, 160px) 0; }
   .chap-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); }
   .chap-side { grid-column: 1 / span 4; position: sticky; top: calc(var(--header-h) + 48px); align-self: start; display: grid; gap: 2rem; min-height: 40vh; }
   .chap-n { color: var(--lime); }

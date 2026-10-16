@@ -48,7 +48,7 @@ const faq = lpFaq(php);
       <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
       <p class="t-body-l lp-deck">{php ? 'We design, build and launch professional websites for Philippine businesses: fully custom, mobile-ready and set up for Google.' : 'We design, build and launch professional websites for small businesses: fully custom, mobile-ready and set up for Google.'} <strong>{php ? 'From ₱19,999, fixed price. Pay via GCash, Maya or bank.' : 'From $499, fixed price. You own everything.'}</strong></p>
       <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
-      <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}</em></li>)}</ol>
+      <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}<i class="ld-t"> · {['Kickoff', 'Design', 'Design', 'Build', 'Build', 'Review', 'Live'][i]}</i></em></li>)}</ol>
       <dl class="lp-trust">
         {lpTrust.map((t) => <div><dt class="mono">{t.label}</dt><dd>{t.value}</dd></div>)}
         <div><dt class="mono">Starting price</dt><dd>{P.starter}</dd></div>
@@ -166,6 +166,8 @@ const faq = lpFaq(php);
   </section>
 </div>
 <style>
+  /* dead zones: two stacked 192px section paddings left 40–60% empty viewports (1440); the rhythm scales with the viewport instead */
+  .lp { --section: clamp(96px, 12vh, 160px); }
   .lp-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h) + 72px) 0 72px; }
   .lp-hero-in { display: grid; gap: 1.5rem; }
   .lp-hero h1 { max-width: 12ch; }
@@ -178,6 +180,19 @@ const faq = lpFaq(php);
   .lp-days span { width: 11px; height: 11px; border-radius: 50%; background: var(--gray-700); border: 1px solid var(--gray-500); }
   .lp-days li.lit span { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
   .lp-days em { font-style: normal; font-size: .65rem; }
+  .ld-t { display: none; font-style: normal; }
+  /* ≥1024: the 7-day line stands up in the hero's right half at display size (the GL days7 formation follows the anchor) */
+  @media (min-width: 1024px) {
+    .lp-hero-in { position: relative; }
+    .lp-hero-in > :not(.lp-days, h1) { max-width: min(100%, calc(100% - 360px)); }
+    .lp-days { position: absolute; right: calc(var(--side) + 2vw); top: 50%; translate: 0 -50%; margin: 0; width: 220px; height: min(66vh, 600px); grid-template-columns: none; grid-template-rows: repeat(7, 1fr); }
+    .lp-days::before { left: 5px; right: auto; top: 5px; bottom: calc(100% / 7 - 5px); width: 1px; height: auto; }
+    .lp-days li { grid-template-columns: 11px auto; align-items: start; align-content: start; column-gap: 2.25rem; }
+    .lp-days li.lit { column-gap: 3.5rem; }
+    .lp-days em { font-size: .75rem; line-height: 11px; color: var(--gray-400); }
+    .lp-days li.lit em { color: var(--lime); font-size: .9rem; }
+    .ld-t { display: inline; }
+  }
   :global(html.gl-live) .poster-days span { visibility: hidden; }
   :global(html.gl-live) .lp-days::before { opacity: 0; }
   .lp-trust { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); max-width: 900px; margin-top: 1.5rem; border-top: 1px solid var(--gray-700); padding-top: 1.25rem; }

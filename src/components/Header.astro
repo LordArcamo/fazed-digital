@@ -41,7 +41,7 @@ const cur = menu.find((m) => m.href === current);
       <a href="/lp/7-day-website" class="sd-cta" data-cursor="GO →"><i class="sd-ring" aria-hidden="true"></i><span class="t-rail" aria-hidden="true">Live in 7 days →</span><span class="t-dock" aria-hidden="true">7 Days →</span><span class="sr-only">Get live in 7 days</span></a>
       <button type="button" class="sd-menu" id="menu-btn" popovertarget="menu" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span class="sd-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sd-x" aria-hidden="true"></span><span class="sd-tip mono" aria-hidden="true">Menu · M</span></button>
     </nav>
-    <svg class="sd-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="sd-goo" x="-20%" y="-60%" width="140%" height="220%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="5" result="b" /><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 22 -10" /></filter></svg>
+    <svg class="sd-defs" width="0" height="0" aria-hidden="true" focusable="false"><filter id="sd-goo" x="-20%" y="-60%" width="140%" height="220%" color-interpolation-filters="sRGB"><feGaussianBlur in="SourceGraphic" stdDeviation="8" result="b" /><feColorMatrix in="b" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 26 -12" /></filter></svg>
     </>}
   </div>
 </header>
@@ -135,7 +135,9 @@ const cur = menu.find((m) => m.href === current);
   }
   :global(html.is-docked) .sd-mark { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--gray-800); color: var(--white); flex: none; }
   :global(html.is-docked) .sd-div { display: block; width: 1px; height: 20px; background: var(--gray-700); margin: 0 8px; flex: none; }
-  :global(html.is-docked) .sd-lw { --gap: 4px; margin-right: 6px; }
+  /* the blob never leaves the link line, and an 8px gap + 1px divider keep it off the lime 7 DAYS pill (5px clip margin = the focus ring) */
+  :global(html.is-docked) .sd-lw { --gap: 4px; margin-right: 17px; overflow: clip; overflow-clip-margin: 5px; }
+  :global(html.is-docked) .sd-cta::before { content: ''; position: absolute; left: -9px; top: 12px; bottom: 12px; width: 1px; background: var(--gray-700); }
   :global(html.is-docked) .sd-lw::after { display: none; }
   :global(html.is-docked) .sd-b1 { height: 40px; margin-top: -20px; } :global(html.is-docked) .sd-b2 { height: 32px; margin-top: -16px; }
   :global(html.is-docked) .sd-a { padding: 0 12px; gap: 8px; font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }

@@ -75,7 +75,7 @@ const schema = [
     </div>
   </section>
 
-  <section class="section container" aria-label="Studio numbers">
+  <section class="section container a-stats" aria-label="Studio numbers">
     <dl class="stats">{stats.filter((s) => s.show).map((s) => <div class="stat"><dt class="mono">{s.label}</dt><dd><span class="stat-v">{s.value}{s.suffix}</span><span class="mono">{s.sub}</span></dd></div>)}</dl>
   </section>
 
@@ -148,7 +148,8 @@ const schema = [
   .a-prom li { display: grid; grid-template-columns: 24px 1fr; gap: 1rem; }
   .a-prom strong { color: var(--white); }
   .tick { width: 12px; height: 12px; margin-top: .45rem; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 5px var(--lime-12); }
-  .a-cta { display: grid; gap: 1.5rem; justify-items: start; position: relative; padding-top: 220px; }
+  .a-stats, .a-values, .a-prom, .a-cta, .a-team, .a-where { --section: clamp(96px, 12vh, 160px); }
+  .a-cta { display: grid; gap: 1.5rem; justify-items: start; position: relative; padding-top: clamp(160px, 20vh, 200px); }
   .a-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
   .node-anchor { position: absolute; left: 24px; top: 80px; }
   @media (max-width: 1023px) {

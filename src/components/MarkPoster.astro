@@ -27,6 +27,8 @@ const t = `scale(${(1 / vw).toFixed(7)} ${(1 / vh).toFixed(7)}) translate(${-vx}
   .mp-l0 { clip-path: url(#mark-clip-0); -webkit-mask: linear-gradient(#000 17.3%, transparent 17.3%); mask: linear-gradient(#000 17.3%, transparent 17.3%); }
   .mp-l1 { clip-path: url(#mark-clip-1); -webkit-mask: linear-gradient(#000 31.6%, transparent 31.6%); mask: linear-gradient(#000 31.6%, transparent 31.6%); }
   .mp-l2 { clip-path: url(#mark-clip-2); -webkit-mask: linear-gradient(#000 45.9%, transparent 45.9%); mask: linear-gradient(#000 45.9%, transparent 45.9%); }
+  /* ≥1600 the D1 headline is ~760–820px wide: shift the mark right so "Live worldwide." keeps ≥48px of air (1920 touched at x≈1170) */
+  @media (min-width: 1600px) { .mark-poster { left: 75%; } }
   @media (max-width: 1023px) {
     /* the mark fills the space above the hero copy and never runs into the coords strip */
     .mark-poster { height: clamp(110px, calc(100svh - 566px), 46svh); left: 50%; top: 76px; transform: translate(-50%, 0); }

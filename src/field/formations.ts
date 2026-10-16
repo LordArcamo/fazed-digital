@@ -328,6 +328,19 @@ export function scatter(n: number, v: View, count = 2400): Formation {
 /* ── days7: 7 nodes on one line (the 7-day timeline); `lit` = how many days are lit ── */
 export function days7(rect: { left: number; top: number; width: number; height: number }, n: number, v: View, lit = 7, y?: number): Formation {
   const pts: Pt[] = [];
+  // vertical anchor (LP hero ≥1024): the same line at display size, Day 1 top → Day 7 bottom, Day 7 lime with a halo ring
+  if (rect.height > rect.width * 1.2) {
+    const x = rect.left + 5, y0 = rect.top + 5, y1 = rect.top + rect.height - rect.height / 7 + 5;
+    line(pts, { x, y: y0 }, { x, y: y1 }, 5, 0.5, 0.8);
+    for (let d = 0; d < 7; d++) {
+      const yy = y0 + ((y1 - y0) * d) / 6;
+      const on = lit < 0 ? d === 6 : d < lit;
+      cluster(pts, { x, y: yy }, on ? (d === 6 ? 11 : 6) : 5, d === 6 ? 170 : 26, on ? 2 : 1, 70 + d);
+    }
+    for (let k = 0; k < 72; k++) { const a = (k / 72) * Math.PI * 2; pts.push([x + Math.cos(a) * 24, y1 + Math.sin(a) * 24, 0, 2, 0.45]); }
+    for (let k = 0; k < 120; k++) { const a = (k / 120) * Math.PI * 2; pts.push([x + Math.cos(a) * 42, y1 + Math.sin(a) * 42, 0, 2, 0.2]); }
+    return pack('days7', pts, n, v, 2.4, [x, y0]);
+  }
   const cy = y ?? rect.top + 5, x0 = rect.left + 5, x1 = rect.left + rect.width - rect.width / 7 + 5;
   line(pts, { x: x0, y: cy }, { x: x1, y: cy }, 5, 0.5, 0.8);
   for (let d = 0; d < 7; d++) {

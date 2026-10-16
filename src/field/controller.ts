@@ -161,7 +161,7 @@ export async function start(g: Gate, flags: Flags) {
         const r = rectOf(a);
         if (!r) return null;
         const isHero = !!a?.classList.contains('poster-days');
-        return attach(F.days7(r, n, v, isHero ? -1 : 7, isHero ? r.top + 5 : r.top), a);
+        return attach(F.days7(r, n, v, isHero ? -1 : 7, isHero ? r.top + 5 : r.top), a); // vertical rects (LP hero ≥1024) take the display branch
       }
       case 'scatter': return F.scatter(n, v);
       case 'flood': return F.lattice(v, n);

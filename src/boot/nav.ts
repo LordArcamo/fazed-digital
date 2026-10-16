@@ -65,6 +65,7 @@ const sp = (): Sp => ({ x: 0, v: 0, w: 0, vw: 0 });
 let H = sp(), T = sp(), tx = 0, tw = 0, raf = 0, last = 0, mag = 0;
 let lw: HTMLElement | null = null, b1: HTMLElement | null = null, b2: HTMLElement | null = null, ink: HTMLElement | null = null;
 let LW = 0, LH = 0, BH = 36;
+const LEASH = 48;
 let target: HTMLElement | null = null, from: { x: number; w: number } | null = null;
 const active = () => lw?.querySelector<HTMLElement>('.sd-a[aria-current]') ?? null;
 function aim(a: HTMLElement | null, snap = false) {
@@ -89,16 +90,17 @@ function draw() {
   if (!b1 || !b2) return;
   const st = Math.min(48, Math.abs(H.v) * 0.035), sq = 1 - Math.min(0.28, Math.abs(H.v) / 5200);
   const put = (el: HTMLElement, s: Sp, extra: number, sy: number) => {
-    const w = Math.max(0, s.w + extra);
+    // overshoot squashes against the ends of the link line instead of being cut off by it
+    const w0 = Math.max(0, s.w + extra), l = Math.max(-2, s.x + mag - w0 / 2), r = Math.min(LW + 2, s.x + mag + w0 / 2), w = Math.max(0, r - l);
     el.style.width = `${w.toFixed(1)}px`;
-    el.style.transform = `translate3d(${(s.x + mag - w / 2).toFixed(1)}px,0,0) scaleY(${(sy * Math.min(1, w / 30)).toFixed(3)})`;
+    el.style.transform = `translate3d(${l.toFixed(1)}px,0,0) scaleY(${(sy * Math.min(1, w / 30)).toFixed(3)})`;
   };
   put(b1, H, st, sq);
   put(b2, T, -6, 1);
   // the #090909 label copy is clipped to the blob, so every label it passes over reads dark on lime
   if (ink) {
     const wh = Math.max(0, H.w + st), wt = Math.max(0, T.w - 6);
-    const l = Math.min(H.x - wh / 2, wt > 2 ? T.x - wt / 2 : 1e9) + mag, r = Math.max(H.x + wh / 2, wt > 2 ? T.x + wt / 2 : -1e9) + mag;
+    const l = Math.max(-2, Math.min(H.x - wh / 2, wt > 2 ? T.x - wt / 2 : 1e9) + mag), r = Math.min(LW + 2, Math.max(H.x + wh / 2, wt > 2 ? T.x + wt / 2 : -1e9) + mag);
     const h = BH * sq * Math.min(1, wh / 30), t = (LH - h) / 2;
     ink.style.clipPath = r - l < 1 ? 'inset(50%)' : `inset(${t.toFixed(1)}px ${(LW - r).toFixed(1)}px ${t.toFixed(1)}px ${l.toFixed(1)}px round ${(h / 2).toFixed(1)}px)`;
   }
@@ -110,6 +112,10 @@ function frame(now: number) {
   const dt = Math.min(1 / 30, Math.max(0.001, (now - last) / 1000)); last = now;
   step(H, 420, 0.62, dt, tx, tw);
   step(T, 150, 0.78, dt, tx, tw);
+  // one liquid shape, never two pills: the tail is leashed so head and tail always overlap by ≥20px
+  // (at least 48px of travel allowed, so it still stretches into a drop, then catches up)
+  const d = T.x - H.x, leash = Math.max(LEASH, (H.w + T.w - 6) / 2 - 20);
+  if (Math.abs(d) > leash) { T.x = H.x + Math.sign(d) * leash; T.v = H.v; }
   draw();
   const busy = [H.v, T.v, H.vw, T.vw].some((v) => Math.abs(v) > 0.6) || Math.abs(H.x - tx) + Math.abs(T.x - tx) + Math.abs(H.w - tw) + Math.abs(T.w - tw) > 0.4;
   if (busy) kick(); else { H.x = T.x = tx; H.w = T.w = tw; draw(); }
