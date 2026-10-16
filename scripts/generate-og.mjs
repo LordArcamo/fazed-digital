@@ -31,11 +31,26 @@ const markSvg = (size, color) => ({
   props: { viewBox: '372 205 755 1089', width: size * 0.693, height: size, children: [{ type: 'g', props: { transform: MARK_TRANSFORM, fill: color, children: MARK_PATHS.map((d) => ({ type: 'path', props: { d } })) } }] },
 });
 
-function card({ eyebrow, title, meta }) {
+// the /lab contact sheet glyph: 5×2 dotted frames, 01–04 filled, the lime research node in 05
+function sheetSvg(shipped) {
+  const ch = [], nums = [], W = 92, H = 59, G = 14;
+  for (let k = 0; k < 10; k++) {
+    const x = (k % 5) * (W + G), y = Math.floor(k / 5) * (H + 34);
+    const tone = k < shipped ? '#BCBCBC' : '#2A2A2A';
+    for (let i = 3; i < W; i += 6) { ch.push({ type: 'circle', props: { cx: x + i, cy: y + 3, r: 1.2, fill: tone } }); ch.push({ type: 'circle', props: { cx: x + i, cy: y + H - 3, r: 1.2, fill: tone } }); }
+    for (let j = 9; j < H - 3; j += 6) { ch.push({ type: 'circle', props: { cx: x + 3, cy: y + j, r: 1.2, fill: tone } }); ch.push({ type: 'circle', props: { cx: x + W - 3, cy: y + j, r: 1.2, fill: tone } }); }
+    if (k < shipped) for (let j = 12; j < H - 9; j += 5) for (let i = 12; i < W - 9; i += 5) if (((i * 7 + j * 13 + k * 5) % 11) < 6) ch.push({ type: 'circle', props: { cx: x + i, cy: y + j, r: 1.1, fill: '#F5F4F0', 'fill-opacity': 0.45 } });
+    if (k === shipped) { ch.push({ type: 'circle', props: { cx: x + W / 2, cy: y + H / 2, r: 5, fill: '#C9FF57' } }); ch.push({ type: 'circle', props: { cx: x + W / 2, cy: y + H / 2, r: 11, fill: 'none', stroke: '#C9FF57', 'stroke-opacity': 0.35 } }); }
+    nums.push(h('span', { position: 'absolute', left: x, top: y + H + 8, fontFamily: 'Mono', fontSize: 14, letterSpacing: 1.5, color: k < shipped ? '#F5F4F0' : k === shipped ? '#C9FF57' : '#939393' }, String(k + 1).padStart(2, '0')));
+  }
+  const w = 5 * W + 4 * G, ht = 2 * H + 34 + 26;
+  return h('div', { display: 'flex', position: 'relative', width: w, height: ht }, [{ type: 'svg', props: { width: w, height: ht, viewBox: `0 0 ${w} ${ht}`, style: { position: 'absolute', left: 0, top: 0 }, children: ch } }, ...nums]);
+}
+function card({ eyebrow, title, meta, art }) {
   const size = title.length <= 14 ? 104 : title.length <= 28 ? 80 : title.length <= 52 ? 60 : 48;
   return h('div', { display: 'flex', width: 1200, height: 630, backgroundColor: '#090909', position: 'relative' }, [
     { type: 'svg', props: { width: 1200, height: 630, viewBox: '0 0 1200 630', style: { position: 'absolute', left: 0, top: 0 }, children: LATTICE } },
-    h('div', { position: 'absolute', right: 70, top: 92, display: 'flex' }, [markSvg(446, '#1C1C1C')]),
+    art ? h('div', { position: 'absolute', right: 64, top: 64, display: 'flex' }, [art]) : h('div', { position: 'absolute', right: 70, top: 92, display: 'flex' }, [markSvg(446, '#1C1C1C')]),
     h('div', { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', padding: '64px 72px', width: 820, height: 630 }, [
       h('div', { display: 'flex', alignItems: 'center', gap: 14 }, [markSvg(34, '#C9FF57'), h('span', { fontFamily: 'Clash', fontSize: 26, color: '#F5F4F0' }, 'Fazed'), h('span', { fontFamily: 'Clash', fontSize: 26, color: '#939393' }, 'Digital')]),
       h('div', { display: 'flex', flexDirection: 'column', gap: 22 }, [
@@ -66,8 +81,12 @@ const pages = {
   'lp-7day': { eyebrow: '7-day website · fixed price', title: 'Your website, live in 7 days.', meta: 'From $499 · You own everything' },
   'lp-7day-ph': { eyebrow: '7-day website · Philippine pricing', title: 'Your website, live in 7 days.', meta: 'From PHP 19,999 · GCash · Maya · Bank' },
 };
+// /lab: counts from src/data/lab.ts (shipped entries; #04 drops out when LAB_04 = 'hide')
+const labSrc = readFileSync(join(ROOT, 'src/data/lab.ts'), 'utf8');
+const labShipped = (labSrc.match(/status: 'shipped'/g) || []).length - (/LAB_04[^=]*=\s*'hide'/.test(labSrc) ? 1 : 0);
+pages.lab = { eyebrow: 'Concept sites · fictional brands', title: 'Concept sites. Real craft.', meta: `Fazed Lab · ${String(labShipped).padStart(2, '0')} immersive 3D concept sites`, art: sheetSvg(labShipped), dep: join(ROOT, 'src/data/lab.ts') };
 let n = 0;
-for (const [k, o] of Object.entries(pages)) { const out = join(OUT, `${k}.png`); if (fresh(out, me)) continue; await render(out, o); n++; }
+for (const [k, o] of Object.entries(pages)) { const out = join(OUT, `${k}.png`); if (fresh(out, me, ...(o.dep ? [o.dep] : []))) continue; await render(out, o); n++; }
 
 // cases (parse the TS data file without a TS runtime: pull the fields we need)
 const casesSrc = readFileSync(join(ROOT, 'src/data/cases.ts'), 'utf8');

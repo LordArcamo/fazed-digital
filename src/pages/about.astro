@@ -75,6 +75,13 @@ const schema = [
     </div>
   </section>
 
+  <!-- lab-spec §8: "The engine" teaser → /lab#engine (no data-f: the team rings keep playing through it, as before) -->
+  <section class="section container a-engine" aria-labelledby="ae-h">
+    <p class="mono">The engine · 04 people + 1 crew</p>
+    <h2 id="ae-h" class="t-h3 a-engine-h">We wrote our own AI production crew. <span class="dim">People still make every call that matters.</span></h2>
+    <a class="link a-engine-a" href="/lab#engine">See how the engine works <span aria-hidden="true">→</span></a>
+  </section>
+
   <section class="section container a-stats" aria-label="Studio numbers">
     <dl class="stats">{stats.filter((s) => s.show).map((s) => <div class="stat"><dt class="mono">{s.label}</dt><dd><span class="stat-v">{s.value}{s.suffix}</span><span class="mono">{s.sub}</span></dd></div>)}</dl>
   </section>
@@ -151,6 +158,11 @@ const schema = [
   .a-prom strong { color: var(--white); }
   .tick { width: 12px; height: 12px; margin-top: .45rem; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 5px var(--lime-12); }
   .a-stats, .a-values, .a-prom, .a-cta, .a-team, .a-where { --section: clamp(96px, 12vh, 160px); }
+  .a-engine { --section: clamp(72px, 9vh, 120px); padding-bottom: 0; display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 1rem; align-items: end; }
+  .a-engine > .mono { grid-column: 1 / -1; }
+  .a-engine-h { grid-column: 1 / span 8; font-size: clamp(1.5rem, 2.6vw, 2.25rem); line-height: 1.12; max-width: 30ch; }
+  .a-engine-a { grid-column: 10 / span 3; justify-self: end; display: inline-flex; align-items: center; gap: .4em; min-height: 44px; font-weight: 600; white-space: nowrap; }
+  @media (max-width: 1023px) { .a-engine-h, .a-engine-a { grid-column: 1 / -1; justify-self: start; } }
   .a-cta { display: grid; gap: 1.5rem; justify-items: start; position: relative; padding-top: clamp(160px, 20vh, 200px); }
   .a-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
   .node-anchor { position: absolute; left: 24px; top: 80px; }

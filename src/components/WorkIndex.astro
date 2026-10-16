@@ -11,7 +11,7 @@ const { services = false } = Astro.props;
   <ul>
     {caseIndex.map((c) => (
       <li class="wli" data-disc={c.discipline.join(' ')}>
-        <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cap={`CASE ${c.slug} · ${c.title}`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
+        <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cap={`CASE ${c.slug} · ${c.title} →`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
           <span class="mono w-n">{c.slug}</span>
           <span class="w-client">{c.title}</span>
           <span class="w-sector">{c.sector}</span>

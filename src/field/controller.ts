@@ -87,6 +87,11 @@ export async function start(g: Gate, flags: Flags) {
     if (!shots.has(id)) shots.set(id, F.parseShot(await bin(`shot-${id}`)));
     return shots.get(id)!;
   };
+  // lab silhouettes (/lab only): fetched on first need, the hero's active slot first
+  const labs = new Map<string, F.Shot>();
+  let labLoad: Promise<unknown> | null = null, labDone = false;
+  const labIds = () => (document.querySelector<HTMLElement>('[data-imaged]')?.dataset.imaged || '').split(' ').filter(Boolean);
+  const loadLabs = () => (labLoad ??= Promise.all(labIds().map((id) => bin(`lab-${id}`).then((b) => labs.set(id, F.parseShot(b))))).catch(() => {}).then(() => { labDone = true; }));
 
   const within = (el: Element | null | undefined, sel: string) => (el && (el.matches(sel) ? el : el.querySelector(sel))) || document.querySelector(sel);
   const build = (id: string, el?: Element | null): F.Formation | null => {
@@ -104,7 +109,24 @@ export async function start(g: Gate, flags: Flags) {
         const ry = cols[0] ? cols[0].top + cols[0].height / 2 : -1e4;
         return F.lattice(v, n, { lit: (x, y) => (Math.abs(y - ry) <= v.pitch / 2 && cols.some((c) => Math.abs(c.left - x) <= v.pitch / 2) ? 2 : 0) });
       }
-      case 'work': return F.lattice(v, n);
+      case 'work': case 'lab': return F.lattice(v, n);
+      case 'slate': {
+        const a = within(el, '[data-slate-anchor]') as HTMLElement | null;
+        const r = rectOf(a);
+        if (!a || !r) return F.lattice(v, n);
+        if (!labDone) { loadLabs().then(() => { if (beat === 'slate' && labs.size) morph(build('slate', beatEl), 1.1, 'power3.out'); }); return F.lattice(v, n); }
+        const lead = rectOf(a.querySelector('[data-slate-lead]'));
+        const frames = [...a.querySelectorAll<HTMLElement>('[data-slate-box]')].map((b) => ({ id: b.dataset.slateBox!, kind: b.dataset.kind as F.SlateFrame['kind'], r: rectOf(b)! }));
+        slateOn ||= labIds().slice(-1)[0] || '';
+        return attach(F.slate(lead && lead.width > 0 ? lead : null, frames, labs.get(slateOn) ?? null, labs, n, v, r), a);
+      }
+      case 'pipeline8': {
+        const a = within(el, '[data-pipe-anchor]') as HTMLElement | null;
+        if (!a || v.w < 768) return F.lattice(v, n);
+        const all = (s: string) => [...(el ?? document).querySelectorAll(s)].map(rectOf).filter((r): r is Rect => !!r && r.width > 0);
+        pipeLit = bus.rm ? 8 : +(a.dataset.lit || 0);
+        return attach(F.pipeline8(all('[data-pipe-node]'), all('[data-gate]'), all('[data-agent]'), all('[data-tool]'), pipeLit, n, v), a);
+      }
       case 'pentagon': {
         const d = (el as HTMLElement | null | undefined)?.dataset ?? {};
         const fx = d.fx ? +d.fx : 0.7, fy = d.fy ? +d.fy : 0.53, fr = d.fr ? +d.fr : 0.17;
@@ -172,6 +194,13 @@ export async function start(g: Gate, flags: Flags) {
   /* ── state ──────────────────────────────────────────────────────────── */
   let beat = '';
   let svcStep = 0, person = -1;
+  let slateOn = '', slateT = 0, slateHold = 0, pipeLit = 0;
+  const slateGo = (id: string) => {
+    if (!id || id === slateOn || !labs.has(id)) return;
+    slateOn = id; slateT = 0;
+    if (beat === 'slate') morph(build('slate', beatEl), bus.rm ? 0 : 0.6, 'power2.out');
+    document.dispatchEvent(new CustomEvent('fz:lab-active', { detail: id }));
+  };
   let globeC = { x: 0, y: 0 }, globeR = 300, ringsC = { x: 0, y: 0 };
   let morphTween: gsap.core.Tween | null = null;
   let heroScrub = false;
@@ -191,7 +220,7 @@ export async function start(g: Gate, flags: Flags) {
     beat = id;
     beatEl = el ?? null;
     // per-beat uniforms
-    gsap.to(u.uDim, { value: id === 'work' || id === 'flood' ? 0.35 : 1, duration: 0.6 });
+    gsap.to(u.uDim, { value: id === 'work' || id === 'flood' ? 0.35 : id === 'lab' ? 0.6 : 1, duration: 0.6 });
     gsap.to(u.uBack, { value: id === 'globe' ? 1 : 0, duration: 0.6 });
     u.uLight.value = id === 'wordmark' && desktop() ? 1 : 0;
     field.setArcs(null);
@@ -252,6 +281,8 @@ export async function start(g: Gate, flags: Flags) {
     listeners.forEach(([t, f]) => document.removeEventListener(t, f));
     listeners = [];
     beat = '';
+    slateT = 0;
+    if (labIds().length) loadLabs();
     const pageF = html.dataset.formation || 'lattice';
     // reading pages: the field fades out and stops rendering; any other page brings it back
     paused = false;
@@ -321,6 +352,27 @@ export async function start(g: Gate, flags: Flags) {
       // the hover plate resolves fast and crisp: one grid-aligned dot per cell (no jitter), 0.45s
       morph(F.shot(`shot-${d.id}`, r, s, n, view(), 1), 0.45, 'power3.out', [r.left + r.width / 2, r.top]);
     }) as EventListener);
+    // lab: a hovered/focused caption takes the lead frame (auto-advance holds until 6s after leave)
+    on('fz:slate', ((e: CustomEvent) => {
+      const id = e.detail as string | null;
+      slateHold = id ? Infinity : performance.now() / 1000 + 6;
+      if (id) slateGo(id);
+    }) as EventListener);
+    on('fz:lab', (async (e: CustomEvent) => {
+      if (beat !== 'lab') return;
+      const d = e.detail as { id: string; el: HTMLElement } | null;
+      if (!d) { morph(F.lattice(view(), n), 0.6, 'power2.out'); return; }
+      await loadLabs();
+      const s = labs.get(d.id), r = rectOf(d.el);
+      if (!s || !r || beat !== 'lab') return;
+      // the product resolves as a dot sculpture at 1.5× the plate, centred on it
+      const big = { left: r.left - r.width * 0.25, top: r.top - r.height * 0.25, width: r.width * 1.5, height: r.height * 1.5 };
+      morph(F.sil(`lab-${d.id}`, big, s, n, view()), 0.45, 'power3.out', [r.left + r.width / 2, r.top]);
+    }) as EventListener);
+    on('fz:pipe', ((e: CustomEvent) => {
+      if (beat !== 'pipeline8' || +e.detail === pipeLit) return;
+      morph(build('pipeline8', beatEl), 0.35, 'power2.out');
+    }) as EventListener);
     on('fz:person', ((e: CustomEvent) => {
       person = e.detail;
       if (beat !== 'rings') return;
@@ -386,10 +438,17 @@ export async function start(g: Gate, flags: Flags) {
     } else {
       u.uTilt.value.set(0, 0);
     }
-    if (beat === 'node' && Math.floor(t / 2.4) !== lastPulse) {
+    if (beat === 'slate' && !bus.rm && innerWidth >= 768) {
+      slateT += dt;
+      if (slateT > 4.2 && performance.now() / 1000 > slateHold) {
+        const ids = labIds();
+        slateGo(ids[(ids.indexOf(slateOn) + 1) % ids.length]);
+      }
+    }
+    if ((beat === 'node' || beat === 'slate') && Math.floor(t / 2.4) !== lastPulse) {
       lastPulse = Math.floor(t / 2.4);
-      const r = within(beatEl, '[data-node-anchor]')?.getBoundingClientRect();
-      if (r) field.ripple(r.left, r.top, 0.7);
+      const r = within(beatEl, beat === 'node' ? '[data-node-anchor]' : '[data-kind="research"]')?.getBoundingClientRect();
+      if (r) field.ripple(r.left + (beat === 'node' ? 0 : r.width / 2), r.top + (beat === 'node' ? 0 : r.height / 2), beat === 'node' ? 0.7 : 0.35);
     }
     field.tick(dt, t);
     if (!record) watchdog.frame(deltaMs, t);

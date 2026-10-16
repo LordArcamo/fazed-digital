@@ -1,0 +1,222 @@
+---
+// Fazed Lab (/lab): brief/lab-spec.md + copy/lab.md (USER ANSWERS 2026-10-17 override the TBCs).
+// H1 (resolved): "Concept sites. / Real craft." (the Designer's line, mirrors /work's "Live sites. / Real businesses.").
+// Alternatives kept for a quick swap: "Concepts. / Built for real." · "Four people. / One AI engine." ·
+// "Our lab. / Your next site." · "Made to play. / Built to ship."
+import Base from '../layouts/Base.astro';
+import LabSheetPoster from '../components/LabSheetPoster.astro';
+import LabIndex from '../components/LabIndex.astro';
+import Engine from '../components/Engine.astro';
+import { labShipped, labUpcoming, labImaged, LAB_TOTAL, pad2 } from '../data/lab';
+import { labImages } from '../data/images';
+import { SITE_URL } from '../data/site';
+import { crumbs, ORG_REF } from '../lib/schema';
+import { getImage } from 'astro:assets';
+
+const plates = Object.fromEntries(await Promise.all(labImaged.map(async (n) => [n, (await getImage({ src: labImages[n], width: 1200, format: 'webp' })).src])));
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'CollectionPage',
+    '@id': `${SITE_URL}/lab#page`,
+    url: `${SITE_URL}/lab`,
+    name: 'Fazed Lab: immersive 3D concept sites',
+    description: 'Concept websites for fictional brands, built by Fazed Digital with its own AI production crew.',
+    isPartOf: { '@id': `${SITE_URL}/#website` },
+    publisher: ORG_REF,
+    mainEntity: {
+      '@type': 'ItemList',
+      numberOfItems: labShipped.length,
+      itemListElement: labShipped.map((i, k) => ({
+        '@type': 'ListItem',
+        position: k + 1,
+        item: {
+          '@type': 'CreativeWork',
+          '@id': `${SITE_URL}/lab#lab-${i.n}`,
+          name: `${i.brand} (concept site)`,
+          url: i.url,
+          genre: 'Concept website',
+          description: i.desc,
+          keywords: [...i.chips!, ...i.built!.split(' · ')].filter((v, j, a) => a.indexOf(v) === j).join(', '),
+          creator: ORG_REF,
+          dateCreated: i.date,
+          ...(plates[i.n] ? { image: SITE_URL + plates[i.n] } : {}),
+          isFamilyFriendly: true,
+          ...(i.credit ? { isBasedOn: { '@type': 'CreativeWork', name: `${i.credit.model} (3D model)`, author: { '@type': 'Person', name: i.credit.author, url: i.credit.authorUrl }, license: i.credit.licenceUrl } } : {}),
+        },
+      })),
+    },
+  },
+  crumbs([['Lab', '/lab']]),
+];
+const shipped = pad2(labShipped.length);
+---
+<Base
+  title="Fazed Lab: Immersive 3D Concept Sites | Fazed Digital"
+  description="Immersive 3D concept sites for fictional brands, built by our studio and its own AI production crew. Three.js, WebGPU, OGL and Blender."
+  image="/og/lab.png"
+  formation="slate"
+  schema={schema}
+  current="/lab"
+>
+  <section class="l-hero" data-f="slate" aria-labelledby="l-h">
+    <div class="container l-hero-in">
+      <div class="l-copy">
+        <p class="mono">Fazed Lab · Concept series · {shipped} of {LAB_TOTAL} shipped · Oct 2026</p>
+        <h1 id="l-h" class="l-h1"><span class="h-l1">Concept sites.</span> <span class="h-l2">Real craft.</span></h1>
+        <p class="t-body-l l-deck">Immersive 3D sites for brands that don’t exist, built to test what we’ll build for brands that do. Four people, and an AI production crew we wrote ourselves.</p>
+        <div class="l-btns">
+          <a class="btn btn--lime" href="#index" data-magnetic>Open the index <span class="arrow" aria-hidden="true">↓</span></a>
+          <a class="btn btn--ghost" href="#engine">How the engine works</a>
+        </div>
+      </div>
+      <LabSheetPoster />
+    </div>
+  </section>
+
+  <section class="section l-index" id="index" data-f="lab" aria-labelledby="li-h">
+    <div class="container">
+      <h2 id="li-h" class="sr-only">Lab index</h2>
+      <p class="mono l-honest"><span class="l-dot" aria-hidden="true"></span>Concept sites · fictional brands · Not client work · {shipped} shipped · {pad2(labUpcoming.length)} queued</p>
+      <LabIndex />
+    </div>
+  </section>
+
+  <section class="section l-engine" id="engine" data-f="pipeline8" aria-labelledby="le-h">
+    <div class="container">
+      <div class="le-head">
+        <div>
+          <p class="mono">The engine</p>
+          <h2 id="le-h" class="t-d2"><span class="h-l1">Four people.</span> <span class="h-l2 dim">One crew. Eight stations.</span></h2>
+        </div>
+        <p class="le-body">Every concept site runs the same line. Agents do the legwork: research, briefs, Blender scripts, code, a jury pass. People pick the direction, approve the model and press ship. Site 04 failed its model check twice before we rebuilt the car.</p>
+      </div>
+      <Engine />
+    </div>
+  </section>
+
+  <section class="section l-rules" data-f="lattice" aria-labelledby="lr-h">
+    <div class="container lr-in">
+      <h2 id="lr-h" class="mono">Ground rules</h2>
+      <ol class="lr-list">
+        <li><span class="mono">01</span><p>The brands are fictional. Nocturne, OFFCUT, Maison Ossel and Halde don’t exist and sell nothing.</p></li>
+        <li><span class="mono">02</span><p>The craft is ours: the code, the Blender scripts, the renders and the copy. Halde’s base mesh is a licensed model, credited on its entry.</p></li>
+        <li><span class="mono">03</span><p>Each concept site opens in a new tab and says it’s a concept in its own footer.</p></li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section l-cta" data-f="node" aria-labelledby="lc-h">
+    <div class="container lc-in">
+      <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
+      <h2 id="lc-h" class="t-d1">Want this engine <span class="dim">on a real brand?</span></h2>
+      <p class="t-body-l">Tell us what you’re building. We’ll reply within one business day.</p>
+      <div class="l-btns"><a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="/work">See client work</a></div>
+    </div>
+  </section>
+</Base>
+<script>
+  // pre-3D glue (no GSAP): sheet hover/focus → fz:slate + the "Now" line; the engine's stations
+  // light in scroll order (.is-lit + fz:pipe for the field); reduced motion = all lit at once.
+  const ev = (t: string, d: unknown) => document.dispatchEvent(new CustomEvent(t, { detail: d }));
+  function initLab() {
+    const sheet = document.querySelector<HTMLElement>('[data-slate-anchor]');
+    const band = document.querySelector<HTMLElement>('[data-pipe-band]');
+    if (!sheet || !band || sheet.dataset.bound) return;
+    sheet.dataset.bound = '1';
+    const now = sheet.querySelector('[data-slate-now]'), poster = sheet.querySelector<HTMLImageElement>('[data-slate-poster]');
+    const show = (id: string) => {
+      const a = sheet.querySelector<HTMLElement>(`[data-slate-frame="${id}"]`);
+      if (!a?.dataset.img) return;
+      if (now) now.textContent = a.dataset.name!;
+      if (poster) poster.src = `/formations/lab-${id}-poster.webp`;
+      sheet.querySelectorAll('.sl-f').forEach((f) => f.classList.toggle('is-now', f.contains(a)));
+    };
+    const pick = (e: Event) => (e.target as HTMLElement).closest<HTMLElement>('[data-slate-frame][data-img]');
+    const on = (e: Event) => { const a = pick(e); if (a) { show(a.dataset.slateFrame!); ev('fz:slate', a.dataset.slateFrame); } };
+    const off = (e: Event) => { if (pick(e) && !sheet.contains((e as FocusEvent).relatedTarget as Node)) ev('fz:slate', null); };
+    sheet.addEventListener('pointerover', on); sheet.addEventListener('focusin', on);
+    sheet.addEventListener('pointerout', off); sheet.addEventListener('focusout', off);
+    const act = (e: Event) => show((e as CustomEvent).detail);
+    document.addEventListener('fz:lab-active', act);
+    // engine: ≥768 the horizontal spine follows the band's progress, phones light each node as it passes 70%
+    const sts = [...band.querySelectorAll<HTMLElement>('.st')], lit = band.querySelectorAll<HTMLElement>('[data-st]');
+    const anchor = band.querySelector<HTMLElement>('[data-pipe-anchor]')!;
+    const rm = document.documentElement.classList.contains('rm');
+    let k = -1;
+    const set = (n: number) => {
+      if (n === k) return;
+      k = n;
+      lit.forEach((el) => el.classList.toggle('is-lit', +el.dataset.st! <= n));
+      sts.forEach((el, i) => el.classList.toggle('is-now', i === n - 1 && n < 8));
+      anchor.dataset.lit = String(n);
+      ev('fz:pipe', n);
+    };
+    const tick = () => {
+      if (rm) return set(8);
+      const h = innerHeight;
+      if (innerWidth < 768) return set(sts.filter((s) => s.getBoundingClientRect().top < h * 0.7).length);
+      const r = band.getBoundingClientRect(), p = (h * 0.75 - r.top) / (r.height + h * 0.15);
+      set(p <= 0 ? 0 : Math.min(8, Math.ceil(p * 8)));
+    };
+    let raf = 0;
+    const onScroll = () => { if (!raf) raf = requestAnimationFrame(() => { raf = 0; tick(); }); };
+    tick();
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll, { passive: true });
+    document.addEventListener('astro:before-swap', () => { removeEventListener('scroll', onScroll); removeEventListener('resize', onScroll); document.removeEventListener('fz:lab-active', act); cancelAnimationFrame(raf); }, { once: true });
+  }
+  document.addEventListener('astro:page-load', initLab);
+  initLab();
+</script>
+<style>
+  /* L1: text 5/12, sheet 7/12 (right edge = container), vertically centred in the first viewport */
+  .l-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding: calc(var(--header-h) + 32px) 0 48px; }
+  .l-hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 2rem var(--gutter); align-items: center; }
+  .l-copy { display: grid; gap: 1.5rem; justify-items: start; align-content: center; }
+  .l-copy > .mono { margin-bottom: -.25rem; }
+  .l-h1 { font-size: clamp(2.75rem, 5.4vw, 5.75rem); line-height: .92; letter-spacing: -.03em; max-width: none; }
+  .l-h1 .h-l1, .l-h1 .h-l2 { display: block; white-space: nowrap; } .l-h1 .h-l2 { color: var(--gray-400); }
+  .l-deck { max-width: 44ch; }
+  .l-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .l-hero :global(.slate) { justify-self: end; width: min(606px, 46vw); }
+  @media (min-width: 1024px) and (max-width: 1279px) { .l-hero :global(.slate) { width: min(520px, 46vw); } .l-h1 { font-size: clamp(2.75rem, 5.6vw, 4.5rem); } }
+  @media (max-width: 1023px) {
+    .l-hero { min-height: 0; display: block; padding-top: calc(var(--header-h) + 48px); }
+    .l-hero-in { grid-template-columns: 1fr; gap: 3rem; }
+    .l-hero :global(.slate) { justify-self: stretch; width: 100%; }
+    .l-h1 { font-size: clamp(2.75rem, 8vw, 4.5rem); }
+  }
+  @media (max-width: 767px) {
+    .l-hero { padding-top: calc(var(--header-h) + 24px); }
+    .l-hero-in { gap: 2.25rem; }
+    .l-h1 { font-size: min(2.75rem, 11.4vw); }
+    .l-btns { display: grid; width: 100%; }
+    .l-btns .btn { width: 100%; }
+  }
+  /* L2 sits close under the hero (96 desktop), like /work */
+  .l-index { padding-top: 96px; }
+  .l-honest { display: flex; align-items: center; gap: .7rem; margin-bottom: .5rem; color: var(--gray-300); }
+  .l-dot { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+  @media (max-width: 767px) { .l-index { padding-top: 48px; } }
+  /* L3 */
+  .l-engine { padding-bottom: 96px; }
+  .le-head { display: grid; grid-template-columns: minmax(0, 8fr) minmax(0, 4fr); gap: 1.5rem var(--gutter); align-items: end; }
+  .le-head .t-d2 { margin-top: 1rem; }
+  .le-head .h-l1, .le-head .h-l2 { display: block; }
+  @media (min-width: 1024px) { .le-head .h-l2 { white-space: nowrap; } }
+  .le-body { max-width: 40ch; justify-self: end; font-size: 1.05rem; color: var(--gray-300); }
+  @media (max-width: 1023px) { .le-head { grid-template-columns: 1fr; } .le-body { justify-self: start; } }
+  /* L4 */
+  .lr-in { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: 2rem var(--gutter); }
+  .lr-in h2 { color: var(--lime); font-weight: 400; }
+  .lr-list { display: grid; }
+  .lr-list li { display: grid; grid-template-columns: 3rem 1fr; gap: 1rem; padding: 1.25rem 0; border-top: 1px solid var(--gray-700); }
+  .lr-list li:last-child { border-bottom: 1px solid var(--gray-700); }
+  .lr-list p { max-width: 60ch; color: var(--gray-300); font-size: 1.05rem; }
+  .l-rules { --section: clamp(96px, 12vh, 160px); }
+  @media (max-width: 767px) { .lr-in { grid-template-columns: 1fr; } }
+  /* L5 */
+  .lc-in { display: grid; gap: 1.5rem; justify-items: start; position: relative; padding-top: 140px; }
+  .node-anchor { position: absolute; left: 24px; top: 24px; }
+</style>

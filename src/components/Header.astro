@@ -2,19 +2,24 @@
 import Logo from './Logo.astro';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 import { NAP, SOCIALS } from '../data/site';
+import { labShipped, pad2 } from '../data/lab';
 const { current = '', lp = false } = Astro.props;
+// Lab sits after Work (its proof sibling). Six links never fit the top rail (measured, lab-spec §7),
+// so Blog leaves the rail only (.sd-blog, undocked ≥1024); it stays in the dock ≥1180, the menu and the footer.
 const links = [
-  { href: '/work', label: 'Work' }, { href: '/services', label: 'Services' }, { href: '/about', label: 'About' },
+  { href: '/work', label: 'Work' }, { href: '/lab', label: 'Lab' }, { href: '/services', label: 'Services' }, { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' }, { href: '/contact', label: 'Contact' },
 ];
 const menu = [
-  { n: '01', href: '/', label: 'Home', hint: 'MARK · START HERE' },
-  { n: '02', href: '/work', label: 'Work', hint: '08 CASES · 3 COUNTRIES' },
-  { n: '03', href: '/services', label: 'Services', hint: '05 SERVICES · 01 SYSTEM' },
-  { n: '04', href: '/about', label: 'About', hint: '04 PEOPLE · EST. 2022' },
-  { n: '05', href: '/blog', label: 'Blog', hint: 'PRACTICAL GUIDES' },
-  { n: '06', href: '/contact', label: 'Contact', hint: 'REPLY IN 1 BUSINESS DAY' },
-];
+  { href: '/', label: 'Home', hint: 'MARK · START HERE' },
+  { href: '/work', label: 'Work', hint: '08 CASES · 3 COUNTRIES' },
+  { href: '/lab', label: 'Lab', hint: `${pad2(labShipped.length)} CONCEPT SITES · OWN ENGINE` },
+  { href: '/services', label: 'Services', hint: '05 SERVICES · 01 SYSTEM' },
+  { href: '/about', label: 'About', hint: '04 PEOPLE · EST. 2022' },
+  { href: '/blog', label: 'Blog', hint: 'PRACTICAL GUIDES' },
+  { href: '/contact', label: 'Contact', hint: 'REPLY IN 1 BUSINESS DAY' },
+].map((m, i) => ({ ...m, n: pad2(i + 1) }));
+const total = pad2(menu.length + 1); // + the 7-day row
 const cur = menu.find((m) => m.href === current);
 ---
 <header class="hdr" id="hdr">
@@ -31,7 +36,7 @@ const cur = menu.find((m) => m.href === current);
     <nav class="sd sd-m" id="sd" aria-label="Primary">
       <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
       <span class="sd-div" aria-hidden="true"></span>
-      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span>{cur && <span class="sd-idx" aria-hidden="true">{cur.n}/06</span>}</button>
+      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span>{cur && <span class="sd-idx" aria-hidden="true">{cur.n}/{pad2(menu.length)}</span>}</button>
       <div class="sd-lw">
       <span class="sd-goo" aria-hidden="true"><i class="sd-b sd-b1"></i><i class="sd-b sd-b2"></i></span>
       <ul class="sd-list" id="sd-list">
@@ -54,7 +59,7 @@ const cur = menu.find((m) => m.href === current);
     <nav aria-label="Menu">
       <ol class="menu-list">
         {menu.map((m, i) => <li style={`--i:${i}`}><a href={m.href} class="menu-link" data-word={m.label} aria-current={current === m.href ? 'page' : undefined}><span class="mono menu-n">{m.n}</span><i class="sd-n mn-n" aria-hidden="true"></i><span class="menu-label">{m.label}</span><span class="mono menu-hint" aria-hidden="true">{m.hint}</span></a></li>)}
-        <li style="--i:6"><a href="/lp/7-day-website" class="menu-link menu-lit" data-word="7 days"><span class="mono menu-n">07</span><i class="sd-ring mn-n" aria-hidden="true"></i><span class="menu-label">Get live in 7 days →</span><span class="mono menu-hint" aria-hidden="true">FROM $499 · ₱19,999</span></a></li>
+        <li style={`--i:${menu.length}`}><a href="/lp/7-day-website" class="menu-link menu-lit" data-word="7 days"><span class="mono menu-n">{total}</span><i class="sd-ring mn-n" aria-hidden="true"></i><span class="menu-label">Get live in 7 days →</span><span class="mono menu-hint" aria-hidden="true">FROM $499 · ₱19,999</span></a></li>
       </ol>
     </nav>
     <div class="menu-foot mono">
@@ -180,6 +185,8 @@ const cur = menu.find((m) => m.href === current);
   .sd-tip { position: absolute; bottom: calc(100% + 18px); left: 50%; translate: -50% 0; padding: 6px 10px; border-radius: 999px; background: var(--gray-900); border: 1px solid var(--gray-700); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-300); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; }
   .sd-menu:hover .sd-tip, .sd-menu:focus-visible .sd-tip { opacity: 1; }
   @media (min-width: 1024px) and (max-width: 1179px) { :global(html.is-docked) .sd-blog { display: none; } }
+  /* top rail: six links never fit next to the telemetry, so Blog steps out of the rail only */
+  @media (min-width: 1024px) { :global(html:not(.is-docked)) .sd-blog { display: none; } }
   :global(html.dock-hide) .sd { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
   @media (max-width: 1023px) { :global(html.dock-kb) .sd, :global(html.dock-kb) .sd-lp { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; } }
   /* menu open: the dock stays as the close control; the rail and top bar step back */
@@ -294,6 +301,16 @@ const cur = menu.find((m) => m.href === current);
     .menu-st { display: none; }
   }
   @media (max-width: 1023px) and (max-height: 700px) { .menu-link { min-height: 48px; } .menu-label { font-size: 32px; } }
+  /* 8 rows on short phones (375×667): 44px rows and email + phone on one row keep the last link clear of the open dock */
+  @media (max-width: 1023px) and (max-height: 720px) {
+    .menu { padding-top: 56px; }
+    .menu-in { gap: 1rem; }
+    .menu-link { min-height: 44px; }
+    .menu-label { font-size: 30px; }
+    .menu-lit .menu-label { font-size: 20px; }
+    .menu-foot { display: grid; grid-template-columns: auto auto; column-gap: 1.25rem; justify-content: start; }
+    .menu-foot > p:nth-of-type(4), .menu-foot > p:nth-of-type(5) { grid-column: 1 / -1; }
+  }
   @media (prefers-reduced-motion: no-preference) {
     .menu.is-open .menu-link { animation: menuIn .5s var(--ease-out) both; animation-delay: calc(.12s + var(--i, 0) * 40ms); }
   }

@@ -1,0 +1,176 @@
+---
+// /lab L3 "The engine" (lab-spec §1 L3, §2, §3.3). The pipeline is real HTML (an <ol> of 8 stations
+// with the 3 human gates inside their station) plus a <dl> of the crew, so it reads without WebGL.
+// ≥1024 the agent links are one SSR SVG in a 1000×560 box (preserveAspectRatio none + non-scaling
+// strokes, so it fits any width without JS); the field (pipeline8) puts its dots on the same nodes.
+// Stations light in scroll order (page script → .is-lit + fz:pipe); reduced motion = all lit.
+const X = (i: number) => 62.5 + i * 125; // station centres in the 1000-wide box (8 equal columns)
+const SPINE = 300;
+const stations = [
+  { t: 'Research', s: '3 directions', l: 'Three directions.', who: 'Web Designer agent (Awwwards, Godly, Codrops)', gate: 'Pick a direction' },
+  { t: 'Brief', s: 'Stack, budgets, copy', l: 'A spec nobody can misread.', who: 'Build Brief Architect (stack, budgets, copy)' },
+  { t: 'Design truth', s: 'Concept sheet', l: 'A concept sheet.', who: 'Prompt Director (Higgsfield)' },
+  { t: 'Model check', s: 'Pass or fail', l: 'Scripted Blender, judged.', who: 'Creative Technologist builds, Web Designer passes or fails', gate: 'Approve the model' },
+  { t: 'Build', s: 'Hero first', l: 'Hero first.', who: 'Creative Technologist' },
+  { t: 'Jury', s: 'Score + fix list', l: 'Score and fix list.', who: 'Jury agent + Web Designer, in parallel' },
+  { t: 'Polish', s: 'Fix, re-check', l: 'Fix, re-check.', who: 'Creative Technologist' },
+  { t: 'Ship', s: 'Repo + Vercel', l: 'A private repo and Vercel.', who: 'A person: our founder', gate: 'Press ship' },
+];
+// x in the 1000 box, y in px; `to` = stations (1-based); align = label anchor
+const agents = [
+  { id: 'hunter', name: 'The Hunter', dim: true, x: 30, y: 46, to: [1], a: 'start' },
+  { id: 'designer', name: 'Web Designer', x: 150, y: 116, to: [1, 4, 6], a: 'center' },
+  { id: 'architect', name: 'Build Brief Architect', x: 300, y: 40, to: [2], a: 'center' },
+  { id: 'wordsmith', name: 'The Wordsmith', dim: true, x: 250, y: 190, to: [2], a: 'center' },
+  { id: 'prompt', name: 'Prompt Director', x: 420, y: 120, to: [3], a: 'center' },
+  { id: 'ct', name: 'Creative Technologist', x: 640, y: 50, to: [4, 5, 7], a: 'center' },
+  { id: 'jury', name: 'Jury agent', x: 800, y: 130, to: [6], a: 'center' },
+];
+const tool = { name: 'Scripted Blender', x: 520, y: 214, to: [4, 5] };
+const gx = [125, 437.5 + 62.5, X(7)]; // gates: after 01, after 04, at 08
+const curve = (ax: number, ay: number, sx: number, sy: number) => `M${ax} ${ay}C${ax} ${ay + (sy - ay) * 0.55} ${sx} ${sy - (sy - ay) * 0.5} ${sx} ${sy}`;
+const links = [
+  ...agents.flatMap((g) => g.to.map((st) => ({ d: curve(g.x, g.y + 12, X(st - 1), SPINE), st, dim: !!g.dim, tool: false }))),
+  ...tool.to.map((st) => ({ d: curve(tool.x, tool.y + 14, X(st - 1), SPINE), st, dim: false, tool: true })),
+];
+const crew = [
+  ['Web Designer', 'Researches the category and pitches three creative directions. Passes or fails every model and reviews every page.'],
+  ['Build Brief Architect', 'Turns the picked direction into a spec: stack, scroll map, budgets and pass/fail checks.'],
+  ['Prompt Director', 'Makes the concept sheet with Higgsfield. Where anything disagrees with it, the sheet wins.'],
+  ['Creative Technologist', 'Scripts the 3D in Blender and builds the site, hero first. Works locally, never deploys.'],
+  ['Jury agent', 'Scores the build on design, usability, creativity, content, speed, mobile and access, then writes the fix list.'],
+  ['The Hunter · client work', 'On real-client jobs: finds and verifies your content, photos and facts. Invents nothing.'],
+  ['The Wordsmith · client work', 'On real-client jobs: writes your copy in your own voice, with SEO, and flags every gap.'],
+  ['Scripted Blender · tool', 'Python-built models and Cycles renders, run headless, so every model can be rebuilt and re-checked.'],
+];
+---
+<div class="eng">
+  <div class="eng-band" data-pipe-band>
+    <svg class="eng-links" viewBox="0 0 1000 560" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+      {links.map((k) => <path class:list={['lk', { 'lk--dim': k.dim, 'lk--tool': k.tool }]} d={k.d} />)}
+      {links.filter((k) => !k.tool).map((k) => <path class="lk lk-on" data-st={k.st} d={k.d} pathLength="1" />)}
+      {gx.map((x) => <path class="lk lk--gate" d={`M${x} ${SPINE + 10}V${436}`} />)}
+      {gx.map((x) => <path class="lk lk--ppl" d={`M${x} ${468}C${x} ${506} ${500} ${470} ${500} ${506}`} />)}
+    </svg>
+    <div class="eng-agents" aria-hidden="true">
+      {agents.map((g) => <span class:list={['ag', `ag--${g.a}`, { 'ag--dim': g.dim }]} style={`left:${g.x / 10}%;top:${g.y}px`}><span class="ag-l mono">{g.name}{g.dim && <span class="ag-cw"> · client work</span>}</span><i class="ag-n" data-agent></i></span>)}
+      <span class="ag ag--tool" style={`left:${tool.x / 10}%;top:${tool.y}px`}><span class="ag-l mono" data-tool>{tool.name}</span></span>
+    </div>
+    <ol class="pipe" data-pipe-anchor aria-label="Eight stations, idea to live">
+      {stations.map((s, i) => (
+        <li class:list={['st', { 'st--ship': i === 7 }]} data-st={i + 1}>
+          <i class="st-n" data-pipe-node aria-hidden="true"></i>
+          <span class="mono st-i">{String(i + 1).padStart(2, '0')}<span class="st-im"> · {s.t}</span></span>
+          <h3 class="st-t"><span class="st-td">{s.t}</span><span class="st-tm">{s.l.replace(/\.$/, '')}</span></h3>
+          <p class="st-s">{s.s}</p>
+          <p class="st-who">{s.l} <em>{s.who}</em></p>
+          {s.gate && (
+            <p class="gate" style={`--gx:${i === 7 ? 50 : 100}%`}><i class="gate-d" data-gate aria-hidden="true"></i><span class="mono gate-k">Human gate · </span><span class="mono gate-t">{s.gate}</span></p>
+          )}
+        </li>
+      ))}
+    </ol>
+    <p class="eng-ppl"><a class="ppl mono" href="/about#team"><span>04 people · Fazed Digital, Iligan City</span></a><span class="mono ppl-sign">Every stage is signed off by our founder, Lord Arcamo.</span></p>
+  </div>
+  <ul class="eng-legend mono" aria-hidden="true">
+    <li><i class="lg-gate"></i>Human gate</li><li><i class="lg-st"></i>Station (scroll lights it)</li><li><i class="lg-ln"></i>Agent link</li><li><i class="lg-tool"></i>Tool</li>
+  </ul>
+  <h3 class="mono crew-h">The crew · agents draft · people decide · we sign off</h3>
+  <dl class="crew">
+    {crew.map(([n, d]) => <div class="crew-i"><dt>{n}</dt><dd>{d}</dd></div>)}
+  </dl>
+</div>
+<style>
+  .eng { position: relative; }
+  .eng-band { position: relative; height: 600px; margin-top: 4rem; }
+  .eng-links { position: absolute; left: 0; top: 0; width: 100%; height: 560px; overflow: visible; pointer-events: none; }
+  .lk { fill: none; stroke: var(--gray-700); stroke-width: 1; vector-effect: non-scaling-stroke; }
+  .lk--dim { stroke-dasharray: 2 4; }
+  .lk--tool { stroke: var(--gray-500); stroke-dasharray: 3 3; }
+  .lk--gate { stroke: var(--gray-500); stroke-dasharray: 1 3; }
+  .lk--ppl { stroke: var(--gray-500); }
+  /* the lit overlay draws itself; it scales with the box (no non-scaling-stroke: that breaks pathLength dashes) */
+  .lk-on { stroke: var(--lime); opacity: .55; vector-effect: none; stroke-dasharray: 1; stroke-dashoffset: 1; transition: stroke-dashoffset .5s var(--ease-out); }
+  .lk-on.is-lit, :global(html:not(.js)) .lk-on { stroke-dashoffset: 0; }
+  .eng-agents { position: absolute; inset: 0; }
+  .ag { position: absolute; display: grid; justify-items: center; gap: 6px; translate: -50% 0; white-space: nowrap; }
+  .ag--start { justify-items: start; translate: -8px 0; }
+  .ag-l { font-size: 11px; color: var(--gray-200); letter-spacing: .12em; }
+  .ag--dim .ag-l { color: var(--gray-400); }
+  .ag-cw { color: var(--gray-400); }
+  .ag-n { width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--gray-400); background: var(--black); }
+  .ag--start .ag-n { margin-left: 5px; }
+  .ag--tool .ag-l { padding: 4px 8px; border: 1px dashed var(--gray-500); color: var(--gray-300); }
+  /* spine: 8 equal columns; the node sits on the line at y=300 */
+  .pipe { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: repeat(8, 1fr); }
+  .pipe::before { content: ''; position: absolute; left: 6.25%; right: 6.25%; top: 300px; height: 1px; background: var(--gray-700); }
+  .st { position: relative; display: grid; justify-items: center; align-content: start; text-align: center; padding-top: 324px; gap: .2rem; }
+  .st-n { position: absolute; left: 50%; top: 300px; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; border: 1px solid var(--gray-400); background: var(--black); transition: background-color .3s, border-color .3s, box-shadow .3s; }
+  .st--ship .st-n { border-radius: 1px; rotate: 45deg; width: 11px; height: 11px; margin: -5.5px 0 0 -5.5px; }
+  .st-i { font-size: 11px; }
+  .st-im, .st-tm, .st-who { display: none; }
+  .st-t { font-size: clamp(1rem, 1.45vw, 1.3rem); line-height: 1.1; color: var(--gray-300); transition: color .3s; }
+  .st-s { font-size: .85rem; line-height: 1.35; color: var(--gray-400); }
+  .st.is-lit .st-n, :global(html:not(.js)) .st-n { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 5px var(--lime-12); }
+  .st.is-lit .st-t, :global(html:not(.js)) .st-t { color: var(--white); }
+  .st.is-now .st-t { color: var(--lime); }
+  /* gates: a white diamond on the spine (on the column edge after 01 and 04, on the node at 08), its label under the station labels */
+  .gate { position: absolute; left: var(--gx); top: 300px; width: 0; height: 160px; }
+  .gate-d { position: absolute; left: -6px; top: -6px; width: 12px; height: 12px; background: var(--white); rotate: 45deg; scale: .8; }
+  .gate-k { display: none; }
+  .gate-t { position: absolute; top: 136px; left: 0; translate: -50% 0; white-space: nowrap; font-size: 11px; color: var(--white); }
+  .eng-ppl { position: absolute; left: 50%; top: 506px; translate: -50% 0; display: grid; justify-items: center; gap: .6rem; }
+  .ppl { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; background: var(--white); color: var(--black); font-size: 11px; white-space: nowrap; transition: background-color .2s; }
+  .ppl:hover, .ppl:focus-visible { background: var(--lime); }
+  .ppl-sign { font-size: 11px; letter-spacing: .1em; white-space: nowrap; color: var(--gray-300); }
+  .eng-legend { display: flex; flex-wrap: wrap; gap: .5rem 2rem; margin-top: 2.5rem; font-size: 11px; }
+  .eng-legend li { display: inline-flex; align-items: center; gap: .6rem; }
+  .lg-gate { width: 8px; height: 8px; background: var(--white); rotate: 45deg; }
+  .lg-st { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+  .lg-ln { width: 16px; height: 1px; background: var(--gray-400); }
+  .lg-tool { width: 16px; height: 0; border-top: 1px dashed var(--gray-400); }
+  .crew-h { margin: 4rem 0 1.25rem; font-size: 11px; color: var(--gray-400); font-family: var(--font-mono); font-weight: 400; }
+  .crew { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem var(--gutter); border-top: 1px solid var(--gray-700); padding-top: 1.5rem; }
+  .crew-i { display: grid; gap: .35rem; align-content: start; }
+  .crew dt { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 1.05rem; }
+  .crew dd { font-size: .92rem; line-height: 1.5; }
+  /* 768–1023: horizontal spine, labels alternate above/below, agents + links step out (the crew list carries them) */
+  @media (max-width: 1023px) {
+    .eng-band { height: 420px; }
+    .eng-links, .eng-agents { display: none; }
+    .pipe::before, .st-n, .gate { top: 150px; }
+    .st { padding-top: 174px; }
+    .st:nth-child(even) { padding-top: 0; height: 132px; align-content: end; }
+    .st:nth-child(even) .st-s { order: 3; }
+    .gate { height: 220px; }
+    .gate-t { top: 196px; }
+    .eng-ppl { top: 360px; }
+    .eng-legend { margin-top: 2rem; }
+    .crew { grid-template-columns: 1fr 1fr; }
+  }
+  /* phones: a vertical spine (F4); gates read as white squares between stations */
+  @media (max-width: 767px) {
+    .eng-band { height: auto; margin-top: 2.5rem; }
+    .pipe { position: relative; display: grid; gap: 1.6rem; padding-left: 2rem; grid-template-columns: 1fr; }
+    .pipe::before { left: 5px; right: auto; top: 8px; bottom: 8px; width: 1px; height: auto; }
+    .st, .st:nth-child(even) { padding: 0; height: auto; justify-items: start; text-align: left; align-content: start; gap: .25rem; }
+    .st-n, .gate { top: auto; }
+    .st-n { left: -2rem; top: 5px; margin: 0; width: 11px; height: 11px; }
+    .st--ship .st-n { margin: 0; }
+    .st-im, .st-tm { display: inline; }
+    .st-td, .st-s { display: none; }
+    .st-t { font-size: 1.2rem; color: var(--gray-300); }
+    .st-who { display: block; font-size: .92rem; line-height: 1.45; color: var(--gray-400); }
+    .st-who em { font-style: normal; }
+    .gate { position: relative; left: auto; width: auto; height: auto; margin-top: 1.1rem; padding-left: 0; display: flex; flex-wrap: wrap; gap: 0 .4em; }
+    .gate-d { left: calc(-2rem + 1px); top: 4px; width: 9px; height: 9px; rotate: 0deg; scale: 1; border-radius: 1px; }
+    .gate-k { display: inline; font-size: 11px; color: var(--gray-400); }
+    .gate-t { position: static; translate: none; white-space: normal; }
+    .eng-ppl { position: static; translate: none; justify-items: start; margin-top: 2rem; }
+    .ppl, .ppl-sign { white-space: normal; }
+    .ppl { min-height: 44px; }
+    .eng-legend { display: none; }
+    .crew { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { .lk-on { transition: none; } }
+</style>

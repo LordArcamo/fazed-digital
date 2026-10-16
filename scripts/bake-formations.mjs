@@ -13,7 +13,7 @@
  */
 import { initWasm, Resvg } from '@resvg/resvg-wasm';
 import sharp from 'sharp';
-import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync, unlinkSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from './lib/mark.mjs';
@@ -86,6 +86,46 @@ for (const [id, file] of Object.entries(SHOTS)) {
   bytes.set(data, 8);
   writeFileSync(out, bytes);
   log(`shot-${id}.bin`, bytes.length, 'B');
+}
+
+/* ── 3b. lab silhouettes: the concept sites' hero renders as luma mattes ─────
+ * Same Shot layout (8 B header + 181×113 u8), but l' = clamp((l - t0) / (t1 - t0))^gamma, so
+ * the background is 0 and the field draws only the product. Plus lab-NN-poster.webp (the same
+ * matte as a 181×113 greyscale image) for the T0/SVG contact sheet, which CSS masks into dots.
+ * Crops are 16:10 boxes in source pixels (tuned by eye on preview renders, see scripts/lab-src). */
+const LAB_04 = (readFileSync(join(ROOT, 'src/data/lab.ts'), 'utf8').match(/LAB_04[^=]*=\s*'(\w+)'/) || [])[1] || 'text';
+const LAB = {
+  '01': { crop: [592, 120, 1216, 760], invert: false, t0: 0.035, t1: 0.5, gamma: 0.5 },
+  '02': { crop: [620, 270, 940, 588], invert: false, t0: 0.26, t1: 0.9, gamma: 1.0 },
+  '03': { crop: [520, 0, 1216, 760], invert: false, t0: 0.16, t1: 0.88, gamma: 1.1 },
+  '04': { crop: [430, 230, 1060, 662], invert: true, t0: 0.14, t1: 1, gamma: 1.5 },
+};
+for (const [id, o] of Object.entries(LAB)) {
+  const src = join(ROOT, 'scripts/lab-src', `lab-${id}.webp`);
+  const out = join(OUT, `lab-${id}.bin`), poster = join(OUT, `lab-${id}-poster.webp`);
+  if (id === '04' && LAB_04 !== 'full') {
+    // no Halde-derived pixel ships unless the flag says so
+    for (const f of [out, poster]) if (existsSync(f)) { unlinkSync(f); log('removed', f); }
+    continue;
+  }
+  if (!existsSync(src) || (!stale(out, src, me) && existsSync(poster))) continue;
+  const [left, top, width, height] = o.crop;
+  const { data } = await sharp(src).extract({ left, top, width, height })
+    .resize(SHOT_COLS, SHOT_ROWS, { fit: 'fill', kernel: 'lanczos3' })
+    .greyscale().raw().toBuffer({ resolveWithObject: true });
+  const m = new Uint8Array(SHOT_COLS * SHOT_ROWS);
+  for (let i = 0; i < m.length; i++) {
+    let l = data[i] / 255;
+    if (o.invert) l = 1 - l;
+    const k = Math.min(1, Math.max(0, (l - o.t0) / (o.t1 - o.t0)));
+    m[i] = Math.round(Math.pow(k, o.gamma) * 255);
+  }
+  const bytes = new Uint8Array(8 + m.length);
+  bytes[0] = SHOT_COLS; bytes[2] = SHOT_ROWS;
+  bytes.set(m, 8);
+  writeFileSync(out, bytes);
+  await sharp(Buffer.from(m), { raw: { width: SHOT_COLS, height: SHOT_ROWS, channels: 1 } }).webp({ quality: 72, effort: 6 }).toFile(poster);
+  log(`lab-${id}.bin`, bytes.length, 'B · poster', statSync(poster).size, 'B');
 }
 
 /* ── 3. service glyphs: stroke-sampled points in a 280-unit box ───────────── */

@@ -350,3 +350,88 @@ export function days7(rect: { left: number; top: number; width: number; height: 
   }
   return pack('days7', pts, n, v, 2.2, [x0, cy]);
 }
+
+/* ── lab: silhouette mattes, the 5×2 contact sheet and the 8-station pipeline ── */
+type R4 = { left: number; top: number; width: number; height: number };
+/** contain-fit a 181:113 matte into a rect */
+const fit = (r: R4, s: Shot): R4 => {
+  const a = s.cols / s.rows, w = Math.min(r.width, r.height * a), h = w / a;
+  return { left: r.left + (r.width - w) / 2, top: r.top + (r.height - h) / 2, width: w, height: h };
+};
+/** matte cells above the floor become dots; the brightest 5% go lime (lit=false: white only) */
+const silPts = (out: Pt[], r: R4, s: Shot, step: number, lit: boolean) => {
+  const pw = (r.width / s.cols) * step, ph = (r.height / s.rows) * step, cells: [number, number, number][] = [];
+  for (let j = 0; j < s.rows; j += step) for (let i = 0; i < s.cols; i += step) {
+    const l = s.luma[j * s.cols + i];
+    if (l > 18) cells.push([r.left + (i / step + 0.5) * pw, r.top + (j / step + 0.5) * ph, l]);
+  }
+  // lime = exactly the brightest 5% (rank-based: saturated mattes would otherwise go all-lime or none)
+  let quota = lit ? Math.floor(cells.length * 0.05) : 0;
+  const thr = quota ? [...cells].sort((a, b) => b[2] - a[2])[quota][2] : 256;
+  for (const [x, y, l] of cells) out.push([x, y, 0, l > thr || (l === thr && quota-- > 0) ? 2 : 0.1 + (l / 255) * 0.95, 1]);
+};
+export function sil(id: string, rect: R4, s: Shot, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  silPts(pts, fit(rect, s), s, 1, true);
+  return pack(id, pts, n, v, Math.max(1.6, Math.min(3.2, (rect.width / s.cols) * 0.78)), [rect.left + rect.width / 2, rect.top], 7);
+}
+/** dotted frame outline: 2px dots on a 6px step, on the CSS poster's dot centres */
+const outline = (out: Pt[], r: R4, tone: number, alpha = 1) => {
+  const nx = Math.floor((r.width - 1) / 6), ny = Math.floor((r.height - 1) / 6);
+  for (let i = 0; i <= nx; i++) { out.push([r.left + 3 + i * 6, r.top + 3, 0, tone, alpha]); out.push([r.left + 3 + i * 6, r.top + 3 + ny * 6, 0, tone, alpha]); }
+  for (let j = 1; j < ny; j++) { out.push([r.left + 3, r.top + 3 + j * 6, 0, tone, alpha]); out.push([r.left + 3 + nx * 6, r.top + 3 + j * 6, 0, tone, alpha]); }
+};
+export interface SlateFrame { id: string; r: R4; kind: 'img' | 'research' | 'queued' }
+/** the contact sheet: static frames first (unshuffled, so an auto-advance only moves the lead), lead last */
+export function slate(lead: R4 | null, frames: SlateFrame[], active: Shot | null, bins: Map<string, Shot>, n: number, v: View, anchor: R4): Formation {
+  const pts: Pt[] = [];
+  const miniStep = lead ? 3 : 5;
+  for (const f of frames) {
+    outline(pts, f.r, f.kind === 'queued' ? 0.3 : 0.62);
+    const s = bins.get(f.id);
+    if (f.kind === 'img' && s) silPts(pts, fit({ left: f.r.left + 2, top: f.r.top + 2, width: f.r.width - 4, height: f.r.height - 4 }, s), s, miniStep, false);
+    if (f.kind === 'research') {
+      const c = { x: f.r.left + f.r.width / 2, y: f.r.top + f.r.height / 2 };
+      cluster(pts, c, 4, 60, 2, 55);
+      halo(pts, c, 1);
+    }
+  }
+  const lp: Pt[] = [];
+  let pitch = 2;
+  if (lead) {
+    outline(pts, lead, 0.5);
+    if (active) {
+      const fr = fit({ left: lead.left + 3, top: lead.top + 3, width: lead.width - 6, height: lead.height - 6 }, active), step = n - pts.length > 12000 ? 1 : 2;
+      silPts(lp, fr, active, step, true);
+      pitch = (fr.height / active.rows) * step;
+    }
+  }
+  pts.push(...shuffle(lp, 7));
+  return pack('slate', pts, n, v, Math.max(1.5, Math.min(2.2, pitch * 0.8)), [anchor.left + anchor.width / 2, anchor.top], null);
+}
+/** 8 stations on one spine; `lit` stations go lime, the 3 human gates are white diamonds,
+ *  agents are small 3-ring clusters, the tool node a dashed square */
+export function pipeline8(nodes: R4[], gates: R4[], agents: R4[], tools: R4[], lit: number, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  const c = (r: R4) => ({ x: r.left + r.width / 2, y: r.top + r.height / 2 });
+  if (nodes.length > 1) {
+    const a = c(nodes[0]), b = c(nodes[nodes.length - 1]), litX = lit > 0 ? c(nodes[Math.min(lit, nodes.length) - 1]).x : -1e9;
+    const len = b.x - a.x;
+    for (let x = 0; x <= len; x += 2.5) pts.push([a.x + x, a.y, 0, a.x + x <= litX ? 1.75 : 0.42, 1]);
+  }
+  nodes.forEach((r, k) => {
+    const p = c(r);
+    if (k < lit) { dot(pts, p, 2, 1); halo(pts, p, k === lit - 1 ? 1 : 0.5); }
+    else for (let i = 0; i < 22; i++) { const t = (i / 22) * Math.PI * 2; pts.push([p.x + Math.cos(t) * 5, p.y + Math.sin(t) * 5, 0, 0.8, 1]); }
+  });
+  gates.forEach((r) => {
+    const p = c(r);
+    for (let y = -6; y <= 6; y += 1.5) for (let x = -6; x <= 6; x += 1.5) if (Math.abs(x) + Math.abs(y) <= 6) pts.push([p.x + x, p.y + y, 0, 1, 1]);
+  });
+  agents.forEach((r, k) => {
+    const p = c(r);
+    [2, 5, 8].forEach((rr, ri) => { const m = 4 + ri * 6; for (let i = 0; i < m; i++) { const t = (i / m) * Math.PI * 2 + k; pts.push([p.x + Math.cos(t) * rr, p.y + Math.sin(t) * rr, 0, ri ? 0.7 : 1.3, 1]); } });
+  });
+  tools.forEach((r) => { for (let i = 0; i < 16; i++) { const s = Math.floor(i / 4), t = (i % 4) / 4 - 0.375; const h = r.width / 2 + 4, vv = r.height / 2 + 4, p = c(r); pts.push(s === 0 ? [p.x + t * 2 * h, p.y - vv, 0, 0.6, 1] : s === 1 ? [p.x + h, p.y + t * 2 * vv, 0, 0.6, 1] : s === 2 ? [p.x - t * 2 * h, p.y + vv, 0, 0.6, 1] : [p.x - h, p.y - t * 2 * vv, 0, 0.6, 1]); } });
+  return pack('pipeline8', pts, n, v, 2, nodes[0] ? [c(nodes[0]).x, c(nodes[0]).y] : [v.w / 2, v.h / 2]);
+}

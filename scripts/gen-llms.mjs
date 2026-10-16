@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { caseIndex } = await import(join(ROOT, 'src/data/cases.ts'));
 const { chapters } = await import(join(ROOT, 'src/data/services.ts'));
+const { labShipped } = await import(join(ROOT, 'src/data/lab.ts'));
 const posts = JSON.parse(readFileSync(join(ROOT, 'src/data/.generated/posts.json'), 'utf8'));
 const S = 'https://www.fazeddigital.com';
 const lines = [
@@ -22,6 +23,10 @@ const lines = [
   '',
   '## Case studies',
   ...caseIndex.map((c) => `- [${c.title}](${S}/work/${c.slug}): ${c.sector}, ${c.country}, ${c.year}. ${c.built}. ${c.resultHeadline}`),
+  '',
+  '## Fazed Lab',
+  `- [Fazed Lab](${S}/lab): concept sites with fictional brands, clearly labelled; not client work.`,
+  ...labShipped.map((i) => `  - ${i.brand} (concept site, fictional brand): ${i.url} · ${i.chips.join(', ')} · ${i.date}`),
   '',
   '## Guides',
   ...posts.map((p) => `- [${p.title}](${S}/blog/${p.slug}) (${p.category}, ${p.date})`),

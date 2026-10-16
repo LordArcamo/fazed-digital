@@ -1,0 +1,83 @@
+---
+// /lab hero: the 5×2 contact sheet (lab-spec §2 L1, §3.1). The GL field reads this element's rects:
+// [data-slate-anchor] (the whole sheet), [data-slate-lead] (lead frame) and every [data-slate-box].
+// The poster layer (.poster-art, hidden once GL is live) draws the same frames in CSS dots: dotted
+// outlines on a 6px step and each matte (public/formations/lab-NN-poster.webp, 181×113) masked into the
+// field's dot grid, so the GL hand-off lands on the same dots with zero layout shift.
+import { labItems, labImaged, labShipped, labUpcoming, pad2, LAB_TOTAL } from '../data/lab';
+const lead = labImaged[labImaged.length - 1];
+const leadItem = labItems.find((i) => i.n === lead);
+const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labImaged.includes(i.n) ? 'img' : 'text') : i.status === 'research' ? 'research' : 'queued');
+---
+<div class="slate" data-slate-anchor data-imaged={labImaged.join(' ')} aria-label={`Contact sheet: ${labShipped.length} of ${LAB_TOTAL} concept sites shipped`} role="group">
+  <div class="sl-lead" data-slate-lead aria-hidden="true">
+    <span class="poster-art sl-ol"></span>
+    {lead && <img class="poster-art sl-img sl-img--lead" src={`/formations/lab-${lead}-poster.webp`} alt="" width="181" height="113" decoding="async" fetchpriority="low" data-slate-poster />}
+  </div>
+  <p class="sl-st mono" aria-hidden="true"><span class="sl-now"><i></i>Now: <b data-slate-now>{leadItem ? `${leadItem.n} ${leadItem.brand}` : ''}</b></span><span class="sl-count">Shipped {pad2(labShipped.length)} · Queued {pad2(labUpcoming.length)}</span></p>
+  <ol class="sl-grid">
+    {labItems.map((i) => {
+      const k = kind(i);
+      const box = (
+        <span class="sl-box" data-slate-box={i.n} data-kind={k === 'text' ? 'queued' : k}>
+          <span class="poster-art sl-ol"></span>
+          {k === 'img' && <img class="poster-art sl-img" src={`/formations/lab-${i.n}-poster.webp`} alt="" width="181" height="113" loading="lazy" decoding="async" />}
+          {k === 'text' && <span class="sl-txt mono">Text only</span>}
+          {k === 'research' && <i class="poster-art sl-node"></i>}
+        </span>
+      );
+      return (
+        <li class:list={['sl-f', `sl-f--${k}`, { 'is-now': i.n === lead }]}>
+          {i.status === 'shipped'
+            ? <a class="sl-a" href={`#lab-${i.n}`} data-slate-frame={i.n} data-name={`${i.n} ${i.brand}`} data-img={k === 'img' ? '1' : undefined} title={i.brand}>{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">: {i.brand}, concept site, jump to its entry</span></span></a>
+            : <span class="sl-a">{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">, {i.status === 'research' ? 'in research' : 'queued'}</span></span></span>}
+        </li>
+      );
+    })}
+  </ol>
+</div>
+<style>
+  .slate { position: relative; width: 100%; }
+  .sl-lead { position: relative; aspect-ratio: 16 / 6.6; }
+  .sl-ol { position: absolute; inset: 0; pointer-events: none; background: radial-gradient(circle at 3px 3px, var(--gray-400) .9px, transparent 1.4px) 0 0 / 6px 6px; padding: 6px; -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; opacity: .75; }
+  .sl-f--queued .sl-ol, .sl-f--text .sl-ol { opacity: .35; }
+  /* the matte, masked into the field's grid (181×113 cells in the lead, every 3rd cell in a mini) */
+  .sl-img { position: absolute; display: block; max-width: none; opacity: .62; image-rendering: auto; --mx: calc(100% / 181); --my: calc(100% / 113);
+    -webkit-mask: radial-gradient(circle at center, #000 38%, transparent 52%) 0 0 / var(--mx) var(--my); mask: radial-gradient(circle at center, #000 38%, transparent 52%) 0 0 / var(--mx) var(--my); }
+  .sl-img--lead { top: 3px; bottom: 3px; height: calc(100% - 6px); width: auto; aspect-ratio: 181 / 113; left: 50%; translate: -50% 0; }
+  .sl-box .sl-img { inset: 2px; width: calc(100% - 4px); height: calc(100% - 4px); --mx: calc(300% / 181); --my: calc(300% / 113); }
+  .sl-st { display: flex; justify-content: space-between; gap: 1rem; margin: 22px 0 10px; font-size: 11px; white-space: nowrap; }
+  .sl-now { color: var(--lime); display: inline-flex; align-items: center; gap: .6em; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .sl-now b { font-weight: 400; color: var(--lime); }
+  .sl-now i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+  .sl-count { color: var(--gray-400); }
+  .sl-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 18px 12px; }
+  .sl-a { display: grid; gap: 8px; color: var(--gray-400); }
+  .sl-box { position: relative; display: block; aspect-ratio: 111 / 71; }
+  .sl-cap { display: flex; gap: .55em; font-size: 11px; letter-spacing: .12em; white-space: nowrap; overflow: hidden; min-height: 24px; align-items: center; }
+  .sl-cap b { font-weight: 400; color: var(--white); }
+  .sl-f--queued .sl-cap b { color: var(--gray-400); }
+  .sl-f--research .sl-cap b { color: var(--lime); }
+  a.sl-a .sl-name { transition: color .2s; }
+  a.sl-a:hover .sl-name, a.sl-a:focus-visible .sl-name, .is-now a.sl-a .sl-name { color: var(--white); }
+  a.sl-a:focus-visible { outline-offset: 4px; border-radius: 2px; }
+  .is-now .sl-ol { opacity: 1; }
+  .sl-node { position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; margin: -4px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
+  @media (prefers-reduced-motion: no-preference) { .sl-node { animation: slPulse 2.4s var(--ease-out) infinite; } }
+  @keyframes slPulse { 0% { box-shadow: 0 0 0 0 var(--lime-25); } 70%, 100% { box-shadow: 0 0 0 14px rgba(201, 255, 87, 0); } }
+  .sl-txt { position: absolute; inset: 0; display: grid; place-items: center; font-size: 10px; color: var(--gray-400); }
+  /* 1024–1279: numbers only; the name shows on hover/focus (and in the title) */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .sl-name { display: none; }
+    a.sl-a:hover .sl-name, a.sl-a:focus-visible .sl-name { display: inline; }
+  }
+  /* phones: 5×2 mini frames, no lead frame, numbers only; a tap jumps to the entry */
+  @media (max-width: 767px) {
+    .sl-lead { display: none; }
+    .sl-st { margin-top: 0; }
+    .sl-now { display: none; }
+    .sl-grid { gap: 12px 10px; }
+    .sl-name { display: none; }
+    .sl-cap { min-height: 44px; margin-top: -8px; }
+  }
+</style>

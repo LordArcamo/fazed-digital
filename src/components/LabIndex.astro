@@ -1,0 +1,131 @@
+---
+// /lab L2: the lab log (lab-spec §1 L2, §2). Rows are links out (new tab). Hover/focus parity drives the
+// fixed plate and the field's silhouette (motion/workindex.ts with data-event="fz:lab").
+import { Picture } from 'astro:assets';
+import { labShipped, labUpcoming, labImaged, LABEL, labDate, hostOf } from '../data/lab';
+import { labImages } from '../data/images';
+const fiction: Record<string, string> = { '01': 'café', '02': 'sneaker brand', '03': 'watch brand', '04': 'electric car brand' };
+const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
+---
+<div class="lindex" data-windex data-event="fz:lab">
+  <div class="lrow lrow--head mono" aria-hidden="true"><span>№</span><span>Concept · fictional brand</span><span>Built with</span><span></span></div>
+  <ul class="l-ship">
+    {labShipped.map((i) => {
+      const img = labImaged.includes(i.n) ? labImages[i.n] : null;
+      return (
+        <li class="lli" id={`lab-${i.n}`}>
+          <a class="lrow" href={i.url} target="_blank" rel="noopener" data-shot={img ? i.n : undefined} data-cap={`LAB ${i.n} · ${hostOf(i.url)} ↗ new tab`} data-cursor="OPEN ↗"
+            aria-label={`Lab ${i.n}: ${i.brand}, concept site for a fictional ${fiction[i.n] ?? 'brand'}. Built with ${list(i.chips!.map((c) => c.replace(' + ', ' and ')))}. Opens in a new tab.`}>
+            <span class="mono l-n">{i.n}</span>
+            <span class="l-main">
+              {img ? <Picture class="l-thumb" src={img} formats={['avif', 'webp']} widths={[480, 800, 1200]} sizes="(max-width: 1023px) 92vw, 430px" alt={i.alt!} loading="lazy" decoding="async" />
+                : <span class="l-thumb l-thumb--text mono" aria-hidden="true">Text only · see the live site</span>}
+              <span class="mono l-meta"><span>{i.n} · {i.category}</span><span>{labDate(i.date)}</span></span>
+              <h3 class="l-brand">{i.brand}</h3>
+              <span class="l-sub"><span class="l-cat">{i.category} · </span>“{i.line}” {i.sub}</span>
+              <span class="l-chips"><span class="chip chip--lab">{LABEL}</span>{i.chips!.map((c) => <span class="chip">{c}</span>)}</span>
+              <span class="mono l-date">Shipped · {labDate(i.date)}</span>
+            </span>
+            <span class="mono l-built">{i.built}</span>
+            <span class="l-open"><span class="l-open-d">Open</span><span class="l-open-m">Open the site</span> <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></span>
+          </a>
+          {i.credit && (
+            <p class="mono l-credit">Base 3D model: “{i.credit.model}” by <a class="link" href={i.credit.authorUrl} target="_blank" rel="noopener">{i.credit.author}<span class="sr-only"> (opens in a new tab)</span></a> (Sketchfab), <a class="link" href={i.credit.licenceUrl} target="_blank" rel="noopener license">{i.credit.licence}<span class="sr-only"> (opens in a new tab)</span></a>, modified (electrified and restyled) for this non-commercial concept.</p>
+          )}
+        </li>
+      );
+    })}
+  </ul>
+  <h3 class="sr-only">Next in the lab</h3>
+  <ol class="l-queue">
+    {labUpcoming.map((i) => (
+      <li class:list={['lq', { 'lq--research': i.status === 'research' }]}>
+        <span class="mono l-n">{i.n}</span>
+        <span class="lq-b"><span class="lq-name">{i.brand}</span><span class="mono lq-st">{i.status === 'research' ? 'In research' : 'Queued'}</span></span>
+      </li>
+    ))}
+  </ol>
+  <div class="lprev" aria-hidden="true" data-wprev data-lab-plate><span class="wprev-scan"></span><span class="wprev-cap mono" data-wcap></span></div>
+</div>
+<script>
+  import { initWorkIndex } from '../motion/workindex';
+  document.addEventListener('astro:page-load', initWorkIndex);
+  initWorkIndex();
+</script>
+<style>
+  .lindex { position: relative; }
+  .lrow { display: grid; grid-template-columns: 52px minmax(0, 1fr) 150px 70px; gap: var(--gutter); align-items: start; padding: 1.75rem 0; border-bottom: 1px solid var(--gray-700); color: var(--gray-300); position: relative; transition: border-color .2s; }
+  .lrow--head { padding: .75rem 0; color: var(--gray-400); align-items: end; }
+  .l-n { padding-top: .55rem; }
+  .l-main { display: grid; gap: .65rem; min-width: 0; }
+  .l-brand { font-size: var(--fs-h3); line-height: 1.1; justify-self: start; padding: 0 .1em; margin-left: -.1em; color: var(--white); background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0% 100%; background-repeat: no-repeat; transition: background-size .25s var(--ease-out), color .2s; }
+  a.lrow:hover .l-brand, a.lrow:focus-visible .l-brand, a.lrow.is-on .l-brand { background-size: 100% 100%; color: var(--black); }
+  a.lrow:hover, a.lrow:focus-visible, a.lrow.is-on { border-bottom-color: var(--lime); }
+  a.lrow:focus-visible { outline-offset: 6px; }
+  .l-sub { max-width: 56ch; font-size: 1rem; line-height: 1.5; }
+  .l-chips { display: flex; flex-wrap: wrap; gap: .5rem; }
+  .l-chips .chip { min-height: 30px; padding: 0 .7rem; font-size: 11px; color: var(--gray-300); }
+  .l-chips .chip--lab { border-color: var(--lime); color: var(--lime); }
+  .l-date { font-size: 11px; }
+  .l-built { padding-top: .55rem; color: var(--gray-300); }
+  .l-open { padding-top: .45rem; color: var(--lime); font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; justify-self: end; }
+  .l-open-m, .l-meta, .l-thumb { display: none; }
+  .l-credit { margin: .9rem 0 0 calc(52px + var(--gutter)); max-width: 72ch; font-size: 11px; letter-spacing: .06em; text-transform: none; line-height: 1.6; color: var(--gray-400); }
+  .l-credit .link { text-transform: none; }
+  .lli:has(.l-credit) { padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-700); }
+  .lli:has(.l-credit) .lrow { border-bottom-color: transparent; padding-bottom: 0; }
+  .lli:has(.l-credit) a.lrow:hover, .lli:has(.l-credit) a.lrow.is-on { border-bottom-color: transparent; }
+  .l-queue { display: grid; grid-template-columns: repeat(3, 1fr); column-gap: var(--gutter); }
+  .lq { display: grid; grid-template-columns: 52px 1fr; gap: 0 var(--gutter); padding: 1.25rem 0; border-bottom: 1px solid var(--gray-700); color: var(--gray-400); }
+  .lq .l-n { padding-top: .3rem; }
+  .lq-b { display: grid; gap: .25rem; }
+  .lq-name { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; line-height: 1.15; color: var(--gray-400); }
+  .lq-st { font-size: 11px; }
+  .lq--research .lq-st { color: var(--lime); }
+  /* the plate: a fixed slot right of the 7-column list (never over live text), opacity only; same timing as /work */
+  .lprev { position: fixed; right: var(--lattice-x); top: 50%; width: min(430px, 30vw); aspect-ratio: 16 / 10; translate: 0 -50%; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 2; border: 1px solid var(--gray-700); }
+  .lprev.is-on { opacity: 1; }
+  .lprev :global(picture) { position: absolute; inset: 0; overflow: hidden; }
+  .lprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .12s; }
+  .lprev :global(img.is-on) { opacity: 1; }
+  :global(html.gl-live) .lprev { border-color: transparent; }
+  :global(html.gl-live) .lprev :global(img.is-on) { transition: opacity .25s .3s; }
+  .lprev .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; z-index: 1; }
+  .lprev.is-on .wprev-scan { animation: lscan .5s var(--ease-io) both; }
+  .lprev .wprev-cap { position: absolute; left: 0; top: calc(100% + 10px); z-index: 1; padding: 0; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--gray-300); }
+  @keyframes lscan { 0% { opacity: 1; top: 0; } 90% { opacity: 1; } 100% { opacity: 0; top: 100%; } }
+  @media (min-width: 1024px) {
+    .lindex > .lrow--head, .l-ship, .l-queue { width: calc((100% + var(--gutter)) * 7 / 12 - var(--gutter)); }
+  }
+  @media (max-width: 1023px) {
+    .lprev, .lrow--head { display: none; }
+    .lindex .lrow.lrow--head { display: none; }
+    .l-thumb { display: block; }
+    img.l-thumb { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); }
+    .l-thumb--text { display: grid; place-items: center; aspect-ratio: 16 / 10; font-size: 11px; background: radial-gradient(circle at 3px 3px, var(--gray-500) .9px, transparent 1.4px) 0 0 / 6px 6px; }
+    .l-ship { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--gutter); }
+    .lli { display: grid; grid-template-rows: subgrid; grid-row: span 2; }
+    .lrow { display: flex; flex-direction: column; gap: .75rem; padding: 1.5rem 0 2rem; }
+    .l-n, .l-built { display: none; }
+    .l-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 11px; }
+    .l-cat, .l-date { display: none; }
+    .l-open { justify-self: auto; align-self: stretch; display: flex; align-items: center; justify-content: center; gap: .4em; min-height: 48px; padding: 0 1.5rem; margin-top: .25rem; border: 1px solid var(--gray-400); border-radius: 999px; color: var(--white); font-family: var(--font-body); font-weight: 600; font-size: 1rem; letter-spacing: -.005em; text-transform: none; transition: border-color .2s, background-color .2s, color .2s; }
+    a.lrow:hover .l-open, a.lrow:focus-visible .l-open { border-color: var(--lime); }
+    .l-open-d { display: none; } .l-open-m { display: inline; }
+    .l-credit { margin-left: 0; }
+    .l-queue { grid-template-columns: 1fr 1fr 1fr; }
+  }
+  @media (max-width: 767px) {
+    .l-ship { grid-template-columns: 1fr; }
+    .lli { grid-row: auto; }
+    .l-brand { font-size: calc(var(--fs-h3) * 1.35); }
+    /* queued slots collapse to one mono list */
+    .l-queue { grid-template-columns: 1fr; margin-top: 1rem; }
+    .lq { grid-template-columns: 2.5rem 1fr; padding: .6rem 0; border-bottom: 0; }
+    .lq .l-n { padding-top: 0; }
+    .lq-b { display: flex; gap: .5em; align-items: baseline; flex-wrap: wrap; }
+    .lq-name { font-family: var(--font-mono); font-weight: 400; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; }
+    .lq-b .lq-st::before { content: '· '; }
+  }
+  @media (prefers-reduced-motion: reduce) { .l-brand { transition: none; } }
+</style>

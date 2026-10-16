@@ -135,7 +135,7 @@ const schema = {
         <ol class="steps" data-path-anchor>
           {steps.map(([n, t, b]) => <li class="step rv"><span class="mono step-n">{n}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}
         </ol>
-        <p class="mono rv">You own everything · No lock-in</p>
+        <p class="mono rv">You own everything · No lock-in · <a class="link proc-lab" href="/lab">The engine behind it: Fazed Lab →</a></p>
       </div>
     </section>
 
@@ -298,6 +298,7 @@ const schema = {
 
   /* PROCESS */
   .process .t-d2 { margin: 1rem 0 4rem; }
+  .proc-lab { display: inline-block; white-space: nowrap; letter-spacing: inherit; }
   .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-bottom: 3rem; }
   .step { display: grid; gap: .75rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
   .step-n { color: var(--lime); }
