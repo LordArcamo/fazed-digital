@@ -72,6 +72,7 @@ const cur = menu.find((m) => m.href === current);
   .sd { view-transition-name: sd; } .sd-lp { view-transition-name: sdlp; }
   :global(::view-transition-old(hdr)), :global(::view-transition-old(sd)), :global(::view-transition-old(sdlp)) { animation: none; opacity: 0; }
   :global(::view-transition-new(hdr)), :global(::view-transition-new(sd)), :global(::view-transition-new(sdlp)) { animation: none; }
+  :global(::view-transition-group(hdr)), :global(::view-transition-group(sd)), :global(::view-transition-group(sdlp)) { animation: none; }
   .hdr-in { height: 100%; display: flex; align-items: center; }
   .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; flex: none; }
   .hdr-lp { margin-left: auto; min-height: 44px; }
