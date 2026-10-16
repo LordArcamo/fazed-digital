@@ -125,12 +125,16 @@ export function parseShot(buf: ArrayBuffer): Shot {
 export function shot(id: string, rect: { left: number; top: number; width: number; height: number }, s: Shot, n: number, v: View, densify = 1): Formation {
   const pts: Pt[] = [];
   const pw = rect.width / s.cols, ph = rect.height / s.rows;
-  const sorted = Array.from(s.luma).sort((a, b) => b - a);
-  const thr = sorted[Math.floor(sorted.length * 0.06)] ?? 255;
+  // lime = exactly the top 6% by luma (rank-based, so white-background shots don't go all-lime);
+  // ties broken by distance from the top edge (headers/CTAs light first)
+  const order = Array.from(s.luma, (l, i) => i).sort((a, b) => s.luma[b] - s.luma[a] || a - b);
+  const lit = new Uint8Array(s.luma.length);
+  const litN = Math.floor(order.length * 0.06);
+  for (let k = 0; k < litN; k++) if (s.luma[order[k]] > 40 && s.luma[order[k]] < 250) lit[order[k]] = 1;
   const r = rng(5);
   for (let j = 0; j < s.rows; j++) for (let i = 0; i < s.cols; i++) {
     const l = s.luma[j * s.cols + i];
-    const tone = l >= thr && l > 40 ? 2 : 0.08 + (l / 255) * 0.92;
+    const tone = lit[j * s.cols + i] ? 2 : 0.08 + (l / 255) * 0.92;
     for (let k = 0; k < densify; k++) {
       const jx = k === 0 ? 0 : (r() - 0.5) * 0.9 * pw, jy = k === 0 ? 0 : (r() - 0.5) * 0.9 * ph;
       pts.push([rect.left + (i + 0.5) * pw + jx, rect.top + (j + 0.5) * ph + jy, 0, tone, 1]);

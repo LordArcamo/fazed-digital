@@ -41,12 +41,12 @@ export interface Field {
 export async function createField(canvas: HTMLCanvasElement, backend: Backend, spec: TierSpec): Promise<Field> {
   const t0 = performance.now();
   const renderer = new WebGPURenderer({
-    canvas, antialias: false, alpha: false, forceWebGL: backend !== 'webgpu', powerPreference: 'high-performance',
+    canvas, antialias: false, alpha: true, premultipliedAlpha: true, forceWebGL: backend !== 'webgpu', powerPreference: 'high-performance',
   });
   await renderer.init();
   const realBackend: Backend = (renderer.backend as any).isWebGPUBackend ? 'webgpu' : 'webgl2';
   renderer.outputColorSpace = LinearSRGBColorSpace;
-  renderer.setClearColor(0x090909, 1);
+  renderer.setClearColor(0x000000, 0); // transparent: the CSS lattice is the permanent ground
   let w = innerWidth, h = innerHeight;
   renderer.setPixelRatio(Math.min(devicePixelRatio || 1, spec.dpr));
   renderer.setSize(w, h, false);

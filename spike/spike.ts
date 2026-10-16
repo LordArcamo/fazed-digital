@@ -12,7 +12,7 @@ const say = (s: string) => { hud.textContent += s + '\n'; };
 
 // poster clip paths (objectBoundingBox units)
 const [vx, vy, vw, vh] = MARK_VIEWBOX;
-document.getElementById('mkpaths')!.innerHTML = MARK_PATHS.map((d) =>
+document.getElementById('mk')!.innerHTML = MARK_PATHS.map((d) =>
   `<path transform="scale(${1 / vw} ${1 / vh}) translate(${-vx} ${-vy}) ${MARK_TRANSFORM}" d="${d}"/>`).join('');
 
 const q = new URLSearchParams(location.search);
