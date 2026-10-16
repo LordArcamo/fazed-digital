@@ -216,7 +216,8 @@ const schema = {
   .hero-cue { position: absolute; bottom: 24px; left: var(--side); }
   @media (max-width: 1023px) {
     .hero { align-items: flex-end; }
-    .hero-in { padding-top: 46svh; padding-bottom: 64px; }
+    /* SIGNAL DOCK: CTAs clear the 64px mobile dock and the compact cookie sheet */
+    .hero-in { padding-top: 34svh; padding-bottom: 156px; }
     .hero-h { font-size: clamp(2.4rem, 11.6vw, 4.6rem); max-width: none; }
     .hero-strip { margin-bottom: 1rem; font-size: .7rem; letter-spacing: .1em; }
     .hero-deck { margin-top: 1.25rem; font-size: 1.0625rem; }

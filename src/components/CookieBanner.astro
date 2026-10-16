@@ -14,4 +14,12 @@
   .ck[hidden] { display: none; }
   .ck-btns { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
   .ck-toast:empty { display: none; }
+  /* <1024: compact bottom sheet in the dock's slot (the dock steps aside while it is open) */
+  @media (max-width: 1023px) {
+    .ck { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: none; padding: .75rem .9rem; font-size: .8rem; line-height: 1.4; border-radius: 20px; }
+    .ck-btns { margin-top: .6rem; gap: .5rem; flex-wrap: nowrap; }
+    .ck-btns .btn { flex: 1; min-height: 44px; padding: 0 .75rem; font-size: .85rem; }
+    :global(html:has(#cookie:not([hidden]))) :global(.sd) { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
+  }
+  @media (min-width: 1024px) { :global(html:has(#cookie:not([hidden]))) :global(.sd) { bottom: 230px; } }
 </style>
