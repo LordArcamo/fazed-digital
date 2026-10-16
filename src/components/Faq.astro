@@ -1,0 +1,25 @@
+---
+const { items, id = 'faq' } = Astro.props as { items: { q: string; a: string }[]; id?: string };
+---
+<div class="faq" id={id}>
+  {items.map((f, i) => (
+    <details class="faq-i" name={id}>
+      <summary><span class="mono faq-n">{String(i + 1).padStart(2, '0')}</span><span class="faq-q">{f.q}</span><span class="faq-x" aria-hidden="true"></span></summary>
+      <p>{f.a}</p>
+    </details>
+  ))}
+</div>
+<style>
+  .faq { border-top: 1px solid var(--gray-700); }
+  .faq-i { border-bottom: 1px solid var(--gray-700); }
+  summary { list-style: none; display: grid; grid-template-columns: 3rem 1fr 24px; gap: 1rem; align-items: center; min-height: 64px; padding: 1rem 0; cursor: pointer; }
+  summary::-webkit-details-marker { display: none; }
+  .faq-q { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; color: var(--white); line-height: 1.2; }
+  .faq-x { width: 14px; height: 14px; position: relative; justify-self: end; }
+  .faq-x::before, .faq-x::after { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1.5px; background: var(--lime); transition: transform .25s var(--ease-out); }
+  .faq-x::after { transform: rotate(90deg); }
+  details[open] .faq-x::after { transform: rotate(0); }
+  summary:hover .faq-q { color: var(--lime); }
+  .faq-i p { padding: 0 2rem 1.5rem 4rem; max-width: 68ch; }
+  @media (max-width: 767px) { .faq-i p { padding-left: 0; } summary { grid-template-columns: 2.25rem 1fr 20px; } }
+</style>

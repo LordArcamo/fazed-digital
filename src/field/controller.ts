@@ -105,8 +105,10 @@ export async function start(g: Gate, flags: Flags) {
       }
       case 'work': return F.lattice(v, n);
       case 'pentagon': {
-        const cx = desktop() ? v.w * 0.7 : v.w / 2, cy = v.h * 0.53;
-        const r = Math.min(v.w * 0.17, v.h * 0.3);
+        const d = (el as HTMLElement | null | undefined)?.dataset ?? {};
+        const fx = d.fx ? +d.fx : 0.7, fy = d.fy ? +d.fy : 0.53, fr = d.fr ? +d.fr : 0.17;
+        const cx = desktop() ? v.w * fx : v.w / 2, cy = v.h * fy;
+        const r = Math.min(v.w * fr, v.h * fr * 1.75);
         return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95));
       }
       case 'path4': {
@@ -161,10 +163,12 @@ export async function start(g: Gate, flags: Flags) {
     if (bus.rm) { u.uMorph.value = 1; morphTween = null; return; }
     morphTween = gsap.to(u.uMorph, { value: 1, duration: dur, ease });
   };
+  let beatEl: Element | null = null;
   const setBeat = (id: string, el?: Element | null) => {
     if (id === beat) return;
     const prev = beat;
     beat = id;
+    beatEl = el ?? null;
     // per-beat uniforms
     gsap.to(u.uDim, { value: id === 'work' || id === 'flood' ? 0.35 : 1, duration: 0.6 });
     gsap.to(u.uBack, { value: id === 'globe' ? 1 : 0, duration: 0.6 });
@@ -237,7 +241,9 @@ export async function start(g: Gate, flags: Flags) {
         onEnterBack: () => setBeat('hero'),
       }));
     } else {
-      const f = build(pageF);
+      const first = document.querySelector(`[data-f="${pageF}"]`);
+      beatEl = first;
+      const f = build(pageF, first);
       if (!field.current()) { if (f) field.set(f); } else morph(f);
       beat = pageF;
     }
@@ -247,7 +253,14 @@ export async function start(g: Gate, flags: Flags) {
       if (id === 'pentagon' && !desktop()) return; // mobile: unpinned rows, field stays lattice
       triggers.push(ScrollTrigger.create({
         trigger: el, start: 'top 55%', end: 'bottom 45%',
-        onToggle: (s) => { if (s.isActive) setBeat(id, el); },
+        onToggle: (s) => {
+          if (!s.isActive) return;
+          if (el.dataset.step !== undefined) {
+            svcStep = +el.dataset.step;
+            if (beat === id) { beatEl = el; morph(build(id, el), 0.6, 'power2.out'); return; }
+          }
+          setBeat(id, el);
+        },
       }));
     });
     const foot = document.querySelector('[data-wordmark]');
@@ -257,7 +270,7 @@ export async function start(g: Gate, flags: Flags) {
     on('fz:svc', ((e: CustomEvent) => {
       svcStep = e.detail;
       if (beat !== 'pentagon') return;
-      morph(build('pentagon'), 0.6, 'power2.out');
+      morph(build('pentagon', beatEl), 0.6, 'power2.out');
     }) as EventListener);
     on('fz:shot', (async (e: CustomEvent) => {
       if (beat !== 'work') return;
@@ -345,7 +358,7 @@ export async function start(g: Gate, flags: Flags) {
 
   addEventListener('resize', () => {
     field.resize(innerWidth, innerHeight);
-    const f = build(beat === 'hero' ? 'mark' : beat);
+    const f = build(beat === 'hero' ? 'mark' : beat, beatEl);
     if (beat === 'hero') { markF = f; latF = build('lattice'); pairMarkLattice(); }
     else if (f) field.retarget(f);
   });
