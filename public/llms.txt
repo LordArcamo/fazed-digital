@@ -1,0 +1,64 @@
+# Fazed Digital
+
+> Web design, branding and SEO studio in Iligan City, Lanao del Norte, Philippines (est. 2022). Websites, brands and web apps for clients in the USA, Australia and the Philippines.
+
+- Contact: info@fazeddigital.com · +63 906 825 3451 · Mon–Fri 8:30am–5:00pm PHT · https://www.fazeddigital.com/contact
+- 7-day website package: Starter $499 / Growth $899 / Pro $1,499 (PHP: ₱19,999 / ₱34,999 / ₱59,999). Delivery in 7 business days, or 20% off the project fee.
+- Custom websites and systems: typically $5,000–$20,000 depending on scope.
+
+## Services
+- [Web design & development](https://www.fazeddigital.com/services#web): A website that brings in enquiries, not just compliments.
+- [Brand identity](https://www.fazeddigital.com/services#brand): Look as good as you actually are.
+- [SEO marketing](https://www.fazeddigital.com/services#seo): Get found by people already looking for you.
+- [Product design](https://www.fazeddigital.com/services#product): Apps and platforms people finish using.
+- [Custom system development](https://www.fazeddigital.com/services#systems): Software that fits how your team works.
+- [7-day website (USD)](https://www.fazeddigital.com/lp/7-day-website) · [Philippine pricing](https://www.fazeddigital.com/lp/7-day-website/ph)
+
+## Case studies
+- [A Framing Company](https://www.fazeddigital.com/work/01): Construction, USA, 2024. WordPress website. A website they now pitch new work with.
+- [Cleen & Green](https://www.fazeddigital.com/work/02): Cleaning services, Philippines, 2025. Brand identity + website. A rebrand that opened a new revenue stream.
+- [CrateOnScene](https://www.fazeddigital.com/work/03): Automotive events, USA, 2024. MVP platform (PWA). Idea to live platform in 5 weeks.
+- [The Telecom Shop](https://www.fazeddigital.com/work/04): Telco retail, Australia, 2024. Magento → PrestaShop migration. Magento to PrestaShop. Zero data loss.
+- [Canwell](https://www.fazeddigital.com/work/05): Health & wellness, Australia, 2024. Web platform + admin portal. The public site and its ops tool, built as one.
+- [8Drive](https://www.fazeddigital.com/work/06): Car rental, Philippines, 2024. Booking + fleet system. From manual bookings to one system.
+- [UGLQ](https://www.fazeddigital.com/work/07): Non-profit, Australia, 2024. Membership portal. One secure portal for a state-wide network.
+- [QLD Law Group](https://www.fazeddigital.com/work/08): Legal, Australia, 2025. Website + web app + mobile app. Three products. One client experience.
+
+## Guides
+- [Technical SEO for Small Businesses: Sitemaps, Crawlability, and the Fixes That Move Rankings](https://www.fazeddigital.com/blog/technical-seo-small-business) (SEO, 15 Oct 2026)
+- [How to Build a Brand Style Guide for Your Small Business](https://www.fazeddigital.com/blog/brand-style-guide) (Branding, 14 Oct 2026)
+- [How to Collect and Use Client Testimonials to Win More Business](https://www.fazeddigital.com/blog/client-testimonials-strategy) (Strategy, 13 Oct 2026)
+- [Web Hosting for Small Businesses: How to Choose the Right Plan and Protect Your SEO](https://www.fazeddigital.com/blog/web-hosting-small-business-guide) (Development, 12 Oct 2026)
+- [Website Navigation Design: How to Structure Your Menu So Visitors Never Get Lost](https://www.fazeddigital.com/blog/website-navigation-design) (Design, 11 Oct 2026)
+- [Schema Markup for Small Businesses: How Structured Data Gets You More Clicks on Google](https://www.fazeddigital.com/blog/schema-markup-small-business) (SEO, 10 Oct 2026)
+- [Brand Voice for Small Businesses: How to Define How Your Business Communicates](https://www.fazeddigital.com/blog/brand-voice-guide) (Branding, 09 Oct 2026)
+- [How Small Businesses Can Compete With Larger Competitors (And Win)](https://www.fazeddigital.com/blog/compete-with-larger-competitors) (Strategy, 08 Oct 2026)
+- [Website Accessibility for Small Businesses: What It Is, Why It Matters, and How to Start](https://www.fazeddigital.com/blog/website-accessibility-guide) (Development, 07 Oct 2026)
+- [Link Building for Small Businesses: How to Earn Backlinks That Actually Improve Your Rankings](https://www.fazeddigital.com/blog/link-building-small-business) (SEO, 06 Oct 2026)
+- [Visual Hierarchy in Web Design: How to Guide Visitors to the Action That Matters](https://www.fazeddigital.com/blog/visual-hierarchy-web-design) (Design, 05 Oct 2026)
+- [Logo Design for Small Businesses: What Makes a Logo Actually Work](https://www.fazeddigital.com/blog/logo-design-small-business) (Branding, 04 Oct 2026)
+- [Google Analytics 4 for Small Businesses: What to Track and How to Set It Up](https://www.fazeddigital.com/blog/google-analytics-4-small-business) (Development, 03 Oct 2026)
+- [How Much Should a Website Cost? A Transparent Pricing Guide for Small Businesses](https://www.fazeddigital.com/blog/web-design-pricing-guide) (Strategy, 03 Oct 2026)
+- [Local SEO for Small Businesses: How to Get Found on Google Maps](https://www.fazeddigital.com/blog/local-seo-small-business-guide) (SEO, 02 Oct 2026)
+- [When to Rebrand (And When You Really Shouldn't)](https://www.fazeddigital.com/blog/rebranding-when-and-how) (Branding, 25 Sep 2026)
+- [The Anatomy of a High-Converting Landing Page](https://www.fazeddigital.com/blog/landing-page-conversion-design) (Design, 18 Sep 2026)
+- [WordPress vs Custom Build: Which Is Right for Your Business?](https://www.fazeddigital.com/blog/wordpress-vs-custom-build) (Development, 10 Sep 2026)
+- [Keyword Research for Small Businesses: Find the Terms That Actually Win](https://www.fazeddigital.com/blog/keyword-research-small-business) (SEO, 01 Sep 2026)
+- [SEO for New Websites: How to Rank on Google When You're Starting From Zero](https://www.fazeddigital.com/blog/seo-for-new-websites) (SEO, 27 Aug 2026)
+- [How to Choose a Web Design Agency in the Philippines (Without Getting Burned)](https://www.fazeddigital.com/blog/how-to-choose-web-design-agency-philippines) (Strategy, 20 Aug 2026)
+- [Website Maintenance for Small Businesses: What It Costs and Why Skipping It Is Expensive](https://www.fazeddigital.com/blog/website-maintenance-guide) (Development, 13 Aug 2026)
+- [How to Choose Brand Colours: A Practical Guide for Small Businesses](https://www.fazeddigital.com/blog/brand-colours-guide) (Branding, 06 Aug 2026)
+- [Homepage Copywriting: How to Write Website Copy That Turns Visitors Into Customers](https://www.fazeddigital.com/blog/homepage-copywriting-that-sells) (Strategy, 30 Jul 2026)
+- [On-Page SEO Checklist: How to Optimise Every Page of Your Small Business Website](https://www.fazeddigital.com/blog/on-page-seo-checklist) (SEO, 23 Jul 2026)
+- [Why Is My Website So Slow? 7 Common Causes and How to Fix Them](https://www.fazeddigital.com/blog/website-speed-fixes) (Development, 16 Jul 2026)
+- [Facebook Page vs Website: Why Philippine Businesses Need Both](https://www.fazeddigital.com/blog/facebook-page-vs-website) (Strategy, 09 Jul 2026)
+- [7 Signs Your Business Website Needs a Redesign](https://www.fazeddigital.com/blog/signs-website-needs-redesign) (Design, 02 Jul 2026)
+- [Google Business Profile Optimisation: 10 Steps to Rank in the Local Map Pack](https://www.fazeddigital.com/blog/google-business-profile-optimization) (SEO, 25 Jun 2026)
+- [Mobile-First Web Design: Why Your Website Must Be Built for Phones First](https://www.fazeddigital.com/blog/mobile-first-web-design) (Design, 18 Jun 2026)
+- [Small Business Website Checklist: 15 Must-Haves Before You Launch](https://www.fazeddigital.com/blog/small-business-website-checklist) (Development, 06 Jun 2026)
+- [Why Brand Identity Is Your Most Important Business Asset](https://www.fazeddigital.com/blog/why-brand-identity-matters) (Branding, 18 Apr 2025)
+- [Core Web Vitals: What They Are and Why They Destroy Rankings](https://www.fazeddigital.com/blog/core-web-vitals-seo) (SEO, 02 Apr 2025)
+- [Astro vs Next.js: Which Should Your Agency Choose in 2025?](https://www.fazeddigital.com/blog/astro-vs-nextjs-agencies) (Development, 21 Mar 2025)
+- [7 UX Mistakes That Are Quietly Killing Your Conversion Rate](https://www.fazeddigital.com/blog/ux-mistakes-killing-conversions) (Design, 05 Mar 2025)
+- [A No-Nonsense Content Strategy for Small Businesses](https://www.fazeddigital.com/blog/content-strategy-small-business) (Strategy, 14 Feb 2025)
+- [Typography in Web Design: The Rules That Actually Matter](https://www.fazeddigital.com/blog/typography-web-design) (Design, 28 Jan 2025)

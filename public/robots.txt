@@ -1,7 +1,6 @@
 User-agent: *
 Allow: /
+Disallow: /_styleguide
+Disallow: /_formations
 
-# Exclude generated/private paths
-Disallow: /storybook/
-
-Sitemap: https://fazeddigital.com/sitemap-index.xml
+Sitemap: https://www.fazeddigital.com/sitemap-index.xml
