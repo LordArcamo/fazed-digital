@@ -120,7 +120,13 @@ function initBlob() {
     ink.classList.add('sd-ink');
     ink.setAttribute('aria-hidden', 'true');
     ink.inert = true;
-    ink.querySelectorAll('a').forEach((a) => { a.removeAttribute('href'); a.removeAttribute('aria-current'); });
+    // spans, not hrefless <a>s (crawlers flag those); attributes are copied so the scoped styles still match
+    ink.querySelectorAll('a').forEach((a) => {
+      const sp = document.createElement('span');
+      for (const at of a.attributes) if (at.name !== 'href' && at.name !== 'aria-current') sp.setAttribute(at.name, at.value);
+      sp.innerHTML = a.innerHTML;
+      a.replaceWith(sp);
+    });
     ink.style.clipPath = 'inset(50%)';
     lw.appendChild(ink);
   }

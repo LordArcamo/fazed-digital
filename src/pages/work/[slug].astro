@@ -1,5 +1,5 @@
 ---
-import { Picture } from 'astro:assets';
+import { Picture, getImage } from 'astro:assets';
 import Base from '../../layouts/Base.astro';
 import { cases, caseIndex } from '../../data/cases';
 import { workImages } from '../../data/images';
@@ -15,6 +15,9 @@ const c = caseIndex.find((x) => x.slug === slug)!;
 const i = caseIndex.findIndex((x) => x.slug === slug);
 const next = caseIndex[(i + 1) % caseIndex.length];
 const img = workImages[slug];
+// LCP: the hero plate is preloaded with the same avif srcset the <Picture> emits (same widths + quality → same URLs)
+const HERO_W = [480, 680, 1000, 1600], HERO_Q = 55, HERO_SIZES = '(max-width: 1340px) 92vw, 1212px';
+const lcp = await getImage({ src: img, format: 'avif', widths: HERO_W, quality: HERO_Q });
 // fresh full-page captures of the live sites (scripts/capture-cases.mjs, user OK'd 2026-10-16)
 const platesAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/work/plates/*.jpg', { eager: true });
 const plate = (k: string) => platesAll[`../../assets/work/plates/${slug}-${k}.jpg`]?.default;
@@ -45,6 +48,7 @@ const resultBody = [restSentences.join(' '), ...c.resultCopy.slice(1)].filter(Bo
 const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry], ['Services', c.services.join(', ')], ['Duration', c.duration], ['Year', c.year]];
 ---
 <Base title={c.seoTitle} description={c.seoDescription} image={`/og/work/${slug}.png`} formation="shot" schema={schema} current="/work">
+  <link slot="head" rel="preload" as="image" type="image/avif" imagesrcset={lcp.srcSet.attribute} imagesizes={HERO_SIZES} fetchpriority="high" />
   <article class="case" data-case={slug}>
     <header class="c-hero container">
       <nav class="crumbs mono" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/work">Work</a></li><li aria-current="page">{c.title}</li></ol></nav>
@@ -58,7 +62,7 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
     </header>
     <figure class="c-shot container" data-f="shot" data-shot={slug}>
       <div class="c-shot-frame" data-shot-rect>
-        <Picture src={img} formats={['avif', 'webp']} widths={[480, 800, 1200, 1600]} sizes="(max-width: 1340px) 92vw, 1212px" alt={c.alt} loading="eager" fetchpriority="high" decoding="async" class="c-img" />
+        <Picture src={img} formats={['avif', 'webp']} widths={HERO_W} quality={HERO_Q} sizes={HERO_SIZES} alt={c.alt} loading="eager" fetchpriority="high" decoding="async" class="c-img" />
         <span class="c-scan" aria-hidden="true"></span>
       </div>
     </figure>
