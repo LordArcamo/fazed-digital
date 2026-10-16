@@ -4,7 +4,15 @@ const html = document.documentElement;
 const tz = 'Asia/Manila';
 const fmt = new Intl.DateTimeFormat('en-GB', { timeZone: tz, hour: '2-digit', minute: '2-digit', second: '2-digit', weekday: 'short', hour12: false });
 
+let sdEl: HTMLElement | null = null;
+// dock progress hairline: page scroll progress as one custom property on the capsule only
+export function progress(y: number) {
+  if (!sdEl) return;
+  const max = document.documentElement.scrollHeight - innerHeight;
+  sdEl.style.setProperty('--sp', max > 0 ? Math.min(1, Math.max(0, y / max)).toFixed(4) : '0');
+}
 export function dockState(y: number, lastY: number) {
+  progress(y);
   const d = html.classList.contains('is-docked');
   if (!d && y > 120) { html.classList.add('is-docked'); html.classList.remove('undocking'); blobRelayout(); }
   else if (d && y < 80) { html.classList.remove('is-docked'); html.classList.add('undocking'); setTimeout(() => html.classList.remove('undocking'), 400); blobRelayout(); }
@@ -16,6 +24,7 @@ export function dockState(y: number, lastY: number) {
 let clock = 0;
 let io: IntersectionObserver | null = null;
 export function initNav() {
+  sdEl = document.querySelector('.sd, .sd-lp');
   clearInterval(clock);
   io?.disconnect();
   const t = document.querySelectorAll<HTMLElement>('[data-clock]');

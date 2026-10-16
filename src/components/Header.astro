@@ -96,6 +96,10 @@ const cur = menu.find((m) => m.href === current);
   .sd-ink .sd-a.sd-a.sd-a { color: var(--black); }
   .sd-ink .sd-n.sd-n.sd-n { background: var(--black); border-color: var(--black); box-shadow: none; transform: none; }
   .sd-ink li::before { display: none; }
+  /* dock progress hairline: a 1px lime line along the capsule's bottom edge */
+  .sd::after, .sd-lp::after { content: ''; position: absolute; left: 28px; right: 28px; bottom: -1px; height: 1px; background: linear-gradient(90deg, rgba(201, 255, 87, 0), var(--lime) 18%); transform-origin: left; transform: scaleX(var(--sp, 0)); opacity: 0; pointer-events: none; transition: opacity .3s; }
+  :global(html.is-docked) .sd::after, :global(html.lp-dock) .sd-lp::after { opacity: .9; }
+  @media (max-width: 1023px) { .sd.sd-m::after { opacity: .9; } }
   .sd-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
   .sd-a.is-blob.is-blob, :global(html.is-docked) .sd-a.is-blob.is-blob { color: var(--black); }
   .sd-a.is-blob.is-blob .sd-n.sd-n { background: var(--black); border-color: var(--black); box-shadow: none; transform: none; }

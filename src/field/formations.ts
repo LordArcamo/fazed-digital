@@ -313,7 +313,7 @@ export function wordmark(rect: { left: number; top: number; width: number; heigh
   for (let y = top + pitch / 2; y < top + h; y += pitch) for (let x = rect.left + pitch / 2; x < rect.left + rect.width; x += pitch) {
     const u = Math.floor(((x - rect.left) / rect.width) * m.w), vv = Math.floor(((y - top) / h) * m.h);
     const i = vv * m.w + u;
-    if ((m.bits[i >> 3] >> (i & 7)) & 1) pts.push([x, y, 0, 0.45, 1]);
+    if ((m.bits[i >> 3] >> (i & 7)) & 1) pts.push([x, y, 0, 0.62, 1]); // tuned 0.45 → 0.62: the footer wordmark read too faint
   }
   return pack('wordmark', pts, n, v, Math.min(3, pitch * 0.55), [rect.left + rect.width / 2, rect.top + rect.height / 2]);
 }

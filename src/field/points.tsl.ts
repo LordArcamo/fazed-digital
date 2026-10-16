@@ -139,7 +139,7 @@ export function buildMaterial(U: Uniforms, S: Sources, opts: MaterialOpts) {
   const gate = (t: N) => select(t.greaterThan(1), float(1).add(t.sub(1).mul(U.uLitGain)), t);
   const tone0 = mix(gate(tA), gate(tB), m);
   const bxy = mix(S.A.xy, S.B.xy, m);
-  const lightK = clamp(float(1).sub(length(bxy.sub(U.uCursor)).div(90)), 0, 1).mul(U.uLight);
+  const lightK = clamp(float(1).sub(length(bxy.sub(U.uCursor)).div(140)), 0, 1).mul(U.uLight);
   const tone = tone0.add(float(2).sub(tone0).mul(lightK));
   const aMix = mix(S.M.z, S.M.w, m);
   const alphaRaw = select(aMix.lessThan(0), aMix.negate().mul(U.uDust), aMix);
