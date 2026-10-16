@@ -61,7 +61,7 @@ const { services = false } = Astro.props;
     .w-sector, .w-country, .w-year { font-family: var(--font-mono); font-size: .72rem; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-400); }
     .w-sector { margin-left: 2.5rem; }
     .w-country::before, .w-year::before { content: '·'; padding: 0 .55em; }
-    .w-built { flex: 1 0 100%; margin-left: 2.5rem; font-size: .95rem; }
+    .w-built { flex: 1 0 calc(100% - 2.5rem); margin-left: 2.5rem; font-size: .95rem; }
     .w-svc { display: none !important; }
     .wprev { display: none; }
     .w-thumb { display: block; flex: 1 0 100%; margin-top: .75rem; }

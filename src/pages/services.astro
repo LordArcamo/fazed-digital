@@ -152,7 +152,7 @@ const schema = [
   .s-ring { position: absolute; left: 50%; top: 40px; width: 230px; height: 230px; margin: -115px; border-radius: 50%; background: radial-gradient(circle, var(--lime) 0 8px, transparent 8.5px 31px, var(--lime-25) 31.5px 32.5px, transparent 33px 71px, var(--lime-12) 71.5px 72.5px, transparent 73px 111px, rgba(201,255,87,.08) 111.5px 112.5px, transparent 113px); }
   @media (max-width: 1023px) {
     .s-poster { left: 50%; top: 24%; width: 60vw; opacity: .6; }
-    .s-hero { align-items: flex-end; padding-bottom: 64px; }
+    .s-hero { align-items: flex-end; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
     .chap-in > * { grid-column: 1 / -1 !important; }
     .chap-side { position: static; min-height: 0; grid-template-columns: auto 1fr; align-items: center; margin-bottom: 1.5rem; }
     .chap-glyph :global(svg) { width: 56px; height: 56px; }

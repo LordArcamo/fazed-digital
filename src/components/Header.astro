@@ -120,7 +120,7 @@ const cur = menu.find((m) => m.href === current);
   /* dock layout */
   @media (min-width: 1024px) {
     :global(html.is-docked) .sd { position: fixed; left: 50%; top: 16px; translate: -50% 0; margin: 0; }
-    :global(html.dock-hide) .sd.sd { transform: translateY(calc(-100% - 40px)); }
+    :global(html.dock-hide) .sd.sd { transform: translateY(calc(-100% - 40px)); opacity: 0; pointer-events: none; }
     .sd .sd-tip { bottom: auto; top: calc(100% + 18px); }
   }
   @media (max-width: 1023px) {
@@ -196,7 +196,7 @@ const cur = menu.find((m) => m.href === current);
   @media (prefers-reduced-motion: reduce) { .sd-lp, :global(html.lp-dock) .sd-lp { transition: opacity .15s linear; } }
   /* reel-in: the capsule starts as the 44px mark node and unrolls into the line */
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
-    :global(html.is-docked) .sd { animation: sdIn .52s var(--ease-out) both; }
+    :global(html.is-docked) .sd { animation: sdIn .52s var(--ease-out) backwards; } /* backwards, not both: a forwards fill pins transform/opacity and dock-hide could never apply */
     :global(html.is-docked) .sd-a, :global(html.is-docked) .sd-cta { animation: sdFade .3s ease-out .22s both; }
     :global(html.is-docked) .sd-a[aria-current='page'] .sd-n { animation: sdPulse .6s var(--ease-out) .45s; }
     :global(html.undocking) .sd-list li, :global(html.undocking) .sd-cta { animation: sdRail .22s var(--ease-out) both; }

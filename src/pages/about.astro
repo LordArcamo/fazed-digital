@@ -156,7 +156,7 @@ const schema = [
     .a-ppl { grid-template-columns: 1fr 1fr; }
     .stats { grid-template-columns: 1fr 1fr; row-gap: 2rem; }
     .a-poster, .a-rings-anchor { width: 80vw; left: auto; right: 10vw; top: 28%; opacity: .7; transform: translateY(-50%); }
-    .a-hero { align-items: flex-end; padding-bottom: 64px; }
+    .a-hero { align-items: flex-end; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
   }
   @media (max-width: 599px) { .a-ppl, .a-cols, .a-prom ul { grid-template-columns: 1fr; } }
 </style>

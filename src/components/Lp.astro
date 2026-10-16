@@ -144,7 +144,7 @@ const faq = lpFaq(php);
     <h2 id="lw-h" class="t-d2">Sites we’ve shipped.</h2>
     <p>From 5-week MVPs to 14-week platforms. The same team builds your 7-day site.</p>
     <ul class="lp-tiles">
-      {caseIndex.map((c) => <li><a href={`/work/${c.slug}`} data-cursor={`CASE ${c.slug} →`}><Picture src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 25vw" alt={`${c.title} website screenshot`} loading="lazy" decoding="async" /><span class="mono">{c.sector}</span><span class="tile-t">See the {c.title} project</span></a></li>)}
+      {caseIndex.map((c) => <li><a href={`/work/${c.slug}`} data-cursor={`CASE ${c.slug} →`}><Picture src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 25vw" alt={`${c.title} website screenshot`} loading="lazy" decoding="async" /><span class="mono">{c.sector}</span><span class="tile-t">See the {c.title.replace(/^The /, '')} project</span></a></li>)}
     </ul>
     <a class="link" href="/work">See all our work →</a>
   </section>

@@ -2,7 +2,7 @@
 // copy/global.md [GLOBAL-COOKIE] · answers #26. GA4 only loads after "Accept analytics".
 ---
 <div class="ck" id="cookie" role="region" aria-label="Cookie preferences" hidden>
-  <p>We use a few cookies to see which pages help people, and reCAPTCHA to keep spam out. No ads, no selling your data. <a class="link" href="/privacy">Read our privacy policy</a></p>
+  <p class="ck-copy"><span class="ck-long">We use a few cookies to see which pages help people, and reCAPTCHA to keep spam out. No ads, no selling your data. </span><span class="ck-short">Analytics cookies + reCAPTCHA. No ads, no data selling. </span><a class="link" href="/privacy"><span class="ck-long">Read our privacy policy</span><span class="ck-short">Privacy</span></a></p>
   <div class="ck-btns">
     <button class="btn btn--lime" type="button" data-consent="granted">Accept analytics</button>
     <button class="btn btn--ghost" type="button" data-consent="denied">Essential only</button>
@@ -14,12 +14,15 @@
   .ck[hidden] { display: none; }
   .ck-btns { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
   .ck-toast:empty { display: none; }
+  .ck-short { display: none; }
   /* <1024: compact bottom sheet in the dock's slot (the dock steps aside while it is open, so the 390 hero CTAs stay clear). ≥1024: compact card bottom-left, the dock lives at the top */
   @media (max-width: 1023px) {
-    .ck { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: none; padding: .75rem .9rem; font-size: .8rem; line-height: 1.4; border-radius: 20px; }
+    .ck { left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); max-width: none; padding: .6rem .75rem .65rem; font-size: .78rem; line-height: 1.35; border-radius: 20px; }
+    /* one-line copy so the sheet stays clear of the hero CTAs (390: was 133px tall, 9px over Start a project) */
+    .ck-long { display: none; } .ck-short { display: inline; }
     .ck-btns { margin-top: .6rem; gap: .5rem; flex-wrap: nowrap; }
     .ck-btns .btn { flex: 1; min-height: 44px; padding: 0 .75rem; font-size: .85rem; }
     :global(html:has(#cookie:not([hidden]))) :global(.sd) { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
   }
-  @media (min-width: 1024px) { .ck { right: auto; left: 16px; max-width: 380px; padding: 1rem 1.1rem .85rem; font-size: .85rem; border-radius: 20px; } .ck-btns .btn { min-height: 44px; } }
+  @media (min-width: 1024px) { .ck { right: auto; left: 16px; max-width: 420px; padding: 1rem 1.1rem .85rem; font-size: .85rem; border-radius: 20px; } .ck-btns { flex-wrap: nowrap; } .ck-btns .btn { min-height: 44px; } }
 </style>

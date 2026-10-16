@@ -254,7 +254,8 @@ const schema = {
   .svc-t a:hover { color: var(--lime); }
   .svc-scope { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; color: var(--gray-300); }
   .svc-scope li::before { content: '· '; color: var(--lime); }
-  .svc-proof { justify-self: start; color: var(--lime); text-decoration: none; }
+  .svc-proof { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; color: var(--lime); text-decoration: none; }
+  .svc-proof:hover, .svc-proof:focus-visible { color: var(--black); }
   .svc-all { grid-column: 1 / -1; justify-self: start; }
   /* desktop pinned mode (motion adds .svc-live): one node at a time, left column */
   @media (min-width: 1024px) {
