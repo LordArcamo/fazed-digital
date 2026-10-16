@@ -208,16 +208,16 @@ const schema = {
   .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: clip; }
   .hero-in { position: relative; z-index: 1; padding-top: calc(var(--header-h) + 24px); padding-bottom: 72px; }
   .hero-strip { margin-bottom: 1.75rem; }
-  .hero-h { font-size: clamp(3rem, 6.5vw, 8rem); line-height: .88; letter-spacing: -.035em; font-weight: 600; max-width: 60%; }
+  .hero-h { font-size: clamp(3rem, 6.5vw, 7rem); line-height: .88; letter-spacing: -.035em; font-weight: 600; max-width: 60%; }
   .hero-l1, .hero-l2 { display: block; white-space: nowrap; }
   .hero-l2 { color: var(--gray-400); }
   .hero-deck { max-width: 36ch; margin-top: 2rem; }
   .hero-cta { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2.25rem; }
   .hero-cue { position: absolute; bottom: 24px; left: var(--side); }
-  @media (max-width: 767px) {
+  @media (max-width: 1023px) {
     .hero { align-items: flex-end; }
     .hero-in { padding-top: 46svh; padding-bottom: 64px; }
-    .hero-h { font-size: clamp(2.4rem, 11.6vw, 4rem); max-width: none; }
+    .hero-h { font-size: clamp(2.4rem, 11.6vw, 4.6rem); max-width: none; }
     .hero-strip { margin-bottom: 1rem; font-size: .7rem; letter-spacing: .1em; }
     .hero-deck { margin-top: 1.25rem; font-size: 1.0625rem; }
     .hero-cue { display: none; }

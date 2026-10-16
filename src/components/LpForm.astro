@@ -18,7 +18,7 @@ const referrals = php ? ['Facebook / Instagram', 'Google Search', 'TikTok', 'Ref
 const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You can upgrade later.'], ['Business', 'Tell us about your business.', 'The more context you give, the better we can tailor the site.'], ['Style', 'How should it feel?', 'Help us nail the look before Day 2.'], ['Contact', 'Where do we reach you?', 'We’ll send your brief and start date here.'], ['Review', 'Check your brief.', 'Look right? Send it and we’ll reply within one business day.']];
 ---
 <div class="lpf" data-lp-form data-variant={variant}>
-  <ol class="lpf-rail" aria-label="Form progress">{steps.map(([l], i) => <li data-rail={i + 1} aria-current={i === 0 ? 'step' : undefined}><span class="mono">0{i + 1}</span> {l}</li>)}</ol>
+  <ol class="lpf-rail" aria-label="Form progress">{steps.map(([l], i) => <li data-rail={i + 1} aria-current={i === 0 ? 'step' : undefined}><span class="mono">0{i + 1}</span> <span class="lpf-rl">{l}</span></li>)}</ol>
   <form novalidate>
     <fieldset class="lpf-step" data-step="1">
       <legend><span class="mono">Step 1 of 5</span><span class="t-h3">{steps[0][1]}</span><span class="lpf-sub">{steps[0][2]}</span></legend>
@@ -79,14 +79,16 @@ const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You
 </script>
 <style>
   .lpf { background: var(--gray-900); border: 1px solid var(--gray-700); padding: clamp(1.25rem, 3vw, 2.5rem); }
-  .lpf-rail { display: grid; grid-template-columns: repeat(5, 1fr); gap: .5rem; margin-bottom: 2rem; }
+  .lpf-rail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .5rem; margin-bottom: 2rem; }
   .lpf-rail li { font-size: .85rem; color: var(--gray-400); border-top: 2px solid var(--gray-700); padding-top: .6rem; }
   .lpf-rail li[aria-current='step'], .lpf-rail li.is-done { color: var(--white); border-top-color: var(--lime); }
   fieldset { border: 0; min-width: 0; }
   .lpf-step > legend { display: grid; gap: .35rem; margin-bottom: 1.5rem; }
   .lpf-step > legend .mono { color: var(--lime); }
   .lpf-sub { color: var(--gray-400); }
-  .lpf-pk { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  .lpf-pk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  @media (max-width: 900px) { .lpf-pk { grid-template-columns: minmax(0, 1fr); } }
+  .lpf-grid, .lpf-opts { min-width: 0; }
   .lpf-card { position: relative; cursor: pointer; }
   .lpf-card input, .lpf-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
   .lpf-card-b { display: grid; gap: .4rem; padding: 1.25rem; border: 1px solid var(--gray-700); background: var(--gray-800); height: 100%; transition: border-color .2s; }
@@ -123,5 +125,5 @@ const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You
   .lpf-fine { font-size: .85rem; color: var(--gray-400); margin-top: 1.25rem; }
   .lpf-ok[hidden], .lpf form[hidden], .lpf-step[hidden] { display: none; }
   .lpf-ok { display: grid; gap: 1rem; }
-  @media (max-width: 767px) { .lpf-pk, .lpf-grid, .lpf-opts, .lpf-opts--2 { grid-template-columns: 1fr; } .lpf-rail { font-size: .7rem; } .lpf-rail li { font-size: .7rem; } .lpf-review { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .lpf-pk, .lpf-grid, .lpf-opts, .lpf-opts--2 { grid-template-columns: 1fr; } .lpf-rail li { font-size: .7rem; min-width: 0; } .lpf-rl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .lpf-review { grid-template-columns: 1fr; } }
 </style>

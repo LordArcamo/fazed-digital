@@ -59,6 +59,7 @@ const menu = [
   .hdr-link[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 4px; height: 4px; border-radius: 50%; background: var(--lime); transform: translateX(-50%); }
   .hdr-cta { min-height: 44px; font-size: .95rem; }
   .hdr-lp { margin-left: auto; min-height: 44px; }
+  @media (max-width: 479px) { .hdr-lp { padding: 0 1rem; font-size: .9rem; } .hdr-lp .arrow { display: none; } .hdr-in { gap: 1rem; } }
   .hdr-menu { display: none; margin-left: auto; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; gap: .7rem; padding: 0 .5rem; color: var(--white); font-weight: 600; }
   .hdr-burger { display: inline-flex; flex-direction: column; gap: 6px; width: 22px; }
   .hdr-burger i { display: block; height: 1.5px; background: currentColor; transition: transform .3s var(--ease-out); }

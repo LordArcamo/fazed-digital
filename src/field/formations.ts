@@ -257,7 +257,7 @@ export function rings(c: P2, vmin: number, n: number, v: View, people = 4, activ
 /* ── node: everything collapses into one 18px lime node + 3 signal rings ── */
 export function node(c: P2, n: number, v: View): Formation {
   const pts: Pt[] = [];
-  cluster(pts, c, 9, 420, 2, 5);
+  cluster(pts, c, 9, 160, 1.85, 5); // tuned: 420 stacked lit points + halo bloomed into a blob on mobile
   [40, 80, 120].forEach((r, i) => {
     const count = Math.round((2 * Math.PI * r) / 4);
     for (let k = 0; k < count; k++) {
