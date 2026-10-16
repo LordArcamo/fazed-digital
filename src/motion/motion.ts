@@ -64,7 +64,6 @@ function pageSwap() {
   pageCleanups.forEach((f) => f());
   pageCleanups = [];
   ScrollTrigger.getAll().forEach((t) => t.kill());
-  bus.lenis?.scrollTo(0, { immediate: true });
   if ((window as any).__debugTriggers) console.info('[motion] triggers after swap', ScrollTrigger.getAll().length);
 }
 

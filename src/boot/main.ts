@@ -3,6 +3,7 @@
 import { readFlags } from './flags';
 import { initMenu } from './menu';
 import { initCookies } from './cookies';
+import { initNav, dockState } from './nav';
 import { bus } from '../lib/bus';
 
 const flags = readFlags();
@@ -12,10 +13,11 @@ bus.record = flags.record;
 
 // header scrolled state (passive, rAF-coalesced)
 let ticking = false;
+let lastY = scrollY;
 const onScroll = () => {
   if (ticking) return;
   ticking = true;
-  requestAnimationFrame(() => { html.classList.toggle('scrolled', scrollY > 24); ticking = false; });
+  requestAnimationFrame(() => { const y = scrollY; html.classList.toggle('scrolled', y > 24); dockState(y, lastY); lastY = y; ticking = false; });
 };
 addEventListener('scroll', onScroll, { passive: true });
 
@@ -64,6 +66,8 @@ function onPage() {
   if (document.body === lastBody) return;
   lastBody = document.body;
   html.classList.toggle('scrolled', scrollY > 24);
+  lastY = scrollY; dockState(scrollY, scrollY + 1);
+  initNav();
   if (first) { first = false; boot(); }
   else {
     initMenu();
@@ -77,7 +81,7 @@ function onPage() {
 }
 document.addEventListener('astro:page-load', onPage);
 // ClientRouter swaps <html> attributes for the incoming document's: carry the runtime state over
-const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'cur-on', 'cur-off'];
+const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'is-docked', 'dock-min', 'dock-hide', 'cur-on', 'cur-off'];
 document.addEventListener('astro:before-swap', (e: any) => {
   const nd = e.newDocument?.documentElement as HTMLElement | undefined;
   if (nd) {
@@ -85,5 +89,16 @@ document.addEventListener('astro:before-swap', (e: any) => {
     if (html.dataset.gl) nd.dataset.gl = html.dataset.gl;
   }
   bus.onSwap.forEach((f) => f());
+});
+// forward ClientRouter navigations open at the top (Lenis keeps its own position otherwise);
+// back/forward ('traverse') keeps the browser's restored position
+let navType = 'push';
+document.addEventListener('astro:before-preparation', (e: any) => { navType = e.navigationType || 'push'; });
+document.addEventListener('astro:after-swap', () => {
+  if (navType !== 'traverse' && !location.hash) {
+    window.scrollTo(0, 0);
+    bus.lenis?.scrollTo(0, { immediate: true, force: true });
+  }
+  bus.lenis?.resize();
 });
 if (document.readyState !== 'loading') onPage(); else document.addEventListener('DOMContentLoaded', onPage, { once: true });

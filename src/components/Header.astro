@@ -1,5 +1,6 @@
 ---
 import Logo from './Logo.astro';
+import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 import { NAP, SOCIALS } from '../data/site';
 const { current = '', lp = false } = Astro.props;
 const links = [
@@ -14,18 +15,24 @@ const menu = [
   { n: '05', href: '/blog', label: 'Blog', hint: 'PRACTICAL GUIDES' },
   { n: '06', href: '/contact', label: 'Contact', hint: 'REPLY IN 1 BUSINESS DAY' },
 ];
+const cur = menu.find((m) => m.href === current);
 ---
 <header class="hdr" id="hdr">
   <div class="hdr-in container">
     <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>
     {lp ? <a href="#get-started" class="btn btn--lime hdr-lp" data-magnetic>Get started <span class="arrow" aria-hidden="true">→</span></a> : <>
-    <nav class="hdr-nav" aria-label="Primary">
-      <ul>
-        {links.map((l) => <li><a href={l.href} class="hdr-link" aria-current={current === l.href ? 'page' : undefined}>{l.label}</a></li>)}
+    <p class="hdr-tel mono" aria-label="Studio time in Iligan City"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></p>
+    <nav class="sd sd-m" id="sd" aria-label="Primary">
+      <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
+      <span class="sd-div" aria-hidden="true"></span>
+      <button type="button" class="sd-cur" data-menu-alt aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span><span class="sd-idx" aria-hidden="true">{cur ? cur.n : '--'}/06</span></button>
+      <ul class="sd-list" id="sd-list">
+        <span class="sd-line" aria-hidden="true"></span>
+        {links.map((l) => <li class={l.href === '/blog' ? 'sd-blog' : undefined}><a href={l.href} class="sd-a" aria-current={current === l.href ? 'page' : undefined}><i class="sd-n" aria-hidden="true"></i><span>{l.label}</span></a></li>)}
       </ul>
+      <a href="/lp/7-day-website" class="sd-cta" data-cursor="GO →"><i class="sd-ring" aria-hidden="true"></i><span class="t-rail" aria-hidden="true">Live in 7 days →</span><span class="t-dock" aria-hidden="true">7 Days →</span><span class="sr-only">Get live in 7 days</span></a>
+      <button type="button" class="sd-menu" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Menu"><span class="sd-dots" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span class="sd-tip mono" aria-hidden="true">Menu · M</span></button>
     </nav>
-    <a href="/lp/7-day-website" class="btn btn--lime hdr-cta" data-magnetic data-cursor="GO →">Get live in 7 days</a>
-    <button class="hdr-menu" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="hdr-menu-l">Menu</span><span class="hdr-burger" aria-hidden="true"><i></i><i></i></span></button>
     </>}
   </div>
 </header>
@@ -48,26 +55,122 @@ const menu = [
   </div>
 </div>}
 <style>
-  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); transition: height .2s, background-color .2s, border-color .2s; border-bottom: 1px solid transparent; }
-  :global(html.scrolled) .hdr { height: 60px; background: rgba(9, 9, 9, .92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--gray-700); }
-  .hdr-in { height: 100%; display: flex; align-items: center; gap: 2rem; }
-  .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; }
-  .hdr-nav { margin-left: auto; }
-  .hdr-nav ul { display: flex; gap: .25rem; }
-  .hdr-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .85rem; color: var(--gray-300); font-weight: 500; font-size: .95rem; border-radius: 999px; transition: color .2s; position: relative; }
-  .hdr-link:hover, .hdr-link[aria-current='page'] { color: var(--white); }
-  .hdr-link[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 4px; height: 4px; border-radius: 50%; background: var(--lime); transform: translateX(-50%); }
-  .hdr-cta { min-height: 44px; font-size: .95rem; }
+  .hdr { position: absolute; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); }
+  .hdr-in { height: 100%; display: flex; align-items: center; }
+  .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; flex: none; }
   .hdr-lp { margin-left: auto; min-height: 44px; }
-  @media (max-width: 479px) { .hdr-lp { padding: 0 1rem; font-size: .9rem; } .hdr-lp .arrow { display: none; } .hdr-in { gap: 1rem; } }
-  .hdr-menu { display: none; margin-left: auto; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; gap: .7rem; padding: 0 .5rem; color: var(--white); font-weight: 600; }
-  .hdr-burger { display: inline-flex; flex-direction: column; gap: 6px; width: 22px; }
-  .hdr-burger i { display: block; height: 1.5px; background: currentColor; transition: transform .3s var(--ease-out); }
-  :global(html.menu-open) .hdr-burger i:first-child { transform: translateY(3.75px) rotate(45deg); }
-  :global(html.menu-open) .hdr-burger i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  @media (max-width: 479px) { .hdr-lp { padding: 0 1rem; font-size: .9rem; } .hdr-lp .arrow { display: none; } }
+  /* telemetry */
+  .hdr-tel { margin: 0 0 0 40px; flex: none; white-space: nowrap; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }
+  .hdr-tel span { white-space: nowrap; }
+  .t-time { color: var(--white); font-variant-numeric: tabular-nums; }
+  .t-open { display: none; width: 6px; height: 6px; border-radius: 50%; background: var(--gray-400); margin-left: 8px; vertical-align: 1px; }
+  .t-open.is-open { background: var(--lime); }
+  @media (max-width: 1599px) { .t-co { display: none; } }
+  @media (max-width: 1279px) { .t-cw { display: none; } }
+  /* SIGNAL DOCK: one nav, two layouts (rail at the top ≥1024, dock when html.is-docked or <1024) */
+  .sd { margin-left: auto; display: flex; align-items: center; position: relative; flex: none; }
+  .sd::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--gray-700); }
+  .sd-mark, .sd-div, .sd-cur, .sd-menu, .t-dock { display: none; }
+  .sd-list { display: flex; gap: 14px; position: relative; margin-right: 14px; }
+  .sd-list li { position: relative; z-index: 1; }
+  .sd-a { display: inline-flex; align-items: center; gap: 9px; height: 44px; padding: 0 9px; background: var(--black); color: var(--gray-300); font-weight: 500; font-size: 15px; border-radius: 999px; transition: color .2s; }
+  .sd-n { flex: none; width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--gray-400); background: var(--black); transition: background-color .2s, border-color .2s, transform .28s var(--ease-out), box-shadow .2s; }
+  .sd-a:hover, .sd-a:focus-visible, .sd-a[aria-current='page'] { color: var(--white); }
+  .sd-a[aria-current='page'] .sd-n, .sd .sd-cur .sd-n.is-lit { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 5px rgba(201, 255, 87, .16); }
+  .sd-a:not([aria-current]):hover .sd-n, .sd-a:not([aria-current]):focus-visible .sd-n { background: var(--white); border-color: var(--white); transform: scale(1.25); }
+  .sd-line { position: absolute; top: 50%; left: var(--l, 0); width: var(--w, 0); height: 1px; margin-top: -.5px; background: var(--lime); box-shadow: 0 0 8px rgba(201, 255, 87, .5); transform: scaleX(0); transform-origin: var(--o, left); transition: transform .18s cubic-bezier(.4, 0, 1, 1); z-index: 0; pointer-events: none; }
+  .sd-line.on { transform: scaleX(1); transition: transform .28s var(--ease-out); }
+  .sd-cta { position: relative; z-index: 1; display: inline-flex; align-items: center; gap: 9px; height: 44px; padding: 0 0 0 10px; background: var(--black); color: var(--lime); font-weight: 600; font-size: 15px; border-radius: 999px; white-space: nowrap; }
+  .sd-ring { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--lime); transition: background-color .2s; }
+  .sd-cta:hover .sd-ring, .sd-cta:focus-visible .sd-ring { background: var(--lime); }
+  .sd :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 999px; }
+  /* dock layout */
+  @media (min-width: 1024px) {
+    :global(html.is-docked) .sd { position: fixed; left: 50%; bottom: max(24px, calc(env(safe-area-inset-bottom) + 12px)); translate: -50% 0; margin: 0; }
+  }
   @media (max-width: 1023px) {
-    .hdr-nav, .hdr-cta { display: none; }
-    .hdr-menu { display: inline-flex; }
+    .hdr-tel { margin-left: auto; font-size: 11px; }
+    .t-city, .t-s, .t-co { display: none; }
+    .t-open { display: inline-block; }
+    .sd { position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); margin: 0; }
+  }
+  :global(html.is-docked) .sd {
+    height: 56px; padding: 6px; border-radius: 999px; background: rgba(17, 17, 17, .96); border: 1px solid var(--gray-700); box-shadow: 0 18px 48px rgba(0, 0, 0, .65); z-index: 50;
+    transition: transform .36s cubic-bezier(.4, 0, 1, 1), opacity .36s;
+  }
+  :global(html.is-docked) .sd::before { display: none; }
+  :global(html.is-docked) .sd-mark { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--gray-800); color: var(--white); flex: none; }
+  :global(html.is-docked) .sd-div { display: block; width: 1px; height: 20px; background: var(--gray-700); margin: 0 8px; flex: none; }
+  :global(html.is-docked) .sd-list { gap: 4px; margin-right: 6px; }
+  :global(html.is-docked) .sd-list::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--gray-700); }
+  :global(html.is-docked) .sd-a { padding: 0 12px; gap: 8px; background: var(--gray-900); font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }
+  :global(html.is-docked) .sd-a[aria-current='page'], :global(html.is-docked) .sd-a:hover, :global(html.is-docked) .sd-a:focus-visible { color: var(--white); }
+  :global(html.is-docked) .sd-n { width: 6px; height: 6px; background: var(--gray-900); }
+  :global(html.is-docked) .sd-cta { height: 44px; padding: 0 18px; gap: 0; background: var(--lime); color: var(--black); font-family: var(--font-mono); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; transition: background-color .2s, transform .12s; }
+  :global(html.is-docked) .sd-cta:hover { background: var(--lime-dark); }
+  :global(html.is-docked) .sd-cta:active { transform: scale(.97); }
+  :global(html.is-docked) .sd-ring, :global(html.is-docked) .t-rail { display: none; }
+  :global(html.is-docked) .t-dock { display: inline; }
+  :global(html.is-docked) .sd-menu { display: inline-grid; place-items: center; position: relative; width: 44px; height: 44px; margin-left: 6px; border-radius: 50%; border: 1px solid var(--gray-700); color: var(--white); flex: none; transition: background-color .2s, color .2s; }
+  @media (max-width: 1023px) {
+    .sd.sd-m {
+    height: 56px; padding: 6px; border-radius: 999px; background: rgba(17, 17, 17, .96); border: 1px solid var(--gray-700); box-shadow: 0 18px 48px rgba(0, 0, 0, .65); z-index: 50;
+    transition: transform .36s cubic-bezier(.4, 0, 1, 1), opacity .36s;
+  }
+    .sd.sd-m::before { display: none; }
+    .sd-m .sd-mark { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; background: var(--gray-800); color: var(--white); flex: none; }
+    .sd-m .sd-div { display: block; width: 1px; height: 20px; background: var(--gray-700); margin: 0 8px; flex: none; }
+    .sd-m .sd-list { gap: 4px; margin-right: 6px; }
+    .sd-m .sd-list::before { content: ''; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: var(--gray-700); }
+    .sd-m .sd-a { padding: 0 12px; gap: 8px; background: var(--gray-900); font-family: var(--font-mono); font-size: 12px; font-weight: 400; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }
+    .sd-m .sd-a[aria-current='page'] { color: var(--white); }
+    .sd-m .sd-n { width: 6px; height: 6px; background: var(--gray-900); }
+    .sd-m .sd-cta { height: 44px; padding: 0 18px; gap: 0; background: var(--lime); color: var(--black); font-family: var(--font-mono); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; transition: background-color .2s, transform .12s; }
+    .sd-m .sd-cta:hover { background: var(--lime-dark); }
+    .sd-m .sd-cta:active { transform: scale(.97); }
+    .sd-m .sd-ring, .sd-m .t-rail { display: none; }
+    .sd-m .t-dock { display: inline; }
+    .sd-m .sd-menu { display: inline-grid; place-items: center; position: relative; width: 44px; height: 44px; margin-left: 6px; border-radius: 50%; border: 1px solid var(--gray-700); color: var(--white); flex: none; transition: background-color .2s, color .2s; }
+  }
+  .sd-dots { display: grid; grid-template-columns: 4px 4px; gap: 5px; }
+  .sd-dots i { width: 4px; height: 4px; border-radius: 50%; background: currentColor; }
+  :global(html.menu-open) .sd-menu { background: var(--white); color: var(--black); }
+  .sd-tip { position: absolute; bottom: calc(100% + 18px); left: 50%; translate: -50% 0; padding: 6px 10px; border-radius: 999px; background: var(--gray-900); border: 1px solid var(--gray-700); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-300); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; }
+  .sd-menu:hover .sd-tip, .sd-menu:focus-visible .sd-tip { opacity: 1; }
+  @media (min-width: 1024px) and (max-width: 1179px) { :global(html.is-docked) .sd-blog { display: none; } }
+  :global(html.dock-hide) .sd { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
+  :global(html.menu-open) .sd { transform: none; opacity: 1; pointer-events: auto; }
+  /* reel-in: the capsule starts as the 44px mark node and unrolls into the line */
+  @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
+    :global(html.is-docked) .sd { animation: sdIn .52s var(--ease-out) both; }
+    :global(html.is-docked) .sd-a, :global(html.is-docked) .sd-cta { animation: sdFade .3s ease-out .22s both; }
+    :global(html.is-docked) .sd-a[aria-current='page'] .sd-n { animation: sdPulse .6s var(--ease-out) .45s; }
+    :global(html.undocking) .sd-list li, :global(html.undocking) .sd-cta { animation: sdRail .22s var(--ease-out) both; }
+    :global(html.undocking) .sd-list li:nth-child(3) { animation-delay: .03s; } :global(html.undocking) .sd-list li:nth-child(4) { animation-delay: .06s; }
+    :global(html.undocking) .sd-list li:nth-child(5) { animation-delay: .09s; } :global(html.undocking) .sd-list li:nth-child(6) { animation-delay: .12s; } :global(html.undocking) .sd-cta { animation-delay: .15s; }
+  }
+  @media (min-width: 1024px) and (prefers-reduced-motion: reduce) { :global(html.is-docked) .sd { animation: sdFade .15s linear both; } }
+  @keyframes sdIn { from { opacity: 0; transform: translateY(32px); clip-path: inset(0 calc(50% - 22px) round 999px); } 15% { clip-path: inset(0 calc(50% - 22px) round 999px); } to { opacity: 1; transform: none; clip-path: inset(0 0 round 999px); } }
+  @keyframes sdFade { from { opacity: 0; } }
+  @keyframes sdPulse { 50% { transform: scale(1.6); } }
+  @keyframes sdRail { from { opacity: 0; transform: translateY(-8px); } }
+  /* mobile dock: current-page chip instead of the link line; collapses on scroll down */
+  @media (max-width: 1023px) {
+    .sd.sd-m { height: 64px; padding: 8px; justify-content: space-between; transition: transform .36s cubic-bezier(.4, 0, 1, 1), opacity .36s, clip-path .32s var(--ease-out); }
+    .sd-m .sd-list, .sd-m .sd-div, .sd-m .sd-mark { display: none; }
+    .sd-m .sd-cur { display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 16px; border-radius: 999px; font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--white); flex: 1 1 auto; min-width: 0; }
+    .sd-m .sd-cur .sd-n { width: 6px; height: 6px; box-shadow: none; }
+    .sd-idx { color: var(--gray-400); }
+    .sd-m .sd-cta { height: 48px; margin-left: auto; }
+    .sd-m .sd-menu { width: 48px; height: 48px; margin-left: 8px; }
+    :global(html.dock-min) .sd.sd-m { left: 50%; right: auto; translate: -50% 0; height: 56px; padding: 6px; }
+    :global(html.dock-min) .sd-m .sd-mark { display: inline-grid; }
+    :global(html.dock-min) .sd-m .sd-cur { height: 44px; padding: 0 12px; flex: none; }
+    :global(html.dock-min) .sd-m .sd-idx { display: none; }
+    :global(html.dock-min) .sd-m .sd-cta { height: 44px; padding: 0 14px; margin-left: 4px; }
+    :global(html.dock-min) .sd-m .sd-menu { width: 44px; height: 44px; margin-left: 6px; }
+    :global(html.dock-min) .sd-m .sd-cur { animation: sdFade .32s ease-out both; }
   }
   .menu { position: fixed; inset: 0; z-index: 45; background: rgba(9, 9, 9, .97); padding-top: calc(var(--header-h) + 24px); overflow-y: auto; }
   .menu[hidden] { display: none; }

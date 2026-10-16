@@ -8,7 +8,7 @@ export function initMenu() {
   const set = (open: boolean) => {
     menu.hidden = !open;
     btn.setAttribute('aria-expanded', String(open));
-    btn.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    btn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
     if (label) label.textContent = open ? 'Close' : 'Menu';
     document.documentElement.classList.toggle('menu-open', open);
     for (const id of ['main', 'footer']) document.getElementById(id)?.toggleAttribute('inert', open);
@@ -16,6 +16,7 @@ export function initMenu() {
     else btn.focus();
   };
   btn.addEventListener('click', () => set(menu.hidden));
+  document.querySelector<HTMLElement>('[data-menu-alt]')?.addEventListener('click', () => set(menu.hidden));
   menu.addEventListener('click', (e) => { if ((e.target as HTMLElement).closest('a')) set(false); });
   document.addEventListener('keydown', (e) => {
     if (menu.hidden) return;

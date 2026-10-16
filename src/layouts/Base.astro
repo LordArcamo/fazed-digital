@@ -93,7 +93,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     (function(d){var h=d.documentElement,q=location.search;h.classList.add('js');
     if(matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('rm');
     if(/[?&]record/.test(q))h.classList.add('record');
-    if(scrollY>24)h.classList.add('scrolled');})(document);
+    if(scrollY>24)h.classList.add('scrolled');if(scrollY>120)h.classList.add('is-docked');})(document);
   </script>
   <ClientRouter fallback="swap" />
   <script type="application/ld+json" set:html={JSON.stringify(org)} />
