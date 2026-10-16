@@ -84,7 +84,7 @@ const pages = {
 // /lab: counts from src/data/lab.ts (shipped entries; #04 drops out when LAB_04 = 'hide')
 const labSrc = readFileSync(join(ROOT, 'src/data/lab.ts'), 'utf8');
 const labShipped = (labSrc.match(/status: 'shipped'/g) || []).length - (/LAB_04[^=]*=\s*'hide'/.test(labSrc) ? 1 : 0);
-pages.lab = { eyebrow: 'Concept sites · fictional brands', title: 'Concept sites. Real craft.', meta: `Fazed Lab · ${String(labShipped).padStart(2, '0')} immersive 3D concept sites`, art: sheetSvg(labShipped), dep: join(ROOT, 'src/data/lab.ts') };
+pages.lab = { eyebrow: 'Concept sites · fictional brands', title: 'Our lab. Your next site.', meta: `Fazed Lab · ${String(labShipped).padStart(2, '0')} immersive 3D concept sites`, art: sheetSvg(labShipped), dep: join(ROOT, 'src/data/lab.ts') };
 let n = 0;
 for (const [k, o] of Object.entries(pages)) { const out = join(OUT, `${k}.png`); if (fresh(out, me, ...(o.dep ? [o.dep] : []))) continue; await render(out, o); n++; }
 
