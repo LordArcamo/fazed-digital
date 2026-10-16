@@ -78,10 +78,12 @@ const cur = menu.find((m) => m.href === current);
   .t-time { color: var(--white); font-variant-numeric: tabular-nums; }
   .t-open { display: none; width: 6px; height: 6px; border-radius: 50%; background: var(--gray-400); margin-left: 8px; vertical-align: 1px; }
   .t-open.is-open { background: var(--lime); }
-  @media (max-width: 1599px) { .t-co { display: none; } }
+  /* the coords need ~216px the 1340 container never has once the five links + CTA are in the rail (1920 measured 96px over);
+     they live in the hero strip and footer, and come back in the rail only when the row really fits */
+  .t-co { display: none; }
   @media (max-width: 1279px) { .t-cw { display: none; } }
   /* SIGNAL DOCK: one nav, two layouts (rail at the top ≥1024, dock when html.is-docked or <1024) */
-  .sd { margin-left: auto; display: flex; align-items: center; position: relative; flex: none; }
+  .sd { margin-left: auto; padding-left: 24px; display: flex; align-items: center; position: relative; flex: none; }
   .sd-mark, .sd-div, .sd-cur, .sd-menu, .t-dock { display: none; }
   .sd-lw { position: relative; display: flex; --gap: 14px; margin-right: 14px; }
   .sd-list { display: flex; gap: var(--gap); position: relative; }
@@ -113,6 +115,8 @@ const cur = menu.find((m) => m.href === current);
   .sd-ring { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--lime); transition: background-color .2s; }
   .sd-cta:hover .sd-ring, .sd-cta:focus-visible .sd-ring { background: var(--lime); }
   .sd :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 999px; }
+  /* 1024–1199 rail: tighter rhythm so the CTA never clips (1024 was 64px over) */
+  @media (min-width: 1024px) and (max-width: 1199px) { .t-city { display: none; } .hdr-tel { margin-left: 24px; } .sd-lw { --gap: 8px; } .sd-a { padding: 0 10px; } }
   /* dock layout */
   @media (min-width: 1024px) {
     :global(html.is-docked) .sd { position: fixed; left: 50%; top: 16px; translate: -50% 0; margin: 0; }

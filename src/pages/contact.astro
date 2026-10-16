@@ -81,7 +81,7 @@ const schema = [
   @media (max-width: 1023px) {
     .ct-cells { grid-template-columns: 1fr 1fr; }
     .ct-next ol { grid-template-columns: 1fr; }
-    .ct-form > *, .ct-faq > * { grid-column: 1 / -1 !important; }
+    .ct-form > :global(*), .ct-faq > :global(*) { grid-column: 1 / -1 !important; }
     .ct-hero { align-items: flex-end; padding-top: 200px; }
   }
   @media (max-width: 599px) { .ct-cells { grid-template-columns: 1fr; } }

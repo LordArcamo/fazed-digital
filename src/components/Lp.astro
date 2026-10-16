@@ -235,7 +235,7 @@ const faq = lpFaq(php);
     .lp-3, .lp-plans { grid-template-columns: 1fr; }
     .lp-steps { grid-template-columns: 1fr 1fr; }
     .lp-4, .lp-tiles { grid-template-columns: 1fr 1fr; }
-    .lp-form > * { grid-column: 1 / -1 !important; }
+    .lp-form > :global(*) { grid-column: 1 / -1 !important; }
   }
   @media (max-width: 599px) { .lp-steps, .lp-4, .lp-tiles { grid-template-columns: 1fr; } .lp-days em { display: none; } }
 </style>
