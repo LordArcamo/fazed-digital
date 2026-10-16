@@ -81,7 +81,7 @@ function onPage() {
 }
 document.addEventListener('astro:page-load', onPage);
 // ClientRouter swaps <html> attributes for the incoming document's: carry the runtime state over
-const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'is-docked', 'dock-min', 'dock-hide', 'cur-on', 'cur-off'];
+const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'is-docked', 'dock-min', 'dock-hide', 'lp-dock', 'cur-on', 'cur-off'];
 document.addEventListener('astro:before-swap', (e: any) => {
   const nd = e.newDocument?.documentElement as HTMLElement | undefined;
   if (nd) {

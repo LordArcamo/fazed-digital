@@ -107,7 +107,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <canvas id="field"></canvas>
   </div>
   <div id="cursor" transition:persist="cursor" aria-hidden="true"><div class="cur-ring"><span class="cur-label"></span></div><div class="cur-dot"></div></div>
-  <Header current={current} lp={!!lp} />
+  <Header current={current} lp={lp} />
   <main id="main" class="page" tabindex="-1">
     <slot />
   </main>

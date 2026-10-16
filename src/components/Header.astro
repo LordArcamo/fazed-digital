@@ -19,9 +19,15 @@ const cur = menu.find((m) => m.href === current);
 ---
 <header class="hdr" id="hdr">
   <div class="hdr-in container">
-    <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>
-    {lp ? <a href="#get-started" class="btn btn--lime hdr-lp" data-magnetic>Get started <span class="arrow" aria-hidden="true">→</span></a> : <>
-    <p class="hdr-tel mono" aria-label="Studio time in Iligan City"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></p>
+    {lp ? <span class="hdr-logo"><Logo /></span> : <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>}
+    {lp ? <>
+    <p class="hdr-tel mono hdr-tel--lp"><span class="sr-only">Studio in Iligan City, Philippines. We reply in 1 business day.</span><span aria-hidden="true"><span class="t-open" data-open></span> <span class="t-lbl" data-open-l>Studio</span> · <span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-city"> · Reply in 1 business day</span></span></p>
+    <div class="sd-lp" id="sd-lp" role="region" aria-label="Get started">
+      <p class="mono sd-price"><span class="t-city">7-day website · </span>From {lp === 'php' ? '₱19,999' : '$499'}</p>
+      <a href="#get-started" class="sd-go">Get started <span aria-hidden="true">→</span></a>
+    </div>
+    </> : <>
+    <p class="hdr-tel mono"><span class="sr-only">Studio in Iligan City, Philippines</span><span aria-hidden="true"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></span></p>
     <nav class="sd sd-m" id="sd" aria-label="Primary">
       <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
       <span class="sd-div" aria-hidden="true"></span>
@@ -143,6 +149,21 @@ const cur = menu.find((m) => m.href === current);
   @media (min-width: 1024px) and (max-width: 1179px) { :global(html.is-docked) .sd-blog { display: none; } }
   :global(html.dock-hide) .sd { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
   :global(html.menu-open) .sd { transform: none; opacity: 1; pointer-events: auto; }
+  /* LP mode: no exits; conversion capsule appears once the hero CTA has left and hides at #get-started */
+  .hdr-tel--lp { margin-left: auto; }
+  .hdr-tel--lp .t-open { display: inline-block; margin: 0 2px 0 0; }
+  .sd-lp { position: fixed; left: 50%; top: 16px; translate: -50% 0; margin: 0; display: flex; align-items: center; gap: 18px; height: 56px; padding: 6px 6px 6px 22px; border-radius: 999px; background: var(--gray-900); border: 1px solid var(--gray-700); box-shadow: 0 18px 48px rgba(0, 0, 0, .65); z-index: 50; transform: translateY(calc(-100% - 40px)); opacity: 0; pointer-events: none; transition: transform .36s cubic-bezier(.4, 0, 1, 1), opacity .36s; }
+  .sd-lp::before { display: none; }
+  :global(html.lp-dock) .sd-lp { transform: none; opacity: 1; pointer-events: auto; transition: transform .52s var(--ease-out), opacity .3s; }
+  .sd-price { margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-300); white-space: nowrap; }
+  .sd-go { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 18px; border-radius: 999px; background: var(--lime); color: var(--black); font-family: var(--font-mono); font-weight: 700; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; transition: background-color .2s, transform .12s; }
+  .sd-go:hover { background: var(--lime-dark); } .sd-go:active { transform: scale(.97); }
+  .sd-lp :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 999px; }
+  @media (max-width: 1023px) {
+    .sd-lp { top: auto; left: 12px; right: 12px; translate: none; bottom: calc(12px + env(safe-area-inset-bottom)); height: 64px; padding: 8px 8px 8px 18px; justify-content: space-between; transform: translateY(calc(100% + 40px)); }
+    .sd-go { height: 48px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .sd-lp, :global(html.lp-dock) .sd-lp { transition: opacity .15s linear; } }
   /* reel-in: the capsule starts as the 44px mark node and unrolls into the line */
   @media (min-width: 1024px) and (prefers-reduced-motion: no-preference) {
     :global(html.is-docked) .sd { animation: sdIn .52s var(--ease-out) both; }

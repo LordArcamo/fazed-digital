@@ -26,9 +26,22 @@ export function initNav() {
     if (t) t.innerHTML = `${p.hour}:${p.minute}<span class="t-s">:${p.second}</span>`;
     const m = +p.hour * 60 + +p.minute;
     const open = !/Sat|Sun/.test(p.weekday) && m >= 510 && m < 1020;
-    if (o) { o.classList.toggle('is-open', open); o.title = open ? 'Open' : 'Closed'; }
+    if (o) o.classList.toggle('is-open', open);
+    const l = document.querySelector('[data-open-l]'); if (l) l.textContent = open ? 'Open now' : 'Closed';
   };
   if (t) { tick(); clock = window.setInterval(tick, 1000); }
+  const lpd = document.getElementById('sd-lp');
+  html.classList.remove('lp-dock');
+  if (lpd) {
+    const seen = new Map<Element, boolean>();
+    const hero = document.querySelector('.lp-cta'), gs = document.getElementById('get-started');
+    io = new IntersectionObserver((ents) => {
+      ents.forEach((e) => seen.set(e.target, e.isIntersecting));
+      html.classList.toggle('lp-dock', !!hero && !seen.get(hero) && !(gs && seen.get(gs)) && scrollY > 200);
+    });
+    [hero, gs].forEach((el) => el && io!.observe(el));
+    return;
+  }
   const f = document.getElementById('footer');
   if (f) { io = new IntersectionObserver(([e]) => html.classList.toggle('dock-hide', e.intersectionRatio >= 0.3), { threshold: [0, 0.3] }); io.observe(f); }
   const list = document.getElementById('sd-list');
