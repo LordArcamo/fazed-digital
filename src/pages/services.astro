@@ -25,10 +25,11 @@ const schema = [
   schema={schema}
   current="/services"
 >
-  <section class="s-hero" data-f="pentagon" data-fx="0.75" data-fy="0.5" data-fr="0.13" aria-labelledby="s-h">
+  <section class="s-hero" data-f="pentagon" data-fx="0.5" data-fy="0.54" data-fr="0.27" data-fdim="0.35" aria-labelledby="s-h">
     <svg class="poster-art s-poster" viewBox="0 0 200 200" aria-hidden="true">
-      {[0, 1, 2, 3, 4].map((k) => { const a = (-90 + k * 72) * Math.PI / 180, b = (-90 + ((k + 1) % 5) * 72) * Math.PI / 180; return <g><line x1={100 + Math.cos(a) * 80} y1={100 + Math.sin(a) * 80} x2={100 + Math.cos(b) * 80} y2={100 + Math.sin(b) * 80} stroke="#F5F4F0" stroke-opacity=".35" stroke-dasharray="1 3" /><line x1="100" y1="100" x2={100 + Math.cos(a) * 80} y2={100 + Math.sin(a) * 80} stroke="#F5F4F0" stroke-opacity=".18" stroke-dasharray="1 3" /><circle cx={100 + Math.cos(a) * 80} cy={100 + Math.sin(a) * 80} r="3" fill={k === 0 ? '#C9FF57' : '#F5F4F0'} fill-opacity={k === 0 ? 1 : .55} /></g>; })}
-      <circle cx="100" cy="100" r="2.5" fill="#C9FF57" />
+      {[0, 1, 2, 3, 4].map((k) => { const a = (-90 + k * 72) * Math.PI / 180, b = (-90 + ((k + 1) % 5) * 72) * Math.PI / 180; return <g><line x1={100 + Math.cos(a) * 80} y1={100 + Math.sin(a) * 80} x2={100 + Math.cos(b) * 80} y2={100 + Math.sin(b) * 80} stroke="#F5F4F0" stroke-opacity=".3" stroke-width=".5" /><line x1="100" y1="100" x2={100 + Math.cos(a) * 80} y2={100 + Math.sin(a) * 80} stroke="#F5F4F0" stroke-opacity=".16" stroke-width=".5" /><circle cx={100 + Math.cos(a) * 80} cy={100 + Math.sin(a) * 80} r="1.6" fill="#F5F4F0" fill-opacity=".6" /></g>; })}
+      <circle cx="100" cy="100" r="5" fill="none" stroke="#C9FF57" stroke-opacity=".35" stroke-width=".4" />
+      <circle cx="100" cy="100" r="1.8" fill="#C9FF57" />
     </svg>
     <div class="container s-hero-in">
       <p class="mono">What we do · 05 services · 01 system</p>
@@ -38,12 +39,12 @@ const schema = [
         <a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a>
         <a class="btn btn--ghost" href="/lp/7-day-website">Get live in 7 days</a>
       </div>
-      <nav class="s-jump" aria-label="Jump to a service">
-        <ul>{chapters.map((c) => <li><a href={`#${c.id}`}><span class="mono">{c.n}</span> {c.h2}</a></li>)}</ul>
-      </nav>
     </div>
+    <!-- the pentagon's vertices are the jump links (≥1024 they sit on the field's nodes) -->
+    <nav class="s-jump" aria-label="Jump to a service">
+      <ul>{chapters.map((c, k) => <li class={`v${k}`}><a href={`#${c.id}`}><span class="mono">{c.n}</span> <span class="s-jl">{c.id === 'web' ? 'Web' : c.id === 'brand' ? 'Brand' : c.id === 'seo' ? 'SEO' : c.id === 'product' ? 'Product' : 'Systems'}</span><span class="sr-only">: {c.h2}</span></a></li>)}</ul>
+    </nav>
   </section>
-
   {chapters.map((c, i) => (
     <section class="chap" id={c.id} data-f="pentagon" data-step={i} data-fx="0.2" data-fy="0.5" data-fr="0.11" aria-labelledby={`${c.id}-h`}>
       <div class="container chap-in">
@@ -94,15 +95,31 @@ const schema = [
   </section>
 </Base>
 <style>
-  .s-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: var(--header-h); }
-  .s-poster { position: absolute; width: min(30vw, 46vh); left: 75%; top: 50%; transform: translate(-50%, -50%); }
-  .s-hero-in { position: relative; display: grid; gap: 1.5rem; }
-  .s-hero h1 { max-width: 11ch; }
+  /* hero: the pentagon is full-bleed behind the H1 at 35%, the H1 centred on its middle node */
+  .s-hero { --R: min(27vw, 47.25vh); --cy: 54vh; position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; padding-top: var(--header-h); text-align: center; overflow: hidden; }
+  .s-poster { position: absolute; width: calc(var(--R) * 2.5); left: 50%; top: var(--cy); transform: translate(-50%, -50%); }
+  .s-hero-in { position: relative; display: grid; gap: 1.5rem; justify-items: center; }
+  .s-hero h1 { max-width: 13ch; }
   .s-deck { max-width: 44ch; }
-  .s-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
-  .s-jump ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; margin-top: 1.5rem; }
-  .s-jump a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); }
-  .s-jump a:hover, .s-jump a:focus-visible { color: var(--lime); }
+  .s-cta { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
+  .s-jump a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+  .s-jump a .mono { color: var(--gray-400); }
+  .s-jump a:hover, .s-jump a:focus-visible, .s-jump a:hover .mono { color: var(--lime); }
+  @media (min-width: 1024px) {
+    .s-jump li { position: absolute; left: calc(50% + var(--x) * var(--R)); top: calc(var(--cy) + var(--y) * var(--R)); translate: var(--tx) var(--ty); white-space: nowrap; }
+    .s-jump a { padding: 0 6px; }
+    .v0 { --x: 0; --y: -1; --tx: -50%; --ty: calc(-100% - 6px); }
+    .v1 { --x: .951; --y: -.309; --tx: 14px; --ty: -50%; }
+    .v2 { --x: .588; --y: .809; --tx: 14px; --ty: -50%; }
+    .v3 { --x: -.588; --y: .809; --tx: calc(-100% - 14px); --ty: -50%; }
+    .v4 { --x: -.951; --y: -.309; --tx: calc(-100% - 14px); --ty: -50%; }
+  }
+  @media (max-width: 1023px) {
+    .s-hero { --R: 27vw; }
+    .s-hero { flex-direction: column; padding-bottom: 112px; }
+    .s-jump { margin-top: 1.5rem; }
+    .s-jump ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1rem; padding: 0 var(--side); }
+  }
   .chap { padding-block: var(--section) 0; }
   .chap-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); }
   .chap-side { grid-column: 1 / span 4; position: sticky; top: calc(var(--header-h) + 48px); align-self: start; display: grid; gap: 2rem; min-height: 40vh; }

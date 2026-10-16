@@ -110,7 +110,7 @@ export async function start(g: Gate, flags: Flags) {
         const fx = d.fx ? +d.fx : 0.7, fy = d.fy ? +d.fy : 0.53, fr = d.fr ? +d.fr : 0.17;
         const cx = desktop() ? v.w * fx : v.w / 2, cy = v.h * fy;
         const r = Math.min(v.w * fr, v.h * fr * 1.75);
-        return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95));
+        return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95), d.fdim ? +d.fdim : 1);
       }
       case 'path4': {
         const r = rectOf(within(el, '[data-path-anchor]'));
@@ -131,7 +131,10 @@ export async function start(g: Gate, flags: Flags) {
         const r = rectOf(within(el, '[data-rings-anchor]'));
         if (!r) return null;
         ringsC = { x: r.left + r.width / 2, y: r.top + r.height / 2 + scrollY() };
-        return attach(F.rings({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, Math.min(vmin, r.width * (el?.matches?.('.a-hero') ? 0.85 : 1.25)), n, v, 4, person));
+        // data-rs: radius as a multiple of the viewport height (the about hero crops 140vh rings off the right edge)
+        const rs = (el as HTMLElement | null)?.dataset?.rs;
+        const R = rs && desktop() ? v.h * +rs : Math.min(vmin, r.width * (el?.matches?.('.a-hero') ? 0.85 : 1.25));
+        return attach(F.rings({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, R, n, v, 4, person));
       }
       case 'node': {
         const r = rectOf(within(el, '[data-node-anchor]'));

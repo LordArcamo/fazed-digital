@@ -174,25 +174,39 @@ export function parseGlyphs(buf: ArrayBuffer): Glyphs {
 export const SERVICE_IDS = ['web', 'brand', 'seo', 'product', 'systems'];
 
 /* ── pentagon: 5 nodes + edges + spokes; the active node becomes its glyph ── */
-export function pentagon(c: P2, r: number, n: number, v: View, active = -1, glyphs?: Glyphs, glyphSize = 220): Formation {
+export function pentagon(c: P2, r: number, n: number, v: View, active = -1, glyphs?: Glyphs, glyphSize = 220, dim = 1): Formation {
+  // solid edges (2.5px pitch reads as a line), crisp 6px nodes; only the active node is lime with a halo
   const pts: Pt[] = [];
   const nodes = [0, 1, 2, 3, 4].map((k) => {
     const a = (-90 + k * 72) * (Math.PI / 180);
     return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r };
   });
   for (let k = 0; k < 5; k++) {
-    line(pts, nodes[k], nodes[(k + 1) % 5], 6, 0.7);
-    line(pts, c, nodes[k], 6, 0.35, 0.8);
+    line(pts, nodes[k], nodes[(k + 1) % 5], 2.5, 0.55, dim);
+    line(pts, c, nodes[k], 3, 0.3, 0.7 * dim);
   }
-  cluster(pts, c, 6, 30, 1.6, 9);
+  const lit = active < 0 ? -1 : active;
+  dot(pts, c, lit < 0 ? 2 : 1, Math.min(1, dim * 2.4));
+  if (lit < 0) halo(pts, c, Math.min(1, dim * 2.4));
   nodes.forEach((p, k) => {
     if (k === active && glyphs) {
       const g = glyphs.pts[k], s = glyphSize / 280;
       for (const q of g) pts.push([p.x + (q.x - 140) * s, p.y + (q.y - 140) * s, 0, q.lit ? 2 : 1, 1]);
-    } else cluster(pts, p, k === active ? 14 : 9, 40, k === active ? 2 : 1, 20 + k);
+    } else {
+      dot(pts, p, k === active ? 2 : 1, Math.min(1, dim * 2.4));
+      if (k === active) halo(pts, p, 1);
+    }
   });
   return pack('pentagon', pts, n, v, 2.2, [c.x, c.y]);
 }
+/** a crisp 6px node: a filled disk at 1.2px pitch */
+const dot = (out: Pt[], c: P2, tone: number, alpha = 1) => {
+  for (let y = -3; y <= 3; y += 1.2) for (let x = -3; x <= 3; x += 1.2) if (x * x + y * y <= 9) out.push([c.x + x, c.y + y, 0, tone, alpha]);
+};
+/** a faint lime halo ring around the active node */
+const halo = (out: Pt[], c: P2, alpha = 1) => {
+  for (let i = 0; i < 28; i++) { const a = (i / 28) * Math.PI * 2; out.push([c.x + Math.cos(a) * 10, c.y + Math.sin(a) * 10, 0, 2, 0.35 * alpha]); }
+};
 
 /* ── globe: fibonacci sphere, land from the baked bitmask, z via layer ──── */
 export const GLOBE_N = 20480;

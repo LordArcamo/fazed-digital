@@ -27,11 +27,9 @@ const schema = [
 ---
 <Base title="Contact Fazed Digital | Get a Free Web Design Quote" description="Get a free quote for web design, branding or SEO. Based in Iligan City, Philippines, working with clients worldwide. We reply within one business day." formation="node" schema={schema} current="/contact">
   <section class="ct-hero" data-f="node" aria-labelledby="ct-h">
-    <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
-    <span class="ct-ring poster-art" aria-hidden="true"></span>
     <div class="container ct-in">
       <p class="mono">Signal · {NAP.coords} · Iligan City, PH</p>
-      <h1 id="ct-h" class="t-d1">Let’s build something great.</h1>
+      <h1 id="ct-h" class="t-d1">Let’s build <span class="ct-hn" aria-hidden="true"><span class="ct-ring poster-art"></span><span class="node-anchor" data-node-anchor></span></span> something great.</h1>
       <p class="t-body-l ct-deck">Tell us what you need and when you need it. A real person replies within one business day, Monday to Friday.</p>
       <dl class="ct-cells">
         <div><dt class="mono">Email</dt><dd><a class="link" href={`mailto:${NAP.email}`} aria-label={`Email Fazed Digital at ${NAP.email}`}>{NAP.email}</a></dd></div>
@@ -57,10 +55,13 @@ const schema = [
 </Base>
 <style>
   .ct-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 160px); padding-bottom: 72px; }
-  .node-anchor { position: absolute; left: 74%; top: 45%; width: 1px; height: 1px; }
-  .ct-ring { position: absolute; left: 74%; top: 45%; width: 230px; height: 230px; margin: -115px; border-radius: 50%; background: radial-gradient(circle, var(--lime) 0 8px, transparent 8.5px 31px, var(--lime-25) 31.5px 32.5px, transparent 33px 71px, var(--lime-12) 71.5px 72.5px, transparent 73px 111px, rgba(201,255,87,.08) 111.5px 112.5px, transparent 113px); }
-  .ct-in { display: grid; gap: 1.5rem; }
-  .ct-in h1 { max-width: 11ch; }
+  /* the contact node sits inline in the H1, on the x-height of the line */
+  .ct-hn { position: relative; display: inline-block; width: .5em; height: .5em; vertical-align: baseline; }
+  .node-anchor { position: absolute; left: 50%; top: 50%; width: 1px; height: 1px; }
+  .ct-ring { position: absolute; left: 50%; top: 50%; width: 230px; height: 230px; margin: -115px; border-radius: 50%; background: radial-gradient(circle, var(--lime) 0 8px, transparent 8.5px 31px, var(--lime-25) 31.5px 32.5px, transparent 33px 71px, var(--lime-12) 71.5px 72.5px, transparent 73px 111px, rgba(201,255,87,.08) 111.5px 112.5px, transparent 113px); }
+  .ct-in { position: relative; z-index: 0; display: grid; gap: 1.5rem; }
+  .ct-ring { z-index: -1; }
+  .ct-in h1 { max-width: 12ch; }
   .ct-deck { max-width: 44ch; }
   .ct-cells { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 1rem 3rem; margin-top: 1rem; }
   .ct-cells dd { margin-top: .3rem; color: var(--gray-200); font-size: 1.1rem; }
@@ -81,8 +82,7 @@ const schema = [
     .ct-cells { grid-template-columns: 1fr 1fr; }
     .ct-next ol { grid-template-columns: 1fr; }
     .ct-form > *, .ct-faq > * { grid-column: 1 / -1 !important; }
-    .node-anchor, .ct-ring { left: 50%; top: 150px; }
-    .ct-hero { align-items: flex-end; padding-top: 300px; }
+    .ct-hero { align-items: flex-end; padding-top: 200px; }
   }
   @media (max-width: 599px) { .ct-cells { grid-template-columns: 1fr; } }
 </style>

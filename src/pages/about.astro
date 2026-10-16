@@ -29,7 +29,7 @@ const schema = [
 ];
 ---
 <Base title="About Fazed Digital | Web Design Agency in Iligan City" description="Meet Fazed Digital: a web design, branding and SEO studio founded in Iligan City, Philippines in 2022, building for clients in the USA, Australia and PH." formation="rings" schema={schema} current="/about">
-  <section class="a-hero" data-f="rings" aria-labelledby="a-h">
+  <section class="a-hero" data-f="rings" data-rs="1.75" aria-labelledby="a-h">
     <div class="a-rings-anchor" data-rings-anchor aria-hidden="true"></div>
     <svg class="poster-art a-poster" viewBox="0 0 200 200" aria-hidden="true"><g fill="none" stroke="#F5F4F0" stroke-opacity=".35" stroke-dasharray="1 3"><ellipse cx="100" cy="100" rx="36" ry="17" /><ellipse cx="100" cy="100" rx="56" ry="26" /><ellipse cx="100" cy="100" rx="80" ry="38" /></g><circle cx="100" cy="100" r="3" fill="#C9FF57" /><circle cx="160" cy="125" r="3" fill="#F5F4F0" /><circle cx="60" cy="80" r="3" fill="#F5F4F0" /><circle cx="130" cy="78" r="3" fill="#F5F4F0" /><circle cx="44" cy="118" r="3" fill="#F5F4F0" /></svg>
     <div class="container a-hero-in">
@@ -111,9 +111,10 @@ const schema = [
   initPeople();
 </script>
 <style>
-  .a-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: var(--header-h); }
-  .a-rings-anchor { position: absolute; right: 6vw; top: 50%; width: 38vw; height: 40vh; transform: translateY(-50%); }
-  .a-poster { position: absolute; right: 6vw; top: 50%; width: 38vw; transform: translateY(-50%); }
+  /* hero: 140vh rings, centred near the right edge and cropped by it */
+  .a-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: var(--header-h); overflow: hidden; }
+  .a-rings-anchor { position: absolute; left: 88vw; top: 58%; width: 8vw; height: 20vh; transform: translate(-50%, -50%); }
+  .a-poster { position: absolute; left: calc(88vw - 87.5vh); top: 58%; width: 175vh; max-width: none; transform: translateY(-50%); }
   .a-hero-in { display: grid; gap: 1.5rem; justify-items: start; }
   .a-hero h1 { max-width: 12ch; }
   .a-deck { max-width: 44ch; }
@@ -154,7 +155,7 @@ const schema = [
     .a-story > *, .a-values > *, .a-values ol { grid-column: 1 / -1 !important; }
     .a-ppl { grid-template-columns: 1fr 1fr; }
     .stats { grid-template-columns: 1fr 1fr; row-gap: 2rem; }
-    .a-poster, .a-rings-anchor { width: 80vw; right: 10vw; top: 28%; opacity: .7; }
+    .a-poster, .a-rings-anchor { width: 80vw; left: auto; right: 10vw; top: 28%; opacity: .7; transform: translateY(-50%); }
     .a-hero { align-items: flex-end; padding-bottom: 64px; }
   }
   @media (max-width: 599px) { .a-ppl, .a-cols, .a-prom ul { grid-template-columns: 1fr; } }
