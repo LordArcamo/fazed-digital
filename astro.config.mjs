@@ -1,41 +1,36 @@
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
+import react from '@astrojs/react'; // TEMPORARY: old interior pages still use React islands (removed in T1 completion)
 import sitemap from '@astrojs/sitemap';
-import vercel from '@astrojs/vercel/serverless';
+import vercel from '@astrojs/vercel';
+import { threeSlim } from './src/field/three-plugin.mjs';
+
+const SITE = 'https://www.fazeddigital.com';
 
 export default defineConfig({
-  // hybrid: all pages are static by default, API routes are serverless
-  output: 'hybrid',
-  adapter: vercel({ functionPerRoute: false }),
-
+  site: SITE,
+  adapter: vercel(),
+  trailingSlash: 'ignore',
   integrations: [
     react(),
     sitemap({
-      // Keep only storybook out of the organic index (landing pages now indexable)
-      filter: (page) => !page.includes('/storybook/'),
+      filter: (page) => !page.includes('/storybook/') && !page.includes('/_styleguide') && !page.includes('/_formations') && !page.includes('/404'),
       changefreq: 'weekly',
       priority: 0.7,
       lastmod: new Date(),
+      serialize(item) {
+        // canonical = no trailing slash except "/"
+        const u = new URL(item.url);
+        if (u.pathname !== '/' && u.pathname.endsWith('/')) u.pathname = u.pathname.slice(0, -1);
+        item.url = u.toString();
+        return item;
+      },
     }),
   ],
-  site: 'https://fazeddigital.com',
   compressHTML: true,
-
-  prefetch: {
-    defaultStrategy: 'hover',
-  },
-
+  prefetch: { defaultStrategy: 'hover' },
   vite: {
-    build: {
-      rollupOptions: {
-        output: {
-          manualChunks(id) {
-            if (id.includes('node_modules/gsap')) return 'gsap';
-            if (id.includes('node_modules/react-dom')) return 'react-dom';
-            if (id.includes('node_modules/react/')) return 'react';
-          },
-        },
-      },
-    },
+    plugins: [threeSlim()],
+    build: { target: 'es2022', chunkSizeWarningLimit: 800 },
+    server: { port: 4351, strictPort: true },
   },
 });
