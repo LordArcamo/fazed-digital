@@ -60,6 +60,11 @@ export function initHome(rm: boolean) {
       wi.querySelectorAll('.wrow').forEach((r) => r.classList.toggle('is-on', r === row));
       prev.classList.toggle('is-on', !!id);
       wi.classList.toggle('has-on', !!id);
+      // the preview reuses the row's own <picture> (cloned once), so there is one image set in the HTML
+      if (row && id && !prev.querySelector(`[data-for="${id}"]`)) {
+        const pic = row.querySelector('picture')?.cloneNode(true) as HTMLElement | undefined;
+        if (pic) { pic.dataset.for = id; pic.querySelector('img')?.setAttribute('alt', ''); pic.querySelector('img')?.setAttribute('loading', 'eager'); prev.prepend(pic); }
+      }
       prev.querySelectorAll<HTMLElement>('[data-for]').forEach((p) => {
         const img = p.querySelector('img') ?? p;
         img.classList.toggle('is-on', p.dataset.for === id);

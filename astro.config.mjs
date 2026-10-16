@@ -27,6 +27,7 @@ export default defineConfig({
     }),
   ],
   compressHTML: true,
+  build: { inlineStylesheets: 'always' },
   devToolbar: { enabled: false },
   prefetch: { defaultStrategy: 'hover' },
   vite: {

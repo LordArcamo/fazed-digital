@@ -114,13 +114,12 @@ const schema = {
                   <span class="w-year">{c.year}</span>
                   <span class="w-built">{c.built}</span>
                   <span class="sr-only">. Read the case study.</span>
-                  <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 1px" alt={c.alt} loading="lazy" decoding="async" />
+                  <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 1023px) 92vw, 420px" alt={c.alt} loading="lazy" decoding="async" />
                 </a>
               </li>
             ))}
           </ul>
           <div class="wprev" aria-hidden="true" data-wprev>
-            {caseIndex.map((c) => <Picture class="wprev-img" data-for={c.slug} src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="420px" alt="" loading="lazy" decoding="async" />)}
             <span class="wprev-scan"></span>
           </div>
         </div>

@@ -53,9 +53,14 @@ function boot() {
   }
 }
 
-// ClientRouter: bundled modules run once; per-page work goes through these events
+// ClientRouter: bundled modules run once; per-page work goes through these events.
+// The initial astro:page-load can fire before this module evaluates (ClientRouter lives in
+// <head>), so run once now and de-duplicate per swapped <body>.
 let first = true;
-document.addEventListener('astro:page-load', () => {
+let lastBody: HTMLElement | null = null;
+function onPage() {
+  if (document.body === lastBody) return;
+  lastBody = document.body;
   html.classList.toggle('scrolled', scrollY > 24);
   if (first) { first = false; boot(); }
   else {
@@ -65,5 +70,7 @@ document.addEventListener('astro:page-load', () => {
     if (ann) ann.textContent = `${document.title.split('|')[0].trim()} loaded`;
   }
   bus.onPage.forEach((f) => f());
-});
+}
+document.addEventListener('astro:page-load', onPage);
 document.addEventListener('astro:before-swap', () => bus.onSwap.forEach((f) => f()));
+if (document.readyState !== 'loading') onPage(); else document.addEventListener('DOMContentLoaded', onPage, { once: true });

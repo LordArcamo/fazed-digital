@@ -16,19 +16,9 @@ export async function gate(flags: Flags): Promise<Gate> {
   const forced = flags.gl === 'force' || !!flags.record;
   if (!forced && nav.connection?.saveData) return t0('save-data');
 
-  let gl2 = false;
-  let renderer = '';
-  try {
-    const c = document.createElement('canvas');
-    const gl = c.getContext('webgl2', { failIfMajorPerformanceCaveat: !forced }) as WebGL2RenderingContext | null;
-    if (gl) {
-      gl2 = true;
-      const ext = gl.getExtension('WEBGL_debug_renderer_info');
-      renderer = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
-    }
-  } catch { /* no webgl2 */ }
-
+  // WebGL2 probe off the main thread (OffscreenCanvas in a Worker): on software
+  // rasterisers (SwiftShader) context creation alone can block for >1s. Cached per session.
+  const { gl2, renderer } = await probe(forced);
   if (!forced) {
     if (!gl2) return t0('no-webgl2');
     if (SOFTWARE_RE.test(renderer)) return t0('software', renderer);
@@ -52,4 +42,42 @@ export async function gate(flags: Flags): Promise<Gate> {
   if (dm < 4 || hc < 4) tier = 't3';
   else if (!mobile && hc >= 8 && innerWidth >= 1024) tier = 't1';
   return { tier, backend, renderer, reason: 'ok' };
+}
+
+const PROBE_SRC = `onmessage=function(e){var r={gl2:false,renderer:''};try{var c=new OffscreenCanvas(1,1);var gl=c.getContext('webgl2',{failIfMajorPerformanceCaveat:!e.data});if(gl){r.gl2=true;var x=gl.getExtension('WEBGL_debug_renderer_info');r.renderer=String(x?gl.getParameter(x.UNMASKED_RENDERER_WEBGL):gl.getParameter(gl.RENDERER));var l=gl.getExtension('WEBGL_lose_context');l&&l.loseContext();}}catch(err){}postMessage(r);};`;
+
+async function probe(forced: boolean): Promise<{ gl2: boolean; renderer: string }> {
+  const key = 'fz-gl-probe-' + (forced ? 'f' : 'a');
+  try { const c = sessionStorage.getItem(key); if (c) return JSON.parse(c); } catch { /* private mode */ }
+  let r: { gl2: boolean; renderer: string } | null = null;
+  if (typeof Worker !== 'undefined' && typeof OffscreenCanvas !== 'undefined') {
+    r = await new Promise((res) => {
+      let url = '';
+      try {
+        url = URL.createObjectURL(new Blob([PROBE_SRC], { type: 'text/javascript' }));
+        const w = new Worker(url);
+        const done = (v: any) => { clearTimeout(to); w.terminate(); URL.revokeObjectURL(url); res(v); };
+        const to = setTimeout(() => done({ gl2: false, renderer: 'probe-timeout' }), 4000);
+        w.onmessage = (e) => done(e.data);
+        w.onerror = () => done(null);
+        w.postMessage(forced);
+      } catch { res(null); }
+    });
+  }
+  if (!r) {
+    // fallback: no Worker/OffscreenCanvas (or the worker failed) → probe on the main thread
+    r = { gl2: false, renderer: '' };
+    try {
+      const c = document.createElement('canvas');
+      const gl = c.getContext('webgl2', { failIfMajorPerformanceCaveat: !forced }) as WebGL2RenderingContext | null;
+      if (gl) {
+        r.gl2 = true;
+        const ext = gl.getExtension('WEBGL_debug_renderer_info');
+        r.renderer = String(ext ? gl.getParameter(ext.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER));
+        gl.getExtension('WEBGL_lose_context')?.loseContext();
+      }
+    } catch { /* no webgl2 */ }
+  }
+  try { sessionStorage.setItem(key, JSON.stringify(r)); } catch { /* ignore */ }
+  return r;
 }

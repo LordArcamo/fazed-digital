@@ -7,7 +7,7 @@
     "prebuild:data": "node scripts/extract-posts.mjs && node scripts/bake-formations.mjs",
     "build": "node scripts/extract-posts.mjs && node scripts/bake-formations.mjs && node scripts/generate-og.mjs && astro build && node scripts/gen-llms.mjs",
     "check": "astro check",
-    "preview:lh": "sirv .vercel/output/static --port 4352 --quiet",
+    "preview:lh": "node scripts/precompress.mjs && sirv .vercel/output/static --port 4352 --quiet --brotli --gzip",
     "generate:og": "node scripts/generate-og.mjs",
     "bake": "node scripts/bake-formations.mjs"
   },
