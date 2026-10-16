@@ -92,6 +92,10 @@ const cur = menu.find((m) => m.href === current);
   .sd-goo { position: absolute; inset: 0; filter: url(#sd-goo); pointer-events: none; z-index: 0; }
   .sd-b { position: absolute; left: 0; top: 50%; width: 1px; height: 36px; margin-top: -18px; border-radius: 999px; background: var(--lime); transform-origin: 50% 50%; will-change: transform, width; }
   .sd-b2 { height: 30px; margin-top: -15px; }
+  .sd-ink { position: absolute; left: 0; top: 0; z-index: 2; pointer-events: none; }
+  .sd-ink .sd-a.sd-a.sd-a { color: var(--black); }
+  .sd-ink .sd-n.sd-n.sd-n { background: var(--black); border-color: var(--black); box-shadow: none; transform: none; }
+  .sd-ink li::before { display: none; }
   .sd-defs { position: absolute; width: 0; height: 0; overflow: hidden; }
   .sd-a.is-blob.is-blob, :global(html.is-docked) .sd-a.is-blob.is-blob { color: var(--black); }
   .sd-a.is-blob.is-blob .sd-n.sd-n { background: var(--black); border-color: var(--black); box-shadow: none; transform: none; }

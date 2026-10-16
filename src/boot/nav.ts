@@ -54,7 +54,8 @@ export function initNav() {
 type Sp = { x: number; v: number; w: number; vw: number };
 const sp = (): Sp => ({ x: 0, v: 0, w: 0, vw: 0 });
 let H = sp(), T = sp(), tx = 0, tw = 0, raf = 0, last = 0, mag = 0;
-let lw: HTMLElement | null = null, b1: HTMLElement | null = null, b2: HTMLElement | null = null;
+let lw: HTMLElement | null = null, b1: HTMLElement | null = null, b2: HTMLElement | null = null, ink: HTMLElement | null = null;
+let LW = 0, LH = 0, BH = 36;
 let target: HTMLElement | null = null, from: { x: number; w: number } | null = null;
 const active = () => lw?.querySelector<HTMLElement>('.sd-a[aria-current]') ?? null;
 function aim(a: HTMLElement | null, snap = false) {
@@ -64,6 +65,7 @@ function aim(a: HTMLElement | null, snap = false) {
   if (a) {
     const li = a.parentElement as HTMLElement; // layout box: immune to the dock's scale-in and the magnetic translate
     tx = li.offsetLeft + li.offsetWidth / 2; tw = li.offsetWidth;
+    LW = lw.offsetWidth; LH = lw.offsetHeight; BH = b1?.offsetHeight || 36;
   } else tw = 0;
   if (!H.w && !T.w && a) { H.x = T.x = tx; }
   if (snap || html.classList.contains('rm')) { H.x = T.x = tx; H.w = T.w = tw; H.v = T.v = H.vw = T.vw = 0; }
@@ -84,6 +86,13 @@ function draw() {
   };
   put(b1, H, st, sq);
   put(b2, T, -6, 1);
+  // the #090909 label copy is clipped to the blob, so every label it passes over reads dark on lime
+  if (ink) {
+    const wh = Math.max(0, H.w + st), wt = Math.max(0, T.w - 6);
+    const l = Math.min(H.x - wh / 2, wt > 2 ? T.x - wt / 2 : 1e9) + mag, r = Math.max(H.x + wh / 2, wt > 2 ? T.x + wt / 2 : -1e9) + mag;
+    const h = BH * sq * Math.min(1, wh / 30), t = (LH - h) / 2;
+    ink.style.clipPath = r - l < 1 ? 'inset(50%)' : `inset(${t.toFixed(1)}px ${(LW - r).toFixed(1)}px ${t.toFixed(1)}px ${l.toFixed(1)}px round ${(h / 2).toFixed(1)}px)`;
+  }
   // the label turns #090909 only once the lime is under it
   target?.classList.toggle('is-blob', Math.abs(H.x - tx) < tw * 0.3 && H.w > tw * 0.6);
 }
@@ -101,9 +110,21 @@ function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFr
 function initBlob() {
   lw = document.querySelector('.sd-lw');
   b1 = lw?.querySelector('.sd-b1') ?? null; b2 = lw?.querySelector('.sd-b2') ?? null;
-  H = sp(); T = sp(); target = null; mag = 0;
+  H = sp(); T = sp(); target = null; mag = 0; ink = null;
   if (!lw || lw.dataset.bound || !lw.getClientRects().length && innerWidth < 1024) { from = null; return; }
   lw.dataset.bound = '1';
+  const ul = lw.querySelector('ul');
+  if (ul) {
+    ink = ul.cloneNode(true) as HTMLElement;
+    ink.removeAttribute('id');
+    ink.classList.add('sd-ink');
+    ink.setAttribute('aria-hidden', 'true');
+    ink.inert = true;
+    ink.querySelectorAll('a').forEach((a) => { a.removeAttribute('href'); a.removeAttribute('aria-current'); });
+    ink.style.clipPath = 'inset(50%)';
+    lw.appendChild(ink);
+  }
+  const inkOf = (el: HTMLElement) => { const i = [...lw!.querySelectorAll('ul:not(.sd-ink) .sd-a')].indexOf(el); return i < 0 ? null : ink?.querySelectorAll<HTMLElement>('.sd-a')[i] ?? null; };
   const a = active();
   if (from && a && !html.classList.contains('rm')) {
     const lr = lw.getBoundingClientRect();
@@ -112,7 +133,7 @@ function initBlob() {
   } else aim(a, true);
   from = null;
   const nav = lw.closest<HTMLElement>('.sd')!;
-  const pick = (e: Event) => (e.target as HTMLElement).closest<HTMLElement>('.sd-a');
+  const pick = (e: Event) => (e.target as HTMLElement).closest<HTMLElement>('ul:not(.sd-ink) .sd-a');
   lw.addEventListener('pointerover', (e) => { const l = pick(e); if (l && l !== target) aim(l); });
   lw.addEventListener('pointerleave', () => { mag = 0; aim(active()); });
   lw.addEventListener('focusin', (e) => { const l = pick(e); if (l) aim(l); });
@@ -122,7 +143,7 @@ function initBlob() {
     let on: HTMLElement | null = null;
     nav.addEventListener('pointermove', (e) => {
       const el = (e.target as HTMLElement).closest<HTMLElement>('.sd-a, .sd-cta');
-      if (on && on !== el) { on.classList.remove('mag'); on.style.translate = ''; }
+      if (on && on !== el) { on.classList.remove('mag'); on.style.translate = ''; const k = inkOf(on); if (k) { k.classList.remove('mag'); k.style.translate = ''; } }
       on = el;
       if (!el || html.classList.contains('rm')) return;
       const r = el.getBoundingClientRect();
@@ -130,9 +151,10 @@ function initBlob() {
       const dy = Math.max(-4, Math.min(4, (e.clientY - r.top - r.height / 2) * 0.18));
       el.classList.add('mag');
       el.style.translate = `${dx.toFixed(1)}px ${dy.toFixed(1)}px`;
+      const k = inkOf(el); if (k) { k.classList.add('mag'); k.style.translate = el.style.translate; }
       if (el === target) { mag = dx; kick(); }
     }, { passive: true });
-    nav.addEventListener('pointerleave', () => { if (on) { on.classList.remove('mag'); on.style.translate = ''; on = null; } mag = 0; kick(); });
+    nav.addEventListener('pointerleave', () => { if (on) { on.classList.remove('mag'); on.style.translate = ''; const k = inkOf(on); if (k) { k.classList.remove('mag'); k.style.translate = ''; } on = null; } mag = 0; kick(); });
   }
 }
 // dock ↔ rail layouts change the link positions: re-aim without travel
