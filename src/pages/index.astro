@@ -281,7 +281,7 @@ const schema = {
     :global(html.js-motion:not(.rm)) .svc-live .svc { position: absolute; inset: 0 0 auto 0; border: 0; opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity .45s var(--ease-out), transform .45s var(--ease-out), visibility 0s .45s; }
     :global(html.js-motion:not(.rm)) .svc-live .svc.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
     :global(html.js-motion:not(.rm)) .svc-live .svc .t-h3 { font-size: var(--fs-d2); line-height: .95; }
-    :global(html.gl-live) .svc-live .svc .glyph { display: none; }
+    :global(html.gl-live) .svc-live .svc :global(.glyph) { display: none; }
   }
 
   /* WORK INDEX */
@@ -349,7 +349,7 @@ const schema = {
 
   /* CONNECTIONS */
   .conn-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; align-items: start; }
-  .conn-globe { grid-column: 7 / span 6; grid-row: 1; aspect-ratio: 1; }
+  .conn-globe { grid-column: 7 / span 6; grid-row: 1; aspect-ratio: 1; position: sticky; top: 12vh; }
   .conn-poster { width: 100%; height: 100%; }
   .conn-text { grid-column: 1 / span 6; grid-row: 1; display: grid; gap: 1.5rem; }
   .results { display: grid; gap: 2.5rem; margin-top: 1.5rem; }
@@ -385,6 +385,6 @@ const schema = {
   .contact-lines { display: grid; gap: .5rem; }
   .contact-lines li { display: grid; grid-template-columns: 5.5rem 1fr; align-items: center; min-height: 44px; }
   .contact-lines .link { justify-self: start; }
-  .node-anchor { position: absolute; left: -48px; top: 8px; width: 1px; height: 1px; }
+  .node-anchor { position: absolute; left: 132px; top: -104px; width: 1px; height: 1px; }
   @media (max-width: 1023px) { .contact-text, .contact-in > :global(.cf) { grid-column: 1 / -1; } .contact-text { padding-top: 168px; } .node-anchor { left: 50%; top: 56px; } }
 </style>

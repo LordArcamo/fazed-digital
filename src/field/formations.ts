@@ -208,15 +208,23 @@ export function project(lat: number, lon: number, R: number, lon0 = 160) {
   const p = lat * Math.PI / 180, l = (lon - lon0) * Math.PI / 180;
   return { x: R * Math.cos(p) * Math.sin(l), y: -R * Math.sin(p), z: R * Math.cos(p) * Math.cos(l) };
 }
-export function globe(c: P2, R: number, land: Uint8Array, n: number, v: View): Formation {
+export function globe(c: P2, R: number, land: Uint8Array, n: number, v: View, nodes: [number, number][] = []): Formation {
   const pts: Pt[] = [];
   for (let i = 0; i < GLOBE_N; i++) {
     const isLand = (land[i >> 3] >> (i & 7)) & 1;
-    if (!isLand && i % 3) continue; // thin the ocean
+    if (!isLand && i % 4) continue; // thin the ocean
     const { lat, lon } = fib(i);
     const q = project(lat, lon, R);
-    pts.push([c.x + q.x, c.y + q.y, 2 + q.z / R, isLand ? 1 : 0.35, isLand ? 1 : 0.5]);
+    pts.push([c.x + q.x, c.y + q.y, 2 + q.z / R, isLand ? 1.15 : 0.12, isLand ? 1 : 0.3]);
   }
+  // lit client nodes (and Iligan) sit just above the surface
+  const rr = rng(88);
+  nodes.forEach(([lat, lon], k) => {
+    for (let j = 0; j < (k === 0 ? 90 : 50); j++) {
+      const q = project(lat + (rr() - 0.5) * 2.2, lon + (rr() - 0.5) * 2.2, R * 1.01);
+      pts.push([c.x + q.x, c.y + q.y, 2 + q.z / R, 2, 1]);
+    }
+  });
   return pack('globe', pts, n, v, isFinite(R) && R < 260 ? 1.8 : 2.1, [c.x, c.y]);
 }
 

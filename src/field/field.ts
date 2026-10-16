@@ -164,7 +164,7 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
   function updateArcs() {
     if (!arcPts || !arcLines.visible) return;
     const ay = u.uTilt.value.x, ca = Math.cos(ay), sa = Math.sin(ay);
-    const hx = u.uHalf.value.x, hy = u.uHalf.value.y;
+    const hx = u.uHalf.value.x, hy = u.uHalf.value.y, fy = u.uFocusY.value; // arc centre is in page space
     const prog = field.arcProgress * arcN;
     for (let a = 0; a < arcN; a++) {
       for (let k = 0; k < ARC_SEG; k++) {
@@ -173,7 +173,7 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
           const x = arcPts[vi] * arcR, y = arcPts[vi + 1] * arcR, z = arcPts[vi + 2] * arcR;
           const x1 = x * ca + z * sa, z1 = z * ca - x * sa;
           const o = ((a * ARC_SEG + k) * 2 + e);
-          arcPos[o * 3] = arcC.x + x1 - hx; arcPos[o * 3 + 1] = hy - (arcC.y + y); arcPos[o * 3 + 2] = z1;
+          arcPos[o * 3] = arcC.x + x1 - hx; arcPos[o * 3 + 1] = hy - (arcC.y + fy + y); arcPos[o * 3 + 2] = z1;
           const t = (k + e) / ARC_SEG;
           const drawn = Math.min(1, Math.max(0, prog - a)) >= t ? 1 : 0;
           arcA[o] = drawn * (z1 > -arcR * 0.15 ? 0.9 : 0.18);

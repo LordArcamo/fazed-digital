@@ -52,8 +52,13 @@ export async function start(g: Gate, flags: Flags) {
   const scrollY = () => (bus.lenis ? bus.lenis.scroll : window.scrollY);
 
   /** move a viewport formation into page space + focus layer so it scrolls with its section */
-  const attach = (f: F.Formation) => {
+  // focus-layer anchor: the attached formation follows this element (works for sticky ones too)
+  let anchorEl: Element | null = null, anchorTop0 = 0, anchorSy0 = 0;
+  const attach = (f: F.Formation, el?: Element | null) => {
     const sy = scrollY();
+    anchorEl = el ?? null;
+    anchorTop0 = el ? el.getBoundingClientRect().top : 0;
+    anchorSy0 = sy;
     for (let i = 0; i < f.visible; i++) {
       const o = i * 4;
       if (f.alpha[i] < 0) continue; // dust stays viewport-fixed
@@ -90,7 +95,7 @@ export async function start(g: Gate, flags: Flags) {
       case 'mark': {
         const r = rectOf(document.getElementById('mark-poster'));
         if (!r || !mask) return F.lattice(v, n);
-        return attach(F.mark(r, mask, n, v));
+        return attach(F.mark(r, mask, n, v), document.getElementById('mark-poster'));
       }
       case 'lattice': {
         // the unfold ruler: one row of lime dots on the 12 column lines
@@ -110,12 +115,13 @@ export async function start(g: Gate, flags: Flags) {
         return attach(F.path4({ left: r.left, top: r.top - 40, width: r.width, height: 60 }, n, v, !desktop()));
       }
       case 'globe': {
-        const r = rectOf(document.querySelector('[data-globe]'));
+        const gel = document.querySelector('[data-globe]');
+        const r = rectOf(gel);
         if (!r || !land) return null;
         const R = Math.min(r.width, r.height) * 0.46;
         globeC = { x: r.left + r.width / 2, y: r.top + r.height / 2 + scrollY() };
         globeR = R;
-        return attach(F.globe({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, R, land, n, v));
+        return attach(F.globe({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, R, land, n, v, [ILIGAN, ...arcList().map((a) => a.to)]), gel);
       }
       case 'rings': {
         if (v.w < 768) return F.lattice(v, n);
@@ -152,7 +158,7 @@ export async function start(g: Gate, flags: Flags) {
     if (!f) return;
     morphTween?.kill();
     field.target(f, anchor ? { anchor } : undefined);
-    if (bus.rm) { u.uMorph.value = 1; return; }
+    if (bus.rm) { u.uMorph.value = 1; morphTween = null; return; }
     morphTween = gsap.to(u.uMorph, { value: 1, duration: dur, ease });
   };
   const setBeat = (id: string, el?: Element | null) => {
@@ -169,8 +175,9 @@ export async function start(g: Gate, flags: Flags) {
       markF = build('mark');
       latF = build('lattice');
       heroScrub = false;
-      morph(markF, bus.rm ? 0 : 0.9);
-      morphTween?.eventCallback('onComplete', () => { if (beat === 'hero') { pairMarkLattice(); heroScrub = true; } });
+      morph(markF, 0.9);
+      const back = () => { if (beat === 'hero') { pairMarkLattice(); heroScrub = true; } };
+      if (morphTween) morphTween.eventCallback('onComplete', back); else back();
       return;
     }
     heroScrub = false;
@@ -178,7 +185,8 @@ export async function start(g: Gate, flags: Flags) {
     if (id === 'globe' && f) {
       morph(f, 1.1);
       const arcs = arcList();
-      morphTween?.eventCallback('onComplete', () => { if (beat !== 'globe') return; field.setArcs(arcs, globeC0(), globeR); field.arcProgress = 0; gsap.to(field, { arcProgress: 1, duration: bus.rm ? 0 : 3, ease: 'none' }); });
+      const draw = () => { if (beat !== 'globe') return; field.setArcs(arcs, globeC, globeR); field.arcProgress = bus.rm ? 1 : 0; if (!bus.rm) gsap.to(field, { arcProgress: 1, duration: 3, ease: 'none' }); };
+      if (morphTween) morphTween.eventCallback('onComplete', draw); else draw();
       return;
     }
     morph(f, prev === 'hero' ? 1.1 : 1.1);
@@ -303,7 +311,7 @@ export async function start(g: Gate, flags: Flags) {
     const vel = bus.lenis ? Math.abs(bus.lenis.velocity) : 0;
     scatter += (Math.min(1, vel / 40) * 0.6 - scatter) * 0.1;
     u.uScatter.value = bus.rm ? 0 : scatter;
-    u.uFocusY.value = -scrollY();
+    u.uFocusY.value = anchorEl && anchorEl.isConnected ? -anchorSy0 + (anchorEl.getBoundingClientRect().top - anchorTop0) : -scrollY();
     if (beat === 'hero') {
       tilt.x += (tiltTo.x - tilt.x) * 0.06; tilt.y += (tiltTo.y - tilt.y) * 0.06;
       const k = 1 - heroP;
@@ -315,12 +323,12 @@ export async function start(g: Gate, flags: Flags) {
       u.uDepth.value = 40 * w * (1 - heroP);
     } else if (beat === 'globe') {
       u.uDepth.value = globeR;
-      u.uTilt.value.set((t * 4 * Math.PI) / 180, 0);
-      u.uTiltC.value.set(globeC.x, globeC.y - scrollY(), 0);
+      u.uTilt.value.set(Math.sin(t * 0.12) * 0.42, 0); // sway ±24° around 160°E so PH/AU/US stay in view
+      u.uTiltC.value.set(globeC.x, globeC.y + u.uFocusY.value, 0);
     } else if (beat === 'rings') {
       u.uDepth.value = Math.min(innerWidth, innerHeight) * 0.4;
       u.uTilt.value.set((t * 9 * Math.PI) / 180, 0);
-      u.uTiltC.value.set(ringsC.x, ringsC.y - scrollY(), 0);
+      u.uTiltC.value.set(ringsC.x, ringsC.y + u.uFocusY.value, 0);
     } else {
       u.uTilt.value.set(0, 0);
     }
