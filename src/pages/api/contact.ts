@@ -61,7 +61,9 @@ export const POST: APIRoute = async ({ request }) => {
   const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
   /* ── Submit to HubSpot public Forms API (no auth needed) ── */
-  const hsRes = await fetch(
+  let hsRes: Response;
+  try {
+  hsRes = await fetch(
     `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`,
     {
       method: 'POST',
@@ -87,6 +89,11 @@ export const POST: APIRoute = async ({ request }) => {
       }),
     }
   );
+  } catch (err) {
+    // network failure / no outbound access: graceful error, never a crash
+    console.error('HubSpot Forms API unreachable:', err);
+    return json({ error: 'Something went wrong on our side and your message didn’t send. Please try again, or email us at info@fazeddigital.com.' }, 502);
+  }
 
   if (!hsRes.ok) {
     const errText = await hsRes.text();
