@@ -15,7 +15,7 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
       const img = labImaged.includes(i.n) ? labImages[i.n] : null;
       return (
         <li class="lli" id={`lab-${i.n}`}>
-          <a class="lrow" href={i.url} target="_blank" rel="noopener" data-shot={img ? i.n : undefined} data-cap={`LAB ${i.n} · ${hostOf(i.url)} ↗ new tab`} data-cursor="OPEN ↗"
+          <a class="lrow" href={i.url} target="_blank" rel="noopener" data-shot={img ? i.n : undefined} data-cap={`LAB ${i.n} · ${hostOf(i.url)}\u00a0↗\u00a0new\u00a0tab`} data-cursor="OPEN ↗"
             aria-label={`Lab ${i.n}: ${i.brand}, concept site for a fictional ${fiction[i.n] ?? 'brand'}. Built with ${list(i.chips!.map((c) => c.replace(' + ', ' and ')))}. Opens in a new tab.`}>
             <span class="mono l-n">{i.n}</span>
             <span class="l-main">
@@ -68,7 +68,8 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
   .l-open { padding-top: .45rem; color: var(--lime); font-family: var(--font-mono); font-size: 12px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; justify-self: end; }
   .l-open-m, .l-meta, .l-thumb { display: none; }
   .l-credit { margin: .9rem 0 0 calc(52px + var(--gutter)); max-width: 72ch; font-size: 11px; letter-spacing: .06em; text-transform: none; line-height: 1.6; color: var(--gray-400); }
-  .l-credit .link { text-transform: none; }
+  .l-credit .link { text-transform: none; padding-block: 4px; background-clip: content-box; }
+  @media (pointer: coarse) { .l-credit .link { padding-block: 13px; } }
   .lli:has(.l-credit) { padding-bottom: 1.5rem; border-bottom: 1px solid var(--gray-700); }
   .lli:has(.l-credit) .lrow { border-bottom-color: transparent; padding-bottom: 0; }
   .lli:has(.l-credit) a.lrow:hover, .lli:has(.l-credit) a.lrow.is-on { border-bottom-color: transparent; }
@@ -89,10 +90,20 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
   :global(html.gl-live) .lprev :global(img.is-on) { transition: opacity .25s .3s; }
   .lprev .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; z-index: 1; }
   .lprev.is-on .wprev-scan { animation: lscan .5s var(--ease-io) both; }
-  .lprev .wprev-cap { position: absolute; left: 0; top: calc(100% + 10px); z-index: 1; padding: 0; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; white-space: nowrap; color: var(--gray-300); }
+  .lprev .wprev-cap { position: absolute; left: 0; top: calc(100% + 10px); z-index: 1; width: fit-content; max-width: 100%; padding: 2px 6px; margin-left: -6px; background: var(--black); font-size: 11px; line-height: 1.5; letter-spacing: .12em; text-transform: uppercase; white-space: normal; overflow-wrap: anywhere; text-wrap: pretty; color: var(--gray-300); }
+  .lprev .wprev-cap:empty { display: none; }
   @keyframes lscan { 0% { opacity: 1; top: 0; } 90% { opacity: 1; } 100% { opacity: 0; top: 100%; } }
   @media (min-width: 1024px) {
     .lindex > .lrow--head, .l-ship, .l-queue { width: calc((100% + var(--gutter)) * 7 / 12 - var(--gutter)); }
+  }
+  /* 1024–1279: the list takes 8 of 12 columns, the plate narrows, Built with steps out (the chips carry the stack) */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .lindex > .lrow--head, .l-ship, .l-queue { width: calc((100% + var(--gutter)) * 8 / 12 - var(--gutter)); }
+    .lrow { grid-template-columns: 52px minmax(0, 1fr) 70px; }
+    .l-built, .lrow--head > span:nth-child(3) { display: none; }
+    .lrow--head > span { white-space: nowrap; }
+    .l-chips .chip { white-space: nowrap; }
+    .lprev { width: min(340px, 28vw); }
   }
   @media (max-width: 1023px) {
     .lprev, .lrow--head { display: none; }
@@ -103,7 +114,7 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
     .l-ship { display: grid; grid-template-columns: 1fr 1fr; column-gap: var(--gutter); }
     .lli { display: grid; grid-template-rows: subgrid; grid-row: span 2; }
     .lrow { display: flex; flex-direction: column; gap: .75rem; padding: 1.5rem 0 2rem; }
-    .l-n, .l-built { display: none; }
+    .lrow .l-n, .l-built { display: none; }
     .l-meta { display: flex; justify-content: space-between; gap: 1rem; font-size: 11px; }
     .l-cat, .l-date { display: none; }
     .l-open { justify-self: auto; align-self: stretch; display: flex; align-items: center; justify-content: center; gap: .4em; min-height: 48px; padding: 0 1.5rem; margin-top: .25rem; border: 1px solid var(--gray-400); border-radius: 999px; color: var(--white); font-family: var(--font-body); font-weight: 600; font-size: 1rem; letter-spacing: -.005em; text-transform: none; transition: border-color .2s, background-color .2s, color .2s; }
@@ -114,7 +125,7 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
   }
   @media (max-width: 767px) {
     .l-ship { grid-template-columns: 1fr; }
-    .lli { grid-row: auto; }
+    .lli { display: block; grid-row: auto; }
     .l-brand { font-size: calc(var(--fs-h3) * 1.35); }
     /* queued slots collapse to one mono list */
     .l-queue { grid-template-columns: 1fr; margin-top: 1rem; }

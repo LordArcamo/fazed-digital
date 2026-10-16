@@ -202,6 +202,7 @@ const shipped = pad2(labShipped.length);
   /* L2 sits close under the hero (96 desktop), like /work */
   .l-index { padding-top: 96px; }
   .l-honest { margin-bottom: .5rem; color: var(--gray-300); }
+  @media (min-width: 1024px) and (max-width: 1279px) { .l-honest { max-width: calc((100% + var(--gutter)) * 8 / 12 - var(--gutter)); } }
   .l-dot { display: inline-block; width: 6px; height: 6px; margin-right: .7rem; vertical-align: 1px; border-radius: 50%; background: var(--lime); }
   @media (max-width: 767px) { .l-index { padding-top: 48px; } .l-hc { display: none; } }
   /* L3 */

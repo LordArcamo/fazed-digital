@@ -28,10 +28,12 @@ const agents = [
 ];
 const tool = { name: 'Scripted Blender', x: 520, y: 214, to: [4, 5] };
 const gx = [125, 437.5 + 62.5, X(7)]; // gates: after 01, after 04, at 08
+// links leave from the node's bottom edge (label 18 + gap 6 + node 6) and the tool box's bottom, so no line crosses its own label
+const AG_NODE = 30, TOOL_H = 28;
 const curve = (ax: number, ay: number, sx: number, sy: number) => `M${ax} ${ay}C${ax} ${ay + (sy - ay) * 0.55} ${sx} ${sy - (sy - ay) * 0.5} ${sx} ${sy}`;
 const links = [
-  ...agents.flatMap((g) => g.to.map((st) => ({ d: curve(g.x, g.y + 12, X(st - 1), SPINE), st, dim: !!g.dim, tool: false }))),
-  ...tool.to.map((st) => ({ d: curve(tool.x, tool.y + 14, X(st - 1), SPINE), st, dim: false, tool: true })),
+  ...agents.flatMap((g) => g.to.map((st) => ({ d: curve(g.x, g.y + AG_NODE, X(st - 1), SPINE), st, dim: !!g.dim, tool: false }))),
+  ...tool.to.map((st) => ({ d: curve(tool.x, tool.y + TOOL_H, X(st - 1), SPINE), st, dim: false, tool: true })),
 ];
 const crew = [
   ['Web Designer', 'Researches the category and pitches three creative directions. Passes or fails every model and reviews every page.'],
@@ -53,7 +55,7 @@ const crew = [
       {gx.map((x) => <path class="lk lk--ppl" d={`M${x} ${468}C${x} ${506} ${500} ${470} ${500} ${506}`} />)}
     </svg>
     <div class="eng-agents" aria-hidden="true">
-      {agents.map((g) => <span class:list={['ag', `ag--${g.a}`, { 'ag--dim': g.dim }]} style={`left:${g.x / 10}%;top:${g.y}px`}><span class="ag-l mono">{g.name}{g.dim && <span class="ag-cw"> · client work</span>}</span><i class="ag-n" data-agent></i></span>)}
+      {agents.map((g) => <span class:list={['ag', `ag--${g.a}`, { 'ag--dim': g.dim }]} style={`left:${g.x / 10}%;top:${g.y}px`}><span class="ag-l mono">{g.name}{g.dim && <span class="ag-cw"><span class="ag-sep"> · </span>client work</span>}</span><i class="ag-n" data-agent></i></span>)}
       <span class="ag ag--tool" style={`left:${tool.x / 10}%;top:${tool.y}px`}><span class="ag-l mono" data-tool>{tool.name}</span></span>
     </div>
     <ol class="pipe" data-pipe-anchor aria-label="Eight stations, idea to live">
@@ -95,12 +97,12 @@ const crew = [
   .eng-agents { position: absolute; inset: 0; }
   .ag { position: absolute; display: grid; justify-items: center; gap: 6px; translate: -50% 0; white-space: nowrap; }
   .ag--start { justify-items: start; translate: -8px 0; }
-  .ag-l { font-size: 11px; color: var(--gray-200); letter-spacing: .12em; }
+  .ag-l { padding: 0 4px; font-size: 11px; color: var(--gray-200); letter-spacing: .12em; background: var(--black); }
   .ag--dim .ag-l { color: var(--gray-400); }
   .ag-cw { color: var(--gray-400); }
   .ag-n { width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--gray-400); background: var(--black); }
   .ag--start .ag-n { margin-left: 5px; }
-  .ag--tool .ag-l { padding: 4px 8px; border: 1px dashed var(--gray-500); color: var(--gray-300); }
+  .ag--tool .ag-l { padding: 4px 8px; background: var(--black); border: 1px dashed var(--gray-500); color: var(--gray-300); }
   /* spine: 8 equal columns; the node sits on the line at y=300 */
   .pipe { position: absolute; left: 0; right: 0; top: 0; display: grid; grid-template-columns: repeat(8, 1fr); }
   .pipe::before { content: ''; position: absolute; left: 6.25%; right: 6.25%; top: 300px; height: 1px; background: var(--gray-700); }
@@ -135,6 +137,12 @@ const crew = [
   .crew-i { display: grid; gap: .35rem; align-content: start; }
   .crew dt { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 1.05rem; }
   .crew dd { font-size: .92rem; line-height: 1.5; }
+  /* 1024–1279: The Hunter's client-work tag drops to a second line (lifted one line, so the node stays put) and clears Build Brief Architect */
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .ag--start { margin-top: -18px; }
+    .ag--start .ag-sep { display: none; }
+    .ag--start .ag-cw { display: block; }
+  }
   /* 768–1023: horizontal spine, labels alternate above/below, agents + links step out (the crew list carries them) */
   @media (max-width: 1023px) {
     .eng-band { height: 410px; }

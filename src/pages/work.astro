@@ -81,7 +81,7 @@ const schema = [
   @media (max-width: 1023px) { .w-hero-in { grid-template-columns: 1fr; } .w-hero h1 { font-size: clamp(2.75rem, 7vw, 3.6rem); } }
   @media (max-width: 479px) { .w-hero h1 { font-size: min(2.75rem, 11.4vw); } } /* "Real businesses." stays one line at 375/390 */
   .w-deck { max-width: 52ch; }
-  .w-lab { grid-column: 2; margin-top: -.25rem; } .w-lab .link { text-transform: none; letter-spacing: .04em; }
+  .w-lab { grid-column: 2; margin-top: -.25rem; } .w-lab .link { display: inline-block; padding-block: 13px; margin-block: -13px; background-clip: content-box; text-transform: none; letter-spacing: .04em; }
   @media (max-width: 1023px) { .w-lab { grid-column: 1; } }
   .w-list { padding-top: 16px; }
   .w-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2rem; }
