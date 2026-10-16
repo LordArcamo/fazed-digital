@@ -88,6 +88,7 @@ export async function start(g: Gate, flags: Flags) {
     return shots.get(id)!;
   };
 
+  const within = (el: Element | null | undefined, sel: string) => (el && (el.matches(sel) ? el : el.querySelector(sel))) || document.querySelector(sel);
   const build = (id: string, el?: Element | null): F.Formation | null => {
     const v = view();
     const vmin = Math.min(v.w, v.h);
@@ -112,12 +113,12 @@ export async function start(g: Gate, flags: Flags) {
         return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95));
       }
       case 'path4': {
-        const r = rectOf(document.querySelector('[data-path-anchor]'));
+        const r = rectOf(within(el, '[data-path-anchor]'));
         if (!r) return null;
         return attach(F.path4({ left: r.left, top: r.top - 40, width: r.width, height: 60 }, n, v, !desktop()));
       }
       case 'globe': {
-        const gel = document.querySelector('[data-globe]');
+        const gel = within(el, '[data-globe]');
         const r = rectOf(gel);
         if (!r || !land) return null;
         const R = Math.min(r.width, r.height) * 0.46;
@@ -127,13 +128,13 @@ export async function start(g: Gate, flags: Flags) {
       }
       case 'rings': {
         if (v.w < 768) return F.lattice(v, n);
-        const r = rectOf(document.querySelector('[data-rings-anchor]'));
+        const r = rectOf(within(el, '[data-rings-anchor]'));
         if (!r) return null;
         ringsC = { x: r.left + r.width / 2, y: r.top + r.height / 2 + scrollY() };
-        return attach(F.rings({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, Math.min(vmin, r.width * 1.25), n, v, 4, person));
+        return attach(F.rings({ x: r.left + r.width / 2, y: r.top + r.height / 2 }, Math.min(vmin, r.width * (el?.matches?.('.a-hero') ? 0.85 : 1.25)), n, v, 4, person));
       }
       case 'node': {
-        const r = rectOf(document.querySelector('[data-node-anchor]'));
+        const r = rectOf(within(el, '[data-node-anchor]'));
         if (!r) return null;
         return attach(F.node({ x: r.left, y: r.top }, n, v));
       }
@@ -372,7 +373,7 @@ export async function start(g: Gate, flags: Flags) {
     }
     if (beat === 'node' && Math.floor(t / 2.4) !== lastPulse) {
       lastPulse = Math.floor(t / 2.4);
-      const r = document.querySelector('[data-node-anchor]')?.getBoundingClientRect();
+      const r = within(beatEl, '[data-node-anchor]')?.getBoundingClientRect();
       if (r) field.ripple(r.left, r.top, 0.7);
     }
     field.tick(dt, t);

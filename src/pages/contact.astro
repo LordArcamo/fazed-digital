@@ -1,167 +1,88 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Cursor from '../components/Cursor';
-import Nav from '../components/Nav';
-import Footer from '../components/Footer';
-import ContactSection from '../components/ContactSection';
-import AnimatedText from '../components/AnimatedText';
-import MarqueeSection from '../components/MarqueeSection';
-import ContactHeroAnim from '../components/ContactHeroAnim';
-
-const faqs = [
-  { q: 'How much does a website cost?', a: 'Every project is scoped individually. A typical website ranges from $5,000–$25,000+ depending on scope, functionality, and timeline. We provide a detailed quote after our initial discovery call — no commitment required.' },
-  { q: 'How long does a project take?', a: "Brand identity projects typically take 4–6 weeks. Websites range from 4 weeks for simpler builds to 12+ weeks for complex builds. We give you a clear timeline in the proposal before anything starts." },
-  { q: 'Do you work with clients outside Iligan City?', a: 'Absolutely. We work with clients across the Philippines and internationally. We\'re set up for seamless remote collaboration with clear processes, regular video check-ins, and detailed async communication.' },
-  { q: 'Do you offer ongoing support?', a: 'Yes — we offer monthly maintenance and support packages for websites, and SEO retainer arrangements for continued growth. Ask us about options during your discovery call.' },
-  { q: 'What do I need to get started?', a: 'Just a conversation. We\'ll ask about your business, goals, and budget, then put together a proposal. No long intake forms or upfront homework required.' },
-  { q: 'Do you work with startups?', a: 'Yes. We love working with early-stage businesses that need to establish a credible, professional presence quickly. We have streamlined packages designed for founders who need to move fast without cutting corners.' },
+import Base from '../layouts/Base.astro';
+import ContactForm from '../components/ContactForm.astro';
+import Faq from '../components/Faq.astro';
+import { NAP, SITE_URL } from '../data/site';
+import { capsCopy } from '../data/proof';
+import { crumbs, faqPage, ORG_REF } from '../lib/schema';
+const faq = [
+  { q: 'How much does a website cost?', a: 'It depends on scope, so we quote every custom project individually. A typical custom website or system runs $5,000–$20,000 depending on features and timeline. If you need something fast and simple, our 7-day packages start at $499 (₱19,999 in the Philippines). You get a detailed quote after the discovery call, with no commitment.' },
+  { q: 'How long does a project take?', a: 'Brand identity projects usually take 4–6 weeks. Websites take 4 weeks for simpler builds and 12+ weeks for complex ones. The proposal gives you a clear timeline before anything starts.' },
+  { q: 'Do you work with clients outside Iligan City?', a: 'Yes. Most of our case studies are for clients abroad. We work across the Philippines, the USA and Australia, with clear milestones, regular video check-ins and detailed written updates.' },
+  { q: 'Do you offer ongoing support?', a: 'Yes. We offer monthly maintenance and support plans for websites (from $99/month or ₱3,500/month), and SEO retainers for continued growth. Ask about options on your discovery call.' },
+  { q: 'What do I need to get started?', a: 'Just a conversation. We’ll ask about your business, goals and budget, then put together a proposal. The discovery call is optional: if you’d rather not meet, we can do it all by email. No long intake forms, no homework.' },
+  { q: 'Do you work with startups?', a: 'Yes. We like working with early-stage businesses that need a credible presence quickly. CrateOnScene went from idea to live platform in 5 weeks.' },
+  { q: 'Will I own my website and domain?', a: 'Yes. Your domain is registered in your name, and you get admin access to hosting and the site. Design files and content are yours once paid for.' },
+];
+const next = [
+  ['01', 'We read it', 'A real person reads your brief. No auto-responder sales funnel.'],
+  ['02', 'We reply', 'Within one business day, with questions, a rough scope or an honest “we’re not the right fit”.'],
+  ['03', 'We scope it', 'An optional discovery call (or just email), then an itemised proposal and timeline before anything starts. No commitment.'],
+];
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'ContactPage', url: `${SITE_URL}/contact`, name: 'Contact Fazed Digital', about: ORG_REF },
+  faqPage(faq),
+  crumbs([['Contact', '/contact']]),
 ];
 ---
-
-<Layout
-  title="Contact Fazed Digital | Get a Free Web Design Quote"
-  description="Get a free quote for web design, branding or SEO from Fazed Digital. Based in Iligan City, Philippines and working with clients worldwide. We reply within one business day."
-  image="/og/contact.png"
-  page="contact"
-  schema={{
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(({ q, a }) => ({
-      "@type": "Question",
-      "name": q,
-      "acceptedAnswer": { "@type": "Answer", "text": a }
-    }))
-  }}
->
-  <Cursor client:only="react" />
-  <Nav client:only="react" currentPath="/contact" />
-
-  <main>
-    <!-- Hero -->
-    <section style="min-height: 40svh; display: flex; flex-direction: column; justify-content: flex-end; padding: clamp(2rem,6vw,6rem); padding-top: 10rem; background: var(--black); overflow: hidden; position: relative; border-bottom: 1px solid var(--border);">
-      <div aria-hidden style="position: absolute; inset: 0; background: radial-gradient(ellipse at 20% 60%, rgba(255,255,255,0.03) 0%, transparent 50%); pointer-events: none;"></div>
-      <!-- Location pin + signal animation -->
-      <div aria-hidden style="position: absolute; right: 0; top: 50%; transform: translateY(-50%); width: min(42%, 380px); aspect-ratio: 1.07; pointer-events: none; opacity: 0.65; z-index: 0;">
-        <ContactHeroAnim client:only="react" />
-      </div>
-      <div style="position: relative; z-index: 1;">
-        <div class="label" style="margin-bottom: 1.5rem;">Get In Touch</div>
-        <AnimatedText
-          client:only="react"
-          text="Let's build something great."
-          as="h1"
-          className="display-lg"
-          style={{ marginBottom: '2rem' }}
-        />
-        <div class="contact-hero-info" style="display: flex; gap: 3rem; flex-wrap: wrap;">
-          {[
-            { label: 'Email',    value: 'info@fazeddigital.com', href: 'mailto:info@fazeddigital.com' },
-            { label: 'Phone',   value: '+63 906 825 3451',       href: 'tel:+639068253451' },
-            { label: 'Hours',   value: 'Mon–Fri 8:30am–5:00pm' },
-            { label: 'Location', value: 'Iligan City, PH' },
-          ].map(item => (
-            <div>
-              <div class="label" style="margin-bottom: 0.25rem;">{item.label}</div>
-              {item.href
-                ? <a href={item.href} style="color: var(--white); font-weight: 500; font-size: 0.975rem;">{item.value}</a>
-                : <span style="color: var(--gray-300); font-size: 0.975rem;">{item.value}</span>
-              }
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-
-    <MarqueeSection client:only="react" />
-
-    <ContactSection client:visible />
-
-    <!-- FAQ -->
-    <section class="section" style="background: var(--gray-900); border-top: 1px solid var(--border);">
-      <div class="container">
-        <div class="faq-grid" style="display: grid; grid-template-columns: 1fr 2fr; gap: clamp(3rem,6vw,8rem); align-items: start;">
-          <div class="faq-sticky" style="position: sticky; top: 8rem;">
-            <div class="label" style="margin-bottom: 1.25rem;">FAQ</div>
-            <AnimatedText
-              client:visible
-              text="Common questions answered."
-              as="h2"
-              className="display-sm"
-            />
-          </div>
-          <div>
-            {faqs.map((item, i) => (
-              <div class="faq-item" style="border-top: 1px solid var(--border);">
-                <button class="faq-summary" aria-expanded="false" style="width: 100%; background: none; border: none; font-family: var(--font-display); font-size: clamp(1rem,1.8vw,1.35rem); font-weight: 600; letter-spacing: -0.01em; cursor: none; display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding: 1.5rem 0; text-align: left; color: var(--white);">
-                  {item.q}
-                  <span class="faq-icon" style="display:flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);color:var(--gray-400);font-size:1rem;flex-shrink:0;font-family:var(--font-mono);transition:border-color 0.25s,color 0.25s;">+</span>
-                </button>
-                <div class="faq-body" style="overflow:hidden;height:0;">
-                  <p class="body" style="color: var(--gray-400); padding-bottom: 1.75rem; max-width: 58ch; line-height: 1.75;">
-                    {item.a}
-                  </p>
-                </div>
-              </div>
-            ))}
-            <div style="border-top: 1px solid var(--border);"></div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <Footer client:visible />
-</Layout>
-
-<script>
-  import { gsap } from 'gsap';
-
-  document.querySelectorAll<HTMLDivElement>('.faq-item').forEach(item => {
-    const btn  = item.querySelector<HTMLButtonElement>('.faq-summary')!;
-    const body = item.querySelector<HTMLDivElement>('.faq-body')!;
-    let isOpen = false;
-    let tween: gsap.core.Tween | null = null;
-
-    btn.addEventListener('click', () => {
-      if (tween) tween.kill();
-
-      if (!isOpen) {
-        // Open: measure full height, animate from 0
-        gsap.set(body, { height: 'auto', overflow: 'visible' });
-        const h = body.scrollHeight;
-        gsap.set(body, { height: 0, overflow: 'hidden' });
-        tween = gsap.to(body, { height: h, duration: 0.45, ease: 'power3.out', onComplete: () => {
-          gsap.set(body, { height: 'auto', overflow: 'visible' });
-        }});
-        item.classList.add('is-open');
-        btn.setAttribute('aria-expanded', 'true');
-      } else {
-        // Close
-        gsap.set(body, { height: body.offsetHeight, overflow: 'hidden' });
-        tween = gsap.to(body, { height: 0, duration: 0.38, ease: 'power3.inOut' });
-        item.classList.remove('is-open');
-        btn.setAttribute('aria-expanded', 'false');
-      }
-      isOpen = !isOpen;
-    });
-  });
-</script>
-
+<Base title="Contact Fazed Digital | Get a Free Web Design Quote" description="Get a free quote for web design, branding or SEO. Based in Iligan City, Philippines, working with clients worldwide. We reply within one business day." formation="node" schema={schema} current="/contact">
+  <section class="ct-hero" data-f="node" aria-labelledby="ct-h">
+    <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
+    <span class="ct-ring poster-art" aria-hidden="true"></span>
+    <div class="container ct-in">
+      <p class="mono">Signal · {NAP.coords} · Iligan City, PH</p>
+      <h1 id="ct-h" class="t-d1">Let’s build something great.</h1>
+      <p class="t-body-l ct-deck">Tell us what you need and when you need it. A real person replies within one business day, Monday to Friday.</p>
+      <dl class="ct-cells">
+        <div><dt class="mono">Email</dt><dd><a class="link" href={`mailto:${NAP.email}`} aria-label={`Email Fazed Digital at ${NAP.email}`}>{NAP.email}</a></dd></div>
+        <div><dt class="mono">Phone</dt><dd><a class="link" href={`tel:${NAP.tel}`} aria-label={`Call Fazed Digital on ${NAP.phone}`}>{NAP.phone}</a></dd></div>
+        <div><dt class="mono">Hours</dt><dd>Mon–Fri, 8:30am–5:00pm (PHT, UTC+8)</dd></div>
+        <div><dt class="mono">Studio</dt><dd>Iligan City, Lanao del Norte, Philippines</dd></div>
+      </dl>
+      <p class="ct-small">Outside our hours? Send the form anyway. It’ll be first in the queue the next working morning.</p>
+    </div>
+  </section>
+  <section class="section container ct-next" aria-labelledby="n-h">
+    <h2 id="n-h" class="t-d2">What happens after you hit send</h2>
+    <ol>{next.map(([n, t, b]) => <li class="rv"><span class="ct-node" aria-hidden="true"></span><span class="mono">{n}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+  </section>
+  <section class="section container ct-form" id="brief" aria-label="Send us your brief">
+    <div class="ct-form-side"><p class="mono ct-cap">{capsCopy.custom}</p><p>Need a simple site live this week? <a class="link" href="/lp/7-day-website">Get live in 7 days</a> · <a class="link" href="/lp/7-day-website/ph">See peso pricing (₱)</a></p></div>
+    <ContactForm id="contact-cf" />
+  </section>
+  <section class="section container ct-faq" data-f="lattice" aria-labelledby="f-h">
+    <div><p class="mono">FAQ · 07</p><h2 id="f-h" class="t-d2">Questions, answered.</h2></div>
+    <Faq items={faq} id="cfaq" />
+  </section>
+</Base>
 <style>
-  .faq-summary { transition: color 0.2s; }
-  .faq-summary:hover { color: var(--white); }
-  .faq-summary:hover .faq-icon { border-color: var(--gray-400) !important; color: var(--white) !important; }
-  .faq-item.is-open .faq-icon { transform: rotate(45deg); border-color: var(--white) !important; color: var(--white) !important; }
-  @media (max-width: 768px) {
-    .faq-grid { grid-template-columns: 1fr !important; }
-    .faq-sticky { position: static !important; }
+  .ct-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 160px); padding-bottom: 72px; }
+  .node-anchor { position: absolute; left: 74%; top: 45%; width: 1px; height: 1px; }
+  .ct-ring { position: absolute; left: 74%; top: 45%; width: 18px; height: 18px; margin: -9px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 31px transparent, 0 0 0 32px var(--lime-25), 0 0 0 71px transparent, 0 0 0 72px var(--lime-12), 0 0 0 111px transparent, 0 0 0 112px rgba(201,255,87,.06); }
+  .ct-in { display: grid; gap: 1.5rem; }
+  .ct-in h1 { max-width: 11ch; }
+  .ct-deck { max-width: 44ch; }
+  .ct-cells { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 1rem 3rem; margin-top: 1rem; }
+  .ct-cells dd { margin-top: .3rem; color: var(--gray-200); font-size: 1.1rem; }
+  .ct-cells a { display: inline-flex; min-height: 44px; align-items: center; }
+  .ct-small { color: var(--gray-400); font-size: .95rem; }
+  .ct-next { display: grid; gap: 3rem; }
+  .ct-next ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
+  .ct-next li { display: grid; gap: .6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); position: relative; }
+  .ct-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); }
+  .ct-form { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; padding-top: 0; }
+  .ct-form-side { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
+  .ct-form > :global(.cf) { grid-column: 6 / span 7; }
+  .ct-cap { color: var(--lime); }
+  .ct-faq { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
+  .ct-faq > div:first-child { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
+  .ct-faq > :global(.faq) { grid-column: 6 / span 7; }
+  @media (max-width: 1023px) {
+    .ct-cells { grid-template-columns: 1fr 1fr; }
+    .ct-next ol { grid-template-columns: 1fr; }
+    .ct-form > *, .ct-faq > * { grid-column: 1 / -1 !important; }
+    .node-anchor, .ct-ring { left: 50%; top: 150px; }
+    .ct-hero { align-items: flex-end; padding-top: 300px; }
   }
-  /* Hero info row on mobile: 4-item flex → 2-col grid */
-  @media (max-width: 640px) {
-    .contact-hero-info { gap: 1.5rem !important; display: grid !important; grid-template-columns: 1fr 1fr !important; }
-  }
-  /* FAQ button: restore pointer cursor on touch devices */
-  @media (pointer: coarse) {
-    .faq-summary { cursor: pointer !important; }
-  }
+  @media (max-width: 599px) { .ct-cells { grid-template-columns: 1fr; } }
 </style>

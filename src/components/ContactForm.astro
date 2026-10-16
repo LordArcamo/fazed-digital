@@ -58,6 +58,7 @@ const budgets = ['$1,000–$3,000', '$3,000–$5,000', '$5,000–$10,000', '$10,
   .cf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 1.5rem; }
   .cf-fine { font-size: .85rem; color: var(--gray-400); max-width: 52ch; }
   .cf-ok { display: grid; gap: 1rem; }
+  .cf-ok[hidden], .cf form[hidden] { display: none; }
   .cf-ok-links { display: flex; flex-wrap: wrap; gap: .75rem; }
   @media (max-width: 767px) { .cf-grid { grid-template-columns: 1fr; } }
 </style>
