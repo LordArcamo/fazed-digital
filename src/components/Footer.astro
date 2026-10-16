@@ -1,0 +1,63 @@
+---
+import { NAP, SOCIALS, BUILD_YEAR } from '../data/site';
+const cols = [
+  { h: 'Services', links: [['Web design', '/services#web'], ['Brand identity', '/services#brand'], ['SEO marketing', '/services#seo'], ['Product design', '/services#product'], ['Custom systems', '/services#systems'], ['7-day website', '/lp/7-day-website']] },
+  { h: 'Studio', links: [['About', '/about'], ['Work', '/work'], ['Blog', '/blog'], ['Contact', '/contact']] },
+];
+---
+<footer class="ftr page" id="footer">
+  <div class="container">
+    <div class="ftr-top">
+      <p class="ftr-line">Web design, branding and SEO from Iligan City, Philippines, for businesses everywhere.</p>
+      <a href="/lp/7-day-website" class="btn btn--lime" data-magnetic>Get live in 7 days <span class="arrow" aria-hidden="true">→</span></a>
+    </div>
+    <div class="ftr-grid">
+      {cols.map((c) => (
+        <nav aria-label={c.h}>
+          <h2 class="mono">{c.h}</h2>
+          <ul>{c.links.map(([l, h]) => <li><a class="ftr-a" href={h}>{l}</a></li>)}</ul>
+        </nav>
+      ))}
+      <div>
+        <h2 class="mono">Contact</h2>
+        <ul>
+          <li><a class="ftr-a" href={`mailto:${NAP.email}`}>{NAP.email}</a></li>
+          <li><a class="ftr-a" href={`tel:${NAP.tel}`}>{NAP.phone}</a></li>
+          <li class="ftr-t">Mon–Fri 8:30am–5:00pm PHT</li>
+          <li class="ftr-t">Iligan City, Lanao del Norte, PH</li>
+        </ul>
+      </div>
+      <div>
+        <h2 class="mono">Follow</h2>
+        <ul>{SOCIALS.map((s) => <li><a class="ftr-a" href={s.href} target="_blank" rel="noopener">{s.label}<span class="sr-only"> (opens in a new tab)</span></a></li>)}</ul>
+        <h2 class="mono ftr-h2b">Legal</h2>
+        <ul>
+          <li><a class="ftr-a" href="/privacy">Privacy policy</a></li>
+          <li><a class="ftr-a" href="/terms">Terms of service</a></li>
+          <li><button class="ftr-a" type="button" data-cookie-settings>Cookie settings</button></li>
+        </ul>
+      </div>
+    </div>
+    <div class="ftr-word" aria-hidden="true" data-wordmark>FAZED</div>
+    <div class="ftr-bar">
+      <p class="mono">© {BUILD_YEAR} Fazed Digital · Est. 2022 · Iligan City, PH · {NAP.coords}</p>
+      <p class="mono">Clash Display · Plus Jakarta Sans · Space Mono · Astro · three.js · Built in Iligan City</p>
+      <a class="ftr-a mono" href="#main">Back to top ↑</a>
+    </div>
+  </div>
+</footer>
+<style>
+  .ftr { padding-top: var(--section); border-top: 1px solid var(--gray-700); background: linear-gradient(transparent, rgba(9,9,9,.6) 30%); }
+  .ftr-top { display: flex; justify-content: space-between; align-items: end; gap: 2rem; flex-wrap: wrap; padding-bottom: 72px; }
+  .ftr-line { font-family: var(--font-display); font-weight: 500; color: var(--white); font-size: var(--fs-h3); max-width: 28ch; line-height: 1.2; }
+  .ftr-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); padding-bottom: 48px; }
+  .ftr-grid h2 { margin-bottom: .75rem; font-weight: 400; }
+  .ftr-h2b { margin-top: 1.5rem; }
+  .ftr-a { display: inline-flex; align-items: center; min-height: 44px; color: var(--gray-300); transition: color .2s; text-align: left; }
+  .ftr-a:hover { color: var(--lime); }
+  .ftr-t { min-height: 44px; display: flex; align-items: center; color: var(--gray-400); }
+  .ftr-word { font-family: var(--font-display); font-weight: 700; font-size: clamp(5rem, 24vw, 22rem); line-height: .8; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1px var(--gray-700); text-align: center; user-select: none; margin: 24px 0 48px; }
+  :global(html.gl-live) .ftr-word.gl-owned { -webkit-text-stroke-color: transparent; }
+  .ftr-bar { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; align-items: center; padding: 24px 0 32px; border-top: 1px solid var(--gray-700); }
+  @media (max-width: 1023px) { .ftr-grid { grid-template-columns: repeat(2, 1fr); row-gap: 2.5rem; } }
+</style>

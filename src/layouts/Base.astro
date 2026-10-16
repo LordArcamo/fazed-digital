@@ -1,0 +1,119 @@
+---
+import { ClientRouter } from 'astro:transitions';
+import Analytics from '@vercel/analytics/astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CookieBanner from '../components/CookieBanner.astro';
+import { SITE_URL, NAP, SOCIALS, FOUNDED } from '../data/site';
+import '../styles/base.css';
+
+export interface Props {
+  title: string;
+  description: string;
+  image?: string;
+  /** field formation id for this route (routes.ts); "none" = poster lattice only */
+  formation?: string;
+  schema?: object | object[];
+  noindex?: boolean;
+  current?: string;
+  bodyClass?: string;
+}
+const { title, description, image = '/og/home.png', formation = 'lattice', schema, noindex = false, current = '', bodyClass = '' } = Astro.props;
+const path = Astro.url.pathname.replace(/\/$/, '') || '/';
+const canonical = SITE_URL + (path === '/' ? '/' : path);
+const ogImage = new URL(image, SITE_URL).toString();
+
+const org = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ProfessionalService',
+      '@id': `${SITE_URL}/#organization`,
+      name: NAP.name,
+      url: `${SITE_URL}/`,
+      foundingDate: String(FOUNDED),
+      logo: `${SITE_URL}/favicon.svg`,
+      image: `${SITE_URL}/og/home.png`,
+      email: NAP.email,
+      telephone: NAP.tel,
+      address: { '@type': 'PostalAddress', addressLocality: NAP.city, addressRegion: NAP.region, addressCountry: NAP.countryCode },
+      geo: { '@type': 'GeoCoordinates', latitude: '8.2280', longitude: '124.2452' },
+      description: 'Fazed Digital is a web design, branding and SEO studio in Iligan City, Northern Mindanao, Philippines, building websites, brands and web apps for clients in the USA, Australia and the Philippines.',
+      openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:30', closes: '17:00' }],
+      priceRange: '$499–$20,000',
+      areaServed: [{ '@type': 'Country', name: 'Philippines' }, { '@type': 'Country', name: 'United States' }, { '@type': 'Country', name: 'Australia' }],
+      contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: NAP.email, telephone: NAP.tel, availableLanguage: ['English'] },
+      knowsAbout: ['Web design', 'Brand identity', 'Search engine optimisation', 'Product design', 'Custom software development', 'WordPress', 'Astro', 'PrestaShop'],
+      founder: { '@type': 'Person', name: 'Lord Arcamo', jobTitle: 'Founder' },
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog', name: 'Digital Agency Services',
+        itemListElement: ['Web Design & Development', 'Brand Identity', 'SEO Marketing', 'Product Design', 'Custom Systems'].map((n) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: n } })),
+      },
+      sameAs: SOCIALS.map((s) => s.href),
+    },
+    { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: 'Fazed Digital', inLanguage: 'en', publisher: { '@id': `${SITE_URL}/#organization` } },
+  ],
+};
+const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
+---
+<!doctype html>
+<html lang="en" data-formation={formation}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>{title}</title>
+  <meta name="description" content={description} />
+  {noindex ? <meta name="robots" content="noindex, follow" /> : <><meta name="robots" content="index, follow" /><link rel="canonical" href={canonical} /></>}
+  <meta name="author" content="Fazed Digital" />
+  <meta name="theme-color" content="#090909" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={canonical} />
+  <meta property="og:title" content={title} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content={`${title.split('|')[0].trim()}: Fazed Digital, web design and branding studio in Iligan City, Philippines`} />
+  <meta property="og:site_name" content="Fazed Digital" />
+  <meta property="og:locale" content="en_PH" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:locale:alternate" content="en_AU" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content={title} />
+  <meta name="twitter:description" content={description} />
+  <meta name="twitter:image" content={ogImage} />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2" />
+  <link rel="preload" href="/fonts/clash/ClashDisplay-Semibold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="/fonts/plus-jakarta-sans-latin-wght-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <script is:inline>
+    // boot flags (≤1KB): js + reduced-motion + gl flags before first paint
+    (function(d){var h=d.documentElement,q=location.search;h.classList.add('js');
+    if(matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('rm');
+    if(/[?&]record/.test(q))h.classList.add('record');
+    if(scrollY>24)h.classList.add('scrolled');})(document);
+  </script>
+  <ClientRouter fallback="swap" />
+  <script type="application/ld+json" set:html={JSON.stringify(org)} />
+  {pageSchema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
+  <slot name="head" />
+</head>
+<body class={bodyClass}>
+  <a class="skip" href="#main">Skip to content</a>
+  <div id="field-root" transition:persist="field" aria-hidden="true">
+    <div class="lattice"></div>
+    <canvas id="field"></canvas>
+  </div>
+  <div id="cursor" transition:persist="cursor" aria-hidden="true"><div class="cur-ring"><span class="cur-label"></span></div><div class="cur-dot"></div></div>
+  <Header current={current} />
+  <main id="main" class="page" tabindex="-1">
+    <slot />
+  </main>
+  <Footer />
+  <CookieBanner />
+  <div id="route-announcer" class="sr-only" aria-live="polite"></div>
+  <Analytics />
+  <script>
+    import '../boot/main';
+  </script>
+</body>
+</html>

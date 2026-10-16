@@ -143,3 +143,162 @@ export function shot(id: string, rect: { left: number; top: number; width: numbe
   const size = Math.max(1.4, Math.min(4, Math.min(pw, ph) * (densify > 1 ? 0.62 : 0.8)));
   return pack(id, pts, n, v, size, [rect.left + rect.width / 2, rect.top], 7);
 }
+
+/* ── helpers ─────────────────────────────────────────────────────────────── */
+type P2 = { x: number; y: number };
+const line = (out: Pt[], a: P2, b: P2, pitch: number, tone: number, alpha = 1) => {
+  const len = Math.hypot(b.x - a.x, b.y - a.y), n = Math.max(1, Math.floor(len / pitch));
+  for (let i = 0; i <= n; i++) out.push([a.x + ((b.x - a.x) * i) / n, a.y + ((b.y - a.y) * i) / n, 0, tone, alpha]);
+};
+const cluster = (out: Pt[], c: P2, r: number, count: number, tone: number, seed: number) => {
+  const rr = rng(seed);
+  for (let i = 0; i < count; i++) {
+    const a = rr() * Math.PI * 2, d = Math.sqrt(rr()) * r;
+    out.push([c.x + Math.cos(a) * d, c.y + Math.sin(a) * d, 0, tone, 1]);
+  }
+};
+
+/* ── glyphs (baked: 5 × stroke samples in a 280 box) ─────────────────────── */
+export interface Glyphs { pts: { x: number; y: number; lit: number }[][] }
+export function parseGlyphs(buf: ArrayBuffer): Glyphs {
+  const dv = new DataView(buf);
+  const counts = [0, 1, 2, 3, 4].map((i) => dv.getUint16(i * 2, true));
+  let o = 10;
+  const pts = counts.map((c) => {
+    const arr = [];
+    for (let k = 0; k < c; k++) { arr.push({ x: dv.getUint16(o, true), y: dv.getUint16(o + 2, true), lit: dv.getUint8(o + 4) }); o += 5; }
+    return arr;
+  });
+  return { pts };
+}
+export const SERVICE_IDS = ['web', 'brand', 'seo', 'product', 'systems'];
+
+/* ── pentagon: 5 nodes + edges + spokes; the active node becomes its glyph ── */
+export function pentagon(c: P2, r: number, n: number, v: View, active = -1, glyphs?: Glyphs, glyphSize = 220): Formation {
+  const pts: Pt[] = [];
+  const nodes = [0, 1, 2, 3, 4].map((k) => {
+    const a = (-90 + k * 72) * (Math.PI / 180);
+    return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r };
+  });
+  for (let k = 0; k < 5; k++) {
+    line(pts, nodes[k], nodes[(k + 1) % 5], 6, 0.7);
+    line(pts, c, nodes[k], 6, 0.35, 0.8);
+  }
+  cluster(pts, c, 6, 30, 1.6, 9);
+  nodes.forEach((p, k) => {
+    if (k === active && glyphs) {
+      const g = glyphs.pts[k], s = glyphSize / 280;
+      for (const q of g) pts.push([p.x + (q.x - 140) * s, p.y + (q.y - 140) * s, 0, q.lit ? 2 : 1, 1]);
+    } else cluster(pts, p, k === active ? 14 : 9, 40, k === active ? 2 : 1, 20 + k);
+  });
+  return pack('pentagon', pts, n, v, 2.2, [c.x, c.y]);
+}
+
+/* ── globe: fibonacci sphere, land from the baked bitmask, z via layer ──── */
+export const GLOBE_N = 20480;
+export function fib(i: number, lon0 = 160) {
+  const ga = Math.PI * (3 - Math.sqrt(5));
+  const y = 1 - (i / (GLOBE_N - 1)) * 2;
+  const lat = Math.asin(y) * 180 / Math.PI;
+  let lon = ((i * ga * 180) / Math.PI) % 360;
+  if (lon > 180) lon -= 360;
+  return { lat, lon };
+}
+export function project(lat: number, lon: number, R: number, lon0 = 160) {
+  const p = lat * Math.PI / 180, l = (lon - lon0) * Math.PI / 180;
+  return { x: R * Math.cos(p) * Math.sin(l), y: -R * Math.sin(p), z: R * Math.cos(p) * Math.cos(l) };
+}
+export function globe(c: P2, R: number, land: Uint8Array, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  for (let i = 0; i < GLOBE_N; i++) {
+    const isLand = (land[i >> 3] >> (i & 7)) & 1;
+    if (!isLand && i % 3) continue; // thin the ocean
+    const { lat, lon } = fib(i);
+    const q = project(lat, lon, R);
+    pts.push([c.x + q.x, c.y + q.y, 2 + q.z / R, isLand ? 1 : 0.35, isLand ? 1 : 0.5]);
+  }
+  return pack('globe', pts, n, v, isFinite(R) && R < 260 ? 1.8 : 2.1, [c.x, c.y]);
+}
+
+/* ── rings: 3 concentric circles in a plane tilted 62°, + 4 person nodes ── */
+export function rings(c: P2, vmin: number, n: number, v: View, people = 4, activeP = -1): Formation {
+  const pts: Pt[] = [];
+  const radii = [0.18, 0.28, 0.4].map((k) => k * vmin);
+  const tilt = 62 * Math.PI / 180, Rmax = radii[2];
+  radii.forEach((r, ri) => {
+    const count = Math.round((2 * Math.PI * r) / 5);
+    for (let i = 0; i < count; i++) {
+      const t = (i / count) * Math.PI * 2;
+      const x = Math.cos(t) * r, y0 = Math.sin(t) * r;
+      pts.push([c.x + x, c.y + y0 * Math.cos(tilt), 2 + (y0 * Math.sin(tilt)) / Rmax, 0.55 + ri * 0.1, 1]);
+    }
+  });
+  for (let p = 0; p < people; p++) {
+    const r = radii[p % 3 === 0 ? 2 : p % 3], t = (p / people) * Math.PI * 2 + 0.6;
+    const x = Math.cos(t) * r, y0 = Math.sin(t) * r;
+    const rr = rng(40 + p), lit = p === activeP;
+    for (let k = 0; k < (lit ? 120 : 36); k++) {
+      const a = rr() * Math.PI * 2, d = Math.sqrt(rr()) * (lit ? 16 : 7);
+      pts.push([c.x + x + Math.cos(a) * d, c.y + y0 * Math.cos(tilt) + Math.sin(a) * d, 2 + (y0 * Math.sin(tilt)) / Rmax, lit ? 2 : 1.4, 1]);
+    }
+  }
+  cluster(pts, c, 5, 24, 2, 77);
+  return pack('rings', pts, n, v, 2.1, [c.x, c.y]);
+}
+
+/* ── node: everything collapses into one 18px lime node + 3 signal rings ── */
+export function node(c: P2, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  cluster(pts, c, 9, 420, 2, 5);
+  [40, 80, 120].forEach((r, i) => {
+    const count = Math.round((2 * Math.PI * r) / 4);
+    for (let k = 0; k < count; k++) {
+      const t = (k / count) * Math.PI * 2;
+      pts.push([c.x + Math.cos(t) * r, c.y + Math.sin(t) * r, 0, 1.2 - i * 0.25, 0.7 - i * 0.18]);
+    }
+  });
+  return pack('node', pts, n, v, 2, [c.x, c.y]);
+}
+
+/* ── path4: 4 nodes on one cubic path ───────────────────────────────────── */
+export function path4(rect: { left: number; top: number; width: number; height: number }, n: number, v: View, vertical = false, lit = 4): Formation {
+  const pts: Pt[] = [];
+  const P = vertical
+    ? [{ x: rect.left + rect.width * 0.12, y: rect.top }, { x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.33 }, { x: rect.left - rect.width * 0.2, y: rect.top + rect.height * 0.66 }, { x: rect.left + rect.width * 0.12, y: rect.top + rect.height }]
+    : [{ x: rect.left, y: rect.top + rect.height * 0.7 }, { x: rect.left + rect.width * 0.33, y: rect.top - rect.height * 0.2 }, { x: rect.left + rect.width * 0.66, y: rect.top + rect.height * 1.2 }, { x: rect.left + rect.width, y: rect.top + rect.height * 0.3 }];
+  const bez = (t: number) => {
+    const u = 1 - t;
+    return {
+      x: u * u * u * P[0].x + 3 * u * u * t * P[1].x + 3 * u * t * t * P[2].x + t * t * t * P[3].x,
+      y: u * u * u * P[0].y + 3 * u * u * t * P[1].y + 3 * u * t * t * P[2].y + t * t * t * P[3].y,
+    };
+  };
+  const N = 900;
+  for (let i = 0; i <= N; i++) { const q = bez(i / N); pts.push([q.x, q.y, 0, 0.9, 1]); }
+  [0, 1 / 3, 2 / 3, 1].forEach((t, k) => cluster(pts, bez(t), k < lit ? 12 : 8, 60, k < lit ? 2 : 1, 60 + k));
+  return pack('path4', pts, n, v, 2.2, [P[0].x, P[0].y]);
+}
+
+/* ── wordmark: "FAZED" mask (baked) fitted into a rect at a 5px pitch ───── */
+export function parseWordmark(buf: ArrayBuffer) {
+  const b = new Uint8Array(buf);
+  return { w: b[0] | (b[1] << 8), h: b[2] | (b[3] << 8), bits: b.subarray(4) };
+}
+export function wordmark(rect: { left: number; top: number; width: number; height: number }, m: { w: number; h: number; bits: Uint8Array }, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  const pitch = Math.max(4, Math.round(rect.width / 240));
+  const h = rect.width * (m.h / m.w), top = rect.top + (rect.height - h) / 2;
+  for (let y = top + pitch / 2; y < top + h; y += pitch) for (let x = rect.left + pitch / 2; x < rect.left + rect.width; x += pitch) {
+    const u = Math.floor(((x - rect.left) / rect.width) * m.w), vv = Math.floor(((y - top) / h) * m.h);
+    const i = vv * m.w + u;
+    if ((m.bits[i >> 3] >> (i & 7)) & 1) pts.push([x, y, 0, 0.45, 1]);
+  }
+  return pack('wordmark', pts, n, v, Math.min(3, pitch * 0.55), [rect.left + rect.width / 2, rect.top + rect.height / 2]);
+}
+
+/* ── scatter (404) ───────────────────────────────────────────────────────── */
+export function scatter(n: number, v: View, count = 2400): Formation {
+  const r = rng(404), pts: Pt[] = [];
+  for (let i = 0; i < count; i++) pts.push([r() * v.w, r() * v.h, 0, 0.3 + r() * 0.8, 0.8]);
+  return pack('scatter', pts, n, v, 2, [v.w / 2, v.h / 2]);
+}

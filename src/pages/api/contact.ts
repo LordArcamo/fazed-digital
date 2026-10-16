@@ -14,19 +14,24 @@ const SERVICE_LABELS: Record<string, string> = {
   brand:   'Brand Identity',
   seo:     'SEO Marketing',
   product: 'Product Design',
+  systems: 'Custom System / Web App',
+  '7day':  '7-Day Website Package',
+  unsure:  'Not Sure Yet',
   other:   'Other',
 };
 
 export const POST: APIRoute = async ({ request }) => {
   /* ── Parse body ─────────────────────────────────────────── */
-  let body: { name?: string; email?: string; service?: string; message?: string; captchaToken?: string };
+  let body: { name?: string; email?: string; service?: string; message?: string; company?: string; budget?: string; captchaToken?: string };
   try {
     body = await request.json();
   } catch {
     return json({ error: 'Invalid request' }, 400);
   }
 
-  const { name = '', email = '', service = '', message = '', captchaToken = '' } = body;
+  const { name = '', email = '', service = '', message = '', company = '', budget = '', captchaToken = '' } = body;
+  // optional fields are folded into the message so the HubSpot form needs no new properties
+  const fullMessage = [message, company && `Business: ${company}`, budget && `Budget: ${budget}`].filter(Boolean).join('\n\n');
 
   /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
   // TODO: re-enable hard block once correct secret key is confirmed in Vercel
@@ -66,11 +71,11 @@ export const POST: APIRoute = async ({ request }) => {
           { name: 'firstname', value: firstName },
           { name: 'lastname',  value: lastName  },
           { name: 'email',     value: email     },
-          { name: 'message',   value: message   },
+          { name: 'message',   value: fullMessage },
           { name: 'service_interest', value: serviceLabel },
         ],
         context: {
-          pageUri:  request.headers.get('referer') ?? 'https://fazeddigital.com/contact',
+          pageUri:  request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
           pageName: 'Fazed Digital — Contact',
         },
         legalConsentOptions: {

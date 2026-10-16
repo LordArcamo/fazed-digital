@@ -1,0 +1,17 @@
+---
+// copy/global.md [GLOBAL-COOKIE] · answers #26. GA4 only loads after "Accept analytics".
+---
+<div class="ck" id="cookie" role="region" aria-label="Cookie preferences" hidden>
+  <p>We use a few cookies to see which pages help people, and reCAPTCHA to keep spam out. No ads, no selling your data. <a class="link" href="/privacy">Read our privacy policy</a></p>
+  <div class="ck-btns">
+    <button class="btn btn--lime" type="button" data-consent="granted">Accept analytics</button>
+    <button class="btn btn--ghost" type="button" data-consent="denied">Essential only</button>
+  </div>
+  <p class="ck-toast mono" role="status" aria-live="polite"></p>
+</div>
+<style>
+  .ck { position: fixed; z-index: 60; right: 16px; bottom: 16px; max-width: min(440px, calc(100vw - 32px)); font-size: .9rem; background: var(--gray-900); border: 1px solid var(--gray-700); padding: 1.25rem 1.25rem 1rem; color: var(--gray-300); font-size: .95rem; }
+  .ck[hidden] { display: none; }
+  .ck-btns { display: flex; gap: .75rem; margin-top: 1rem; flex-wrap: wrap; }
+  .ck-toast:empty { display: none; }
+</style>

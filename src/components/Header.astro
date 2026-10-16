@@ -1,0 +1,94 @@
+---
+import Logo from './Logo.astro';
+import { NAP, SOCIALS } from '../data/site';
+const { current = '' } = Astro.props;
+const links = [
+  { href: '/work', label: 'Work' }, { href: '/services', label: 'Services' }, { href: '/about', label: 'About' },
+  { href: '/blog', label: 'Blog' }, { href: '/contact', label: 'Contact' },
+];
+const menu = [
+  { n: '01', href: '/', label: 'Home', hint: 'MARK · START HERE' },
+  { n: '02', href: '/work', label: 'Work', hint: '08 CASES · 3 COUNTRIES' },
+  { n: '03', href: '/services', label: 'Services', hint: '05 SERVICES · 01 SYSTEM' },
+  { n: '04', href: '/about', label: 'About', hint: '04 PEOPLE · EST. 2022' },
+  { n: '05', href: '/blog', label: 'Blog', hint: 'PRACTICAL GUIDES' },
+  { n: '06', href: '/contact', label: 'Contact', hint: 'REPLY IN 1 BUSINESS DAY' },
+];
+---
+<header class="hdr" id="hdr">
+  <div class="hdr-in container">
+    <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>
+    <nav class="hdr-nav" aria-label="Primary">
+      <ul>
+        {links.map((l) => <li><a href={l.href} class="hdr-link" aria-current={current === l.href ? 'page' : undefined}>{l.label}</a></li>)}
+      </ul>
+    </nav>
+    <a href="/lp/7-day-website" class="btn btn--lime hdr-cta" data-magnetic data-cursor="GO →">Get live in 7 days</a>
+    <button class="hdr-menu" id="menu-btn" aria-expanded="false" aria-controls="menu" aria-label="Open menu"><span class="hdr-menu-l">Menu</span><span class="hdr-burger" aria-hidden="true"><i></i><i></i></span></button>
+  </div>
+</header>
+<div class="menu" id="menu" role="dialog" aria-modal="true" aria-label="Site menu" hidden>
+  <div class="menu-in container">
+    <nav aria-label="Menu">
+      <ol class="menu-list">
+        {menu.map((m) => <li><a href={m.href} class="menu-link" aria-current={current === m.href ? 'page' : undefined}><span class="mono">{m.n}</span><span class="menu-label">{m.label}</span><span class="mono menu-hint" aria-hidden="true">{m.hint}</span></a></li>)}
+        <li><a href="/lp/7-day-website" class="menu-link menu-lit"><span class="mono">●</span><span class="menu-label">Get live in 7 days →</span><span class="mono menu-hint" aria-hidden="true">FROM $499 · ₱19,999</span></a></li>
+      </ol>
+    </nav>
+    <dl class="menu-info">
+      <div><dt class="mono">Email</dt><dd><a class="link" href={`mailto:${NAP.email}`}>{NAP.email}</a></dd></div>
+      <div><dt class="mono">Phone</dt><dd><a class="link" href={`tel:${NAP.tel}`}>{NAP.phone}</a></dd></div>
+      <div><dt class="mono">Hours</dt><dd>{NAP.hours}</dd></div>
+      <div><dt class="mono">Studio</dt><dd>Iligan City, PH · {NAP.coords}</dd></div>
+      <div><dt class="mono">Follow</dt><dd>{SOCIALS.map((s, i) => <>{i ? ' · ' : ''}<a class="link" href={s.href} rel="noopener" target="_blank">{s.label}<span class="sr-only"> (opens in a new tab)</span></a></>)}</dd></div>
+    </dl>
+    <p class="mono menu-esc" aria-hidden="true">ESC TO CLOSE</p>
+  </div>
+</div>
+<style>
+  .hdr { position: fixed; inset: 0 0 auto 0; z-index: 50; height: var(--header-h); transition: height .2s, background-color .2s, border-color .2s; border-bottom: 1px solid transparent; }
+  :global(html.scrolled) .hdr { height: 60px; background: rgba(9, 9, 9, .92); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border-bottom-color: var(--gray-700); }
+  .hdr-in { height: 100%; display: flex; align-items: center; gap: 2rem; }
+  .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; }
+  .hdr-nav { margin-left: auto; }
+  .hdr-nav ul { display: flex; gap: .25rem; }
+  .hdr-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 .85rem; color: var(--gray-300); font-weight: 500; font-size: .95rem; border-radius: 999px; transition: color .2s; position: relative; }
+  .hdr-link:hover, .hdr-link[aria-current='page'] { color: var(--white); }
+  .hdr-link[aria-current='page']::after { content: ''; position: absolute; left: 50%; bottom: 6px; width: 4px; height: 4px; border-radius: 50%; background: var(--lime); transform: translateX(-50%); }
+  .hdr-cta { min-height: 44px; font-size: .95rem; }
+  .hdr-menu { display: none; margin-left: auto; min-width: 48px; min-height: 48px; align-items: center; justify-content: center; gap: .7rem; padding: 0 .5rem; color: var(--white); font-weight: 600; }
+  .hdr-burger { display: inline-flex; flex-direction: column; gap: 6px; width: 22px; }
+  .hdr-burger i { display: block; height: 1.5px; background: currentColor; transition: transform .3s var(--ease-out); }
+  :global(html.menu-open) .hdr-burger i:first-child { transform: translateY(3.75px) rotate(45deg); }
+  :global(html.menu-open) .hdr-burger i:last-child { transform: translateY(-3.75px) rotate(-45deg); }
+  @media (max-width: 1023px) {
+    .hdr-nav, .hdr-cta { display: none; }
+    .hdr-menu { display: inline-flex; }
+  }
+  .menu { position: fixed; inset: 0; z-index: 45; background: rgba(9, 9, 9, .97); padding-top: calc(var(--header-h) + 24px); overflow-y: auto; }
+  .menu[hidden] { display: none; }
+  .menu-in { display: grid; grid-template-columns: 1.6fr 1fr; gap: 3rem; padding-bottom: 3rem; }
+  .menu-list { counter-reset: none; display: grid; gap: .1rem; }
+  .menu-link { display: grid; grid-template-columns: 3rem 1fr; align-items: baseline; gap: 1rem; padding: .35rem 0; min-height: 44px; }
+  .menu-label { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.25rem, 6vw, 5.5rem); line-height: 1; letter-spacing: -.03em; color: var(--white); transition: color .2s; }
+  .menu-hint { grid-column: 2; opacity: 0; transform: translateY(-4px); transition: opacity .2s, transform .2s; }
+  .menu-link:hover .menu-label, .menu-link:focus-visible .menu-label, .menu-link[aria-current='page'] .menu-label { color: var(--lime); }
+  .menu-link:hover .menu-hint, .menu-link:focus-visible .menu-hint { opacity: 1; transform: none; }
+  .menu-lit .menu-label { color: var(--lime); font-size: clamp(1.6rem, 3.6vw, 3rem); }
+  .menu-lit .mono { color: var(--lime); }
+  .menu-info { align-self: end; display: grid; gap: 1.25rem; color: var(--gray-300); }
+  .menu-info dt { margin-bottom: .2rem; }
+  .menu-info a { min-height: 44px; display: inline-flex; align-items: center; }
+  .menu-esc { grid-column: 1 / -1; }
+  @media (max-width: 767px) { .menu-in { grid-template-columns: 1fr; } .menu-esc { display: none; } }
+  @media (prefers-reduced-motion: no-preference) {
+    .menu:not([hidden]) .menu-link { animation: menuIn .5s var(--ease-out) both; }
+    .menu:not([hidden]) li:nth-child(2) .menu-link { animation-delay: .04s; }
+    .menu:not([hidden]) li:nth-child(3) .menu-link { animation-delay: .08s; }
+    .menu:not([hidden]) li:nth-child(4) .menu-link { animation-delay: .12s; }
+    .menu:not([hidden]) li:nth-child(5) .menu-link { animation-delay: .16s; }
+    .menu:not([hidden]) li:nth-child(6) .menu-link { animation-delay: .2s; }
+    .menu:not([hidden]) li:nth-child(7) .menu-link { animation-delay: .24s; }
+  }
+  @keyframes menuIn { from { opacity: 0; transform: translateY(18px); } }
+</style>

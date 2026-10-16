@@ -31,6 +31,9 @@ export interface Field {
   cursor(x: number, y: number, active: boolean): void;
   ripple(x: number, y: number, amp?: number): void;
   setLinks(on: boolean): void;
+  /** Great-circle arcs (globe formation). null = hide. progress 0..1 draws them in sequence. */
+  setArcs(arcs: { from: [number, number]; to: [number, number] }[] | null, c?: { x: number; y: number }, R?: number): void;
+  arcProgress: number;
   tick(dt: number, t: number): void;
   render(): void;
   resize(w: number, h: number): void;
@@ -132,6 +135,55 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
   scene.add(links);
   let linksOn = true;
 
+  // arcs: up to 6 × 64 segments
+  const ARC_SEG = 64, ARC_MAX = 6;
+  const arcPos = new Float32Array(ARC_MAX * ARC_SEG * 2 * 3);
+  const arcA = new Float32Array(ARC_MAX * ARC_SEG * 2);
+  const arcGeo = new BufferGeometry();
+  arcGeo.setAttribute('position', new BufferAttribute(arcPos, 3));
+  arcGeo.setAttribute('aAlpha', new BufferAttribute(arcA, 1));
+  const arcMat = new LineBasicNodeMaterial({ transparent: true, depthTest: false, depthWrite: false });
+  arcMat.color.setRGB(201 / 255, 1, 87 / 255);
+  arcMat.opacityNode = attribute('aAlpha', 'float');
+  const arcLines = new LineSegments(arcGeo, arcMat);
+  arcLines.frustumCulled = false;
+  arcLines.visible = false;
+  arcLines.renderOrder = 3;
+  scene.add(arcLines);
+  let arcPts: Float32Array | null = null; // unit-sphere xyz per arc vertex
+  let arcN = 0, arcC = { x: 0, y: 0 }, arcR = 1;
+  const slerp = (a: number[], b: number[], t: number) => {
+    const d = Math.acos(Math.min(1, Math.max(-1, a[0] * b[0] + a[1] * b[1] + a[2] * b[2])));
+    const s0 = Math.sin((1 - t) * d) / Math.sin(d || 1e-6), s1 = Math.sin(t * d) / Math.sin(d || 1e-6);
+    return [a[0] * s0 + b[0] * s1, a[1] * s0 + b[1] * s1, a[2] * s0 + b[2] * s1];
+  };
+  const unit = (lat: number, lon: number) => {
+    const p = (lat * Math.PI) / 180, l = ((lon - 160) * Math.PI) / 180;
+    return [Math.cos(p) * Math.sin(l), -Math.sin(p), Math.cos(p) * Math.cos(l)];
+  };
+  function updateArcs() {
+    if (!arcPts || !arcLines.visible) return;
+    const ay = u.uTilt.value.x, ca = Math.cos(ay), sa = Math.sin(ay);
+    const hx = u.uHalf.value.x, hy = u.uHalf.value.y;
+    const prog = field.arcProgress * arcN;
+    for (let a = 0; a < arcN; a++) {
+      for (let k = 0; k < ARC_SEG; k++) {
+        for (let e = 0; e < 2; e++) {
+          const vi = (a * (ARC_SEG + 1) + k + e) * 3;
+          const x = arcPts[vi] * arcR, y = arcPts[vi + 1] * arcR, z = arcPts[vi + 2] * arcR;
+          const x1 = x * ca + z * sa, z1 = z * ca - x * sa;
+          const o = ((a * ARC_SEG + k) * 2 + e);
+          arcPos[o * 3] = arcC.x + x1 - hx; arcPos[o * 3 + 1] = hy - (arcC.y + y); arcPos[o * 3 + 2] = z1;
+          const t = (k + e) / ARC_SEG;
+          const drawn = Math.min(1, Math.max(0, prog - a)) >= t ? 1 : 0;
+          arcA[o] = drawn * (z1 > -arcR * 0.15 ? 0.9 : 0.18);
+        }
+      }
+    }
+    (arcGeo.attributes.position as BufferAttribute).needsUpdate = true;
+    (arcGeo.attributes.aAlpha as BufferAttribute).needsUpdate = true;
+  }
+
   let cur: Formation | null = null;
   let tgt: Formation | null = null;
   let cursorActive = false;
@@ -149,14 +201,19 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
 
   /** Snapshot what is on screen (without noise) into A. */
   const snapshot = () => {
+    const fy = u.uFocusY.value;
     for (let i = 0; i < n; i++) {
       const m = mOf(i), o = i * 4;
-      for (let c = 0; c < 4; c++) {
-        // layer is discrete: take whichever side dominates
-        A[o + c] = c === 2 ? (m < 0.5 ? A[o + 2] : B[o + 2]) : A[o + c] + (B[o + c] - A[o + c]) * m;
-      }
-      const a = M[o + 2] + (M[o + 3] - M[o + 2]) * m;
-      M[o + 2] = a;
+      const fa = A[o + 2] > 0.5 ? 1 : 0, fb = B[o + 2] > 0.5 ? 1 : 0;
+      const focus = fa + (fb - fa) * m;
+      const x = A[o] + (B[o] - A[o]) * m;
+      const yScreen = A[o + 1] + (B[o + 1] - A[o + 1]) * m + fy * focus;
+      const layer = m < 0.5 ? A[o + 2] : B[o + 2];
+      A[o] = x;
+      A[o + 1] = layer > 0.5 ? yScreen - fy : yScreen; // focus layer lives in page space
+      A[o + 2] = layer;
+      A[o + 3] = A[o + 3] + (B[o + 3] - A[o + 3]) * m;
+      M[o + 2] = M[o + 2] + (M[o + 3] - M[o + 2]) * m;
     }
     u.uSizeA.value = u.uSizeA.value + (u.uSizeB.value - u.uSizeA.value) * Math.min(1, u.uMorph.value);
   };
@@ -225,10 +282,27 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
       ripIdx++;
     },
     setLinks(on) { linksOn = on; },
+    arcProgress: 0,
+    setArcs(list, c, R) {
+      if (!list || !c || !R) { arcLines.visible = false; arcPts = null; return; }
+      arcN = Math.min(ARC_MAX, list.length); arcC = c; arcR = R;
+      arcPts = new Float32Array(arcN * (ARC_SEG + 1) * 3);
+      list.slice(0, arcN).forEach((arc, a) => {
+        const A = unit(arc.from[0], arc.from[1]), B = unit(arc.to[0], arc.to[1]);
+        for (let k = 0; k <= ARC_SEG; k++) {
+          const t = k / ARC_SEG, p = slerp(A, B, t), lift = 1 + 0.22 * Math.sin(Math.PI * t);
+          arcPts.set([p[0] * lift, p[1] * lift, p[2] * lift], (a * (ARC_SEG + 1) + k) * 3);
+        }
+      });
+      arcA.fill(0);
+      arcGeo.setDrawRange(0, arcN * ARC_SEG * 2);
+      arcLines.visible = true;
+    },
     tick(_dt, t) {
       u.uTime.value = t;
       if (computeNode) renderer.compute(computeNode);
       updateLinks();
+      updateArcs();
       renderer.render(scene, camera);
     },
     render() { renderer.render(scene, camera); },
@@ -246,7 +320,7 @@ export async function createField(canvas: HTMLCanvasElement, backend: Backend, s
       if (halo) { halo.count = points.count; halo.visible = s.halo; }
     },
     dispose() {
-      linkGeo.dispose(); linkMat.dispose(); pointsMat.dispose(); haloMat.dispose();
+      linkGeo.dispose(); linkMat.dispose(); arcGeo.dispose(); arcMat.dispose(); pointsMat.dispose(); haloMat.dispose();
       renderer.dispose();
     },
   };

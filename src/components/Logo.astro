@@ -1,0 +1,17 @@
+---
+// Fazed mark (3 isometric planes, brand/fazed-mark-white.svg) + lockup text
+import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
+const { size = 28 } = Astro.props;
+---
+<span class="logo">
+  <svg class="logo-mark" width={Math.round(size * 0.693)} height={size} viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false">
+    <g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g>
+  </svg>
+  <span class="logo-word">Fazed <span class="logo-sub">Digital</span></span>
+</span>
+<style>
+  .logo { display: inline-flex; align-items: center; gap: .6rem; color: var(--white); }
+  .logo-mark { color: var(--white); }
+  .logo-word { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; letter-spacing: -.01em; line-height: 1; display: inline-flex; align-items: baseline; gap: .3em; }
+  .logo-sub { color: var(--gray-400); font-weight: 500; }
+</style>

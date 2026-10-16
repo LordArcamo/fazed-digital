@@ -30,6 +30,8 @@ export function makeUniforms() {
     uFocusY: uniform(0),
     uFocusA: uniform(1), // focus-layer alpha (fades the mark independently of the lattice)
     uRipples: uniformArray([new Vector4(0, 0, -99, 0), new Vector4(0, 0, -99, 0), new Vector4(0, 0, -99, 0)], 'vec4'),
+    uBack: uniform(0), // globe: dim the far hemisphere
+    uLight: uniform(0), // wordmark: points near the cursor light lime
     uScan: uniform(2), // scan-resolve threshold (0..1 of the target rect, 2 = off)
     uScanRect: uniform(new Vector4(0, 0, 0, 0)),
   };
@@ -135,13 +137,22 @@ export function buildMaterial(U: Uniforms, S: Sources, opts: MaterialOpts) {
   // lit gain: during the intro the lime is gated so frame 1 equals the poster
   const tA = S.A.w, tB = S.B.w;
   const gate = (t: N) => select(t.greaterThan(1), float(1).add(t.sub(1).mul(U.uLitGain)), t);
-  const tone = mix(gate(tA), gate(tB), m);
+  const tone0 = mix(gate(tA), gate(tB), m);
+  const bxy = mix(S.A.xy, S.B.xy, m);
+  const lightK = clamp(float(1).sub(length(bxy.sub(U.uCursor)).div(90)), 0, 1).mul(U.uLight);
+  const tone = tone0.add(float(2).sub(tone0).mul(lightK));
   const aMix = mix(S.M.z, S.M.w, m);
   const alphaRaw = select(aMix.lessThan(0), aMix.negate().mul(U.uDust), aMix);
   const focus = mix(step(0.5, S.A.z), step(0.5, S.B.z), m);
   const { col, alpha, lit } = toneColor(tone);
   const dimmed = mix(U.uDim, U.uFocusA, focus);
-  const a = alphaRaw.mul(alpha).mul(dimmed);
+  // far hemisphere of the globe: z after the same rotY the position node applies
+  const zf = mix(planeZ(S.A.z), planeZ(S.B.z), m);
+  const relx = bxy.x.sub(U.uTiltC.x).div(max(U.uDepth, 1));
+  const ay = U.uTilt.x.mul(focus);
+  const zr = zf.mul(cos(ay)).sub(relx.mul(sin(ay)));
+  const back = mix(float(1), smoothstep(-0.45, 0.2, zr).mul(0.82).add(0.18), U.uBack.mul(focus));
+  const a = alphaRaw.mul(alpha).mul(dimmed).mul(back);
   const size = mix(U.uSizeA, U.uSizeB, m).mul(float(1).add(lit.mul(0.35)));
 
   const vCol = varying(col);

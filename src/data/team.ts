@@ -1,0 +1,7 @@
+// copy/home.md HOME-08 + copy/about.md ABOUT-TEAM. Portraits: swap the `photo` path when supplied ([TBC-03]).
+export const team = [
+  { id: 'lord', name: 'Lord Arcamo', role: 'Founder', line: 'Sets the creative direction and keeps every project sharp, strategic and on brief.', bio: 'Started Fazed in 2022. Sets the creative direction and keeps every project sharp, strategic and focused on results. Writes about branding and design on the blog.', photo: '/images/team/lord.jpeg', initials: 'LA' },
+  { id: 'reancirl', name: 'Reancirl Balaba', role: 'Co-Founder', line: 'Shapes where the studio goes next, and makes sure every client relationship runs on trust.', bio: 'Co-architect of the Fazed vision. Shapes where the studio goes next, and makes sure every client relationship is built on trust. Writes our guides on choosing an agency and pricing.', photo: null, initials: 'RB' },
+  { id: 'russel', name: 'Russel Heyrana', role: 'Marketing Director', line: 'Positioning, campaigns and the data that tells us what’s working.', bio: 'Drives growth through data-informed strategy, brand positioning and campaigns. Writes the SEO and marketing side of the blog.', photo: '/images/team/russel.jpeg', initials: 'RH' },
+  { id: 'justin', name: 'Justin Sumaya', role: 'Head of Development', line: 'Fast, accessible builds. Clean code, Core Web Vitals and no shortcuts.', bio: 'Builds fast, accessible websites. Cares about performance, clean code and Core Web Vitals. Writes about development and hosting.', photo: null, initials: 'JS' },
+] as const;

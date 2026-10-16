@@ -1,0 +1,8 @@
+---
+// Static service glyph (SSR poster; also the mobile row icon). Same source as the baked GL glyph.
+import { GLYPHS } from '../../scripts/lib/glyphs.mjs';
+const { id, size = 56 } = Astro.props;
+const g = GLYPHS.find((x) => x.id === id)!;
+---
+<svg class="glyph" width={size} height={size} viewBox={`0 0 ${g.box} ${g.box}`} aria-hidden="true" focusable="false" set:html={g.svg} />
+<style>.glyph { flex: none; opacity: .9; }</style>

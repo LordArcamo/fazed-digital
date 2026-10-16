@@ -1,0 +1,26 @@
+---
+// Frame-0 poster of the hero formation: the Fazed mark drawn in dots. A 4px CSS dot
+// pattern clipped by the three mark planes (objectBoundingBox clip). The GL field reads
+// this element's rect and samples the same 4px grid inside the same mask, so the first
+// GL frame lands on these exact dots.
+import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
+const [vx, vy, vw, vh] = MARK_VIEWBOX;
+const t = `scale(${(1 / vw).toFixed(7)} ${(1 / vh).toFixed(7)}) translate(${-vx} ${-vy}) ${MARK_TRANSFORM}`;
+---
+<div class="poster-art mark-poster" id="mark-poster" aria-hidden="true"></div>
+<svg class="defs" width="0" height="0" aria-hidden="true" focusable="false">
+  <clipPath id="mark-clip" clipPathUnits="objectBoundingBox">{MARK_PATHS.map((d) => <path transform={t} d={d} />)}</clipPath>
+</svg>
+<style>
+  .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
+  .mark-poster {
+    position: absolute; height: min(62vh, 600px); aspect-ratio: 755 / 1089; left: 72%; top: 52%; transform: translate(-50%, -50%);
+    background-image: radial-gradient(circle at center, rgba(245, 244, 240, .55) 1.1px, transparent 1.6px);
+    background-size: 4px 4px;
+    clip-path: url(#mark-clip);
+    pointer-events: none;
+  }
+  @media (max-width: 767px) {
+    .mark-poster { height: 34svh; left: 50%; top: 26svh; }
+  }
+</style>

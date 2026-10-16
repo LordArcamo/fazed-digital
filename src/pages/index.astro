@@ -1,47 +1,390 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import Loader from '../components/Loader';
-import Cursor from '../components/Cursor';
-import Nav from '../components/Nav';
-import HeroSection from '../components/HeroSection';
-import MarqueeSection from '../components/MarqueeSection';
-import ServicesSection from '../components/ServicesSection';
-import WorkSection from '../components/WorkSection';
-import ProcessSection from '../components/ProcessSection';
-import StatsSection from '../components/StatsSection';
-import AboutSection from '../components/AboutSection';
-import ImageStrip from '../components/ImageStrip';
-import WhyFazedSection from '../components/WhyFazedSection';
-import TestimonialsSection from '../components/TestimonialsSection';
-import ContactSection from '../components/ContactSection';
-import SevenDayBanner from '../components/SevenDayBanner.astro';
-import Footer from '../components/Footer';
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import MarkPoster from '../components/MarkPoster.astro';
+import Glyph from '../components/Glyph.astro';
+import ContactForm from '../components/ContactForm.astro';
+import { services } from '../data/services';
+import { caseIndex, countries } from '../data/cases';
+import { stats, results, capsCopy } from '../data/proof';
+import { team } from '../data/team';
+import { workImages } from '../data/images';
+import { NAP, SITE_URL } from '../data/site';
+
+const cols = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
+const days = ['Day 1 · Brief', 'Day 2 · Design', 'Day 3 · Design', 'Day 4 · Build', 'Day 5 · Build', 'Day 6 · Review', 'Day 7 · Launch'];
+const steps = [
+  ['01', 'Discover', 'We learn your business, your market and your customers. No guessing, just the right questions.'],
+  ['02', 'Strategy', 'The answers become a plan: structure, message and a brief every later decision points back to.'],
+  ['03', 'Design', 'Every visual and every word, from logo to layout, with the detail most people only feel.'],
+  ['04', 'Launch', 'We ship, measure and fix. You get the keys: domain, hosting, logins and files, all in your name.'],
+];
+// arcs: Iligan → each distinct client location (from cases.ts only)
+const arcDests = [...new Map(caseIndex.map((c) => [`${c.lat},${c.lon}`, [c.lat, c.lon]])).values()];
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: 'Fazed Digital case studies',
+  itemListElement: caseIndex.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.title, url: `${SITE_URL}/work/${c.slug}` })),
+};
 ---
-
-<Layout
+<Base
   title="Web Design & Branding Agency in Iligan City | Fazed Digital"
-  description="Fazed Digital is a web design, branding & SEO agency in Iligan City, Philippines. We build fast, conversion-focused websites that turn visitors into customers — get a free quote today."
-  image="/og/home.png"
-  page="home"
+  description="Web design, branding and SEO from Iligan City, Philippines. Fast websites, brands and web apps for clients in the USA, Australia and PH. Start a project."
+  formation="mark"
+  schema={schema}
+  current="/"
 >
-  <Cursor client:idle />
-  <Loader client:only="react" />
-  <Nav client:only="react" currentPath="/" />
+  <div data-page="home">
+    <!-- [HOME-01] MARK -->
+    <section class="hero" id="top" data-f="mark" aria-labelledby="hero-h">
+      <MarkPoster />
+      <div class="container hero-in">
+        <p class="mono hero-strip">Iligan City, PH · {NAP.coords} · Est. 2022</p>
+        <h1 id="hero-h" class="hero-h"><span class="hero-l1">Built in Iligan.</span> <span class="hero-l2">Live worldwide.</span></h1>
+        <p class="t-body-l hero-deck">Websites, brands and web apps for owners who want to be found, trusted and chosen. Made in the Philippines, shipped to the USA, Australia and home.</p>
+        <div class="hero-cta">
+          <a class="btn btn--lime" href="/contact" data-magnetic data-cursor="GO →">Start a project <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="/work">See the work</a>
+        </div>
+        <p class="mono hero-cue" aria-hidden="true">Scroll · 01 / 09</p>
+      </div>
+    </section>
 
-  <main>
-    <HeroSection client:only="react" />
-    <MarqueeSection client:only="react" />
-    <ServicesSection client:visible />
-    <SevenDayBanner />
-    <WorkSection client:visible />
-    <ProcessSection client:visible />
-    <ImageStrip client:visible />
-    <StatsSection client:visible />
-    <WhyFazedSection client:visible />
-    <AboutSection client:visible />
-    <TestimonialsSection client:visible />
-    <ContactSection client:visible />
-  </main>
+    <!-- [HOME-02] UNFOLD -->
+    <section class="section unfold" id="unfold" data-f="lattice" aria-labelledby="unfold-h">
+      <div class="ruler container" aria-hidden="true">{cols.map((c) => <span class="mono">Col {c}</span>)}<span class="mono ruler-pitch">Pitch 24px</span></div>
+      <div class="container unfold-in">
+        <h2 id="unfold-h" class="t-d1 rv">Web design, branding <span class="dim">and SEO from the Philippines.</span></h2>
+        <p class="mono rv">Shipping to USA · Australia · Philippines since 2022</p>
+        <div class="unfold-body">
+          <p class="t-body-l rv">Fazed Digital is a small studio in Iligan City, Mindanao. We design and build the websites, brand systems and custom tools that small and mid-sized businesses run on, from a framing contractor in Utah to a law firm in Queensland.</p>
+          <p class="rv">Every project starts with the same three questions: who are you, who are you talking to, and what do you want them to feel? The answers shape everything that follows.</p>
+        </div>
+      </div>
+    </section>
 
-  <Footer client:visible />
-</Layout>
+    <!-- [HOME-03] SERVICES -->
+    <section class="services" id="services" data-f="pentagon" aria-labelledby="svc-h">
+      <div class="svc-pin">
+        <div class="container svc-in">
+          <div class="svc-head">
+            <p class="mono">What we do · 05 services</p>
+            <h2 id="svc-h" class="t-d2">Five services. One connected system.</h2>
+            <p class="svc-intro">Hire us for one, or let them work together. Brand feeds the site, the site feeds search, search feeds the business.</p>
+            <div class="svc-steps" role="group" aria-label="Step through the five services">
+              {services.map((s, i) => <button type="button" class="svc-step" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'} aria-controls={`svc-${s.id}`}><span class="sr-only">Show </span>{s.n}<span class="sr-only"> {s.title}</span></button>)}
+            </div>
+          </div>
+          <ol class="svc-list">
+            {services.map((s, i) => (
+              <li class="svc" id={`svc-${s.id}`} data-i={i}>
+                <Glyph id={s.id} size={56} />
+                <div class="svc-body">
+                  <p class="mono svc-n">Node {s.n}/05</p>
+                  <h3 class="t-h3 svc-t"><a href={`/services#${s.id}`}>{s.title}</a></h3>
+                  <p class="svc-line">{s.line}</p>
+                  <ul class="svc-scope mono" aria-label={`${s.title} scope`}>{s.scope.map((x) => <li>{x}</li>)}</ul>
+                  <a class="mono svc-proof link" href={s.proof.href}>{s.proof.label} <span class="sr-only">{s.proof.name}</span></a>
+                </div>
+              </li>
+            ))}
+          </ol>
+          <a class="btn btn--ghost svc-all" href="/services">See all five services</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- [HOME-04] WORK INDEX -->
+    <section class="section work" id="work" data-f="work" aria-labelledby="work-h">
+      <div class="container">
+        <p class="mono rv">Selected work · 08 cases · {String(countries.length).padStart(2, '0')} countries</p>
+        <h2 id="work-h" class="t-d2 rv">Work that’s live, not just pretty.</h2>
+        <p class="work-intro rv">Every project below is a real business running on what we built. Open the live sites on your phone. That’s the test.</p>
+        <div class="windex" data-windex>
+          <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span>What we built</span></div>
+          <ul>
+            {caseIndex.map((c, i) => (
+              <li>
+                <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cursor={`CASE ${c.slug} →`}>
+                  <span class="mono w-n">{c.slug}</span>
+                  <span class="w-client">{c.title}</span>
+                  <span class="w-sector">{c.sector}</span>
+                  <span class="w-country">{c.country}</span>
+                  <span class="w-year">{c.year}</span>
+                  <span class="w-built">{c.built}</span>
+                  <span class="sr-only">. Read the case study.</span>
+                  <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 1px" alt={c.alt} loading="lazy" decoding="async" />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <div class="wprev" aria-hidden="true" data-wprev>
+            {caseIndex.map((c) => <Picture class="wprev-img" data-for={c.slug} src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="420px" alt="" loading="lazy" decoding="async" />)}
+            <span class="wprev-scan"></span>
+          </div>
+        </div>
+        <a class="btn btn--ghost" href="/work">See all the work</a>
+      </div>
+    </section>
+
+    <!-- [HOME-05] FLOOD -->
+    <section class="flood on-lime" id="flood" data-f="flood" aria-labelledby="flood-h">
+      <div class="container flood-in">
+        <p class="mono flood-eye">Fast-track · Fixed price</p>
+        <h2 id="flood-h" class="t-mega flood-h">Live in <span>7 days.</span></h2>
+        <p class="flood-body">A custom, mobile-ready, SEO-set-up website for your small business. Designed, built and launched in one week, at a fixed price you know upfront.</p>
+        <ol class="days" aria-label="The 7-day timeline">
+          {days.map((d, i) => <li class="day" data-day={i}><span class="day-node" aria-hidden="true"></span><span class="mono">{d}</span></li>)}
+        </ol>
+        <ul class="flood-chips" aria-label="Packages">
+          <li class="chip">Starter $499</li><li class="chip">Growth $899</li><li class="chip">Pro $1,499</li>
+        </ul>
+        <p class="flood-honest">Seven days works when your content and feedback arrive on time. We’ll tell you exactly what we need on Day 1.</p>
+        <div class="flood-cta">
+          <a class="btn btn--black" href="/lp/7-day-website" data-magnetic>Get live in 7 days <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="flood-link" href="/lp/7-day-website/ph">See peso pricing (₱19,999+)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- [HOME-06] PROCESS -->
+    <section class="section process" id="process" data-f="path4" aria-labelledby="proc-h">
+      <div class="container">
+        <p class="mono rv">How we work · 04 steps</p>
+        <h2 id="proc-h" class="t-d2 rv">Questions first. Pixels second.</h2>
+        <ol class="steps" data-path-anchor>
+          {steps.map(([n, t, b]) => <li class="step rv"><span class="mono step-n">{n}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}
+        </ol>
+        <p class="mono rv">You own everything · No lock-in</p>
+      </div>
+    </section>
+
+    <!-- [HOME-07] CONNECTIONS -->
+    <section class="section conn" id="connections" data-f="globe" aria-labelledby="conn-h" data-arcs={JSON.stringify(arcDests)}>
+      <div class="container conn-in">
+        <div class="conn-globe" data-globe aria-hidden="true">
+          <svg class="poster-art conn-poster" viewBox="0 0 200 200"><defs><pattern id="gd" width="4" height="4" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r=".9" fill="#F5F4F0" fill-opacity=".35" /></pattern></defs><circle cx="100" cy="100" r="96" fill="url(#gd)" /><circle cx="100" cy="100" r="96" fill="none" stroke="#2A2A2A" /></svg>
+        </div>
+        <div class="conn-text">
+          <p class="mono rv">Connections · Iligan → USA · Australia · Philippines</p>
+          <h2 id="conn-h" class="t-d1 rv">One studio. <span class="dim">Many time zones.</span></h2>
+          <ul class="results">
+            {results.map((r) => <li class="result rv"><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p><a class="link" href={r.link.href}>{r.link.label}</a></li>)}
+          </ul>
+          <p class="mono conn-count">08 cases · {String(countries.length).padStart(2, '0')} countries · Est. 2022</p>
+        </div>
+      </div>
+      <div class="container">
+        <dl class="stats">
+          {stats.filter((s) => s.show).map((s) => <div class="stat rv"><dt class="mono">{s.label}</dt><dd><span class="stat-v">{s.value}{s.suffix}</span><span class="mono">{s.sub}</span></dd></div>)}
+        </dl>
+      </div>
+    </section>
+
+    <!-- [HOME-08] PEOPLE -->
+    <section class="section people" id="people" data-f="rings" aria-labelledby="ppl-h">
+      <div class="container people-in">
+        <div>
+          <p class="mono rv">The team · 04 people · 01 city</p>
+          <h2 id="ppl-h" class="t-d2 rv">Four people. No hand-offs.</h2>
+          <p class="rv people-intro">The people who pitch your project are the people who build it. You talk to us directly, not to an account manager.</p>
+          <a class="link" href="/about">Meet the studio</a>
+        </div>
+        <ul class="ppl" data-rings-anchor>
+          {team.map((p, i) => (
+            <li class="person rv" tabindex="0" data-person={i}>
+              {p.photo ? <img class="person-img" src={p.photo} alt={`Portrait of ${p.name}, ${p.role} at Fazed Digital`} width="96" height="96" loading="lazy" decoding="async" /> : <span class="person-init mono" aria-hidden="true">{p.initials}</span>}
+              <div><h3 class="person-n">{p.name}</h3><p class="mono">{p.role}</p><p class="person-l">{p.line}</p></div>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- [HOME-09] CONTACT NODE -->
+    <section class="section contact" id="contact" data-f="node" aria-labelledby="ct-h">
+      <div class="container contact-in">
+        <div class="contact-text">
+          <p class="mono">{NAP.coords} · Mon–Fri 8:30am–5:00pm PHT</p>
+          <h2 id="ct-h" class="t-d1">Your move. <span class="dim">Send the brief.</span></h2>
+          <p class="t-body-l">Tell us what you’re building and when you need it. We’ll reply within one business day with next steps, not a sales script.</p>
+          <p class="mono contact-cap">{capsCopy.custom}</p>
+          <ul class="contact-lines">
+            <li><span class="mono">Email</span><a class="link" href={`mailto:${NAP.email}`} aria-label={`Email Fazed Digital at ${NAP.email}`}>{NAP.email}</a></li>
+            <li><span class="mono">Phone</span><a class="link" href={`tel:${NAP.tel}`} aria-label={`Call Fazed Digital on ${NAP.phone}`}>{NAP.phone}</a></li>
+            <li><span class="mono">Hours</span><span>Mon–Fri, 8:30am–5:00pm (Philippine time)</span></li>
+            <li><span class="mono">Studio</span><span>Iligan City, Lanao del Norte, Philippines</span></li>
+          </ul>
+          <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
+        </div>
+        <ContactForm id="home-cf" />
+      </div>
+    </section>
+  </div>
+</Base>
+
+<style>
+  /* HERO */
+  .hero { position: relative; min-height: 100svh; display: flex; align-items: center; overflow: clip; }
+  .hero-in { position: relative; z-index: 1; padding-top: calc(var(--header-h) + 24px); padding-bottom: 72px; }
+  .hero-strip { margin-bottom: 1.75rem; }
+  .hero-h { font-size: clamp(3rem, 6.5vw, 8rem); line-height: .88; letter-spacing: -.035em; font-weight: 600; max-width: 60%; }
+  .hero-l1, .hero-l2 { display: block; white-space: nowrap; }
+  .hero-l2 { color: var(--gray-400); }
+  .hero-deck { max-width: 36ch; margin-top: 2rem; }
+  .hero-cta { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2.25rem; }
+  .hero-cue { position: absolute; bottom: 24px; left: var(--side); }
+  @media (max-width: 767px) {
+    .hero { align-items: flex-end; }
+    .hero-in { padding-top: 46svh; padding-bottom: 64px; }
+    .hero-h { font-size: clamp(2.4rem, 11.6vw, 4rem); max-width: none; }
+    .hero-strip { margin-bottom: 1rem; font-size: .7rem; letter-spacing: .1em; }
+    .hero-deck { margin-top: 1.25rem; font-size: 1.0625rem; }
+    .hero-cue { display: none; }
+  }
+
+  /* UNFOLD */
+  .unfold { overflow: clip; }
+  .ruler { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); margin-bottom: 96px; position: relative; }
+  .ruler span { font-size: .625rem; border-left: 1px solid var(--gray-700); padding-left: .4rem; color: var(--gray-400); }
+  .ruler .ruler-pitch { position: absolute; right: var(--side); top: 1.5rem; border: 0; }
+  .unfold-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
+  .unfold-in h2 { grid-column: 1 / span 11; }
+  .unfold-in > .mono { grid-column: 1 / span 6; }
+  .unfold-body { grid-column: 7 / span 6; display: grid; gap: 1.25rem; }
+  @media (max-width: 1023px) { .ruler { grid-template-columns: repeat(4, 1fr); } .ruler span:nth-child(n + 5):not(.ruler-pitch) { display: none; } .unfold-in > * { grid-column: 1 / -1 !important; } }
+
+  /* SERVICES */
+  .services { position: relative; }
+  .svc-pin { padding-block: var(--section); }
+  .svc-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; }
+  .svc-head { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-content: start; }
+  .svc-intro { max-width: 40ch; }
+  .svc-steps { display: none; gap: .5rem; }
+  .svc-step { min-width: 48px; min-height: 48px; border-radius: 999px; border: 1px solid var(--gray-700); font-family: var(--font-mono); font-size: .8rem; color: var(--gray-300); }
+  .svc-step[aria-pressed='true'] { background: var(--lime); color: var(--black); border-color: var(--lime); }
+  @media (max-width: 1023px) { .svc-head { grid-column: 1 / -1; } }
+  .svc-list { grid-column: 1 / -1; display: grid; gap: 0; border-top: 1px solid var(--gray-700); }
+  .svc { display: flex; gap: 1.5rem; padding: 2rem 0; border-bottom: 1px solid var(--gray-700); }
+  .svc-body { display: grid; gap: .6rem; }
+  .svc-t a:hover { color: var(--lime); }
+  .svc-scope { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; color: var(--gray-300); }
+  .svc-scope li::before { content: '· '; color: var(--lime); }
+  .svc-proof { justify-self: start; color: var(--lime); text-decoration: none; }
+  .svc-all { grid-column: 1 / -1; justify-self: start; }
+  /* desktop pinned mode (motion adds .svc-live): one node at a time, left column */
+  @media (min-width: 1024px) {
+    :global(html.js-motion:not(.rm)) .svc-live .svc-pin { min-height: 100vh; display: flex; align-items: center; padding-block: calc(var(--header-h) + 24px) 48px; }
+    :global(html.js-motion:not(.rm)) .svc-live .svc-steps { display: flex; }
+    :global(html.js-motion:not(.rm)) .svc-live .svc-list { grid-column: 1 / span 5; position: relative; border: 0; min-height: 300px; }
+    :global(html.js-motion:not(.rm)) .svc-live .svc { position: absolute; inset: 0 0 auto 0; border: 0; opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity .45s var(--ease-out), transform .45s var(--ease-out), visibility 0s .45s; }
+    :global(html.js-motion:not(.rm)) .svc-live .svc.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+    :global(html.js-motion:not(.rm)) .svc-live .svc .t-h3 { font-size: var(--fs-d2); line-height: .95; }
+    :global(html.gl-live) .svc-live .svc .glyph { display: none; }
+  }
+
+  /* WORK INDEX */
+  .work .t-d2 { margin: 1rem 0; }
+  .work-intro { max-width: 52ch; margin-bottom: 3rem; }
+  .windex { position: relative; margin-bottom: 3rem; }
+  .wrow { display: grid; grid-template-columns: 4rem 2.2fr 1.4fr 1.1fr .6fr 2fr; gap: var(--gutter); align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--gray-700); min-height: 64px; position: relative; color: var(--gray-300); transition: color .2s, padding .3s var(--ease-out); }
+  .wrow--head { padding: .75rem 0; min-height: 0; color: var(--gray-400); }
+  .w-client { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--white); line-height: 1.1; background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0% 100%; background-repeat: no-repeat; transition: background-size .25s var(--ease-out), color .2s; justify-self: start; padding: 0 .1em; margin-left: -.1em; }
+  a.wrow:hover .w-client, a.wrow:focus-visible .w-client, a.wrow.is-on .w-client { background-size: 100% 100%; color: var(--black); }
+  a.wrow:hover, a.wrow:focus-visible { color: var(--white); }
+  .w-thumb { display: none; }
+  .windex.has-on .w-year, .windex.has-on .w-built { opacity: .12; }
+  .w-year, .w-built { transition: opacity .25s; }
+  .wprev { position: absolute; right: 0; top: 0; width: 420px; aspect-ratio: 16 / 10; pointer-events: none; opacity: 0; transition: opacity .25s; z-index: 2; border: 1px solid var(--gray-700); overflow: hidden; }
+  .wprev.is-on { opacity: 1; }
+  .wprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .35s; }
+  .wprev :global(img.is-on) { opacity: 1; }
+  :global(html.gl-live) .wprev { border-color: transparent; }
+  :global(html.gl-live) .wprev :global(img.is-on) { transition-delay: .6s; }
+  .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; }
+  .wprev.is-on .wprev-scan { animation: scan .6s var(--ease-io) both; }
+  @keyframes scan { 0% { opacity: 1; top: 0; } 90% { opacity: 1; } 100% { opacity: 0; top: 100%; } }
+  @media (max-width: 1023px) {
+    .wrow { grid-template-columns: 2.5rem 1fr; row-gap: .35rem; }
+    .wrow--head { display: none; }
+    .w-sector, .w-country, .w-year, .w-built { grid-column: 2; font-size: .95rem; }
+    .wprev { display: none; }
+    .w-thumb { display: block; grid-column: 1 / -1; margin-top: .75rem; }
+    .w-thumb :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  }
+
+  /* FLOOD */
+  .flood { position: relative; background: var(--lime); color: var(--black); padding-block: var(--section); clip-path: circle(150% at 10% 60%); }
+  :global(html.js-motion:not(.rm)) .flood { clip-path: circle(var(--flood, 0%) at 12% 62%); }
+  .flood :global(*) { color: var(--black); }
+  .flood-in { display: grid; gap: 2rem; }
+  .flood-eye { color: var(--black); opacity: .8; }
+  .flood-h { color: var(--black); }
+  .flood-h span { display: block; }
+  .flood-body { max-width: 46ch; font-size: var(--fs-body-l); line-height: 1.5; }
+  .days { display: grid; grid-template-columns: repeat(7, 1fr); gap: .5rem; position: relative; padding-top: 28px; }
+  .days::before { content: ''; position: absolute; left: 6px; right: 6px; top: 33px; height: 1px; background: rgba(9, 9, 9, .35); }
+  .day { display: grid; gap: .75rem; }
+  .day-node { width: 12px; height: 12px; border-radius: 50%; border: 1.5px solid var(--black); background: var(--lime); position: relative; z-index: 1; transition: background-color .3s, transform .3s var(--ease-snap); }
+  .day.is-lit .day-node, :global(html:not(.js-motion)) .day-node, :global(html.rm) .day-node { background: var(--black); }
+  .day.is-lit .day-node { transform: scale(1.25); }
+  .day .mono { color: var(--black); font-size: .7rem; }
+  .flood-chips { display: flex; gap: .5rem; flex-wrap: wrap; }
+  .flood-chips .chip { border-color: rgba(9, 9, 9, .4); }
+  .flood-honest { max-width: 60ch; }
+  .flood-cta { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; }
+  .flood-link { min-height: 44px; display: inline-flex; align-items: center; font-weight: 600; text-decoration: underline; text-underline-offset: .2em; }
+  .flood .btn--black { color: var(--lime); }
+  .flood .btn--black :global(*) { color: var(--lime); }
+  @media (max-width: 767px) { .days { grid-template-columns: 1fr; padding-top: 0; } .days::before { left: 5px; right: auto; top: 6px; bottom: 6px; width: 1px; height: auto; } .day { grid-template-columns: 12px 1fr; align-items: center; } }
+
+  /* PROCESS */
+  .process .t-d2 { margin: 1rem 0 4rem; }
+  .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-bottom: 3rem; }
+  .step { display: grid; gap: .75rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
+  .step-n { color: var(--lime); }
+  @media (max-width: 1023px) { .steps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 767px) { .steps { grid-template-columns: 1fr; } }
+
+  /* CONNECTIONS */
+  .conn-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; align-items: start; }
+  .conn-globe { grid-column: 7 / span 6; grid-row: 1; aspect-ratio: 1; }
+  .conn-poster { width: 100%; height: 100%; }
+  .conn-text { grid-column: 1 / span 6; grid-row: 1; display: grid; gap: 1.5rem; }
+  .results { display: grid; gap: 2.5rem; margin-top: 1.5rem; }
+  .result { display: grid; gap: .6rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
+  .result .t-h3 { font-size: clamp(1.6rem, 2.6vw, 2.4rem); }
+  .result .link { justify-self: start; }
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: 120px; border-top: 1px solid var(--gray-700); }
+  .stat { padding-top: 1.5rem; display: grid; gap: .5rem; }
+  .stat dd { display: grid; gap: .5rem; }
+  .stat-v { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-d2); color: var(--white); line-height: 1; }
+  @media (max-width: 1023px) { .conn-globe { grid-column: 1 / -1; position: relative; top: 0; max-width: 420px; justify-self: center; width: 80vw; } .conn-text { grid-column: 1 / -1; grid-row: 2; } .stats { grid-template-columns: 1fr 1fr; row-gap: 2rem; } }
+
+  /* PEOPLE */
+  .people-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; align-items: center; }
+  .people-in > div { grid-column: 1 / span 5; display: grid; gap: 1.25rem; justify-items: start; }
+  .people-intro { max-width: 42ch; }
+  .ppl { grid-column: 7 / span 6; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
+  .person { display: grid; grid-template-columns: 64px 1fr; gap: 1rem; padding: 1.25rem; border: 1px solid var(--gray-700); background: rgba(9, 9, 9, .7); transition: border-color .2s; }
+  .person:hover, .person:focus-visible, .person.is-on { border-color: var(--lime); }
+  .person-img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: top; filter: grayscale(1); }
+  .person:hover .person-img, .person:focus-visible .person-img { filter: none; }
+  .person-init { width: 64px; height: 64px; border-radius: 50%; border: 1.5px solid var(--lime); display: flex; align-items: center; justify-content: center; color: var(--lime); font-size: .9rem; }
+  .person-n { font-size: 1.15rem; font-weight: 600; }
+  .person-l { font-size: .95rem; margin-top: .35rem; }
+  @media (max-width: 1023px) { .people-in > div, .ppl { grid-column: 1 / -1; } }
+  @media (max-width: 599px) { .ppl { grid-template-columns: 1fr; } }
+
+  /* CONTACT */
+  .contact-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; }
+  .contact-text { grid-column: 1 / span 5; display: grid; gap: 1.5rem; align-content: start; position: relative; }
+  .contact-in > :global(.cf) { grid-column: 7 / span 6; }
+  .contact-cap { color: var(--lime); }
+  .contact-lines { display: grid; gap: .5rem; }
+  .contact-lines li { display: grid; grid-template-columns: 5.5rem 1fr; align-items: center; min-height: 44px; }
+  .contact-lines .link { justify-self: start; }
+  .node-anchor { position: absolute; left: -48px; top: 8px; width: 1px; height: 1px; }
+  @media (max-width: 1023px) { .contact-text, .contact-in > :global(.cf) { grid-column: 1 / -1; } .contact-text { padding-top: 168px; } .node-anchor { left: 50%; top: 56px; } }
+</style>

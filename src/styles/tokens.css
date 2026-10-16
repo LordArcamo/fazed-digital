@@ -1,0 +1,60 @@
+/* Fazed Digital · NETWORK design tokens (palette locked: #090909 / #F5F4F0 / #C9FF57) */
+@font-face { font-family: 'Clash Display'; src: url('/fonts/clash/ClashDisplay-Bold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('/fonts/clash/ClashDisplay-Semibold.woff2') format('woff2'); font-weight: 600; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Clash Display'; src: url('/fonts/clash/ClashDisplay-Medium.woff2') format('woff2'); font-weight: 500; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Plus Jakarta Sans'; src: url('/fonts/plus-jakarta-sans-latin-wght-normal.woff2') format('woff2-variations'); font-weight: 200 800; font-style: normal; font-display: swap; unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+20B1, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD; }
+@font-face { font-family: 'Space Mono'; src: url('/fonts/space-mono-latin-400-normal.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+@font-face { font-family: 'Space Mono'; src: url('/fonts/space-mono-latin-700-normal.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+/* metric fallbacks so the swap doesn't reflow the hero */
+@font-face { font-family: 'Clash Fallback'; src: local('Arial'); size-adjust: 104%; ascent-override: 92%; descent-override: 22%; line-gap-override: 0%; }
+@font-face { font-family: 'Jakarta Fallback'; src: local('Arial'); size-adjust: 101%; ascent-override: 98%; descent-override: 22%; line-gap-override: 0%; }
+@font-face { font-family: 'Mono Fallback'; src: local('Courier New'); size-adjust: 100%; }
+
+:root {
+  --black: #090909;
+  --white: #F5F4F0;
+  --lime: #C9FF57;
+  --lime-dark: #9FCC2E;
+  --gray-900: #111111;
+  --gray-800: #1C1C1C;
+  --gray-700: #2A2A2A;
+  --gray-500: #676767; /* hairlines only, never text */
+  --gray-400: #939393; /* minimum text colour on black */
+  --gray-300: #BCBCBC;
+  --gray-200: #DCDCDC;
+  --lime-06: rgba(201, 255, 87, .06);
+  --lime-12: rgba(201, 255, 87, .12);
+  --lime-25: rgba(201, 255, 87, .25);
+
+  --font-display: 'Clash Display', 'Clash Fallback', 'Arial Narrow', sans-serif;
+  --font-body: 'Plus Jakarta Sans', 'Jakarta Fallback', system-ui, sans-serif;
+  --font-mono: 'Space Mono', 'Mono Fallback', ui-monospace, monospace;
+
+  --fs-mega: clamp(4.25rem, 14vw, 15rem);
+  --fs-d1: clamp(2.75rem, 7.5vw, 8rem);
+  --fs-d2: clamp(2rem, 4.2vw, 4.5rem);
+  --fs-h3: clamp(1.375rem, 2vw, 1.75rem);
+  --fs-body: 1.0625rem;
+  --fs-body-l: 1.25rem;
+  --fs-article: 1.125rem;
+  --fs-mono: .75rem;
+
+  --pitch: 24px;
+  --gutter: var(--pitch);
+  --side: clamp(1rem, 4vw, 4rem);
+  --container: 1340px;
+  --section: 192px; /* 8 × pitch */
+  /* lattice origin = container content-left edge */
+  --lattice-x: calc((100vw - min(100vw, var(--container))) / 2 + var(--side));
+
+  --ease-out: cubic-bezier(.16, 1, .3, 1);
+  --ease-io: cubic-bezier(.65, 0, .35, 1);
+  --ease-snap: cubic-bezier(.34, 1.56, .64, 1);
+  --header-h: 72px;
+}
+@media (max-width: 767px) {
+  :root { --pitch: 16px; --section: 96px; }
+}
+@media (max-width: 399px) {
+  :root { --fs-mega: 3.6rem; }
+}

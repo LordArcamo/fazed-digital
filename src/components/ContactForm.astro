@@ -1,0 +1,62 @@
+---
+// copy/contact.md [CONTACT-FORM] + answers #19 (budget) #20 (call optional)
+const { id = 'cf', heading = 'Send us your brief' } = Astro.props;
+const services = [['web', 'Web design & development'], ['brand', 'Brand identity'], ['seo', 'SEO marketing'], ['product', 'Product design'], ['systems', 'Custom system / web app'], ['7day', '7-day website package'], ['unsure', 'Not sure yet'], ['other', 'Something else']];
+const budgets = ['$1,000–$3,000', '$3,000–$5,000', '$5,000–$10,000', '$10,000–$20,000', 'Not sure yet'];
+---
+<div class="cf" data-contact-form>
+  <form id={id} novalidate>
+    <h3 class="t-h3 cf-h" tabindex="-1">{heading}</h3>
+    <p class="cf-intro">Four quick fields. The more you tell us, the better our first reply.</p>
+    <p class="cf-summary" role="alert" hidden>A couple of fields need attention. They’re highlighted below.</p>
+    <div class="cf-grid">
+      <div class="f"><label for={`${id}-name`}>Your name</label><input id={`${id}-name`} name="name" autocomplete="name" placeholder="e.g. Maria Santos" required aria-describedby={`${id}-name-e`} /><p class="f-e" id={`${id}-name-e`} aria-live="polite"></p></div>
+      <div class="f"><label for={`${id}-email`}>Email address</label><input id={`${id}-email`} name="email" type="email" autocomplete="email" placeholder="you@business.com" required aria-describedby={`${id}-email-h ${id}-email-e`} /><p class="f-h" id={`${id}-email-h`}>We’ll reply here.</p><p class="f-e" id={`${id}-email-e`} aria-live="polite"></p></div>
+      <div class="f"><label for={`${id}-company`}>Business name (optional)</label><input id={`${id}-company`} name="company" autocomplete="organization" placeholder="e.g. Santos Bakery" /></div>
+      <div class="f"><label for={`${id}-service`}>What do you need?</label><select id={`${id}-service`} name="service" aria-describedby={`${id}-service-h`}><option value="">Choose one…</option>{services.map(([v, l]) => <option value={v}>{l}</option>)}</select><p class="f-h" id={`${id}-service-h`}>Not sure? Pick “Not sure yet”.</p></div>
+      <div class="f"><label for={`${id}-budget`}>Rough budget (optional)</label><select id={`${id}-budget`} name="budget" aria-describedby={`${id}-budget-h`}><option value="">Choose a range…</option>{budgets.map((b) => <option value={b}>{b}</option>)}</select><p class="f-h" id={`${id}-budget-h`}>Helps us suggest the right scope.</p></div>
+      <div class="f f--wide"><label for={`${id}-message`}>Tell us about the project</label><textarea id={`${id}-message`} name="message" rows="5" placeholder="What are you building, who is it for, and when do you need it?" required aria-describedby={`${id}-message-h ${id}-message-e`}></textarea><p class="f-h" id={`${id}-message-h`}>A few sentences is plenty.</p><p class="f-e" id={`${id}-message-e`} aria-live="polite"></p></div>
+    </div>
+    <div class="cf-foot">
+      <button class="btn btn--lime" type="submit" data-magnetic data-cursor="SEND"><span class="cf-label">Send my brief</span> <span class="arrow" aria-hidden="true">→</span></button>
+      <p class="cf-fine">Protected by reCAPTCHA. Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply. We’ll only use your details to reply to you. <a class="link" href="/privacy">Our privacy policy</a></p>
+    </div>
+    <p class="cf-err" role="alert" hidden></p>
+  </form>
+  <div class="cf-ok" hidden>
+    <h3 class="t-d2 cf-ok-h" tabindex="-1">Brief received.</h3>
+    <p class="cf-ok-b"></p>
+    <p>Book a call (optional), or just reply by email. Either way works.</p>
+    <p class="cf-ok-links"><a class="btn btn--ghost" href="/work">See the work</a> <a class="btn btn--ghost" href="/blog">Read our guides</a> <button type="button" class="btn btn--ghost cf-again">Send another message</button></p>
+    <p class="mono cf-ok-sig"></p>
+  </div>
+</div>
+<script>
+  import { initContactForms } from '../forms/contact';
+  document.addEventListener('astro:page-load', initContactForms);
+</script>
+<style>
+  .cf { background: var(--gray-900); border: 1px solid var(--gray-700); padding: clamp(1.25rem, 3vw, 2.5rem); }
+  .cf-h { margin-bottom: .25rem; }
+  .cf-intro { color: var(--gray-400); margin-bottom: 1.5rem; }
+  .cf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem var(--gutter); }
+  .f { display: flex; flex-direction: column; gap: .35rem; }
+  .f--wide { grid-column: 1 / -1; }
+  .f label { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gray-300); }
+  .f input, .f select, .f textarea { width: 100%; min-height: 48px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--white); padding: .8rem 1rem; border-radius: 0; font-size: 1rem; transition: border-color .2s; }
+  .f select { appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--gray-400) 50%), linear-gradient(135deg, var(--gray-400) 50%, transparent 50%); background-position: calc(100% - 20px) 50%, calc(100% - 15px) 50%; background-size: 5px 5px; background-repeat: no-repeat; }
+  .f input::placeholder, .f textarea::placeholder { color: var(--gray-400); }
+  .f input:hover, .f select:hover, .f textarea:hover { border-color: var(--gray-500); }
+  .f input:focus-visible, .f select:focus-visible, .f textarea:focus-visible { border-color: var(--lime); outline-offset: 0; }
+  .f [aria-invalid='true'] { border-color: #ff8a7a; }
+  .f-h { font-size: .85rem; color: var(--gray-400); }
+  .f-e { font-size: .9rem; color: #ffb3a8; }
+  .f-e:empty { display: none; }
+  .cf-summary, .cf-err { color: #ffb3a8; margin-bottom: 1rem; }
+  .cf-err { margin: 1rem 0 0; }
+  .cf-foot { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; margin-top: 1.5rem; }
+  .cf-fine { font-size: .85rem; color: var(--gray-400); max-width: 52ch; }
+  .cf-ok { display: grid; gap: 1rem; }
+  .cf-ok-links { display: flex; flex-wrap: wrap; gap: .75rem; }
+  @media (max-width: 767px) { .cf-grid { grid-template-columns: 1fr; } }
+</style>
