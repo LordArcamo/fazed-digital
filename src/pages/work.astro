@@ -77,7 +77,8 @@ const schema = [
   /* two-line rhythm like home: line 2 in gray-400 */
   .w-hero h1 .h-l1, .w-hero h1 .h-l2 { display: block; } .w-hero h1 .h-l2 { color: var(--gray-400); }
   @media (min-width: 768px) { .w-hero h1 .h-l1, .w-hero h1 .h-l2 { white-space: nowrap; } }
-  @media (max-width: 1023px) { .w-hero-in { grid-template-columns: 1fr; } }
+  @media (max-width: 1023px) { .w-hero-in { grid-template-columns: 1fr; } .w-hero h1 { font-size: clamp(2.75rem, 7vw, 3.6rem); } }
+  @media (max-width: 479px) { .w-hero h1 { font-size: min(2.75rem, 11.4vw); } } /* "Real businesses." stays one line at 375/390 */
   .w-deck { max-width: 52ch; }
   .w-list { padding-top: 16px; }
   .w-filters { display: flex; gap: .5rem; flex-wrap: wrap; margin-bottom: 2rem; }

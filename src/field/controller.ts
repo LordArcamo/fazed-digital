@@ -109,7 +109,7 @@ export async function start(g: Gate, flags: Flags) {
         const d = (el as HTMLElement | null | undefined)?.dataset ?? {};
         const fx = d.fx ? +d.fx : 0.7, fy = d.fy ? +d.fy : 0.53, fr = d.fr ? +d.fr : 0.17;
         const cx = desktop() ? v.w * fx : v.w / 2, cy = v.h * fy;
-        const r = Math.min(v.w * fr, v.h * fr * 1.75);
+        const r = Math.min(v.w * fr, v.h * fr * 1.75, d.ftop ? cy - +d.ftop : Infinity);
         return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95), d.fdim ? +d.fdim : 1);
       }
       case 'path4': {

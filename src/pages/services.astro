@@ -25,7 +25,7 @@ const schema = [
   schema={schema}
   current="/services"
 >
-  <section class="s-hero" data-f="pentagon" data-fx="0.5" data-fy="0.54" data-fr="0.27" data-fdim="0.35" aria-labelledby="s-h">
+  <section class="s-hero" data-f="pentagon" data-fx="0.5" data-fy="0.54" data-fr="0.27" data-fdim="0.35" data-ftop="128" aria-labelledby="s-h">
     <svg class="poster-art s-poster" viewBox="0 0 200 200" aria-hidden="true">
       {[0, 1, 2, 3, 4].map((k) => { const a = (-90 + k * 72) * Math.PI / 180, b = (-90 + ((k + 1) % 5) * 72) * Math.PI / 180; return <g><line x1={100 + Math.cos(a) * 80} y1={100 + Math.sin(a) * 80} x2={100 + Math.cos(b) * 80} y2={100 + Math.sin(b) * 80} stroke="#F5F4F0" stroke-opacity=".3" stroke-width=".5" /><line x1="100" y1="100" x2={100 + Math.cos(a) * 80} y2={100 + Math.sin(a) * 80} stroke="#F5F4F0" stroke-opacity=".16" stroke-width=".5" /><circle cx={100 + Math.cos(a) * 80} cy={100 + Math.sin(a) * 80} r="1.6" fill="#F5F4F0" fill-opacity=".6" /></g>; })}
       <circle cx="100" cy="100" r="5" fill="none" stroke="#C9FF57" stroke-opacity=".35" stroke-width=".4" />
@@ -96,14 +96,17 @@ const schema = [
 </Base>
 <style>
   /* hero: the pentagon is full-bleed behind the H1 at 35%, the H1 centred on its middle node */
-  .s-hero { --R: min(27vw, 47.25vh); --cy: 54vh; position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; padding-top: var(--header-h); text-align: center; overflow: hidden; }
+  /* R is capped so the top vertex (and its 01 WEB label) stays ≥56px under the rail: cy − R ≥ header-h + 56 (= data-ftop for the field) */
+  .s-hero { --R: min(27vw, 47.25vh, calc(54vh - var(--header-h) - 56px)); --cy: 54vh; position: relative; min-height: 100svh; display: flex; align-items: center; justify-content: center; padding-top: var(--header-h); text-align: center; overflow: hidden; }
   .s-poster { position: absolute; width: calc(var(--R) * 2.5); left: 50%; top: var(--cy); transform: translate(-50%, -50%); }
   .s-hero-in { position: relative; display: grid; gap: 1.5rem; justify-items: center; }
   .s-hero h1 { max-width: none; }
+  /* line 2 can be wider than the container's content box: keep the column on the viewport centre (it used to drift right by half the overflow) */
+  .s-hero-in { grid-template-columns: minmax(0, 1fr); } .s-hero h1 { width: max-content; justify-self: center; }
   /* two-line rhythm like home: line 2 in gray-400 */
   .s-hero h1 .h-l1, .s-hero h1 .h-l2 { display: block; } .s-hero h1 .h-l2 { color: var(--gray-400); }
   .s-hero h1 .h-l1, .s-hero h1 .h-l2 { white-space: nowrap; }
-  @media (max-width: 767px) { .s-hero h1 { font-size: min(9vw, 3rem); } } /* "One connected brand." stays one line at 375/390 */
+  @media (max-width: 767px) { .s-hero h1 { font-size: min(8.4vw, 3rem); } } /* "One connected brand." fits 358px at 390 with even 16px gutters */
   .s-deck { max-width: 44ch; }
   .s-cta { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
   .s-jump a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
@@ -112,6 +115,8 @@ const schema = [
   @media (min-width: 1024px) {
     .s-jump li { position: absolute; left: calc(50% + var(--x) * var(--R)); top: calc(var(--cy) + var(--y) * var(--R)); translate: var(--tx) var(--ty); white-space: nowrap; }
     .s-jump a { padding: 0 6px; }
+    /* the H1 is sized off the pentagon: "Five services." (≈6.4em) ends ≥24px inside the side vertex labels at every width/height */
+    .s-hero h1 { font-size: min(var(--fs-d1), calc(var(--R) * .297 - 10.6px)); }
     .v0 { --x: 0; --y: -1; --tx: -50%; --ty: calc(-100% - 6px); }
     .v1 { --x: .951; --y: -.309; --tx: 14px; --ty: -50%; }
     .v2 { --x: .588; --y: .809; --tx: 14px; --ty: -50%; }

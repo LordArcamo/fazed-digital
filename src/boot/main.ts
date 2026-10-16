@@ -10,6 +10,9 @@ const flags = readFlags();
 const html = document.documentElement;
 bus.rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 bus.record = flags.record;
+// prefers-reduced-motion: the SSR SVG posters ARE the experience, the GL field never boots
+// (?gl=force / ?record still override for QA and capture)
+const noGL = flags.gl === 'off' || (bus.rm && flags.gl !== 'force' && !flags.record);
 
 // header scrolled state (passive, rAF-coalesced)
 let ticking = false;
@@ -29,6 +32,7 @@ const loadMotion = () => (motion ??= import('../motion/motion').then((m) => { m.
 
 let gl: Promise<any> | null = null;
 const loadGL = () => (gl ??= (async () => {
+  if (noGL) { html.dataset.gl = 't0'; return null; }
   const { gate } = await import('./gpu');
   const g = await gate(flags);
   html.dataset.gl = g.tier;
@@ -49,7 +53,7 @@ function boot() {
   // reading pages (blog posts, legal): native scroll, no motion chunk, no GL on a cold load
   if (html.dataset.formation === 'none' && flags.gl !== 'force') return;
   idle(loadMotion);
-  if (flags.gl === 'off') return;
+  if (noGL) return;
   if (mobile) {
     const go = () => { ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => removeEventListener(t, go)); loadGL(); };
     ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => addEventListener(t, go, { passive: true, once: true }));
@@ -74,7 +78,7 @@ function onPage() {
     initMenu();
     initCookies();
     if (html.dataset.formation !== 'none') idle(loadMotion);
-    if (!gl && flags.gl !== 'off' && html.dataset.formation !== 'none') idle(loadGL, 2000);
+    if (!gl && !noGL && html.dataset.formation !== 'none') idle(loadGL, 2000);
     const ann = document.getElementById('route-announcer');
     if (ann) ann.textContent = `${document.title.split('|')[0].trim()} loaded`;
   }
