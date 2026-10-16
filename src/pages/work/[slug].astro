@@ -15,6 +15,10 @@ const c = caseIndex.find((x) => x.slug === slug)!;
 const i = caseIndex.findIndex((x) => x.slug === slug);
 const next = caseIndex[(i + 1) % caseIndex.length];
 const img = workImages[slug];
+// fresh full-page captures of the live sites (scripts/capture-cases.mjs, user OK'd 2026-10-16)
+const platesAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/work/plates/*.jpg', { eager: true });
+const plate = (k: string) => platesAll[`../../assets/work/plates/${slug}-${k}.jpg`]?.default;
+const plateD = plate('desktop'), plateM = plate('mobile');
 const countryCode: Record<string, string> = { USA: 'US', Australia: 'AU', Philippines: 'PH' };
 const schema = [
   {
@@ -76,10 +80,18 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
     </section>
 
     <section class="section c-plate container" aria-label="Project screens">
-      <div class="browser" data-plate>
-        <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="mono">{c.liveLabel ? c.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') : 'private system'}</span></div>
-        <div class="browser-view"><Picture src={img} formats={['avif', 'webp']} widths={[800, 1200, 1600]} sizes="(max-width: 1340px) 92vw, 1212px" alt={c.alt} loading="lazy" decoding="async" class="plate-img" /></div>
+      <div class:list={['c-plates', { 'c-plates--m': !!plateM }]}>
+        <div class="browser" data-plate>
+          <div class="browser-bar" aria-hidden="true"><i></i><i></i><i></i><span class="mono">{c.liveLabel ? c.liveUrl.replace(/^https?:\/\//, '').replace(/\/$/, '') : 'private system'}</span></div>
+          <div class="browser-view"><Picture src={plateD ?? img} formats={['avif', 'webp']} widths={[800, 1200, 1440]} sizes="(max-width: 1023px) 92vw, 900px" alt={plateD ? `Full-page capture of ${c.title}'s live site, desktop` : c.alt} loading="lazy" decoding="async" class="plate-img" /></div>
+        </div>
+        {plateM && (
+          <div class="phone" data-plate>
+            <div class="browser-view"><Picture src={plateM} formats={['avif', 'webp']} widths={[390, 780]} sizes="300px" alt={`Full-page capture of ${c.title}'s live site on a phone`} loading="lazy" decoding="async" class="plate-img" /></div>
+          </div>
+        )}
       </div>
+      {plateD && <p class="mono c-cap">Captured from the live site, Oct 2026</p>}
     </section>
 
     <section class="section c-out container" data-f="lattice" aria-labelledby="o-h">
@@ -131,6 +143,11 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
   .c-story { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--gutter) * 3); padding-top: 0; }
   .c-story h2 { margin-bottom: 1.25rem; font-weight: 400; }
   .c-article { font-size: var(--fs-article); line-height: 1.7; max-width: 64ch; color: var(--gray-200); hanging-punctuation: first; }
+  .c-plates { display: grid; gap: var(--gutter); align-items: start; }
+  .c-plates--m { grid-template-columns: 1fr 300px; }
+  .phone { border: 1px solid var(--gray-700); border-radius: 36px; padding: 10px; background: var(--gray-900); }
+  .phone .browser-view { border-radius: 26px; height: min(70vh, 620px); }
+  .c-cap { margin-top: 1rem; }
   .browser { border: 1px solid var(--gray-700); background: var(--gray-900); }
   .browser-bar { display: flex; align-items: center; gap: 6px; padding: 0 14px; height: 40px; border-bottom: 1px solid var(--gray-700); }
   .browser-bar i { width: 10px; height: 10px; border-radius: 50%; background: var(--gray-700); }
@@ -153,6 +170,6 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
   .c-next-name { color: var(--white); transition: color .2s; }
   .c-next-a:hover .c-next-name, .c-next-a:focus-visible .c-next-name { color: var(--lime); }
   .c-next-meta { color: var(--gray-400); }
-  @media (max-width: 1023px) { .c-facts { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .c-story { grid-template-columns: 1fr; } .c-nodes { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 1023px) { .c-plates--m { grid-template-columns: 1fr; } .phone { max-width: 300px; } .c-facts { grid-template-columns: repeat(2, 1fr); row-gap: 1.25rem; } .c-story { grid-template-columns: 1fr; } .c-nodes { grid-template-columns: 1fr 1fr; } }
   @media (max-width: 599px) { .c-nodes { grid-template-columns: 1fr; } .browser-view { height: 60vh; } }
 </style>
