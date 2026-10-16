@@ -42,9 +42,10 @@ function boot() {
   initCookies();
   const mobile = matchMedia('(pointer: coarse)').matches || innerWidth < 768;
   if (flags.record) { loadMotion(); loadGL(); return; }
+  // reading pages (blog posts, legal): native scroll, no motion chunk, no GL on a cold load
+  if (html.dataset.formation === 'none' && flags.gl !== 'force') return;
   idle(loadMotion);
   if (flags.gl === 'off') return;
-  if (html.dataset.formation === 'none' && flags.gl !== 'force') return; // reading pages: no GL on a cold load
   if (mobile) {
     const go = () => { ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => removeEventListener(t, go)); loadGL(); };
     ['scroll', 'touchstart', 'pointermove', 'keydown'].forEach((t) => addEventListener(t, go, { passive: true, once: true }));
@@ -67,6 +68,7 @@ function onPage() {
   else {
     initMenu();
     initCookies();
+    if (html.dataset.formation !== 'none') idle(loadMotion);
     if (!gl && flags.gl !== 'off' && html.dataset.formation !== 'none') idle(loadGL, 2000);
     const ann = document.getElementById('route-announcer');
     if (ann) ann.textContent = `${document.title.split('|')[0].trim()} loaded`;
@@ -74,5 +76,14 @@ function onPage() {
   bus.onPage.forEach((f) => f());
 }
 document.addEventListener('astro:page-load', onPage);
-document.addEventListener('astro:before-swap', () => bus.onSwap.forEach((f) => f()));
+// ClientRouter swaps <html> attributes for the incoming document's: carry the runtime state over
+const RUNTIME = ['js', 'rm', 'record', 'gl-live', 'js-motion', 'lenis', 'lenis-smooth', 'scrolled', 'cur-on', 'cur-off'];
+document.addEventListener('astro:before-swap', (e: any) => {
+  const nd = e.newDocument?.documentElement as HTMLElement | undefined;
+  if (nd) {
+    RUNTIME.forEach((c) => html.classList.contains(c) && nd.classList.add(c));
+    if (html.dataset.gl) nd.dataset.gl = html.dataset.gl;
+  }
+  bus.onSwap.forEach((f) => f());
+});
 if (document.readyState !== 'loading') onPage(); else document.addEventListener('DOMContentLoaded', onPage, { once: true });

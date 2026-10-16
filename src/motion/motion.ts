@@ -15,6 +15,7 @@ let pageCleanups: (() => void)[] = [];
 export function start(flags: Flags) {
   if (started) return;
   started = true;
+  (window as any).__ST = ScrollTrigger; // leak checks: __ST.getAll().length
   const html = document.documentElement;
   html.classList.add('js-motion');
   gsap.ticker.lagSmoothing(0);
