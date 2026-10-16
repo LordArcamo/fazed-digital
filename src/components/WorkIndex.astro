@@ -1,0 +1,69 @@
+---
+// Typographic work index (home §4, /work). Rows are links; hover/focus parity drives the
+// preview frame + the field's scan-resolve (motion/workindex.ts → fz:shot).
+import { Picture } from 'astro:assets';
+import { caseIndex } from '../data/cases';
+import { workImages } from '../data/images';
+const { services = false } = Astro.props;
+---
+<div class:list={['windex', { 'windex--svc': services }]} data-windex>
+  <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span>What we built</span>{services && <span class="w-svc">Services</span>}</div>
+  <ul>
+    {caseIndex.map((c) => (
+      <li class="wli" data-disc={c.discipline.join(' ')}>
+        <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cursor={`CASE ${c.slug} →`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
+          <span class="mono w-n">{c.slug}</span>
+          <span class="w-client">{c.title}</span>
+          <span class="w-sector">{c.sector}</span>
+          <span class="w-country">{c.country}</span>
+          <span class="w-year">{c.year}</span>
+          <span class="w-built">{c.built}</span>
+          {services && <span class="w-svc mono">{c.discipline.join(' · ')}</span>}
+          <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 1023px) 92vw, 420px" alt={c.alt} loading="lazy" decoding="async" />
+        </a>
+      </li>
+    ))}
+  </ul>
+  <div class="wprev" aria-hidden="true" data-wprev><span class="wprev-scan"></span></div>
+</div>
+<script>
+  import { initWorkIndex } from '../motion/workindex';
+  document.addEventListener('astro:page-load', initWorkIndex);
+  initWorkIndex();
+</script>
+<style>
+  .windex { position: relative; margin-bottom: 3rem; }
+  .wrow { display: grid; grid-template-columns: 4rem 2.2fr 1.4fr 1.1fr .6fr 2fr; gap: var(--gutter); align-items: baseline; padding: 1.25rem 0; border-bottom: 1px solid var(--gray-700); min-height: 64px; position: relative; color: var(--gray-300); transition: color .2s, padding .3s var(--ease-out); }
+  .wrow--head { padding: .75rem 0; min-height: 0; color: var(--gray-400); }
+  .w-client { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--white); line-height: 1.1; background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0% 100%; background-repeat: no-repeat; transition: background-size .25s var(--ease-out), color .2s; justify-self: start; padding: 0 .1em; margin-left: -.1em; }
+  a.wrow:hover .w-client, a.wrow:focus-visible .w-client, a.wrow.is-on .w-client { background-size: 100% 100%; color: var(--black); }
+  a.wrow:hover, a.wrow:focus-visible { color: var(--white); }
+  .w-thumb { display: none; }
+  .windex.has-on .w-year, .windex.has-on .w-built { opacity: .12; }
+  .w-year, .w-built { transition: opacity .25s; }
+  .wprev { position: absolute; right: 0; top: 0; width: 420px; aspect-ratio: 16 / 10; pointer-events: none; opacity: 0; transition: opacity .25s, transform .4s var(--ease-out); z-index: 2; border: 1px solid var(--gray-700); overflow: hidden; }
+  .wprev.is-on { opacity: 1; }
+  .wprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .35s; }
+  .wprev :global(img.is-on) { opacity: 1; }
+  :global(html.gl-live) .wprev { border-color: transparent; }
+  :global(html.gl-live) .wprev :global(img.is-on) { transition-delay: .6s; }
+  .wprev-scan { position: absolute; left: 0; right: 0; top: 0; height: 1px; background: var(--lime); box-shadow: 0 0 12px var(--lime); opacity: 0; }
+  .wprev.is-on .wprev-scan { animation: scan .6s var(--ease-io) both; }
+  @keyframes scan { 0% { opacity: 1; top: 0; } 90% { opacity: 1; } 100% { opacity: 0; top: 100%; } }
+  @media (max-width: 1023px) {
+    .wrow, .windex--svc .wrow { grid-template-columns: 2.5rem 1fr; row-gap: .35rem; }
+    .wrow--head { display: none; }
+    .w-sector, .w-country, .w-year, .w-built { grid-column: 2; font-size: .95rem; }
+    .wprev { display: none; }
+    .w-thumb { display: block; grid-column: 1 / -1; margin-top: .75rem; }
+    .w-thumb :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; }
+  }
+
+  .windex--svc .wrow { grid-template-columns: 4rem 2.2fr 1.3fr 1fr .5fr 1.8fr 1.3fr; }
+  .w-svc { display: none; }
+  @media (min-width: 1280px) { .windex--svc .w-svc { display: block; } }
+  @media (max-width: 1279px) { .windex--svc .wrow { grid-template-columns: 4rem 2.2fr 1.4fr 1.1fr .6fr 2fr; } }
+  .wli { transition: opacity .3s; }
+  .wli.is-dim { opacity: .25; }
+  .wli[hidden] { display: none; }
+</style>

@@ -42,48 +42,6 @@ export function initHome(rm: boolean) {
     }
   }
 
-  /* §4 work index: preview frame follows the cursor y, hover/focus parity */
-  const wi = document.querySelector<HTMLElement>('[data-windex]');
-  const prev = document.querySelector<HTMLElement>('[data-wprev]');
-  if (wi && prev && desktop) {
-    const yTo = gsap.quickTo(prev, 'y', { duration: 0.4, ease: 'power3.out' });
-    let on: string | null = null;
-    const activate = (row: HTMLElement | null, ev?: PointerEvent) => {
-      const id = row?.dataset.shot ?? null;
-      if (row) {
-        const wr = wi.getBoundingClientRect(), rr = row.getBoundingClientRect();
-        const y = (ev ? ev.clientY : rr.top + rr.height / 2) - wr.top - prev.offsetHeight / 2;
-        yTo(Math.max(0, Math.min(wr.height - prev.offsetHeight, y)));
-      }
-      if (id === on) return;
-      on = id;
-      wi.querySelectorAll('.wrow').forEach((r) => r.classList.toggle('is-on', r === row));
-      prev.classList.toggle('is-on', !!id);
-      wi.classList.toggle('has-on', !!id);
-      // the preview reuses the row's own <picture> (cloned once), so there is one image set in the HTML
-      if (row && id && !prev.querySelector(`[data-for="${id}"]`)) {
-        const pic = row.querySelector('picture')?.cloneNode(true) as HTMLElement | undefined;
-        if (pic) { pic.dataset.for = id; pic.querySelector('img')?.setAttribute('alt', ''); pic.querySelector('img')?.setAttribute('loading', 'eager'); prev.prepend(pic); }
-      }
-      prev.querySelectorAll<HTMLElement>('[data-for]').forEach((p) => {
-        const img = p.querySelector('img') ?? p;
-        img.classList.toggle('is-on', p.dataset.for === id);
-      });
-      // let the scan restart
-      const scan = prev.querySelector<HTMLElement>('.wprev-scan');
-      if (scan) { scan.style.animation = 'none'; void scan.offsetWidth; scan.style.animation = ''; }
-      emit('fz:shot', id ? { id, el: prev } : null);
-    };
-    const move = (e: PointerEvent) => activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow'), e);
-    const leave = () => activate(null);
-    const focus = (e: FocusEvent) => activate((e.target as HTMLElement).closest<HTMLElement>('a.wrow'));
-    wi.addEventListener('pointermove', move);
-    wi.addEventListener('pointerleave', leave);
-    wi.addEventListener('focusin', focus);
-    wi.addEventListener('focusout', leave);
-    offs.push(() => { wi.removeEventListener('pointermove', move); wi.removeEventListener('pointerleave', leave); wi.removeEventListener('focusin', focus); wi.removeEventListener('focusout', leave); });
-  }
-
   /* §5 flood: circle wipe from Day 1 (scrub), then days light 1→7 */
   const flood = document.getElementById('flood');
   if (flood && !rm) {

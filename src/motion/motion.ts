@@ -49,6 +49,13 @@ function pageLoad() {
   }
   pageCleanups.push(initMagnetic());
   if (document.querySelector('[data-page="home"]')) pageCleanups.push(initHome(bus.rm));
+  // case plates: the full-page capture scrolls inside the browser frame (scrubbed)
+  if (!bus.rm) document.querySelectorAll<HTMLElement>('[data-plate]').forEach((plate) => {
+    const view = plate.querySelector<HTMLElement>('.browser-view'), img = view?.querySelector('img');
+    if (!view || !img) return;
+    const tw = gsap.to(img, { y: () => -Math.max(0, img.offsetHeight - view.offsetHeight), ease: 'none', scrollTrigger: { trigger: plate, start: 'top 75%', end: 'bottom 25%', scrub: 0.6, invalidateOnRefresh: true } });
+    pageCleanups.push(() => { tw.scrollTrigger?.kill(); tw.kill(); });
+  });
   ScrollTrigger.refresh();
 }
 

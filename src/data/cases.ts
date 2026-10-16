@@ -140,7 +140,7 @@ export const cases: Case[] = [
 export interface CaseExtra {
   country: string; region?: string; sector: string; built: string; changed: string;
   discipline: ('web' | 'brand' | 'systems')[]; resultHeadline: string;
-  seoTitle: string; seoDescription: string; alt: string; services: { label: string; href: string }[];
+  seoTitle: string; seoDescription: string; alt: string; servicesUsed: { label: string; href: string }[];
   liveLabel: string | null; strip: string; lat: number; lon: number;
   /** copy/work.md rewritten blocks (UK spelling, plain words) */
   resultCopy: string[]; challengeCopy: string; approachCopy: string; outcomesCopy: string[];
@@ -161,7 +161,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['web'], resultHeadline: 'A website they now pitch new work with.',
     seoTitle: 'A Framing Company: WordPress Website Case Study | Fazed',
     seoDescription: 'How Fazed Digital built a portfolio-led WordPress site for a Utah framing contractor, now a core part of how they pitch new work. 6-week project.',
-    alt: 'Homepage of A Framing Company’s website, designed and built by Fazed Digital', services: [S.web, S.seo],
+    alt: 'Homepage of A Framing Company’s website, designed and built by Fazed Digital', servicesUsed: [S.web, S.seo],
     liveLabel: 'Visit aframingcompany.com', strip: 'CASE 01 / 08 · CONSTRUCTION · UTAH, USA · 2024', lat: 39.32, lon: -111.09,
     resultCopy: ['Within weeks of launch, A Framing Company reported a clear rise in enquiries from contractors and developers, some finding them through search, others sent the site during bidding.', 'The site is now a core part of how they pitch for work.'],
     challengeCopy: 'A Framing Company is a Utah framing contractor known for precise work: wood framing, concrete and roofing on residential and commercial builds. Their website didn’t show any of it. It was outdated and had no portfolio, so they were losing bids to competitors who simply looked more credible online.',
@@ -173,7 +173,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['brand', 'web'], resultHeadline: 'A rebrand that opened a new revenue stream.',
     seoTitle: 'Cleen & Green: Brand Identity & Website Case Study | Fazed',
     seoDescription: 'A premium eco brand and WordPress site for a Philippine cleaning company, with a franchise section that opened a new growth channel. 8 weeks.',
-    alt: 'Homepage of Cleen & Green’s website, designed and built by Fazed Digital', services: [S.brand, S.web],
+    alt: 'Homepage of Cleen & Green’s website, designed and built by Fazed Digital', servicesUsed: [S.brand, S.web],
     liveLabel: 'Visit cleenandgreen.com', strip: 'CASE 02 / 08 · CLEANING SERVICES · PHILIPPINES · 2025', lat: 12.88, lon: 121.77,
     resultCopy: ['The brand finally matches the service. The new site converts better, everything looks consistent across every touchpoint, and the franchise section opened a growth channel they couldn’t activate before.'],
     challengeCopy: 'Cleen & Green is a premium cleaning company in the Philippines: deep house cleaning, post-construction cleaning, car interior detailing and eco-safe disinfection. They wanted to sit above the typical cleaning service, but their brand and website didn’t show the premium, eco-conscious experience they actually delivered. In a market where trust is everything, they were underselling themselves.',
@@ -185,7 +185,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['web', 'systems'], resultHeadline: 'Idea to live platform in 5 weeks.',
     seoTitle: 'CrateOnScene: MVP Platform (PWA) Built in 5 Weeks | Fazed',
     seoDescription: 'An automotive event discovery platform for drivers, organisers, businesses and spectators, shipped as an installable PWA in 5 weeks.',
-    alt: 'CrateOnScene event platform interface built by Fazed Digital', services: [S.product, S.systems, S.web],
+    alt: 'CrateOnScene event platform interface built by Fazed Digital', servicesUsed: [S.product, S.systems, S.web],
     liveLabel: 'Visit crateonscene.com', strip: 'CASE 03 / 08 · AUTOMOTIVE EVENTS · USA · 2024', lat: 39.32, lon: -111.09,
     resultCopy: ['CrateOnScene launched as a fully working platform serving four kinds of user at once. Because it’s a PWA, there’s no app store in the way, and the event-first design keeps people browsing from their first visit.'],
     challengeCopy: 'CrateOnScene needed to go from idea to live product, fast. The vision: one hub where drivers, spectators, businesses and organisers find each other around car shows, meets and racing events across the US. It had to feel polished enough to attract real users from day one, not like a rough prototype.',
@@ -197,7 +197,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['web'], resultHeadline: 'Magento to PrestaShop. Zero data loss.',
     seoTitle: 'Magento to PrestaShop Migration, Zero Data Loss | Fazed',
     seoDescription: 'How we moved an Australian telco retailer’s catalogue, customers and order history from Magento to PrestaShop with zero data loss and minimal downtime.',
-    alt: 'The Telecom Shop PrestaShop storefront interface built by Fazed Digital', services: [S.web, S.seo],
+    alt: 'The Telecom Shop PrestaShop storefront interface built by Fazed Digital', servicesUsed: [S.web, S.seo],
     liveLabel: 'Visit thetelecomshop.com', strip: 'CASE 04 / 08 · TELCO RETAIL · AUSTRALIA · 2024', lat: -33.87, lon: 151.21,
     resultCopy: ['The migration finished with zero data loss and minimal disruption to trading. The new store loads significantly faster than the old Magento build, and the team runs its catalogue and promotions without a developer.'],
     challengeCopy: 'The Telecom Shop is an Australian online retailer of phones, tablets, accessories and plans. Their Magento store had become a liability: slow, expensive to maintain and hard to update. They needed the full catalogue, customer data and order history moved to PrestaShop without disrupting sales or losing ground in search.',
@@ -209,7 +209,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['web', 'systems'], resultHeadline: 'The public site and its ops tool, built as one.',
     seoTitle: 'Canwell: Health Platform & Admin Portal Case Study | Fazed',
     seoDescription: 'A public website and a separate admin portal for Australian health platform Canwell, delivered together in 8 weeks under one ‘Own Your Health’ system.',
-    alt: 'Canwell web platform interface built by Fazed Digital', services: [S.web, S.systems],
+    alt: 'Canwell web platform interface built by Fazed Digital', servicesUsed: [S.web, S.systems],
     liveLabel: 'Visit canwell.com.au', strip: 'CASE 05 / 08 · HEALTH & WELLNESS · AUSTRALIA · 2024', lat: -33.87, lon: 151.21,
     resultCopy: ['Canwell launched with a digital presence that matched the platform’s ambition. The admin portal removed manual processes and gave operations the tools to scale, while the public site built credibility and drove sign-ups from day one.'],
     challengeCopy: 'Canwell is an Australian health and wellness platform that helps people take ownership of their health. They needed two things under one system: a public website that explains the offer clearly, and a solid admin portal for managing a growing base of users, practitioners and content.',
@@ -221,7 +221,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['systems'], resultHeadline: 'From manual bookings to one system.',
     seoTitle: '8Drive: Car Rental Booking & Fleet System | Fazed Digital',
     seoDescription: 'A custom car rental system for 8Drive Cars: bookings, real-time fleet availability, customer records, chauffeur scheduling and reporting in one app.',
-    alt: '8Drive rental management system interface built by Fazed Digital', services: [S.systems, S.product],
+    alt: '8Drive rental management system interface built by Fazed Digital', servicesUsed: [S.systems, S.product],
     liveLabel: null, strip: 'CASE 06 / 08 · CAR RENTAL · PHILIPPINES · 2024', lat: 14.6, lon: 121.0,
     resultCopy: ['8Drive moved from scattered manual processes to one system that runs the whole operation. Bookings got noticeably faster, fleet visibility improved, and management had clear operational data for the first time.'],
     challengeCopy: '8Drive Cars offers premium self-drive and chauffeured rentals. Bookings, fleet availability, customer records and chauffeur scheduling were mostly manual, with no central system holding it together. They needed a purpose-built platform to run the operation end to end.',
@@ -233,7 +233,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['systems'], resultHeadline: 'One secure portal for a state-wide network.',
     seoTitle: 'UGLQ Connect: Membership Management Portal | Fazed Digital',
     seoDescription: 'A secure, role-based membership portal for the United Grand Lodge of Queensland: member records, lodge admin, dues and reporting in one place.',
-    alt: 'UGLQ Connect membership portal interface built by Fazed Digital', services: [S.systems, S.product],
+    alt: 'UGLQ Connect membership portal interface built by Fazed Digital', servicesUsed: [S.systems, S.product],
     liveLabel: 'Visit connect.uglq.org.au', strip: 'CASE 07 / 08 · NON-PROFIT · QUEENSLAND, AU · 2024', lat: -20.92, lon: 142.7,
     resultCopy: ['UGLQ Connect replaced a patchwork of legacy tools with one secure, purpose-built platform. It’s now the operational backbone of Queensland Freemasonry. Lodge secretaries report big time savings on admin, and the Grand Lodge has the data it needs to manage the network.'],
     challengeCopy: 'The United Grand Lodge of Queensland governs Freemasonry across the state: hundreds of lodges and thousands of members. Membership records, communications and lodge admin lived in disconnected legacy systems, which made work slow for the Grand Lodge and for every lodge secretary.',
@@ -245,7 +245,7 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
     discipline: ['web', 'systems'], resultHeadline: 'Three products. One client experience.',
     seoTitle: 'QLD Law Group: Law Firm Website, Portal & App | Fazed',
     seoDescription: 'Website, client portal and iOS/Android app for a Queensland law firm. One system that lets clients track matters and share documents. 14 weeks.',
-    alt: 'Homepage of QLD Law Group’s website, designed and built by Fazed Digital', services: [S.web, S.product, S.systems],
+    alt: 'Homepage of QLD Law Group’s website, designed and built by Fazed Digital', servicesUsed: [S.web, S.product, S.systems],
     liveLabel: 'Visit the QLD Law Group app', strip: 'CASE 08 / 08 · LEGAL · QUEENSLAND, AU · 2025', lat: -20.92, lon: 142.7,
     resultCopy: ['QLD Law Group launched a complete digital presence that sets them apart from firms still running on phone and email. Matters are more transparent, documents move faster, and the firm can take on more clients without adding admin overhead.'],
     challengeCopy: 'QLD Law Group is a Queensland law firm serving individuals and companies across several practice areas. They needed a complete overhaul and three connected products: a professional website, a secure client portal for matter updates and documents, and a mobile app for on-the-go access.',

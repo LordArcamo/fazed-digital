@@ -142,6 +142,16 @@ export async function start(g: Gate, flags: Flags) {
         if (!r || !word) return null;
         return attach(F.wordmark(r, word, n, v));
       }
+      case 'shot': {
+        const host = el as HTMLElement | null;
+        const id = host?.dataset.shot;
+        const frame = host?.querySelector('[data-shot-rect]') ?? host;
+        if (!id || !frame) return F.lattice(v, n);
+        const s = shots.get(id);
+        if (!s) { shot(id).then(() => { if (beat === 'shot' && beatEl === host) resolveShot(host!); }); return null; }
+        const r = rectOf(frame)!;
+        return attach(F.shot(`shot-${id}`, r, s, n, v, spec.densify), frame);
+      }
       case 'scatter': return F.scatter(n, v);
       case 'flood': return F.lattice(v, n);
       default: return F.lattice(v, n);
@@ -185,6 +195,7 @@ export async function start(g: Gate, flags: Flags) {
       return;
     }
     heroScrub = false;
+    if (id === 'shot' && el) { resolveShot(el as HTMLElement); return; }
     const f = build(id, el);
     if (id === 'globe' && f) {
       morph(f, 1.1);
@@ -194,6 +205,15 @@ export async function start(g: Gate, flags: Flags) {
       return;
     }
     morph(f, prev === 'hero' ? 1.1 : 1.1);
+  };
+  /** case hero: dots resolve into the screenshot, a scan line passes, the real image crossfades in */
+  const resolveShot = (host: HTMLElement) => {
+    const frame = host.querySelector<HTMLElement>('[data-shot-rect]');
+    const f = build('shot', host);
+    if (!f || !frame) { frame?.classList.add('is-resolved'); return; }
+    morph(f, bus.rm ? 0 : 1.3, 'power3.out', [frame.getBoundingClientRect().left + frame.offsetWidth / 2, frame.getBoundingClientRect().top]);
+    frame.classList.add('is-scanning');
+    gsap.delayedCall(bus.rm ? 0 : 1.2, () => frame.classList.add('is-resolved'));
   };
   const globeC0 = () => ({ x: globeC.x, y: globeC.y - scrollY() });
   const arcList = () => {
@@ -243,9 +263,14 @@ export async function start(g: Gate, flags: Flags) {
     } else {
       const first = document.querySelector(`[data-f="${pageF}"]`);
       beatEl = first;
-      const f = build(pageF, first);
-      if (!field.current()) { if (f) field.set(f); } else morph(f);
       beat = pageF;
+      if (pageF === 'shot' && first) {
+        if (!field.current()) field.set(F.lattice(view(), n));
+        shot((first as HTMLElement).dataset.shot!).then(() => resolveShot(first as HTMLElement));
+      } else {
+        const f = build(pageF, first);
+        if (!field.current()) { if (f) field.set(f); } else morph(f);
+      }
     }
     document.querySelectorAll<HTMLElement>('[data-f]').forEach((el) => {
       const id = el.dataset.f!;
