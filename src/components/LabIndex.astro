@@ -5,7 +5,7 @@ import { Picture } from 'astro:assets';
 import { labShipped, labUpcoming, labImaged, LABEL, labDate, hostOf } from '../data/lab';
 import { labImages } from '../data/images';
 import IndexPreview from './IndexPreview.astro';
-const fiction: Record<string, string> = { '01': 'café', '02': 'sneaker brand', '03': 'watch brand', '04': 'electric car brand' };
+const fiction: Record<string, string> = { '01': 'café', '02': 'sneaker brand', '03': 'watch brand', '04': 'electric car brand', '05': 'skincare brand' };
 const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
 ---
 <div class="lindex" data-windex data-event="fz:lab">
@@ -42,7 +42,7 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
     {labUpcoming.map((i) => (
       <li class:list={['lq', { 'lq--research': i.status === 'research' }]}>
         <span class="mono l-n">{i.n}</span>
-        <span class="lq-b"><span class="lq-name">{i.brand}</span><span class="mono lq-st">{i.status === 'research' ? 'In research' : 'Queued'}</span></span>
+        <span class="lq-b"><span class="lq-name">{i.brand}</span><span class="mono lq-st">{i.status === 'research' ? 'In the works' : 'Queued'}</span></span>
       </li>
     ))}
   </ol>

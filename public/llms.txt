@@ -30,6 +30,7 @@
   - OFFCUT COURT-7 (concept site, fictional brand): https://fazed-offcut-frame7.vercel.app · React Three Fiber, drei, Blender, GSAP + Lenis · 2026-10-15
   - Maison Ossel OS-01 (concept site, fictional brand): https://fazed-maison-ossel.vercel.app · WebGPU, TSL, Threlte, Blender, Web Audio · 2026-10-16
   - Halde Ø1 (concept site, fictional brand): https://fazed-halde-o1.vercel.app · OGL, Blender Cycles, Lenis, Seedance clip · 2026-10-17
+  - Vitrène Sérum 1.47 (concept site, fictional brand): https://fazed-vitrene-serum.vercel.app · PixiJS, Blender Cycles, GSAP + Lenis, Web Audio · 2026-10-17
 
 ## Guides
 - [Contact Page Design: How to Build a Page That Converts Visitors Into Enquiries](https://www.fazeddigital.com/blog/contact-page-design) (Design, 16 Oct 2026)

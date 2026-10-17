@@ -3,7 +3,7 @@
 // a live drop that never ticks), so a plate never dates itself. Layout is kept: visibility only, no reflow.
 import puppeteer from '/Users/lordarcamo/Projects/fazed-3d-sites/clients/fazed-digital/site/node_modules/puppeteer-core/lib/puppeteer/puppeteer-core.js';
 const OUT='/Users/lordarcamo/Projects/fazed-3d-sites/clients/fazed-digital/media/lab-design/captures';
-const sites=[['01','https://fazed-nocturne-espresso.vercel.app'],['02','https://fazed-offcut-frame7.vercel.app'],['03','https://fazed-maison-ossel.vercel.app'],['04','https://fazed-halde-o1.vercel.app'],['fd-home','https://www.fazeddigital.com/'],['fd-work','https://www.fazeddigital.com/work'],['fd-about','https://www.fazeddigital.com/about']];
+const sites=[['01','https://fazed-nocturne-espresso.vercel.app'],['02','https://fazed-offcut-frame7.vercel.app'],['03','https://fazed-maison-ossel.vercel.app'],['04','https://fazed-halde-o1.vercel.app'],['05','https://fazed-vitrene-serum.vercel.app'],['fd-home','https://www.fazeddigital.com/'],['fd-work','https://www.fazeddigital.com/work'],['fd-about','https://www.fazeddigital.com/about']];
 // per-site: selectors hidden before the shot
 const hide={'02':['[data-cd]','[data-cd-label]','[data-cd-short]']};
 const only=process.argv.slice(2);

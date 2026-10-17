@@ -147,7 +147,7 @@ const faq = lpFaq(php);
     <h2 id="lw-h" class="t-d2">See what we can build.</h2>
     <p>Concept sites for fictional brands, designed and built in-house to push our craft. Your 7-day site is simpler, but it’s made by the same team with the same care.</p>
     <ul class="lp-tiles">
-      {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
+      {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 599px) 92vw, (max-width: 1023px) 46vw, 25vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
     </ul>
     <p class="lp-work-more"><a class="link" href="/lab">Explore the Fazed Lab →</a> <span class="mono">or</span> <a class="link" href="/work">see 8 live client projects →</a></p>
   </section>
@@ -236,7 +236,7 @@ const faq = lpFaq(php);
   .lp-mid-in { display: grid; gap: .75rem; justify-items: start; }
   .lp-mid .btn--black, .lp-mid .btn--black :global(*) { color: var(--lime); }
   .lp-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: 1.5rem; }
-  .lp-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin: 1.5rem 0; }
+  .lp-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin: 1.5rem 0; }
   .lp-tiles a { display: grid; gap: .4rem; }
   .lp-tiles :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); transition: border-color .2s; }
   .lp-tiles a:hover :global(img), .lp-tiles a:focus-visible :global(img) { border-color: var(--lime); }

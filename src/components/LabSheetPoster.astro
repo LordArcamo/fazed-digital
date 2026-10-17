@@ -30,7 +30,7 @@ const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labIma
         <li class:list={['sl-f', `sl-f--${k}`, { 'is-now': i.n === lead }]}>
           {i.status === 'shipped'
             ? <a class="sl-a" href={`#lab-${i.n}`} data-slate-frame={i.n} data-name={`${i.n} ${i.brand}`} data-img={k === 'img' ? '1' : undefined} title={i.brand}>{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">: {i.brand}, concept site, jump to its entry</span></span></a>
-            : <span class="sl-a">{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">, {i.status === 'research' ? 'in research' : 'queued'}</span></span></span>}
+            : <span class="sl-a">{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">, {i.status === 'research' ? 'in the works' : 'queued'}</span></span></span>}
         </li>
       );
     })}

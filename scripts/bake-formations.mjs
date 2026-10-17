@@ -99,6 +99,8 @@ const LAB = {
   '02': { crop: [620, 270, 940, 588], invert: false, t0: 0.26, t1: 0.9, gamma: 1.0 },
   '03': { crop: [520, 0, 1216, 760], invert: false, t0: 0.16, t1: 0.88, gamma: 1.1 },
   '04': { crop: [430, 230, 1060, 662], invert: true, t0: 0.14, t1: 1, gamma: 1.5 },
+  // pale glass on a pale wall: luma can't isolate the bottle, so the dark headline carries it and the glass reads as a ghost
+  '05': { crop: [1000, 120, 1600, 1000], invert: true, t0: 0.25, t1: 0.85, gamma: 1.2 },
 };
 for (const [id, o] of Object.entries(LAB)) {
   const src = join(ROOT, 'scripts/lab-src', `lab-${id}.webp`);
