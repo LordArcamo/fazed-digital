@@ -5,11 +5,14 @@
 import { Picture } from 'astro:assets';
 import Faq from './Faq.astro';
 import LpForm from './LpForm.astro';
-import { caseIndex } from '../data/cases';
-import { workImages } from '../data/images';
+import { labImages } from '../data/images';
+import { labShipped, LABEL } from '../data/lab';
 import { lpFaq } from '../data/lp';
 import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, prices, capsCopy } from '../data/proof';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
+// Example sites = Fazed Lab concept sites (fictional brands, always labelled as such).
+// #04 Halde is left out: its base mesh is CC BY-NC (non-commercial) and this is a paid-ads sales page.
+const lpLab = labShipped.filter((i) => i.n !== '04' && labImages[i.n] && i.url);
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
 const plans = [
@@ -140,13 +143,13 @@ const faq = lpFaq(php);
   </section>
 
   <section class="section container lp-work" aria-labelledby="lw-h">
-    <p class="mono">Real work · 08 live projects</p>
-    <h2 id="lw-h" class="t-d2">Sites we’ve shipped.</h2>
-    <p>From 5-week MVPs to 14-week platforms. The same team builds your 7-day site.</p>
+    <p class="mono">Fazed Lab · {String(lpLab.length).padStart(2, '0')} concept sites</p>
+    <h2 id="lw-h" class="t-d2">See what we can build.</h2>
+    <p>Concept sites for fictional brands, designed and built in-house to push our craft. Your 7-day site is simpler, but it’s made by the same team with the same care.</p>
     <ul class="lp-tiles">
-      {caseIndex.map((c) => <li><a href={`/work/${c.slug}`} data-cursor={`CASE ${c.slug} →`}><Picture src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 25vw" alt={`${c.title} website screenshot`} loading="lazy" decoding="async" /><span class="mono">{c.sector}</span><span class="tile-t">See the {c.title.replace(/^The /, '')} project</span></a></li>)}
+      {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
     </ul>
-    <a class="link" href="/work">See all our work →</a>
+    <p class="lp-work-more"><a class="link" href="/lab">Explore the Fazed Lab →</a> <span class="mono">or</span> <a class="link" href="/work">see 8 live client projects →</a></p>
   </section>
 
   <section class="section container lp-faq" aria-labelledby="fq-h">
@@ -233,11 +236,14 @@ const faq = lpFaq(php);
   .lp-mid-in { display: grid; gap: .75rem; justify-items: start; }
   .lp-mid .btn--black, .lp-mid .btn--black :global(*) { color: var(--lime); }
   .lp-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: 1.5rem; }
-  .lp-tiles { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin: 1.5rem 0; }
+  .lp-tiles { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin: 1.5rem 0; }
   .lp-tiles a { display: grid; gap: .4rem; }
   .lp-tiles :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); transition: border-color .2s; }
   .lp-tiles a:hover :global(img), .lp-tiles a:focus-visible :global(img) { border-color: var(--lime); }
   .tile-t { color: var(--white); font-weight: 600; }
+  .tile-l { color: var(--gray-400); font-style: italic; }
+  .lp-work-more { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
+  .lp-work-more .mono { color: var(--gray-500); }
   .lp-faq > :global(.faq) { max-width: 1000px; }
   .lp-form { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .lp-form-side { grid-column: 1 / span 4; display: grid; gap: 1.25rem; align-content: start; }
