@@ -32,6 +32,7 @@
   - Halde Ø1 (concept site, fictional brand): https://fazed-halde-o1.vercel.app · OGL, Blender Cycles, Lenis, Seedance clip · 2026-10-17
 
 ## Guides
+- [Image Optimisation for Small Business Websites: How to Cut Load Times Without Losing Visual Quality](https://www.fazeddigital.com/blog/image-optimisation-small-business) (Development, 17 Oct 2026)
 - [Contact Page Design: How to Build a Page That Converts Visitors Into Enquiries](https://www.fazeddigital.com/blog/contact-page-design) (Design, 16 Oct 2026)
 - [Technical SEO for Small Businesses: Sitemaps, Crawlability, and the Fixes That Move Rankings](https://www.fazeddigital.com/blog/technical-seo-small-business) (SEO, 15 Oct 2026)
 - [How to Build a Brand Style Guide for Your Small Business](https://www.fazeddigital.com/blog/brand-style-guide) (Branding, 14 Oct 2026)
