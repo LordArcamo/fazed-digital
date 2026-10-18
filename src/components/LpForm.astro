@@ -25,7 +25,7 @@ const id = `lpq-${variant}`;
   <div class="qf-card" data-card>
     <p class="mono qf-eyebrow">Your 7-day brief{php && ' · Peso pricing'}</p>
     <h3 class="t-h3 qf-card-h">Which package fits?</h3>
-    <p class="qf-card-sub">A few quick questions, mostly one tap each.</p>
+    <p class="qf-card-sub">Pick one to start. You can change it later.</p>
     <div class="qf-card-pk">{pkgs.map((p) => (
       <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure']} href="#get-started" data-start={p.value}>
         <span class="qt-b"><span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span></span>
