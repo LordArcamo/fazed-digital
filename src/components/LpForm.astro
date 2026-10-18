@@ -31,7 +31,7 @@ const id = `lpq-${variant}`;
         <span class="qt-b"><span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span></span>
       </a>
     ))}</div>
-    <p class="qf-resume" data-resume hidden><button type="button" class="btn btn--lime" data-resume-btn>Continue your brief · <span data-resume-n></span> of 7 answered <span class="arrow" aria-hidden="true">→</span></button></p>
+    <p class="qf-resume" data-resume hidden><button type="button" class="btn btn--lime" data-resume-btn><span data-resume-label>Continue your brief · <span data-resume-n></span> of 7 answered</span> <span class="arrow" aria-hidden="true">→</span></button></p>
     <div class="qf-card-ok" data-card-ok hidden><p class="mono qf-eyebrow">Brief sent</p><p class="t-h3">Brief received. You’re in the queue.</p><p>We’ll reply within one business day with your confirmed start date.</p></div>
     <p class="qf-card-fine">Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
   </div>
@@ -61,7 +61,7 @@ const id = `lpq-${variant}`;
                   <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
                 </label>
               ))}</div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-package`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="industry" data-kind="choice" hidden>
@@ -71,7 +71,7 @@ const id = `lpq-${variant}`;
                 <label class="qt qt--chip"><input type="radio" name="industry" value={x} /><span class="qt-b">{i < 9 && <span class="qt-k" aria-hidden="true">{i + 1}</span>}<span class="qt-t" data-opt>{x}</span></span></label>
               ))}</div>
               <div class="f q-other" data-other-wrap hidden><label for={`${id}-other`}>What do you do? (optional)</label><input id={`${id}-other`} name="industryOther" autocapitalize="sentences" enterkeyhint="next" placeholder={php ? 'e.g. Printing shop' : 'e.g. Dog grooming'} /></div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-industry`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="goal" data-kind="choice" hidden>
@@ -80,7 +80,7 @@ const id = `lpq-${variant}`;
               <div class="q-opts q-opts--rows">{goals.map(([v, l], i) => (
                 <label class="qt"><input type="radio" name="goal" value={v} /><span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-node" aria-hidden="true"></span></span></label>
               ))}</div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-goal`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="timeline" data-kind="choice" hidden>
@@ -89,7 +89,7 @@ const id = `lpq-${variant}`;
               <div class="q-opts q-opts--rows">{timelines.map(([v, l], i) => (
                 <label class="qt"><input type="radio" name="timeline" value={v} /><span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-node" aria-hidden="true"></span></span></label>
               ))}</div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-timeline`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="style" data-kind="choice" hidden>
@@ -98,7 +98,7 @@ const id = `lpq-${variant}`;
               <div class="q-opts q-opts--cards q-opts--style">{styles.map(([v, l, d], i) => (
                 <label class="qt qt--card qt--style" data-style={v}><input type="radio" name="styleVibe" value={v} /><span class="qt-b"><span class="qt-spec" aria-hidden="true"><i></i><i></i><i></i></span><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-d">{d}</span><span class="qt-node" aria-hidden="true"></span></span></label>
               ))}</div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-style`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="business" data-kind="text" hidden>
@@ -109,7 +109,7 @@ const id = `lpq-${variant}`;
                 {php && <div class="f"><label for={`${id}-fb`}>Facebook page (optional)</label><input id={`${id}-fb`} name="facebookPage" inputmode="url" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="facebook.com/santosbakeshop" aria-describedby={`${id}-fb-h`} /><p class="f-h" id={`${id}-fb-h`}>We’ll pull your photos and details from it to save you time.</p></div>}
                 <div class="f" data-replace-only hidden><label for={`${id}-cw`}>Current website (optional)</label><input id={`${id}-cw`} name="currentWebsite" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="url" enterkeyhint="next" placeholder="yourbusiness.com" aria-describedby={`${id}-cw-h`} /><p class="f-h" id={`${id}-cw-h`}>So we can see what to keep and what to fix.</p></div>
               </div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-business`}></p>
             </fieldset>
 
             <fieldset class="q" data-q="contact" data-kind="text" hidden>
@@ -122,13 +122,14 @@ const id = `lpq-${variant}`;
                 <button type="button" class="qf-note-toggle" data-note-toggle>+ Add a note (optional)</button>
                 <div class="f" data-note hidden><label for={`${id}-no`}>Anything else we should know?</label><textarea id={`${id}-no`} name="notes" rows="3" placeholder="Pages you need, a launch deadline, sites you like…"></textarea></div>
               </div>
-              <p class="q-err" data-err role="alert"></p>
+              <p class="q-err" data-err role="alert" id={`${id}-err-contact`}></p>
             </fieldset>
 
             <div class="q-nav">
               <button type="button" class="btn btn--lime q-next" data-next hidden>Continue <span class="arrow" aria-hidden="true">→</span></button>
               <button type="submit" class="btn btn--lime q-send" data-submit hidden data-cursor="SEND"><span data-label>Send my 7-day brief</span> <span class="arrow" aria-hidden="true">→</span></button>
               <p class="q-hint mono" data-hint aria-hidden="true"></p>
+              <p class="q-status" data-status></p>
             </div>
             <p class="q-mail" data-mail hidden><a class="link" data-mail-link href="mailto:info@fazeddigital.com">Email it instead</a></p>
             <div class="q-fine" data-fine hidden>
@@ -165,9 +166,10 @@ const id = `lpq-${variant}`;
   </dialog>
 </div>
 <script>
-  import { initLpForms } from '../forms/lp';
-  document.addEventListener('astro:page-load', initLpForms);
-  initLpForms();
+  // tiny eager shell; the questionnaire engine (src/forms/lp.ts) loads at idle or on first intent
+  import { initLpShell } from '../forms/lp-shell';
+  document.addEventListener('astro:page-load', initLpShell);
+  initLpShell();
 </script>
 <style>
   /* `hidden` always wins over the display values below (the back button keeps its slot instead) */
@@ -181,6 +183,7 @@ const id = `lpq-${variant}`;
   .qf-card-pk { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
   .qf-card-pk .qt-b { min-height: 104px; }
   .qf-resume[hidden], .qf-card-ok[hidden] { display: none; }
+  .qf-resume .btn { white-space: normal; width: 100%; height: auto; min-height: 56px; padding-block: 12px; justify-content: center; text-align: center; }
   .qf-card-ok { display: grid; gap: .5rem; }
 
   /* ── Option tile (row · chip · card) ───────────────────── */
@@ -254,6 +257,8 @@ const id = `lpq-${variant}`;
   .q-sub { color: var(--gray-300); margin-bottom: 12px; }
   .q-opts { display: grid; gap: 8px; }
   .q-opts--cards { grid-template-columns: 1fr 1fr; }
+  .q-opts--cards .qt { display: grid; }
+  .q-opts--cards .qt-b { height: 100%; }
   .q-opts--chips { display: flex; flex-wrap: wrap; }
   .q-opts--rows { max-width: 560px; }
   .q-other { margin-top: 12px; }
@@ -278,12 +283,19 @@ const id = `lpq-${variant}`;
   .q-hint { color: var(--gray-400); display: none; }
   @media (hover: hover) and (pointer: fine) { .q-hint { display: block; } }
   .q-send:disabled { background: var(--lime-dark); color: var(--black); cursor: progress; }
+  .q-status { color: var(--gray-300); font-size: .9rem; flex-basis: 100%; }
+  .q-status:empty { display: none; }
   .q-mail { margin-top: 12px; }
   .q-fine { margin-top: 16px; display: grid; gap: 8px; font-size: .875rem; color: var(--gray-400); }
   .q-ok { display: grid; gap: 14px; }
   .q-ok[hidden] { display: none; }
   .q-ok-stamp { color: var(--lime); }
   .q-ok-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+  @media (min-width: 1024px) {
+    .brief-main { padding-bottom: 0; }
+    .q-nav { position: sticky; bottom: 0; z-index: 1; margin-top: auto; padding: 16px 0 24px; background: var(--gray-900); box-shadow: 0 -1px 0 var(--gray-700); }
+  }
 
   /* Brief rail (desktop) */
   .brief-rail { background: var(--black); border-left: 1px solid var(--gray-700); padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
@@ -317,10 +329,13 @@ const id = `lpq-${variant}`;
     fieldset.q[data-kind='choice'] { flex: 1; }
     fieldset.q[data-kind='choice'] .q-opts { margin-top: auto; }
     .q-opts--cards { grid-template-columns: 1fr; }
-    .q-opts--style { grid-template-columns: 1fr 1fr; }
+    .q-opts--style { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
     .q-nav .btn { width: 100%; min-height: 56px; justify-content: center; }
     .brief-rail { display: none; border: 0; padding: 16px; }
-    .brief[data-step='contact'] .brief-rail { display: flex; order: -1; border-bottom: 1px solid var(--gray-700); }
+    /* the last step shows the whole brief above the fields as the review (not a collapsed scroll box) */
+    .brief[data-step='contact'] .brief-rail { display: flex; flex: none; overflow: visible; order: -1; border-bottom: 1px solid var(--gray-700); }
+    .q[data-q='package'] .qt-d { display: none; }
+    .q[data-q='package'] .qt--card .qt-b { min-height: 96px; padding-block: 14px; }
     .brief[data-step='contact'] .brief-pills, .brief[data-step='contact'] .brief-rail-empty { display: none; }
   }
   @media (max-width: 479px) { .qf-card-pk { grid-template-columns: 1fr; } }

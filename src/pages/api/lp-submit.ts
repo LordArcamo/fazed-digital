@@ -39,16 +39,14 @@ interface LpSubmitBody {
   captchaToken?: string;
 }
 
-// Best-effort duplicate guard: the same brief id within 10 minutes is accepted but not sent twice.
+// Best-effort duplicate guard: a brief id that was SENT in the last 10 minutes is accepted but not sent again.
+// Marked only after a successful send, so a retry after a failure always goes through.
 // (Lives in the warm function instance; the client also blocks double taps.)
-const seen = new Map<string, number>();
-function duplicate(id: string): boolean {
-  if (!id) return false;
+const sent = new Map<string, number>();
+function sentRecently(id: string): boolean {
   const now = Date.now();
-  for (const [k, at] of seen) if (now - at > 600_000) seen.delete(k);
-  if (seen.has(id)) return true;
-  seen.set(id, now);
-  return false;
+  for (const [k, at] of sent) if (now - at > 600_000) sent.delete(k);
+  return !!id && sent.has(id);
 }
 
 export const POST: APIRoute = async ({ request }) => {
@@ -81,7 +79,7 @@ export const POST: APIRoute = async ({ request }) => {
   if (!d.name || !d.email) return json({ error: 'Please fill in all required fields.' }, 400);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return json({ error: 'Please enter a valid email address.' }, 400);
 
-  if (duplicate(s(body.idem))) {
+  if (sentRecently(s(body.idem))) {
     console.warn('LP duplicate brief dropped:', s(body.idem));
     return json({ ok: true });
   }
@@ -108,7 +106,9 @@ export const POST: APIRoute = async ({ request }) => {
   ]);
   console.log(`LP lead: email=${mail || 'failed'} hubspot=${hs}`);
 
-  // Soft-fail: the lead is already in the log above, so the visitor always gets a success.
+  // Nothing reached the team: tell the visitor, so the form keeps their answers and offers "Email it instead".
+  if (!mail && hs !== 'ok') return json({ error: 'Your brief didn’t send. Please try again, or email it to info@fazeddigital.com.' }, 502);
+  if (s(body.idem)) sent.set(s(body.idem), Date.now());
   return json({ ok: true });
 };
 

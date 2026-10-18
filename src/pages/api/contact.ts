@@ -75,8 +75,8 @@ export const POST: APIRoute = async ({ request }) => {
     pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
     pageName: 'Fazed Digital — Contact',
   });
-  // HubSpot unreachable AND no email went out: the visitor must retry. Otherwise the lead is safe.
-  if (hs === 'unreachable' && !emailed) {
+  // Neither the email nor HubSpot got the lead: the visitor must retry. Otherwise the lead is safe.
+  if (!emailed && hs !== 'ok') {
     return json({ error: 'Something went wrong on our side and your message didn’t send. Please try again, or email us at info@fazeddigital.com.' }, 502);
   }
 

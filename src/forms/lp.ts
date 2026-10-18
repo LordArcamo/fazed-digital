@@ -62,7 +62,6 @@ function typoFix(email: string): string {
   return hit ? `${user}@${hit}` : '';
 }
 
-let delegated = false;
 const openers = new Map<string, (pkg?: string, from?: HTMLElement | null) => void>(); // variant → open()
 
 export function initLpForms() {
@@ -89,6 +88,24 @@ export function initLpForms() {
     const active = () => screens.filter((s) => !skip.has(s.dataset.q!));
     const isChoice = (s: HTMLElement) => s.dataset.kind === 'choice';
     const errEl = (s: HTMLElement) => s.querySelector<HTMLElement>('[data-err]')!;
+    const status = $('[data-status]');
+    // which field a message belongs to, so it can be marked invalid and focused
+    const FIELD_OF = new Map<string, string>([[MSG.businessName, 'businessName'], [MSG.facebookPage, 'facebookPage'], [MSG.currentWebsite, 'currentWebsite'], [MSG.name, 'name'], [MSG.emailBlank, 'email'], [MSG.emailBad, 'email'], [MSG.phoneUsd, 'phone'], [MSG.phonePhp, 'phone']]);
+    function clearErr(s: HTMLElement) {
+      errEl(s).textContent = '';
+      s.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    }
+    function showErr(s: HTMLElement, m: string) {
+      clearErr(s);
+      errEl(s).textContent = m;
+      const f = FIELD_OF.get(m);
+      const input = f ? s.querySelector<HTMLInputElement>(`[name="${f}"]`) : s.querySelector<HTMLInputElement>('input[type=radio]');
+      if (!input) return;
+      input.setAttribute('aria-invalid', 'true');
+      const ids = new Set((input.getAttribute('aria-describedby') ?? '').split(' ').filter(Boolean)); ids.add(errEl(s).id);
+      input.setAttribute('aria-describedby', [...ids].join(' '));
+      if (f) input.focus();
+    }
     const optLabel = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.closest('label')?.querySelector('[data-opt]')?.textContent?.trim() ?? '';
 
     /* ── persistence (sessionStorage; cleared on success) ── */
@@ -117,7 +134,10 @@ export function initLpForms() {
       // a package picked from the pricing table counts as answered even though its screen is skipped
       const n = answered() + (skip.has('package') && val('package') ? 1 : 0), any = FIELDS.some((f) => val(f));
       const r = root.querySelector<HTMLElement>('[data-resume]');
-      if (r) { r.hidden = !any || n >= 7; root.querySelector('[data-resume-n]')!.textContent = String(Math.min(n, 7)); }
+      if (!r) return;
+      r.hidden = !any;
+      const label = root.querySelector<HTMLElement>('[data-resume-label]')!;
+      label.innerHTML = n >= 7 ? 'Your brief is ready · Review and send' : `Continue your brief · <span data-resume-n>${n}</span> of 7 answered`;
     }
 
     /* ── conditional fields ── */
@@ -196,25 +216,37 @@ export function initLpForms() {
       const last = cur === total - 1;
       send.hidden = !last;
       fine.hidden = !last;
-      next.hidden = last || (isChoice(s) && $('[data-other-wrap]').hidden) || (isChoice(s) && s.dataset.q !== 'industry');
+      syncNext(s);
       const opts = s.querySelectorAll('input[type=radio]').length;
-      hint.textContent = isChoice(s) ? `Press 1–${Math.min(opts, 9)} to choose` : 'or press Enter ↵';
+      hint.textContent = isChoice(s) ? `Press 1–${Math.min(opts, 9)} or Enter` : 'or press Enter ↵';
       chip.hidden = !(skip.has('package') && cur === 0);
-      errEl(s).textContent = '';
+      clearErr(s);
+      status.textContent = '';
       mail.hidden = true;
       rail();
       if (focus) {
-        h.focus({ preventScroll: true });
+        // on desktop, typing should go straight into the first empty field; the legend still names the question
+        const empty = !isChoice(s) && matchMedia('(pointer: fine)').matches ? [...s.querySelectorAll<HTMLInputElement>('.f:not([hidden]) input')].find((i) => !i.value) : null;
+        (empty ?? h).focus({ preventScroll: true });
         $('.brief-main').scrollTop = 0;
         (window as any).gtag?.('event', 'lp_form_step', { step: s.dataset.q, n });
       }
+    }
+
+    // Continue: always on text screens; on choice screens a quiet ghost button once something is chosen
+    function syncNext(s: HTMLElement) {
+      const last = cur === active().length - 1;
+      const choice = isChoice(s);
+      next.hidden = last || (choice && !s.querySelector('input[type=radio]:checked'));
+      next.classList.toggle('btn--ghost', choice);
+      next.classList.toggle('btn--lime', !choice);
     }
 
     function go(delta: number) {
       const list = active(), s = list[cur];
       if (delta > 0) {
         const e = validate(s);
-        if (e) { errEl(s).textContent = e; return; }
+        if (e) { showErr(s, e); return; }
         if (cur === list.length - 1) return;
       }
       cur += delta;
@@ -232,6 +264,7 @@ export function initLpForms() {
       cur = firstOpen();
       if (!sheet.open) {
         sheet.showModal();
+        cleaned = false;
         document.documentElement.classList.add('brief-open');
         bus.lenis?.stop?.();
         openedAt ||= Date.now();
@@ -241,15 +274,24 @@ export function initLpForms() {
       render(true);
     }
     openers.set(variant, open);
-    sheet.addEventListener('close', () => {
+    // Cleanup runs directly from every way we close (×, Esc, navigation). The native 'close' event is only a
+    // backup: it's queued, and can lag when the tab isn't painting.
+    let cleaned = true;
+    function cleanup() {
+      if (cleaned) return;
+      cleaned = true;
       document.documentElement.classList.remove('brief-open');
       bus.lenis?.start?.();
       clearTimeout(timer);
-      opener?.focus?.({ preventScroll: true });
+      // one tick later: on Esc, Chrome restores focus itself after our handler runs
+      const o = opener; setTimeout(() => o?.focus?.({ preventScroll: true }), 0);
       syncCard();
-    });
-    sheet.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', () => sheet.close()));
-    document.addEventListener('astro:before-swap', () => { if (sheet.open) sheet.close(); }, { once: true });
+    }
+    function closeSheet() { if (sheet.open) sheet.close(); cleanup(); }
+    sheet.addEventListener('close', cleanup);
+    sheet.addEventListener('cancel', (e) => { e.preventDefault(); closeSheet(); }); // Esc / Android back
+    sheet.querySelectorAll('[data-close]').forEach((b) => b.addEventListener('click', closeSheet));
+    document.addEventListener('astro:before-swap', closeSheet, { once: true });
 
     /* ── choices: pointer tap or number key advances; arrows only select ── */
     function advanceSoon() {
@@ -269,11 +311,12 @@ export function initLpForms() {
     form.addEventListener('change', (ev) => {
       const t = ev.target as HTMLInputElement;
       const s = t.closest<HTMLElement>('[data-q]');
-      if (s) errEl(s).textContent = '';
+      if (s) clearErr(s);
       conditional();
-      if (t.type === 'radio') {
+      if (t.type === 'radio' && s) {
         live.textContent = `${t.closest('label')?.querySelector('[data-opt]')?.textContent?.trim() ?? t.value} selected.`;
-        if (s?.dataset.q === 'industry') { next.hidden = t.value !== 'Other'; if (t.value === 'Other') form.querySelector<HTMLInputElement>('[name=industryOther]')?.focus(); }
+        syncNext(s);
+        if (t.value === 'Other') form.querySelector<HTMLInputElement>('[name=industryOther]')?.focus();
       }
       if (t.name === 'email') {
         const fix = typoFix(t.value.trim());
@@ -282,7 +325,11 @@ export function initLpForms() {
       }
       save(); rail();
     });
-    form.addEventListener('input', () => { save(); });
+    form.addEventListener('input', (ev) => {
+      const s = (ev.target as Element).closest<HTMLElement>('[data-q]');
+      if (s && errEl(s).textContent) clearErr(s);
+      save();
+    });
     $('[data-typo-fix]').addEventListener('click', (ev) => {
       const e = form.querySelector<HTMLInputElement>('[name=email]')!;
       e.value = (ev.currentTarget as HTMLElement).textContent!;
@@ -312,7 +359,7 @@ export function initLpForms() {
       }
     });
 
-    next.addEventListener('click', () => go(1));
+    next.addEventListener('click', () => { clearTimeout(timer); go(1); });
     back.addEventListener('click', () => { clearTimeout(timer); go(-1); });
     $('[data-note-toggle]').addEventListener('click', (ev) => {
       (ev.currentTarget as HTMLElement).hidden = true;
@@ -325,20 +372,13 @@ export function initLpForms() {
       if (i >= 0) { clearTimeout(timer); const d = i < cur ? 'back' : 'fwd'; cur = i; render(true, d); }
     }));
 
-    /* ── inline start card ── */
-    root.querySelectorAll<HTMLElement>('[data-start]').forEach((a) => a.addEventListener('click', (ev) => {
-      ev.preventDefault();
-      open(a.dataset.start, a);
-    }));
-    root.querySelector('[data-resume-btn]')?.addEventListener('click', (ev) => open(undefined, ev.currentTarget as HTMLElement));
-
     /* ── send ── */
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       if (sending) return; // double tap / double Enter
-      for (const [i, x] of active().entries()) { const m = validate(x); if (m) { cur = i; render(); errEl(x).textContent = m; return; } }
+      for (const [i, x] of active().entries()) { const m = validate(x); if (m) { cur = i; render(); showErr(x, m); return; } }
       const s = active()[cur];
-      if (!navigator.onLine) { errEl(s).textContent = MSG.offline; return; }
+      if (!navigator.onLine) { showErr(s, MSG.offline); return; }
 
       const industry = val('industry') === 'Other' && val('industryOther') ? `Other: ${val('industryOther')}` : val('industry');
       const p = {
@@ -352,7 +392,7 @@ export function initLpForms() {
       send.setAttribute('aria-busy', 'true');
       sendLabel.textContent = 'Sending your brief…';
       live.textContent = 'Sending your brief…';
-      const slow = setTimeout(() => { live.textContent = 'Still sending. Your answers are saved.'; errEl(s).textContent = 'Still sending. Your answers are saved.'; }, 8000);
+      const slow = setTimeout(() => { live.textContent = status.textContent = 'Still sending. Your answers are saved.'; }, 8000);
       const ac = new AbortController();
       const kill = setTimeout(() => ac.abort(), 20000);
       try {
@@ -365,7 +405,8 @@ export function initLpForms() {
         dispatchEvent(new CustomEvent('fz:lead', { detail: { form: 'lp', variant, package: p.package } }));
         success(p);
       } catch {
-        errEl(s).textContent = MSG.network;
+        status.textContent = '';
+        showErr(s, MSG.network);
         // never lose the brief: offer it as a ready-written email
         const body = Object.entries(p).filter(([k, v]) => v && !['website', 't', 'idem', 'variant'].includes(k)).map(([k, v]) => `${k}: ${v}`).join('\n');
         $<HTMLAnchorElement>('[data-mail-link]').href = `mailto:info@fazeddigital.com?subject=${encodeURIComponent(`7-day brief: ${p.businessName || p.name}`)}&body=${encodeURIComponent(body)}`;
@@ -394,6 +435,7 @@ export function initLpForms() {
       const now = new Date();
       ok.querySelector('[data-ok-stamp]')!.textContent = `SIGNAL RECEIVED · ${now.toLocaleDateString('en-PH', { timeZone: 'Asia/Manila' })} · ${now.toLocaleTimeString('en-PH', { timeZone: 'Asia/Manila', hour: '2-digit', minute: '2-digit' })} PHT`;
       form.hidden = true; chip.hidden = true; back.hidden = true;
+      sheet.dataset.step = 'sent';
       ok.hidden = false;
       bar.style.setProperty('--p', '1');
       count.textContent = 'SENT';
@@ -409,17 +451,10 @@ export function initLpForms() {
     syncCard();
   });
 
-  /* ── page-wide triggers, bound once: every #get-started CTA and pricing button opens the sheet ── */
-  if (delegated) return;
-  delegated = true;
-  document.addEventListener('click', (ev) => {
-    const el = (ev.target as Element).closest<HTMLElement>('[data-choose], a[href="#get-started"]');
-    if (!el || el.closest('[data-lp-form]') || ev.metaKey || ev.ctrlKey || ev.shiftKey) return;
-    const here = document.querySelector<HTMLElement>('[data-lp-form]'); // only on a page that has the form
-    if (!here?.querySelector('[data-sheet]')?.isConnected) return;
-    const open = openers.get(here.dataset.variant === 'php' ? 'php' : 'usd');
-    if (!open) return;
-    ev.preventDefault();
-    open(el.dataset.choose, el);
-  });
+}
+
+/** Called by the shell (lp-shell.ts) when a CTA, pricing button or start tile is clicked. */
+export function openLp(variant: 'usd' | 'php', pkg?: string, from?: HTMLElement | null) {
+  initLpForms();
+  openers.get(variant)?.(pkg, from);
 }
