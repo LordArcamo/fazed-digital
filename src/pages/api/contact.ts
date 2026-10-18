@@ -1,15 +1,14 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { sendLead } from '../../lib/mail';
 
 // ─── HubSpot config ─────────────────────────────────────────────────────────
 const PORTAL_ID = '244473168';
 const FORM_GUID = import.meta.env.HUBSPOT_FORM_GUID ?? 'c119e15a-357c-4bfb-9264-a1fb3f1a3389';
 
-// ─── Resend config (lead notification email) ─────────────────────────────────
-const RESEND_API_KEY = import.meta.env.RESEND_API_KEY;
-const RESEND_FROM    = import.meta.env.RESEND_FROM ?? 'Fazed Digital <onboarding@resend.dev>';
-const RESEND_TO      = ['info@fazeddigital.com'];
+// ─── Lead notification (Google Workspace first, Resend fallback: src/lib/mail.ts) ──
+const LEAD_TO = ['info@fazeddigital.com'];
 
 // ─── reCAPTCHA v3 config ─────────────────────────────────────────────────────
 const RECAPTCHA_SECRET = import.meta.env.RECAPTCHA_SECRET_KEY;
@@ -116,34 +115,17 @@ export const POST: APIRoute = async ({ request }) => {
   return json({ ok: true });
 };
 
-// ─── Lead notification via Resend ─────────────────────────────────────────────
-// Returns true when Resend accepted the email. Never throws: a failed email must not block the form.
+// ─── Lead notification email ──────────────────────────────────────────────────
+// Returns true when Gmail or Resend accepted the email. Never throws: a failed email must not block the form.
 async function sendLeadEmail(d: { name: string; email: string; serviceLabel: string; company: string; budget: string; message: string }): Promise<boolean> {
-  if (!RESEND_API_KEY) {
-    console.error('RESEND_API_KEY is not set — skipping contact email');
-    return false;
-  }
-  try {
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: { 'Authorization': `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        from: RESEND_FROM,
-        to: RESEND_TO,
-        reply_to: d.email,
-        subject: `New contact lead: ${d.company || d.name} (${d.serviceLabel})`,
-        html: buildHtml(d),
-      }),
-    });
-    if (!res.ok) {
-      console.error('Resend send failed (contact):', res.status, await res.text().catch(() => ''));
-      return false;
-    }
-    return true;
-  } catch (err) {
-    console.error('Resend send error (contact):', err);
-    return false;
-  }
+  const via = await sendLead({
+    to: LEAD_TO,
+    replyTo: d.email,
+    subject: `New contact lead: ${d.company || d.name} (${d.serviceLabel})`,
+    html: buildHtml(d),
+  });
+  if (via) console.log(`Contact lead emailed via ${via}`);
+  return via !== false;
 }
 
 function buildHtml(d: { name: string; email: string; serviceLabel: string; company: string; budget: string; message: string }): string {

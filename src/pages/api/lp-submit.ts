@@ -1,11 +1,10 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
+import { sendLead } from '../../lib/mail';
 
-// ─── Resend config ────────────────────────────────────────────────────────────
-const RESEND_API_KEY = import.meta.env.RESEND_API_KEY;
-const RESEND_FROM    = import.meta.env.RESEND_FROM ?? 'Fazed Digital <onboarding@resend.dev>';
-const RESEND_TO = [
+// ─── Lead notification recipients (Google Workspace first, Resend fallback: src/lib/mail.ts) ──
+const LEAD_TO = [
   'reancirl@gmail.com',
   'russeljessheyrana@gmail.com',
   'lordrynkartracydwight@gmail.com',
@@ -91,42 +90,19 @@ export const POST: APIRoute = async ({ request }) => {
   const payload = { name, email, phone, pkg, businessName, industry, goal, styleVibe, pagesNeeded, brandColors, inspirationUrls, referral, notes };
   console.log('LP form submission:', JSON.stringify(payload));
 
-  /* ── Send notification email via Resend ────────────────── */
-  if (!RESEND_API_KEY) {
-    console.error('RESEND_API_KEY is not set — skipping email send');
-    return json({ ok: true });
-  }
-
-  try {
-    const subject = `New 7-Day Website lead: ${businessName || name} (${PACKAGE_LABELS[pkg] ?? pkg})`;
-    const res = await fetch('https://api.resend.com/emails', {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${RESEND_API_KEY}`,
-        'Content-Type':  'application/json',
-      },
-      body: JSON.stringify({
-        from: RESEND_FROM,
-        to: RESEND_TO,
-        reply_to: email,
-        subject,
-        html: buildHtml({
-          pkg, businessName, industry, goal, styleVibe, pagesNeeded,
-          brandColors, inspirationUrls, name, email, phone, referral, notes,
-        }),
-      }),
-    });
-
-    if (!res.ok) {
-      const errText = await res.text().catch(() => '');
-      console.error('Resend send failed:', res.status, errText);
-      // Soft-fail: still return ok so the lead isn't blocked. We have the log.
-      return json({ ok: true });
-    }
-  } catch (err) {
-    console.error('Resend send error:', err);
-    return json({ ok: true });
-  }
+  /* ── Send notification email (Gmail → Resend fallback) ─── */
+  const subject = `New 7-Day Website lead: ${businessName || name} (${PACKAGE_LABELS[pkg] ?? pkg})`;
+  const via = await sendLead({
+    to: LEAD_TO,
+    replyTo: email,
+    subject,
+    html: buildHtml({
+      pkg, businessName, industry, goal, styleVibe, pagesNeeded,
+      brandColors, inspirationUrls, name, email, phone, referral, notes,
+    }),
+  });
+  // Soft-fail: the lead is already in the log above, so the visitor always gets a success.
+  if (via) console.log(`LP lead emailed via ${via}`);
 
   return json({ ok: true });
 };
