@@ -20,11 +20,25 @@ export function start(flags: Flags) {
   html.classList.add('js-motion');
   gsap.ticker.lagSmoothing(0);
   if (!bus.rm) {
-    const lenis = new Lenis({ duration: 1.1, smoothWheel: true, autoRaf: false, anchors: true });
+    const lenis = new Lenis({ duration: 1.1, smoothWheel: true, autoRaf: false });
     bus.lenis = lenis;
     (window as any).__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
     gsap.ticker.add((t) => lenis.raf(t * 1000));
+    // In-page links (#index, #engine, #pricing…) get exactly one owner for the scroll. Before, the browser or the
+    // ClientRouter jumped to the section natively, then Lenis (which didn't know) pulled the page back where it was.
+    // Capture phase so this runs before the router; the LP form shell has already claimed #get-started (defaultPrevented).
+    window.addEventListener('click', (ev) => {
+      if (ev.defaultPrevented || ev.button !== 0 || ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.altKey) return;
+      const a = (ev.target as Element).closest?.<HTMLAnchorElement>('a[href^="#"]');
+      const id = a ? decodeURIComponent(a.getAttribute('href')!.slice(1)) : '';
+      const target = id ? document.getElementById(id) : null;
+      if (!target) return;
+      ev.preventDefault();
+      ev.stopPropagation();
+      lenis.scrollTo(target); // Lenis already honours html's scroll-padding-top (the header gap)
+      history.replaceState(history.state, '', `#${id}`); // keep the router's history entry; just update the hash
+    }, true);
   }
   if (!flags.record) initCursor();
   pageLoad();

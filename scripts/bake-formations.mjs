@@ -99,6 +99,7 @@ const LAB = {
   '02': { crop: [620, 270, 940, 588], invert: false, t0: 0.26, t1: 0.9, gamma: 1.0 },
   '03': { crop: [520, 0, 1216, 760], invert: false, t0: 0.16, t1: 0.88, gamma: 1.1 },
   '04': { crop: [430, 230, 1060, 662], invert: true, t0: 0.14, t1: 1, gamma: 1.5 },
+  '05': { crop: [80, 50, 1760, 1100], invert: false, t0: 0.035, t1: 0.55, gamma: 0.6 },
 };
 for (const [id, o] of Object.entries(LAB)) {
   const src = join(ROOT, 'scripts/lab-src', `lab-${id}.webp`);
