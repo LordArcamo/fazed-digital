@@ -25,6 +25,7 @@
   --lime-06: rgba(201, 255, 87, .06);
   --lime-12: rgba(201, 255, 87, .12);
   --lime-25: rgba(201, 255, 87, .25);
+  --err: #FFB3A8; /* form error text: 11.0:1 on gray-900 */
 
   --font-display: 'Clash Display', 'Clash Fallback', 'Arial Narrow', sans-serif;
   --font-body: 'Plus Jakarta Sans', 'Jakarta Fallback', system-ui, sans-serif;

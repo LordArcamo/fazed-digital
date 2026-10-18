@@ -1,76 +1,168 @@
 ---
-// Vanilla port of components/lp/LpForm.tsx: same 5 steps, same values, same /api/lp-submit payload.
-// Copy: copy/lp-7-day-usd.md [LP-FORM] (+ PH overrides). currentWebsite / facebookPage are folded into
-// `notes` client-side so the API payload shape is unchanged.
+// 7-Day Website questionnaire. Inline start card (entry · resume · no-JS) + a <dialog> "focus takeover"
+// with one question per screen and a live brief rail on desktop (docs/forms-redesign/ux-directions.md §6).
+// Copy: docs/forms-redesign/copy.md. Logic: src/forms/lp.ts. API: /api/lp-submit (Gmail alert + HubSpot record).
+import { prices } from '../data/proof';
+import { NAP } from '../data/site';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 const php = variant === 'php';
-const P = php ? { starter: '₱19,999', growth: '₱34,999', pro: '₱59,999' } : { starter: '$499', growth: '$899', pro: '$1,499' };
-const packages = [
-  { value: 'starter', name: 'Starter', price: P.starter, tag: 'New businesses getting online', feats: ['5 custom pages', 'Mobile-responsive design', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
-  { value: 'growth', name: 'Growth', price: P.growth, tag: 'Growing small businesses', popular: true, feats: ['8 custom pages', 'Custom design system', 'Advanced SEO', 'Blog + CMS setup', 'Google Analytics', '3 revision rounds', '7-day delivery'] },
-  { value: 'pro', name: 'Pro', price: P.pro, tag: 'Businesses ready to scale', feats: ['10+ custom pages', 'Full brand integration', 'E-commerce ready', 'Performance < 2s', 'Unlimited revisions', 'Priority support', '7-day delivery'] },
+const P = php ? prices.php : prices.usd;
+const pkgs = [
+  { value: 'starter', name: 'Starter', price: P.starter, for: 'New businesses getting online', detail: '5 pages · 2 revision rounds' },
+  { value: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', detail: '8 pages · blog + CMS · 3 revision rounds' },
+  { value: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', detail: '10+ pages · e-commerce ready · unlimited revisions' },
+  { value: 'unsure', name: 'Not sure yet', price: '', for: 'Help me choose', detail: 'We’ll suggest one when we reply.' },
 ];
-const industries = ['Restaurant & Food', 'Retail & Fashion', 'Professional Services', 'Healthcare & Wellness', 'Real Estate', 'E-commerce', 'Education', 'Construction & Trades', 'Beauty & Salon', 'Tech & Startups', 'Other'];
-const goals = [['leads', 'Get more leads & enquiries'], ['sell', 'Sell products online'], ['credibility', 'Build credibility & trust'], ['replace', 'Replace an outdated website'], ['launch', 'Launch a new business'], ['other', 'Something else']];
-const styles = [['minimal', 'Minimal & clean', 'Whitespace, simple typography'], ['bold', 'Bold & vibrant', 'Strong colours, high energy'], ['corporate', 'Corporate & professional', 'Formal, trustworthy, polished'], ['playful', 'Playful & fun', 'Friendly, colourful, approachable']];
-const pages = ['Home', 'About', 'Services', 'Contact', 'Blog', 'Gallery', 'Portfolio', 'FAQ', 'Team', 'Testimonials', 'Pricing', 'Shop / Store'];
-const referrals = php ? ['Facebook / Instagram', 'Google Search', 'TikTok', 'Referred by a friend', 'LinkedIn', 'Other'] : ['Google Search', 'Facebook / Instagram', 'TikTok', 'Referred by a friend', 'LinkedIn', 'Other'];
-const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You can upgrade later.'], ['Business', 'Tell us about your business.', 'The more context you give, the better we can tailor the site.'], ['Style', 'How should it feel?', 'Help us nail the look before Day 2.'], ['Contact', 'Where do we reach you?', 'We’ll send your brief and start date here.'], ['Review', 'Check your brief.', 'Look right? Send it and we’ll reply within one business day.']];
+const industries = [php ? 'Food & catering' : 'Food & restaurants', 'Retail & shops', 'Beauty & salon', 'Health & wellness', 'Professional services', 'Real estate', 'Construction & trades', 'Education & training', 'Online store', 'Other'];
+const goals = [['leads', 'Bring in more enquiries'], ['sell', 'Sell online'], ['credibility', 'Look more established'], ['replace', 'Replace my old website'], ['launch', 'Launch a new business'], ['other', 'Something else']];
+const timelines = [['asap', 'As soon as possible'], ['month', 'Within a month'], ['quarter', 'In 1–3 months'], ['exploring', 'Just exploring for now']];
+const styles = [['minimal', 'Minimal', 'Clean, calm, lots of space'], ['bold', 'Bold', 'Strong colour, high energy'], ['corporate', 'Professional', 'Polished, formal, trustworthy'], ['playful', 'Playful', 'Friendly, bright, approachable']];
+const rail = [['package', 'Package'], ['industry', 'Industry'], ['goal', 'Goal'], ['timeline', 'Launch'], ['style', 'Style'], ['business', 'Business'], ['contact', 'Contact']];
+const id = `lpq-${variant}`;
 ---
-<div class="lpf" data-lp-form data-variant={variant}>
-  <ol class="lpf-rail" aria-label="Form progress">{steps.map(([l], i) => <li data-rail={i + 1} aria-current={i === 0 ? 'step' : undefined}><span class="mono">0{i + 1}</span> <span class="lpf-rl">{l}</span></li>)}</ol>
-  <form novalidate>
-    <fieldset class="lpf-step" data-step="1">
-      <legend><span class="mono">Step 1 of 5</span><span class="t-h3">{steps[0][1]}</span><span class="lpf-sub">{steps[0][2]}</span></legend>
-      <div class="lpf-pk">{packages.map((p) => (
-        <label class="lpf-card">
-          <input type="radio" name="package" value={p.value} />
-          <span class="lpf-card-b">{p.popular && <span class="mono lpf-pop">Most popular</span>}<span class="lpf-name">{p.name}</span><span class="lpf-price">{p.price}</span><span class="lpf-tag">{p.tag}</span><span class="lpf-feats">{p.feats.join(' · ')}</span></span>
-        </label>
-      ))}</div>
-    </fieldset>
-    <fieldset class="lpf-step" data-step="2" hidden>
-      <legend><span class="mono">Step 2 of 5</span><span class="t-h3">{steps[1][1]}</span><span class="lpf-sub">{steps[1][2]}</span></legend>
-      <div class="lpf-grid">
-        <div class="f"><label for="lp-bn">Business name</label><input id="lp-bn" name="businessName" autocomplete="organization" placeholder="e.g. Sunrise Coffee Co." /></div>
-        <div class="f"><label for="lp-ind">Industry</label><select id="lp-ind" name="industry"><option value="">Select your industry…</option>{industries.map((x) => <option>{x}</option>)}</select></div>
-        <div class="f f--wide"><label for="lp-cw">Current website (if any)</label><input id="lp-cw" name="currentWebsite" type="url" autocomplete="url" placeholder="https://yoursite.com" /></div>
-        {php && <div class="f f--wide"><label for="lp-fb">Your Facebook page (optional)</label><input id="lp-fb" name="facebookPage" placeholder="facebook.com/yourbusiness" aria-describedby="lp-fb-h" /><p class="f-h" id="lp-fb-h">We’ll pull your photos and details from it to save you time.</p></div>}
-        <fieldset class="f f--wide lpf-opts"><legend>Main goal for your new site</legend>{goals.map(([v, l]) => <label class="lpf-opt"><input type="radio" name="goal" value={v} /><span>{l}</span></label>)}</fieldset>
+<div class="qf" data-lp-form data-variant={variant}>
+  <!-- Inline start card: real package tiles. One tap opens the sheet at the next question. -->
+  <div class="qf-card" data-card>
+    <p class="mono qf-eyebrow">Your 7-day brief{php && ' · Peso pricing'}</p>
+    <h3 class="t-h3 qf-card-h">Which package fits?</h3>
+    <p class="qf-card-sub">A few quick questions, mostly one tap each.</p>
+    <div class="qf-card-pk">{pkgs.map((p) => (
+      <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure']} href="#get-started" data-start={p.value}>
+        <span class="qt-b"><span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span></span>
+      </a>
+    ))}</div>
+    <p class="qf-resume" data-resume hidden><button type="button" class="btn btn--lime" data-resume-btn>Continue your brief · <span data-resume-n></span> of 7 answered <span class="arrow" aria-hidden="true">→</span></button></p>
+    <div class="qf-card-ok" data-card-ok hidden><p class="mono qf-eyebrow">Brief sent</p><p class="t-h3">Brief received. You’re in the queue.</p><p>We’ll reply within one business day with your confirmed start date.</p></div>
+    <p class="qf-card-fine">Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
+  </div>
+
+  <dialog class="brief" data-sheet aria-labelledby={`${id}-title`}>
+    <div class="brief-in">
+      <header class="brief-hd">
+        <button type="button" class="brief-ic" data-back aria-label="Back to the previous question" hidden><span aria-hidden="true">←</span></button>
+        <p class="mono brief-count" id={`${id}-title`}><span class="sr-only">Your 7-day brief. </span><span data-count aria-hidden="true"></span></p>
+        <button type="button" class="brief-ic brief-x" data-close aria-label="Close the form. Your answers are saved."><span aria-hidden="true">×</span></button>
+      </header>
+      <div class="brief-bar" aria-hidden="true"><span data-bar></span></div>
+
+      <div class="brief-cols">
+        <div class="brief-main" data-lenis-prevent>
+          <p class="qf-chosen" data-chosen hidden><span class="mono"><span data-chosen-label></span> selected</span> <button type="button" class="qf-change" data-change>Change</button></p>
+
+          <form novalidate>
+            <div class="hp" aria-hidden="true"><label>Leave this field empty<input name="website" tabindex="-1" autocomplete="off" /></label></div>
+
+            <fieldset class="q" data-q="package" data-kind="choice">
+              <legend><h2 class="q-h" data-h tabindex="-1">Which package fits?</h2></legend>
+              <p class="q-sub">{php ? 'Fixed peso prices. Pay via GCash, Maya or bank.' : 'Every package is fixed price, with 7-day delivery.'}</p>
+              <div class="q-opts q-opts--cards">{pkgs.map((p, i) => (
+                <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure']} data-chip={p.price ? `${p.name} · ${p.price}` : p.name}>
+                  <input type="radio" name="package" value={p.value} />
+                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
+                </label>
+              ))}</div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="industry" data-kind="choice" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">What kind of business is it?</h2></legend>
+              <p class="q-sub">Pick the closest match.</p>
+              <div class="q-opts q-opts--chips">{industries.map((x, i) => (
+                <label class="qt qt--chip"><input type="radio" name="industry" value={x} /><span class="qt-b">{i < 9 && <span class="qt-k" aria-hidden="true">{i + 1}</span>}<span class="qt-t" data-opt>{x}</span></span></label>
+              ))}</div>
+              <div class="f q-other" data-other-wrap hidden><label for={`${id}-other`}>What do you do? (optional)</label><input id={`${id}-other`} name="industryOther" autocapitalize="sentences" enterkeyhint="next" placeholder={php ? 'e.g. Printing shop' : 'e.g. Dog grooming'} /></div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="goal" data-kind="choice" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">What should the site do for you?</h2></legend>
+              <p class="q-sub">Pick the one that matters most.</p>
+              <div class="q-opts q-opts--rows">{goals.map(([v, l], i) => (
+                <label class="qt"><input type="radio" name="goal" value={v} /><span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-node" aria-hidden="true"></span></span></label>
+              ))}</div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="timeline" data-kind="choice" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">When do you want to launch?</h2></legend>
+              <p class="q-sub">A rough idea is fine. It helps us plan your start date.</p>
+              <div class="q-opts q-opts--rows">{timelines.map(([v, l], i) => (
+                <label class="qt"><input type="radio" name="timeline" value={v} /><span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-node" aria-hidden="true"></span></span></label>
+              ))}</div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="style" data-kind="choice" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">How should it feel?</h2></legend>
+              <p class="q-sub">Pick the closest. We’ll go over the details on Day 1.</p>
+              <div class="q-opts q-opts--cards q-opts--style">{styles.map(([v, l, d], i) => (
+                <label class="qt qt--card qt--style" data-style={v}><input type="radio" name="styleVibe" value={v} /><span class="qt-b"><span class="qt-spec" aria-hidden="true"><i></i><i></i><i></i></span><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-d">{d}</span><span class="qt-node" aria-hidden="true"></span></span></label>
+              ))}</div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="business" data-kind="text" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">What’s your business called?</h2></legend>
+              <p class="q-sub">A working name is fine.</p>
+              <div class="q-fields">
+                <div class="f"><label for={`${id}-bn`}>Business name</label><input id={`${id}-bn`} name="businessName" autocomplete="organization" autocapitalize="words" enterkeyhint="next" placeholder={php ? 'e.g. Santos Bakeshop' : 'e.g. Sunrise Coffee Co.'} /></div>
+                {php && <div class="f"><label for={`${id}-fb`}>Facebook page (optional)</label><input id={`${id}-fb`} name="facebookPage" inputmode="url" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="facebook.com/santosbakeshop" aria-describedby={`${id}-fb-h`} /><p class="f-h" id={`${id}-fb-h`}>We’ll pull your photos and details from it to save you time.</p></div>}
+                <div class="f" data-replace-only hidden><label for={`${id}-cw`}>Current website (optional)</label><input id={`${id}-cw`} name="currentWebsite" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="url" enterkeyhint="next" placeholder="yourbusiness.com" aria-describedby={`${id}-cw-h`} /><p class="f-h" id={`${id}-cw-h`}>So we can see what to keep and what to fix.</p></div>
+              </div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <fieldset class="q" data-q="contact" data-kind="text" hidden>
+              <legend><h2 class="q-h" data-h tabindex="-1">Where do we send your start date?</h2></legend>
+              <p class="q-sub">We reply within one business day, Monday to Friday.</p>
+              <div class="q-fields">
+                <div class="f"><label for={`${id}-n`}>Your name</label><input id={`${id}-n`} name="name" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder={php ? 'e.g. Maria Santos' : 'e.g. Jane Smith'} /></div>
+                <div class="f"><label for={`${id}-e`}>Email</label><input id={`${id}-e`} name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder={php ? 'maria.santos@gmail.com' : 'you@yourbusiness.com'} aria-describedby={`${id}-e-h`} /><p class="f-h" id={`${id}-e-h`}>Your start date and what we need for Day 1 go here.</p><p class="q-typo" data-typo hidden>Did you mean <button type="button" data-typo-fix></button>?</p></div>
+                <div class="f"><label for={`${id}-p`}>Phone (optional)</label><input id={`${id}-p`} name="phone" type="tel" inputmode="tel" autocomplete="tel" enterkeyhint="send" placeholder={php ? '+63 9XX XXX XXXX' : '+1 555 000 0000'} aria-describedby={`${id}-p-h`} /><p class="f-h" id={`${id}-p-h`}>{php ? 'Add it if you’d rather confirm your start date by call or text.' : 'Add it if you’d rather confirm your start date by phone.'}</p></div>
+                <button type="button" class="qf-note-toggle" data-note-toggle>+ Add a note (optional)</button>
+                <div class="f" data-note hidden><label for={`${id}-no`}>Anything else we should know?</label><textarea id={`${id}-no`} name="notes" rows="3" placeholder="Pages you need, a launch deadline, sites you like…"></textarea></div>
+              </div>
+              <p class="q-err" data-err role="alert"></p>
+            </fieldset>
+
+            <div class="q-nav">
+              <button type="button" class="btn btn--lime q-next" data-next hidden>Continue <span class="arrow" aria-hidden="true">→</span></button>
+              <button type="submit" class="btn btn--lime q-send" data-submit hidden data-cursor="SEND"><span data-label>Send my 7-day brief</span> <span class="arrow" aria-hidden="true">→</span></button>
+              <p class="q-hint mono" data-hint aria-hidden="true"></p>
+            </div>
+            <p class="q-mail" data-mail hidden><a class="link" data-mail-link href="mailto:info@fazeddigital.com">Email it instead</a></p>
+            <div class="q-fine" data-fine hidden>
+              <p>No commitment until you approve the quote.</p>
+              <p>Protected by reCAPTCHA. Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply. We’ll only use your details to reply to you. <a class="link" href="/privacy">Our privacy policy</a></p>
+            </div>
+            <p class="sr-only" data-live role="status" aria-live="polite"></p>
+          </form>
+
+          <div class="q-ok" data-ok hidden>
+            <p class="mono q-ok-stamp" data-ok-stamp></p>
+            <h2 class="q-h" data-ok-h tabindex="-1">Brief received. You’re in the queue.</h2>
+            <p data-ok-lead></p>
+            <p>No commitment until you approve the quote.</p>
+            <p>To save time, start gathering your logo, photos and the text you want on the site.</p>
+            {php && <p data-ok-fb hidden>We’ll pull your photos and details from your Facebook page, so there’s less to send.</p>}
+            <p data-ok-after hidden>Sent outside our hours? It’ll be first in the queue the next working morning.</p>
+            <p>Questions before then? Call or text <a class="link" href={`tel:${NAP.tel}`}>{NAP.phone}</a> ({NAP.hours}), or email <a class="link" href={`mailto:${NAP.email}`}>{NAP.email}</a>.</p>
+            <p class="q-ok-links"><button type="button" class="btn btn--lime" data-close>Close</button> <a class="btn btn--ghost" href="/work">See the work</a> <a class="btn btn--ghost" href="/lab">Explore the Fazed Lab</a></p>
+          </div>
+        </div>
+
+        <aside class="brief-rail" data-rail aria-label="Your 7-day brief so far">
+          <p class="mono brief-rail-h">Your 7-day brief · {php ? 'PHP' : 'USD'}</p>
+          <p class="brief-rail-empty" data-rail-empty>Your answers build your brief here.</p>
+          <dl class="brief-dl">{rail.map(([k, l]) => (
+            <div class="brief-row" data-row={k}><dt class="mono">{l}</dt><dd><button type="button" class="brief-v" data-jump={k} disabled><span data-v>—</span></button></dd></div>
+          ))}</dl>
+          <p class="mono brief-price" data-price hidden></p>
+          <ul class="mono brief-pills"><li>No lock-in</li><li>Fixed price</li><li>7 business days or 20% off</li><li>You own your site</li></ul>
+        </aside>
       </div>
-    </fieldset>
-    <fieldset class="lpf-step" data-step="3" hidden>
-      <legend><span class="mono">Step 3 of 5</span><span class="t-h3">{steps[2][1]}</span><span class="lpf-sub">{steps[2][2]}</span></legend>
-      <fieldset class="lpf-opts lpf-opts--2"><legend>Style</legend>{styles.map(([v, l, d]) => <label class="lpf-opt"><input type="radio" name="styleVibe" value={v} /><span>{l}<small>{d}</small></span></label>)}</fieldset>
-      <fieldset class="lpf-opts lpf-opts--pages"><legend>Pages you need</legend>{pages.map((pg) => <label class="lpf-opt lpf-opt--chip"><input type="checkbox" name="pagesNeeded" value={pg} checked={['Home', 'About', 'Contact'].includes(pg)} /><span>{pg}</span></label>)}</fieldset>
-      <div class="lpf-grid">
-        <div class="f"><label for="lp-bc">Brand colours (optional)</label><input id="lp-bc" name="brandColors" placeholder="e.g. Navy blue, gold and white" /></div>
-        <div class="f"><label for="lp-iu">Sites you like (optional, paste links)</label><textarea id="lp-iu" name="inspirationUrls" rows="2" placeholder="Paste links to websites you like the look of…"></textarea></div>
-      </div>
-    </fieldset>
-    <fieldset class="lpf-step" data-step="4" hidden>
-      <legend><span class="mono">Step 4 of 5</span><span class="t-h3">{steps[3][1]}</span><span class="lpf-sub">{steps[3][2]}</span></legend>
-      <div class="lpf-grid">
-        <div class="f"><label for="lp-n">Your name</label><input id="lp-n" name="name" autocomplete="name" placeholder="Jane Smith" /></div>
-        <div class="f"><label for="lp-e">Email address</label><input id="lp-e" name="email" type="email" autocomplete="email" placeholder="jane@yourbusiness.com" /></div>
-        <div class="f"><label for="lp-p">Phone (optional)</label><input id="lp-p" name="phone" type="tel" autocomplete="tel" placeholder={php ? '+63 9XX XXX XXXX' : '+1 555 000 0000'} /></div>
-        <div class="f"><label for="lp-r">How did you hear about us?</label><select id="lp-r" name="referral"><option value="">Choose one…</option>{referrals.map((x) => <option>{x}</option>)}</select></div>
-        <div class="f f--wide"><label for="lp-no">Anything else we should know? (optional)</label><textarea id="lp-no" name="notes" rows="3" placeholder="Special requirements, launch deadline, anything else…"></textarea></div>
-      </div>
-    </fieldset>
-    <fieldset class="lpf-step" data-step="5" hidden>
-      <legend><span class="mono">Step 5 of 5</span><span class="t-h3">{steps[4][1]}</span><span class="lpf-sub">{steps[4][2]}</span></legend>
-      <dl class="lpf-review" data-review></dl>
-    </fieldset>
-    <p class="lpf-err" role="alert" aria-live="assertive"></p>
-    <div class="lpf-nav">
-      <button type="button" class="btn btn--ghost lpf-back" data-back hidden>← Back</button>
-      <button type="button" class="btn btn--lime" data-next>Continue <span class="arrow" aria-hidden="true">→</span></button>
-      <button type="submit" class="btn btn--lime" data-submit hidden data-cursor="SEND"><span class="lpf-label">Send my 7-day brief</span> <span class="arrow" aria-hidden="true">→</span></button>
     </div>
-    <p class="lpf-fine">Protected by reCAPTCHA. Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply. Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
-  </form>
-  <div class="lpf-ok" hidden><h3 class="t-d2" tabindex="-1">Brief received. You’re in the queue.</h3><p class="lpf-ok-b"></p></div>
+  </dialog>
 </div>
 <script>
   import { initLpForms } from '../forms/lp';
@@ -78,53 +170,169 @@ const steps = [['Package', 'Choose your package.', 'Pick the plan that fits. You
   initLpForms();
 </script>
 <style>
-  .lpf-back::before { display: none; } /* the ← is the glyph; no ghost node on top of it */
-  .lpf { background: var(--gray-900); border: 1px solid var(--gray-700); padding: clamp(1.25rem, 3vw, 2.5rem); }
-  .lpf-rail { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: .5rem; margin-bottom: 2rem; }
-  .lpf-rail li { font-size: .85rem; color: var(--gray-400); border-top: 2px solid var(--gray-700); padding-top: .6rem; }
-  .lpf-rail li[aria-current='step'], .lpf-rail li.is-done { color: var(--white); border-top-color: var(--lime); }
-  fieldset { border: 0; min-width: 0; }
-  .lpf-step > legend { display: grid; gap: .35rem; margin-bottom: 1.5rem; }
-  .lpf-step > legend .mono { color: var(--lime); }
-  .lpf-sub { color: var(--gray-400); }
-  .lpf-pk { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
-  @media (max-width: 900px) { .lpf-pk { grid-template-columns: minmax(0, 1fr); } }
-  .lpf-grid, .lpf-opts { min-width: 0; }
-  .lpf-card { position: relative; cursor: pointer; }
-  .lpf-card input, .lpf-opt input { position: absolute; opacity: 0; width: 1px; height: 1px; }
-  .lpf-card-b { display: grid; gap: .4rem; padding: 1.25rem; border: 1px solid var(--gray-700); background: var(--gray-800); height: 100%; transition: border-color .2s; }
-  .lpf-card input:checked + .lpf-card-b { border-color: var(--lime); box-shadow: inset 0 0 0 1px var(--lime); }
-  .lpf-card input:focus-visible + .lpf-card-b, .lpf-opt input:focus-visible + span { outline: 2px solid var(--lime); outline-offset: 3px; }
-  .lpf-pop { color: var(--lime); }
-  .lpf-name { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 1.25rem; }
-  .lpf-price { font-family: var(--font-display); font-weight: 600; color: var(--white); font-size: 2rem; line-height: 1; }
-  .lpf-tag { color: var(--gray-300); font-size: .95rem; }
-  .lpf-feats { color: var(--gray-400); font-size: .85rem; }
-  .lpf-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.1rem var(--gutter); }
-  .f { display: flex; flex-direction: column; gap: .35rem; }
-  .f--wide { grid-column: 1 / -1; }
-  .f label, .lpf-opts > legend { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gray-300); }
-  .lpf-opts > legend { margin-bottom: .6rem; }
-  .f input, .f select, .f textarea { width: 100%; min-height: 48px; background: var(--gray-800); border: 1px solid var(--gray-700); color: var(--white); padding: .8rem 1rem; border-radius: 0; font-size: 1rem; }
+  /* `hidden` always wins over the display values below (the back button keeps its slot instead) */
+  .qf [hidden]:not(.brief-ic) { display: none !important; }
+
+  /* ── Inline start card ─────────────────────────────────── */
+  .qf-card { background: var(--gray-900); border: 1px solid var(--gray-700); padding: clamp(1.25rem, 3vw, 2.5rem); display: grid; gap: 1rem; }
+  .qf-eyebrow { color: var(--lime); }
+  .qf-card-sub, .qf-card-fine { color: var(--gray-400); }
+  .qf-card-fine { font-size: .875rem; }
+  .qf-card-pk { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  .qf-card-pk .qt-b { min-height: 104px; }
+  .qf-resume[hidden], .qf-card-ok[hidden] { display: none; }
+  .qf-card-ok { display: grid; gap: .5rem; }
+
+  /* ── Option tile (row · chip · card) ───────────────────── */
+  .qt { position: relative; display: block; cursor: pointer; text-decoration: none; color: inherit; }
+  .qt input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .qt-b { position: relative; display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 44px 0 20px; background: var(--gray-800); border: 1px solid var(--gray-500); color: var(--white); font-size: var(--fs-body); font-weight: 500; transition: background-color .2s, border-color .2s, scale .12s var(--ease-out); }
+  .qt-node { position: absolute; right: 18px; top: 50%; width: 11px; height: 11px; margin-top: -5.5px; border-radius: 50%; border: 1px solid var(--gray-400); transition: background-color .2s, box-shadow .2s, border-color .2s; }
+  .qt-k { display: none; place-items: center; flex: none; width: 24px; height: 24px; border: 1px solid var(--gray-500); font-family: var(--font-mono); font-size: 12px; color: var(--gray-300); }
+  @media (hover: hover) and (pointer: fine) {
+    .qt-k { display: inline-grid; }
+    .qt:hover .qt-b { background: var(--gray-700); border-color: var(--gray-300); }
+    .qt:hover .qt-node { border-color: var(--white); }
+  }
+  .qt:active .qt-b { scale: .985; }
+  .qt input:focus-visible + .qt-b, a.qt:focus-visible .qt-b { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .qt input:checked + .qt-b { border-color: var(--lime); box-shadow: inset 0 0 0 1px var(--lime); background: var(--lime-06); animation: none; }
+  .qt input:checked + .qt-b .qt-node { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
+  .qt input:checked + .qt-b .qt-k { background: var(--lime); border-color: var(--lime); color: var(--black); }
+  .qt--chip .qt-b { min-height: 48px; padding: 0 18px; border-radius: 999px; font-size: 1rem; }
+  .qt--card .qt-b { flex-direction: column; align-items: flex-start; justify-content: center; gap: 4px; min-height: 112px; padding: 20px 44px 20px 20px; }
+  .qt--card .qt-node { top: 22px; margin-top: 0; }
+  .qt--card .qt-k { position: absolute; right: 12px; bottom: 12px; }
+  .qt-t { line-height: 1.25; }
+  .qt--card .qt-t { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); }
+  .qt-price { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: 1; }
+  .qt-for { color: var(--gray-300); font-weight: 400; }
+  .qt-d { color: var(--gray-400); font-size: .875rem; font-weight: 400; }
+  .qt--unsure .qt-b { border-style: dashed; }
+  /* Style mini-specimens: CSS drawings in the palette, decorative only */
+  .qt--style .qt-b { min-height: 128px; }
+  .qt-spec { position: relative; display: block; width: 100%; height: 48px; margin-bottom: 6px; }
+  .qt-spec i { position: absolute; display: block; }
+  [data-style='minimal'] .qt-spec i:nth-child(1) { left: 0; top: 14px; width: 70%; height: 1px; background: var(--gray-400); }
+  [data-style='minimal'] .qt-spec i:nth-child(2) { left: 0; top: 26px; width: 45%; height: 1px; background: var(--gray-400); }
+  [data-style='minimal'] .qt-spec i:nth-child(3) { right: 30%; top: 23px; width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+  [data-style='bold'] .qt-spec i:nth-child(1) { left: 0; top: 4px; width: 60%; height: 28px; background: var(--white); }
+  [data-style='bold'] .qt-spec i:nth-child(2) { left: 0; top: 38px; width: 36%; height: 6px; background: var(--lime); }
+  [data-style='corporate'] .qt-spec i { top: 6px; width: 28%; height: 36px; border: 1px solid var(--gray-500); }
+  [data-style='corporate'] .qt-spec i:nth-child(1) { left: 0; } [data-style='corporate'] .qt-spec i:nth-child(2) { left: 33%; } [data-style='corporate'] .qt-spec i:nth-child(3) { left: 66%; }
+  [data-style='playful'] .qt-spec i { border-radius: 50%; }
+  [data-style='playful'] .qt-spec i:nth-child(1) { left: 0; top: 10px; width: 30px; height: 30px; background: var(--white); }
+  [data-style='playful'] .qt-spec i:nth-child(2) { left: 40px; top: 22px; width: 18px; height: 18px; background: var(--gray-300); }
+  [data-style='playful'] .qt-spec i:nth-child(3) { left: 66px; top: 4px; width: 24px; height: 24px; background: var(--lime); }
+
+  /* ── The sheet ─────────────────────────────────────────── */
+  .brief { margin: auto; /* base.css zeroes margins, which un-centres a modal dialog */ padding: 0; border: 1px solid var(--gray-700); background: var(--gray-900); color: var(--white); width: min(1040px, calc(100vw - 2 * var(--side))); max-width: none; height: min(760px, calc(100svh - 96px)); max-height: none; box-shadow: var(--capsule-sh); overflow: hidden; }
+  .brief::backdrop { background: rgba(9, 9, 9, .82); }
+  .brief[open] { display: block; opacity: 1; scale: 1; transition: opacity .32s var(--ease-out), scale .32s var(--ease-out), overlay .32s allow-discrete, display .32s allow-discrete; }
+  @starting-style { .brief[open] { opacity: 0; scale: .98; } }
+  .brief-in { display: flex; flex-direction: column; height: 100%; }
+  .brief-hd { display: flex; align-items: center; justify-content: space-between; gap: 12px; height: 64px; padding: 0 16px; flex: none; }
+  .brief-ic { display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--gray-500); background: transparent; color: var(--white); font-size: 1.25rem; cursor: pointer; }
+  .brief-ic[hidden] { visibility: hidden; display: grid; }
+  .brief-x { background: var(--white); color: var(--black); border-color: var(--white); }
+  .brief-ic:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .brief-count { color: var(--gray-300); }
+  .brief-count [data-count] :global(b) { color: var(--white); font-weight: 400; }
+  .brief-bar { height: 2px; background: var(--gray-700); flex: none; }
+  .brief-bar span { display: block; height: 100%; background: var(--lime); transform: scaleX(var(--p, 0)); transform-origin: left; transition: transform .48s var(--ease-out); }
+  .brief-cols { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+  .brief-main { overflow-y: auto; overscroll-behavior: contain; padding: 32px 40px; display: flex; flex-direction: column; }
+  .brief-main form { display: flex; flex-direction: column; flex: 1; }
+
+  /* Question screens */
+  fieldset.q { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; gap: 8px; }
+  fieldset.q legend { padding: 0; margin-bottom: 4px; }
+  .q:not([hidden]) { transition: opacity .36s var(--ease-out) .06s, translate .36s var(--ease-out) .06s; }
+  @starting-style { .q:not([hidden]) { opacity: 0; translate: 0 16px; } }
+  .brief[data-dir='back'] .q:not([hidden]) { @starting-style { translate: 0 -16px; } }
+  .q-h { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3vw, 2.25rem); line-height: 1.08; letter-spacing: -0.02em; outline: none; }
+  .q-sub { color: var(--gray-300); margin-bottom: 12px; }
+  .q-opts { display: grid; gap: 8px; }
+  .q-opts--cards { grid-template-columns: 1fr 1fr; }
+  .q-opts--chips { display: flex; flex-wrap: wrap; }
+  .q-opts--rows { max-width: 560px; }
+  .q-other { margin-top: 12px; }
+  .q-err { color: var(--err); min-height: 1.4em; font-size: .95rem; }
+  .q:has(.q-err:not(:empty)) { box-shadow: inset 2px 0 0 var(--err); padding-left: 14px; }
+  .q-fields { display: grid; gap: 14px; max-width: 560px; }
+  .f { display: flex; flex-direction: column; gap: 6px; }
+  .f[hidden], [data-note][hidden], .q-typo[hidden], .q-mail[hidden], .q-fine[hidden] { display: none; }
+  .f label { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-300); }
+  .f input, .f textarea { width: 100%; min-height: 56px; background: var(--gray-800); border: 1px solid var(--gray-500); color: var(--white); padding: .8rem 1rem; border-radius: 0; font-size: 1.0625rem; }
   .f input::placeholder, .f textarea::placeholder { color: var(--gray-400); }
-  .f input:focus-visible, .f select:focus-visible, .f textarea:focus-visible { border-color: var(--lime); outline-offset: 0; }
-  .f-h { font-size: .85rem; color: var(--gray-400); }
-  .lpf-opts { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; margin-bottom: 1.25rem; }
-  .lpf-opts--2 { grid-template-columns: 1fr 1fr; }
-  .lpf-opts--pages { display: flex; flex-wrap: wrap; }
-  .lpf-opt { position: relative; cursor: pointer; }
-  .lpf-opt span { display: grid; gap: .2rem; min-height: 48px; align-content: center; padding: .6rem 1rem; border: 1px solid var(--gray-700); background: var(--gray-800); color: var(--gray-200); transition: border-color .2s; }
-  .lpf-opt small { color: var(--gray-400); font-size: .8rem; }
-  .lpf-opt--chip span { border-radius: 999px; min-height: 44px; padding: 0 1rem; }
-  .lpf-opt input:checked + span { border-color: var(--lime); color: var(--white); box-shadow: inset 0 0 0 1px var(--lime); }
-  .lpf-review { display: grid; grid-template-columns: 10rem 1fr; gap: .6rem 1rem; }
-  .lpf-review dt { font-family: var(--font-mono); font-size: var(--fs-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gray-400); }
-  .lpf-review dd { color: var(--gray-200); }
-  .lpf-err { color: #ffb3a8; min-height: 1.5em; margin-top: 1rem; }
-  .lpf-nav { display: flex; gap: .75rem; justify-content: flex-end; margin-top: .5rem; }
-  .lpf-nav [hidden] { display: none; }
-  .lpf-fine { font-size: .85rem; color: var(--gray-400); margin-top: 1.25rem; }
-  .lpf-ok[hidden], .lpf form[hidden], .lpf-step[hidden] { display: none; }
-  .lpf-ok { display: grid; gap: 1rem; }
-  @media (max-width: 767px) { .lpf-pk, .lpf-grid, .lpf-opts, .lpf-opts--2 { grid-template-columns: 1fr; } .lpf-rail li { font-size: .7rem; min-width: 0; } .lpf-rl { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .lpf-review { grid-template-columns: 1fr; } }
+  .f input:hover, .f textarea:hover { border-color: var(--gray-300); }
+  .f input:focus-visible, .f textarea:focus-visible { border-color: var(--lime); outline: 2px solid var(--lime); outline-offset: 0; }
+  .f-h { font-size: .875rem; color: var(--gray-400); }
+  .q-typo { font-size: .95rem; color: var(--gray-200); }
+  .q-typo button, .qf-change, .qf-note-toggle { background: none; border: 0; padding: 0; color: var(--lime); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
+  .qf-note-toggle { justify-self: start; }
+  .qf-chosen { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; color: var(--gray-200); }
+  .qf-chosen[hidden] { display: none; }
+  .q-nav { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 16px; }
+  .q-nav [hidden] { display: none; }
+  .q-hint { color: var(--gray-400); display: none; }
+  @media (hover: hover) and (pointer: fine) { .q-hint { display: block; } }
+  .q-send:disabled { background: var(--lime-dark); color: var(--black); cursor: progress; }
+  .q-mail { margin-top: 12px; }
+  .q-fine { margin-top: 16px; display: grid; gap: 8px; font-size: .875rem; color: var(--gray-400); }
+  .q-ok { display: grid; gap: 14px; }
+  .q-ok[hidden] { display: none; }
+  .q-ok-stamp { color: var(--lime); }
+  .q-ok-links { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 8px; }
+
+  /* Brief rail (desktop) */
+  .brief-rail { background: var(--black); border-left: 1px solid var(--gray-700); padding: 40px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+  .brief-rail-h { color: var(--lime); }
+  .brief-rail-empty { color: var(--gray-400); }
+  .brief-rail-empty[hidden] { display: none; }
+  .brief-dl { display: grid; }
+  .brief-row { position: relative; display: grid; grid-template-columns: 6.5rem 1fr; align-items: center; min-height: 44px; border-bottom: 1px dashed var(--gray-500); }
+  .brief-row::after { content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px; background: var(--lime); transform: scaleX(0); transform-origin: left; transition: transform .36s var(--ease-out); }
+  .brief-row.is-set::after { transform: scaleX(1); }
+  .brief-row dt { color: var(--gray-400); }
+  .brief-v { background: none; border: 0; padding: 6px 0; color: var(--gray-400); font: inherit; font-weight: 500; text-align: left; min-height: 44px; width: 100%; cursor: pointer; }
+  .brief-row.is-set .brief-v { color: var(--white); }
+  .brief-v:disabled { cursor: default; }
+  .brief-v:not(:disabled):hover [data-v] { text-decoration: underline; text-underline-offset: 3px; }
+  .brief-v:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
+  .brief-price { color: var(--white); margin-top: auto; }
+  .brief-price[hidden] { display: none; }
+  .brief-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; color: var(--gray-400); list-style: none; padding: 0; }
+
+  .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+
+  /* ── Mobile: full-screen focus mode, answers in the thumb zone ── */
+  @media (max-width: 1023px) {
+    .brief { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; border: 0; background: var(--black); padding: env(safe-area-inset-top) 0 env(safe-area-inset-bottom); }
+    .brief[open] { translate: 0 0; transition: translate .42s var(--ease-out), overlay .42s allow-discrete, display .42s allow-discrete; }
+    @starting-style { .brief[open] { translate: 0 100%; opacity: 1; scale: 1; } }
+    .brief-hd { height: 56px; }
+    .brief-cols { display: flex; flex-direction: column; overflow-y: auto; }
+    .brief-main { overflow: visible; padding: 24px 16px; flex: 1; }
+    fieldset.q[data-kind='choice'] { flex: 1; }
+    fieldset.q[data-kind='choice'] .q-opts { margin-top: auto; }
+    .q-opts--cards { grid-template-columns: 1fr; }
+    .q-opts--style { grid-template-columns: 1fr 1fr; }
+    .q-nav .btn { width: 100%; min-height: 56px; justify-content: center; }
+    .brief-rail { display: none; border: 0; padding: 16px; }
+    .brief[data-step='contact'] .brief-rail { display: flex; order: -1; border-bottom: 1px solid var(--gray-700); }
+    .brief[data-step='contact'] .brief-pills, .brief[data-step='contact'] .brief-rail-empty { display: none; }
+  }
+  @media (max-width: 479px) { .qf-card-pk { grid-template-columns: 1fr; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .brief[open], .q:not([hidden]), .qt-b, .brief-bar span, .brief-row::after { transition-duration: .12s; translate: none; scale: none; }
+    @starting-style { .brief[open], .q:not([hidden]) { translate: none; scale: none; } }
+  }
+  @media (forced-colors: active) {
+    .qt-b { border-color: CanvasText; }
+    .qt input:checked + .qt-b { outline: 2px solid Highlight; }
+    .qt-node { forced-color-adjust: none; }
+    .qt input:checked + .qt-b .qt-node { background: Highlight; }
+  }
 </style>

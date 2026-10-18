@@ -2,10 +2,7 @@ export const prerender = false;
 
 import type { APIRoute } from 'astro';
 import { sendLead } from '../../lib/mail';
-
-// ─── HubSpot config ─────────────────────────────────────────────────────────
-const PORTAL_ID = '244473168';
-const FORM_GUID = import.meta.env.HUBSPOT_FORM_GUID ?? 'c119e15a-357c-4bfb-9264-a1fb3f1a3389';
+import { saveToHubSpot } from '../../lib/hubspot';
 
 // ─── Lead notification (Google Workspace first, Resend fallback: src/lib/mail.ts) ──
 const LEAD_TO = ['info@fazeddigital.com'];
@@ -26,16 +23,22 @@ const SERVICE_LABELS: Record<string, string> = {
 
 export const POST: APIRoute = async ({ request }) => {
   /* ── Parse body ─────────────────────────────────────────── */
-  let body: { name?: string; email?: string; service?: string; message?: string; company?: string; budget?: string; captchaToken?: string };
+  let body: { name?: string; email?: string; phone?: string; service?: string; message?: string; company?: string; budget?: string; website?: string; captchaToken?: string };
   try {
     body = await request.json();
   } catch {
     return json({ error: 'Invalid request' }, 400);
   }
 
-  const { name = '', email = '', service = '', message = '', company = '', budget = '', captchaToken = '' } = body;
+  const { name = '', email = '', phone = '', service = '', message = '', company = '', budget = '', website = '', captchaToken = '' } = body;
   // optional fields are folded into the message so the HubSpot form needs no new properties
-  const fullMessage = [message, company && `Business: ${company}`, budget && `Budget: ${budget}`].filter(Boolean).join('\n\n');
+  const fullMessage = [message, company && `Business: ${company}`, phone && `Phone: ${phone}`, budget && `Budget: ${budget}`].filter(Boolean).join('\n\n');
+
+  /* ── Bots fill the hidden honeypot; pretend success, send nothing ── */
+  if (website.trim()) {
+    console.warn('Contact honeypot hit, dropped:', JSON.stringify({ email }));
+    return json({ ok: true });
+  }
 
   /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
   // TODO: re-enable hard block once correct secret key is confirmed in Vercel
@@ -60,56 +63,21 @@ export const POST: APIRoute = async ({ request }) => {
     return json({ error: 'Please enter a valid email address.' }, 400);
   }
 
-  const [firstName, ...rest] = name.trim().split(' ');
-  const lastName     = rest.join(' ') || '-';
   const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
   /* ── Always log, then email the lead to info@ (a lead is never lost) ── */
-  console.log('Contact form submission:', JSON.stringify({ name, email, service: serviceLabel, company, budget, message }));
-  const emailed = await sendLeadEmail({ name, email, serviceLabel, company, budget, message });
+  console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message }));
+  const emailed = await sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message });
 
-  /* ── Submit to HubSpot public Forms API (no auth needed) ── */
-  let hsRes: Response;
-  try {
-  hsRes = await fetch(
-    `https://api.hsforms.com/submissions/v3/integration/submit/${PORTAL_ID}/${FORM_GUID}`,
-    {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        fields: [
-          { name: 'firstname', value: firstName },
-          { name: 'lastname',  value: lastName  },
-          { name: 'email',     value: email     },
-          { name: 'message',   value: fullMessage },
-          { name: 'service_interest', value: serviceLabel },
-        ],
-        context: {
-          pageUri:  request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
-          pageName: 'Fazed Digital — Contact',
-        },
-        legalConsentOptions: {
-          consent: {
-            consentToProcess: true,
-            text: 'I agree to allow Fazed Digital to store and process my personal data.',
-          },
-        },
-      }),
-    }
-  );
-  } catch (err) {
-    // network failure / no outbound access: graceful error, never a crash
-    console.error('HubSpot Forms API unreachable:', err);
-    // the email already reached info@, so the lead is safe
-    if (emailed) return json({ ok: true });
+  /* ── Save to HubSpot (the leads list) ─────────────────── */
+  const hs = await saveToHubSpot({
+    name, email, message: fullMessage, serviceLabel,
+    pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
+    pageName: 'Fazed Digital — Contact',
+  });
+  // HubSpot unreachable AND no email went out: the visitor must retry. Otherwise the lead is safe.
+  if (hs === 'unreachable' && !emailed) {
     return json({ error: 'Something went wrong on our side and your message didn’t send. Please try again, or email us at info@fazeddigital.com.' }, 502);
-  }
-
-  if (!hsRes.ok) {
-    const errText = await hsRes.text();
-    console.error('HubSpot Forms API error:', hsRes.status, errText);
-    // Still return OK to the user — don't expose internal errors
-    return json({ ok: true });
   }
 
   return json({ ok: true });
@@ -117,7 +85,7 @@ export const POST: APIRoute = async ({ request }) => {
 
 // ─── Lead notification email ──────────────────────────────────────────────────
 // Returns true when Gmail or Resend accepted the email. Never throws: a failed email must not block the form.
-async function sendLeadEmail(d: { name: string; email: string; serviceLabel: string; company: string; budget: string; message: string }): Promise<boolean> {
+async function sendLeadEmail(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string }): Promise<boolean> {
   const via = await sendLead({
     to: LEAD_TO,
     replyTo: d.email,
@@ -128,11 +96,12 @@ async function sendLeadEmail(d: { name: string; email: string; serviceLabel: str
   return via !== false;
 }
 
-function buildHtml(d: { name: string; email: string; serviceLabel: string; company: string; budget: string; message: string }): string {
+function buildHtml(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string }): string {
   const rows: [string, string][] = [
     ['Service',  d.serviceLabel],
     ['Name',     d.name],
     ['Email',    d.email],
+    ['Phone',    d.phone || '—'],
     ['Business', d.company || '—'],
     ['Budget',   d.budget || '—'],
     ['Message',  d.message],
