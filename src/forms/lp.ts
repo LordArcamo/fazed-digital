@@ -130,7 +130,9 @@ export function initLpForms() {
       conditional();
     }
     const answered = () => active().filter((s) => !validate(s)).length;
+    let done = false; // brief sent: the card keeps its success state for the rest of the visit
     function syncCard() {
+      if (done) return;
       // a package picked from the pricing table counts as answered even though its screen is skipped
       const n = answered() + (skip.has('package') && val('package') ? 1 : 0), any = FIELDS.some((f) => val(f));
       const r = root.querySelector<HTMLElement>('[data-resume]');
@@ -440,8 +442,9 @@ export function initLpForms() {
       bar.style.setProperty('--p', '1');
       count.textContent = 'SENT';
       try { sessionStorage.removeItem(STORE); } catch {}
+      done = true;
       root.querySelector<HTMLElement>('[data-card-ok]')!.hidden = false;
-      root.querySelectorAll<HTMLElement>('.qf-card-pk, [data-resume], .qf-card-h, .qf-card-sub').forEach((e) => (e.hidden = true));
+      root.querySelectorAll<HTMLElement>('.qf-card > .qf-eyebrow, .qf-card-pk, [data-resume], .qf-card-h, .qf-card-sub').forEach((e) => (e.hidden = true));
       ok.querySelector<HTMLElement>('[data-ok-h]')!.focus();
       (window as any).__field?.signal?.();
     }
