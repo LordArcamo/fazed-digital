@@ -8,7 +8,7 @@ import LpForm from './LpForm.astro';
 import { labImages } from '../data/images';
 import { labShipped, LABEL } from '../data/lab';
 import { lpFaq } from '../data/lp';
-import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, prices, capsCopy } from '../data/proof';
+import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, results, prices, capsCopy } from '../data/proof';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 // Example sites = Fazed Lab concept sites (fictional brands, always labelled as such).
 // #04 Halde is left out: its base mesh is CC BY-NC (non-commercial) and this is a paid-ads sales page.
@@ -68,7 +68,7 @@ const faq = lpFaq(php);
         <li><h3 class="t-h3">Look established.</h3><p>Corporate clients and overseas buyers check for a proper website (and a real business email) before they message.</p></li>
         <li><h3 class="t-h3">Keep Messenger.</h3><p>We add a chat button so customers can still message you the way they like.</p></li>
       </ul>
-      <a class="link" href="/blog/facebook-page-vs-website">Read: Facebook page vs website</a>
+      <a class="link" href="/blog/facebook-page-vs-website" target="_blank" rel="noopener">Read: Facebook page vs website ↗<span class="sr-only"> (opens in a new tab)</span></a>
     </section>
   )}
 
@@ -110,12 +110,16 @@ const faq = lpFaq(php);
   )}
 
   <section class="section container lp-reviews" aria-labelledby="rv-h">
-    <p class="mono">Client reviews</p>
-    <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
-    {LP_REVIEWS_REAL && lpTestimonials.length
-      ? <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
-      : <ul class="lp-3 lp-ph" data-placeholder>{[1, 2, 3].map((n) => <li><p class="mono">Placeholder · review {n}</p><p>Client review coming soon. We only publish reviews clients have approved.</p></li>)}</ul>}
-    <p>Meanwhile, see the work for yourself: <a class="link" href="/work">8 live projects</a>.</p>
+    {LP_REVIEWS_REAL && lpTestimonials.length ? <>
+      <p class="mono">Client reviews</p>
+      <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
+      <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
+    </> : <>
+      <!-- Real client results (proof.ts) until approved review quotes exist. Funnel rule: no links off the LP here. -->
+      <p class="mono">Client results</p>
+      <h2 id="rv-h" class="t-d2">Real clients. <span class="dim">Real results.</span></h2>
+      <ul class="lp-3 lp-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
+    </>}
   </section>
 
   <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
@@ -149,7 +153,7 @@ const faq = lpFaq(php);
     <ul class="lp-tiles">
       {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
     </ul>
-    <p class="lp-work-more"><a class="link" href="/lab">Explore the Fazed Lab →</a> <span class="mono">or</span> <a class="link" href="/work">see 8 live client projects →</a></p>
+    <p class="lp-work-more">Like what you see? <a class="btn btn--lime" href="#get-started">Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a></p>
   </section>
 
   <section class="section container lp-faq" aria-labelledby="fq-h">
@@ -225,7 +229,8 @@ const faq = lpFaq(php);
   .lp-note { color: var(--gray-300); }
   .lp-chips, .lp-pills { display: flex; flex-wrap: wrap; gap: .5rem; }
   .lp-chips .chip { color: var(--gray-200); min-height: 40px; }
-  .lp-ph li { border: 1px dashed var(--gray-500); padding: 1.25rem; border-top-style: dashed; }
+  .lp-res li { border-top: 1px solid var(--gray-700); padding-top: 1.25rem; display: grid; gap: .5rem; align-content: start; }
+  .lp-res .mono { color: var(--lime); }
   .lp-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gutter); margin-top: 2rem; }
   .lp-steps li, .lp-4 li { display: grid; gap: .6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); position: relative; }
   .lp-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); }
@@ -243,7 +248,6 @@ const faq = lpFaq(php);
   .tile-t { color: var(--white); font-weight: 600; }
   .tile-l { color: var(--gray-400); font-style: italic; }
   .lp-work-more { display: flex; flex-wrap: wrap; align-items: baseline; gap: .5rem 1rem; }
-  .lp-work-more .mono { color: var(--gray-500); }
   .lp-faq > :global(.faq) { max-width: 1000px; }
   .lp-form { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .lp-form-side { grid-column: 1 / span 4; display: grid; gap: 1.25rem; align-content: start; }

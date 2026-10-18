@@ -6,9 +6,10 @@ const { variant = 'usd' } = Astro.props;
   <div class="container lpft-in">
     <p class="mono">© {BUILD_YEAR} Fazed Digital · {variant === 'php' ? 'Iligan City, Lanao del Norte, Philippines' : 'Iligan City, Philippines'}</p>
     <nav aria-label="Footer"><ul>
-      <li><a href="/">Back to site</a></li><li><a href="/work">Our work</a></li>
+      <!-- Landing-page footer: no exits into the main site; legal opens in a new tab -->
       <li>{variant === 'php' ? <a href="/lp/7-day-website">USD pricing ($)</a> : <a href="/lp/7-day-website/ph">See peso pricing (₱)</a>}</li>
-      <li><a href="/contact">Contact</a></li><li><a href="/privacy">Privacy</a></li><li><button type="button" data-cookie-settings>Cookie settings</button></li>
+      <li><a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></li>
+      <li><a href="/privacy" target="_blank" rel="noopener">Privacy<span class="sr-only"> (opens in a new tab)</span></a></li><li><button type="button" data-cookie-settings>Cookie settings</button></li>
     </ul></nav>
   </div>
 </footer>
