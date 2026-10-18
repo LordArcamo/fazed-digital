@@ -54,7 +54,7 @@ const schema = [
   </section>
 </Base>
 <style>
-  .ct-hero { position: relative; min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 160px); padding-bottom: 72px; }
+  .ct-hero { position: relative; overflow-x: clip; /* the decorative ring can poke past narrow screens */ min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 160px); padding-bottom: 72px; }
   /* the contact node sits inline in the H1, on the x-height of the line */
   .ct-hn { position: relative; display: inline-block; width: .5em; height: .5em; vertical-align: baseline; }
   .node-anchor { position: absolute; left: 50%; top: 50%; width: 1px; height: 1px; }

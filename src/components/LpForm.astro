@@ -316,6 +316,10 @@ const id = `lpq-${variant}`;
   .brief-price[hidden] { display: none; }
   .brief-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 12px; color: var(--gray-400); list-style: none; padding: 0; }
 
+  /* Scroll lock while the sheet is open. Lenis.stop() alone misses touch scrolling and reduced motion (no Lenis);
+     the gutter stays so the page doesn't shift sideways when its scrollbar goes. */
+  :global(html.brief-open) { overflow: hidden; scrollbar-gutter: stable; }
+  .brief { overscroll-behavior: contain; }
   .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
   /* ── Mobile: full-screen focus mode, answers in the thumb zone ── */
@@ -324,7 +328,7 @@ const id = `lpq-${variant}`;
     .brief[open] { translate: 0 0; transition: translate .42s var(--ease-out), overlay .42s allow-discrete, display .42s allow-discrete; }
     @starting-style { .brief[open] { translate: 0 100%; opacity: 1; scale: 1; } }
     .brief-hd { height: 56px; }
-    .brief-cols { display: flex; flex-direction: column; overflow-y: auto; }
+    .brief-cols { display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
     .brief-main { overflow: visible; padding: 24px 16px; flex: 1; }
     fieldset.q[data-kind='choice'] { flex: 1; }
     fieldset.q[data-kind='choice'] .q-opts { margin-top: auto; }
@@ -332,8 +336,8 @@ const id = `lpq-${variant}`;
     .q-opts--style { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
     .q-nav .btn { width: 100%; min-height: 56px; justify-content: center; }
     .brief-rail { display: none; border: 0; padding: 16px; }
-    /* the last step shows the whole brief above the fields as the review (not a collapsed scroll box) */
-    .brief[data-step='contact'] .brief-rail { display: flex; flex: none; overflow: visible; order: -1; border-bottom: 1px solid var(--gray-700); }
+    /* the last step lists the whole brief under Send as the review, so the fields come first */
+    .brief[data-step='contact'] .brief-rail { display: flex; flex: none; overflow: visible; border-top: 1px solid var(--gray-700); }
     .q[data-q='package'] .qt-d { display: none; }
     .q[data-q='package'] .qt--card .qt-b { min-height: 96px; padding-block: 14px; }
     .brief[data-step='contact'] .brief-pills, .brief[data-step='contact'] .brief-rail-empty { display: none; }

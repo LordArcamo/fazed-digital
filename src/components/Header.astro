@@ -190,6 +190,8 @@ const cur = menu.find((m) => m.href === current);
   :global(html.dock-hide) .sd { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
   @media (max-width: 1023px) { :global(html.dock-kb) .sd, :global(html.dock-kb) .sd-lp { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; } }
   /* menu open: the dock stays as the close control; the rail and top bar step back */
+  /* the LP status line is the widest header item; tighten it on the narrowest phones */
+  @media (max-width: 359px) { .hdr-tel--lp { letter-spacing: .06em; } }
   :global(html.menu-open) .hdr-logo, :global(html.menu-open) .hdr-tel { visibility: hidden; }
   @media (min-width: 1024px) { :global(html.menu-open:not(.is-docked)) .sd { visibility: hidden; } }
   :global(html.menu-open) .sd { transform: none; opacity: 1; pointer-events: auto; }

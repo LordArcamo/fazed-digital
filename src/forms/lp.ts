@@ -109,7 +109,9 @@ export function initLpForms() {
     const optLabel = (name: string) => form.querySelector<HTMLInputElement>(`input[name="${name}"]:checked`)?.closest('label')?.querySelector('[data-opt]')?.textContent?.trim() ?? '';
 
     /* ── persistence (sessionStorage; cleared on success) ── */
+    let done = false; // brief sent: the card and sheet stay in the sent state until the page is left
     function save() {
+      if (done) return; // sent: never write the brief back (a reload would offer it again → duplicate lead)
       const o: Record<string, string> = {};
       FIELDS.forEach((f) => { const v = val(f); if (v) o[f] = v; });
       o._skip = skip.has('package') ? '1' : '';
@@ -130,7 +132,6 @@ export function initLpForms() {
       conditional();
     }
     const answered = () => active().filter((s) => !validate(s)).length;
-    let done = false; // brief sent: the card keeps its success state for the rest of the visit
     function syncCard() {
       if (done) return;
       // a package picked from the pricing table counts as answered even though its screen is skipped
@@ -222,6 +223,7 @@ export function initLpForms() {
       const opts = s.querySelectorAll('input[type=radio]').length;
       hint.textContent = isChoice(s) ? `Press 1–${Math.min(opts, 9)} or Enter` : 'or press Enter ↵';
       chip.hidden = !(skip.has('package') && cur === 0);
+      if (!chip.hidden) chip.querySelector('[data-chosen-label]')!.textContent = form.querySelector<HTMLInputElement>('input[name=package]:checked')?.closest('label')?.dataset.chip ?? '';
       clearErr(s);
       status.textContent = '';
       mail.hidden = true;
@@ -231,6 +233,7 @@ export function initLpForms() {
         const empty = !isChoice(s) && matchMedia('(pointer: fine)').matches ? [...s.querySelectorAll<HTMLInputElement>('.f:not([hidden]) input')].find((i) => !i.value) : null;
         (empty ?? h).focus({ preventScroll: true });
         $('.brief-main').scrollTop = 0;
+        $('.brief-cols').scrollTop = 0; // the scroll box on mobile
         (window as any).gtag?.('event', 'lp_form_step', { step: s.dataset.q, n });
       }
     }
@@ -261,9 +264,8 @@ export function initLpForms() {
       opener = from ?? (document.activeElement as HTMLElement);
       if (pkg) {
         const r = form.querySelector<HTMLInputElement>(`input[name=package][value="${pkg}"]`);
-        if (r) { r.checked = true; skip.add('package'); chip.querySelector('[data-chosen-label]')!.textContent = r.closest('label')?.dataset.chip ?? pkg; save(); }
+        if (r && !done) { r.checked = true; skip.add('package'); save(); }
       }
-      cur = firstOpen();
       if (!sheet.open) {
         sheet.showModal();
         cleaned = false;
@@ -273,6 +275,9 @@ export function initLpForms() {
         idem ||= (crypto as any).randomUUID?.() ?? String(Math.random()).slice(2);
         loadRecaptcha().catch(() => {});
       }
+      // already sent: reopen on the confirmation, never on the old questions (no duplicate lead)
+      if (done) { $<HTMLElement>('[data-ok-h]').focus(); return; }
+      cur = firstOpen();
       render(true);
     }
     openers.set(variant, open);
@@ -346,7 +351,8 @@ export function initLpForms() {
         // Enter moves to the next empty field on text screens, then continues
         const fields = [...s.querySelectorAll<HTMLInputElement>('.f:not([hidden]) input')];
         const i = fields.indexOf(t as HTMLInputElement);
-        if (i >= 0 && i < fields.length - 1) { fields[i + 1].focus(); return; }
+        const nextEmpty = (t as HTMLInputElement).value ? fields.slice(i + 1).find((f) => !f.value) : undefined; // empty here → validate instead
+        if (i >= 0 && nextEmpty) { nextEmpty.focus(); return; }
         if (send.hidden) go(1); else form.requestSubmit(send);
         return;
       }
@@ -368,8 +374,10 @@ export function initLpForms() {
       $('[data-note]').hidden = false;
       form.querySelector<HTMLTextAreaElement>('[name=notes]')?.focus();
     });
-    chip.querySelector('[data-change]')!.addEventListener('click', () => { skip.delete('package'); save(); cur = 0; render(true, 'back'); });
+    const changePackage = () => { clearTimeout(timer); skip.delete('package'); save(); cur = 0; render(true, 'back'); };
+    chip.querySelector('[data-change]')!.addEventListener('click', changePackage);
     sheet.querySelectorAll<HTMLButtonElement>('[data-jump]').forEach((b) => b.addEventListener('click', () => {
+      if (b.dataset.jump === 'package' && skip.has('package')) return changePackage(); // its screen was skipped
       const i = active().findIndex((s) => s.dataset.q === b.dataset.jump);
       if (i >= 0) { clearTimeout(timer); const d = i < cur ? 'back' : 'fwd'; cur = i; render(true, d); }
     }));
@@ -393,6 +401,7 @@ export function initLpForms() {
       send.disabled = true;
       send.setAttribute('aria-busy', 'true');
       sendLabel.textContent = 'Sending your brief…';
+      hint.hidden = true;
       live.textContent = 'Sending your brief…';
       const slow = setTimeout(() => { live.textContent = status.textContent = 'Still sending. Your answers are saved.'; }, 8000);
       const ac = new AbortController();
@@ -410,7 +419,11 @@ export function initLpForms() {
         status.textContent = '';
         showErr(s, MSG.network);
         // never lose the brief: offer it as a ready-written email
-        const body = Object.entries(p).filter(([k, v]) => v && !['website', 't', 'idem', 'variant'].includes(k)).map(([k, v]) => `${k}: ${v}`).join('\n');
+        const body = [
+          ['Package', optLabel('package')], ['Industry', industry], ['Goal', optLabel('goal')], ['Launch', optLabel('timeline')],
+          ['Style', optLabel('styleVibe')], ['Business', p.businessName], ['Facebook page', p.facebookPage], ['Current website', p.currentWebsite],
+          ['Name', p.name], ['Email', p.email], ['Phone', p.phone], ['Notes', p.notes],
+        ].filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n');
         $<HTMLAnchorElement>('[data-mail-link]').href = `mailto:info@fazeddigital.com?subject=${encodeURIComponent(`7-day brief: ${p.businessName || p.name}`)}&body=${encodeURIComponent(body)}`;
         mail.hidden = false;
         sending = false;
@@ -418,6 +431,7 @@ export function initLpForms() {
       } finally {
         clearTimeout(slow); clearTimeout(kill);
         send.removeAttribute('aria-busy');
+        hint.hidden = done;
         sendLabel.textContent = 'Send my 7-day brief';
       }
     });

@@ -48,6 +48,15 @@ export function initContactForms() {
     syncTip();
     form.addEventListener('focusin', () => { loadRecaptcha().catch(() => {}); }, { once: true });
     form.addEventListener('focusin', () => (window as any).__field?.ripple?.(innerWidth * 0.25, innerHeight * 0.5, 0.6));
+    // a field's error clears as soon as the person starts fixing it
+    form.addEventListener('input', (ev) => {
+      const input = ev.target as HTMLElement;
+      if (input.getAttribute('aria-invalid') !== 'true') return;
+      input.setAttribute('aria-invalid', 'false');
+      const out = form.querySelector<HTMLElement>(`#${input.id}-e`);
+      if (out) out.textContent = '';
+      if (!form.querySelector('[aria-invalid="true"]')) sum.hidden = true;
+    });
     form.addEventListener('submit', async (ev) => {
       ev.preventDefault();
       err.hidden = true;
