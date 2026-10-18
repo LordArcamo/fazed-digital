@@ -12,7 +12,8 @@ import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, results, prices, capsCopy } f
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 // Example sites = Fazed Lab concept sites (fictional brands, always labelled as such).
 // #04 Halde is left out: its base mesh is CC BY-NC (non-commercial) and this is a paid-ads sales page.
-const lpLab = labShipped.filter((i) => i.n !== '04' && labImages[i.n] && i.url);
+// newest 4 shippable concept sites (2×2); #04 stays off the LP (CC BY-NC base model)
+const lpLab = labShipped.filter((i) => i.n !== '04' && labImages[i.n] && i.url).reverse().slice(0, 4);
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
 const plans = [

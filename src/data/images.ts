@@ -13,4 +13,5 @@ import lab02 from '../assets/lab/02.jpg';
 import lab03 from '../assets/lab/03.jpg';
 import lab04 from '../assets/lab/04.jpg';
 import lab05 from '../assets/lab/05.jpg';
-export const labImages: Record<string, ImageMetadata> = { '01': lab01, '02': lab02, '03': lab03, '04': lab04, '05': lab05 };
+import lab06 from '../assets/lab/06.jpg';
+export const labImages: Record<string, ImageMetadata> = { '01': lab01, '02': lab02, '03': lab03, '04': lab04, '05': lab05, '06': lab06 };

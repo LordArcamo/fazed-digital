@@ -31,6 +31,7 @@
   - Maison Ossel OS-01 (concept site, fictional brand): https://fazed-maison-ossel.vercel.app · WebGPU, TSL, Threlte, Blender, Web Audio · 2026-10-16
   - Halde Ø1 (concept site, fictional brand): https://fazed-halde-o1.vercel.app · OGL, Blender Cycles, Lenis, Seedance clip · 2026-10-17
   - Vitrène Sérum 1.47 (concept site, fictional brand): https://fazed-vitrene-serum.vercel.app · PixiJS, Blender Cycles, GSAP + Lenis, Multi-pass plates · 2026-10-17
+  - Saltrae · Casa Ocaso (concept site, fictional brand): https://fazed-casa-ocaso.vercel.app · Three.js, Live lighting, postprocessing, KTX2, GSAP + Lenis · 2026-10-19
 
 ## Guides
 - [How to Get More Google Reviews: A Practical Guide for Small Business Owners](https://www.fazeddigital.com/blog/get-more-google-reviews) (Strategy, 18 Oct 2026)
