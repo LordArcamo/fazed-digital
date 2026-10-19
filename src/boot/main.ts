@@ -8,6 +8,12 @@ import { bus } from '../lib/bus';
 
 const flags = readFlags();
 const html = document.documentElement;
+// --screen-h: the real visible height, measured once (and again only when the width changes, i.e. rotation).
+// On iPhone Chrome 100svh comes out ~40px shorter than what is visible, so the phone hero was short and its mark
+// small; dvh would track the toolbars and shift the page while scrolling.
+let screenW = innerWidth; // the <head> boot script already set --screen-h before first paint
+const measureScreen = () => { if (innerWidth === screenW) return; screenW = innerWidth; html.style.setProperty('--screen-h', `${innerHeight}px`); };
+addEventListener('resize', measureScreen, { passive: true });
 bus.rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 bus.record = flags.record;
 // prefers-reduced-motion: the SSR SVG posters ARE the experience, the GL field never boots
@@ -94,6 +100,8 @@ document.addEventListener('astro:before-swap', (e: any) => {
   if (nd) {
     RUNTIME.forEach((c) => html.classList.contains(c) && nd.classList.add(c));
     if (html.dataset.gl) nd.dataset.gl = html.dataset.gl;
+    const sh = html.style.getPropertyValue('--screen-h');
+    if (sh) nd.style.setProperty('--screen-h', sh); // the swap replaces <html> attributes, inline style included
   }
   bus.onSwap.forEach((f) => f());
 });
