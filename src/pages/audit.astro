@@ -66,20 +66,19 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
       ))}</ol>
     </section>
 
-    <section class="container au-sec au-steps" aria-labelledby="st-h">
-      <div class="au-sec-hd">
-        <p class="mono">How it works</p>
-        <h2 id="st-h" class="t-d2">Fifteen minutes, <span class="dim">start to finish.</span></h2>
-      </div>
-      <ol class="au-tl">{steps.map(([ts, t, b]) => <li class="rv"><span class="mono au-ts">{ts}</span><span class="au-tl-node" aria-hidden="true"></span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
-    </section>
-
     <section class="container au-sec au-book" id="book" aria-labelledby="bk-h">
       <div class="au-book-hd">
         <p class="mono">Book your free check</p>
-        <h2 id="bk-h" class="t-d2">Pick a time.</h2>
-        <p>15 minutes on Google Meet. The link arrives by email after you book.</p>
+        <h2 id="bk-h" class="t-d2">Pick a time. <span class="dim">We’ll do the rest.</span></h2>
       </div>
+      <!-- How it works: a 15-minute call drawn as a progress track. Dashed = before the call, lime = the call itself. -->
+      <ol class="au-tl rv" aria-label="How it works">{steps.map(([ts, t, b], i) => (
+        <li class:list={[i === 0 && 'is-pre', i === steps.length - 1 && 'is-end']}>
+          <span class="mono au-ts">{ts}</span>
+          <span class="au-tk" aria-hidden="true"><i class="au-tl-node"></i></span>
+          <h3>{t}</h3><p>{b}</p>
+        </li>
+      ))}</ol>
       <!-- Desktop: Google's scheduler embedded. Phones: its own full-screen page (2,200px tall when embedded). -->
       <div class="au-cal au-d">
         <iframe src={`${BOOK}?gv=true`} title="Book a free 15-minute website check with Fazed Digital (Google Calendar)" loading="lazy"></iframe>
@@ -184,13 +183,20 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   .vg-u { font-size: 9px; letter-spacing: .06em; color: var(--gray-400); }
   .au-vis .vg-t { height: 8px; width: 82%; background: var(--lime); }
 
-  /* How it works: the 15 minutes as a timeline */
-  .au-tl { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
-  .au-tl::before { content: ''; position: absolute; left: 0; right: 0; top: calc(1.4em + 18px); height: 1px; background: linear-gradient(90deg, var(--gray-700), var(--lime)); }
-  .au-tl li { display: grid; gap: .5rem; align-content: start; }
-  .au-ts { color: var(--gray-300); font-size: 13px; letter-spacing: .1em; }
-  .au-tl-node { position: relative; z-index: 1; width: 13px; height: 13px; margin: 12px 0 14px; border-radius: 50%; border: 1px solid var(--lime); background: var(--black); }
-  .au-tl li:last-child .au-tl-node { background: var(--lime); box-shadow: 0 0 0 6px rgba(201, 255, 87, .15); }
+  /* How it works (inside #book): each step owns the track segment to the next node, so the line always meets
+     the node centres and stops at the last one. Segment 1 = before the call (dashed), segment 2 = the call (lime). */
+  .au-tl { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); margin-bottom: .5rem; }
+  .au-tl li { display: grid; gap: .4rem; align-content: start; }
+  .au-ts { color: var(--gray-300); font-size: 12px; letter-spacing: .12em; }
+  .au-tk { position: relative; display: flex; align-items: center; height: 14px; margin: 6px 0 10px; }
+  .au-tl-node { position: relative; z-index: 1; flex: none; width: 13px; height: 13px; border-radius: 50%; border: 1px solid var(--lime); background: var(--black); }
+  .au-tl li:not(.is-end) .au-tk::after { content: ''; position: absolute; left: 13px; right: calc(-1 * var(--gutter)); top: 50%; height: 1px; translate: 0 -50%; }
+  .au-tl li.is-pre .au-tk::after { background: repeating-linear-gradient(90deg, var(--gray-500) 0 5px, transparent 5px 10px); }
+  /* the call segment fills like a progress bar when the steps scroll in (--fill 0 → 1) */
+  .au-tl li:not(.is-pre):not(.is-end) .au-tk::after { height: 3px; border-radius: 2px; background: var(--lime); transform-origin: left; scale: var(--fill, 0) 1; transition: scale 1.4s var(--ease-out) .25s; }
+  .au-tl.rv-in, :global(html:not(.js-motion)) .au-tl { --fill: 1; }
+  .au-tl li.is-end .au-tl-node { background: var(--lime); box-shadow: 0 0 0 6px rgba(201, 255, 87, .15); }
+  .au-tl h3 { font: 600 1.125rem/1.3 var(--font-display, inherit); }
   .au-tl p { color: var(--gray-300); max-width: 34ch; }
 
   /* Client results as editorial rows */
@@ -201,7 +207,6 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   .au-res li > p { color: var(--gray-300); }
 
   .au-book-hd { display: grid; gap: .75rem; }
-  .au-book-hd p:last-child { color: var(--gray-300); }
   /* Google's scheduler is a light page: frame it like a sheet of paper on the dark site */
   .au-cal { border: 1px solid var(--gray-700); border-radius: 16px; overflow: hidden; background: #fff; box-shadow: var(--capsule-sh); }
   .au-cal iframe { display: block; width: 100%; height: 900px; border: 0; }
@@ -230,11 +235,13 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   @media (max-width: 767px) {
     .au-row { grid-template-columns: 1fr; gap: 1rem; padding-block: 24px; }
     .au-vis { height: 120px; }
-    .au-tl { grid-template-columns: 1fr; gap: 0; padding-left: 28px; }
-    .au-tl::before { left: 6px; right: auto; top: 6px; bottom: 6px; width: 1px; height: auto; background: linear-gradient(180deg, var(--gray-700), var(--lime) 72%, transparent); }
-    .au-tl li:last-child { padding-bottom: 8px; }
-    .au-tl li { position: relative; padding-bottom: 28px; }
-    .au-tl-node { position: absolute; left: -28px; top: 2px; margin: 0; }
+    /* vertical on phones: the segment hangs from each node down to the next */
+    .au-tl { grid-template-columns: 1fr; gap: 0; padding-left: 30px; }
+    .au-tl li { position: relative; padding-bottom: 24px; }
+    .au-tk { position: absolute; left: -30px; top: 0; bottom: 0; height: auto; margin: 0; flex-direction: column; align-items: flex-start; }
+    .au-tl li:not(.is-end) .au-tk::after { left: 6px; right: auto; top: 13px; bottom: 0; width: 1px; height: auto; translate: none; }
+    .au-tl li.is-pre .au-tk::after { background: repeating-linear-gradient(180deg, var(--gray-500) 0 5px, transparent 5px 10px); }
+    .au-tl li:not(.is-pre):not(.is-end) .au-tk::after { width: 3px; height: auto; left: 5px; top: 13px; bottom: 0; translate: none; transform-origin: top; scale: 1 var(--fill, 0); }
   }
   @media (max-width: 599px) {
     .au-hero { min-height: 0; padding-top: calc(var(--header-h) + 48px); }
@@ -244,6 +251,7 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   @media (prefers-reduced-motion: reduce) {
     .au-dot { animation: none; }
     .au-tick, .au-tick::after, .vp-tap, .vf-dot { animation: none; }
+    .au-tl { --fill: 1; } .au-tl li .au-tk::after { transition: none; }
     .vf-dot { left: calc(100% - 8px); }
     .au-tick { background: var(--lime); border-color: var(--lime); } .au-tick::after { opacity: 1; }
   }
