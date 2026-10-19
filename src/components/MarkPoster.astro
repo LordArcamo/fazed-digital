@@ -30,7 +30,9 @@ const t = `scale(${(1 / vw).toFixed(7)} ${(1 / vh).toFixed(7)}) translate(${-vx}
   /* ≥1600 the D1 headline is ~760–820px wide: shift the mark right so "Live worldwide." keeps ≥48px of air (1920 touched at x≈1170) */
   @media (min-width: 1600px) { .mark-poster { left: 75%; } }
   @media (max-width: 1023px) {
-    /* the mark fills the space above the hero copy and never runs into the coords strip */
-    .mark-poster { height: clamp(110px, calc(100svh - 566px), 46svh); left: 50%; top: 76px; transform: translate(-50%, 0); }
+    /* phones: the mark is a flex item that takes all the room between the header and the hero copy (the hero is a
+       column there), so it is as big as each phone allows and can never run into the coords strip. Short screens
+       (iPhone Chrome with both toolbars ≈ 430×740) were left with a 174px mark by the old fixed 566px reserve. */
+    .mark-poster { position: relative; left: auto; top: auto; transform: none; align-self: center; flex: 1 1 0; height: auto; min-height: 140px; max-height: 46svh; margin-top: calc(var(--header-h) + 4px); }
   }
 </style>

@@ -242,13 +242,15 @@ const schema = {
   .hero-cta { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: 2.25rem; }
   .hero-cue { position: absolute; bottom: 24px; left: var(--side); }
   @media (max-width: 1023px) {
-    .hero { align-items: flex-end; }
-    /* SIGNAL DOCK: CTAs clear the 64px mobile dock and the compact cookie sheet */
-    .hero-in { padding-top: 34svh; padding-bottom: calc(136px + env(safe-area-inset-bottom)); }
+    /* column: the mark (MarkPoster) grows into the space above the copy */
+    .hero { flex-direction: column; align-items: stretch; justify-content: flex-end; }
+    /* SIGNAL DOCK: CTAs clear the 64px mobile dock (+12px inset) with air to spare */
+    .hero-in { padding-top: 20px; padding-bottom: calc(96px + env(safe-area-inset-bottom)); }
     .hero-h { font-size: clamp(2.4rem, 11.6vw, 4.6rem); max-width: none; }
-    .hero-strip { margin-bottom: 1rem; font-size: .7rem; letter-spacing: .1em; }
+    .hero-strip { margin-bottom: .75rem; font-size: .7rem; letter-spacing: .1em; }
     .hs-d { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); } .hs-m { display: inline; }
-    .hero-deck { margin-top: 1.25rem; font-size: 1.0625rem; }
+    .hero-deck { margin-top: 1rem; font-size: 1.0625rem; }
+    .hero-cta { margin-top: 1.5rem; }
     .hero-cue { display: none; }
     .hero-cta { flex-wrap: nowrap; gap: .5rem; } .hero-cta .btn { padding: 0 1rem; }
   }
