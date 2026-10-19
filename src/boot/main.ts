@@ -100,10 +100,16 @@ document.addEventListener('astro:before-swap', (e: any) => {
 let navType = 'push';
 document.addEventListener('astro:before-preparation', (e: any) => { navType = e.navigationType || 'push'; });
 document.addEventListener('astro:after-swap', () => {
-  if (navType !== 'traverse' && !location.hash) {
-    window.scrollTo(0, 0);
-    bus.lenis?.scrollTo(0, { immediate: true, force: true });
-  }
   bus.lenis?.resize();
+  if (navType === 'traverse') return;
+  // a link to another page's section (/lab#lab-06): land on that section. The router jumps natively, but Lenis still
+  // holds the previous page's position and would pull the new page back to it.
+  const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (target) {
+    bus.lenis?.scrollTo(target, { immediate: true, force: true });
+    return;
+  }
+  window.scrollTo(0, 0);
+  bus.lenis?.scrollTo(0, { immediate: true, force: true });
 });
 if (document.readyState !== 'loading') onPage(); else document.addEventListener('DOMContentLoaded', onPage, { once: true });

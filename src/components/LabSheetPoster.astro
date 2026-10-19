@@ -5,6 +5,8 @@
 // outlines on a 6px step and each matte (public/formations/lab-NN-poster.webp, 181×113) masked into the
 // field's dot grid, so the GL hand-off lands on the same dots with zero layout shift.
 import { labItems, labImaged, labShipped, labUpcoming, pad2, LAB_TOTAL } from '../data/lab';
+// linkBase: '' on /lab (frames jump to #lab-NN), '/lab' when the sheet is featured on another page
+const { linkBase = '' } = Astro.props as { linkBase?: string };
 const lead = labImaged[labImaged.length - 1];
 const leadItem = labItems.find((i) => i.n === lead);
 const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labImaged.includes(i.n) ? 'img' : 'text') : i.status === 'research' ? 'research' : 'queued');
@@ -29,7 +31,7 @@ const kind = (i: (typeof labItems)[number]) => (i.status === 'shipped' ? (labIma
       return (
         <li class:list={['sl-f', `sl-f--${k}`, { 'is-now': i.n === lead }]}>
           {i.status === 'shipped'
-            ? <a class="sl-a" href={`#lab-${i.n}`} data-slate-frame={i.n} data-name={`${i.n} ${i.brand}`} data-img={k === 'img' ? '1' : undefined} title={i.brand}>{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">: {i.brand}, concept site, jump to its entry</span></span></a>
+            ? <a class="sl-a" href={`${linkBase}#lab-${i.n}`} data-slate-frame={i.n} data-name={`${i.n} ${i.brand}`} data-img={k === 'img' ? '1' : undefined} title={i.brand}>{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">: {i.brand}, concept site, {linkBase ? 'see it in the Lab' : 'jump to its entry'}</span></span></a>
             : <span class="sl-a">{box}<span class="sl-cap mono"><b>{i.n}</b> <span class="sl-name">{i.short}</span><span class="sr-only">, {i.status === 'research' ? 'in research' : 'queued'}</span></span></span>}
         </li>
       );

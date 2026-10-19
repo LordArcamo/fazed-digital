@@ -5,6 +5,8 @@ import MarkPoster from '../components/MarkPoster.astro';
 import Glyph from '../components/Glyph.astro';
 import ContactForm from '../components/ContactForm.astro';
 import WorkIndex from '../components/WorkIndex.astro';
+import LabSheetPoster from '../components/LabSheetPoster.astro';
+import { labShipped, LAB_TOTAL, LABEL, pad2 } from '../data/lab';
 import { services } from '../data/services';
 import { caseIndex, countries } from '../data/cases';
 import { stats, results, capsCopy } from '../data/proof';
@@ -20,6 +22,8 @@ const steps = [
   ['03', 'Design', 'Every visual and every word, from logo to layout, with the detail most people only feel.'],
   ['04', 'Launch', 'We ship, measure and fix. You get the keys: domain, hosting, logins and files, all in your name.'],
 ];
+// Lab feature: the newest three concept sites, newest first (#04 Halde stays off sales pages: CC BY-NC base model)
+const labNew = labShipped.filter((i) => i.n !== '04' && i.url).reverse().slice(0, 3);
 // arcs: Iligan → each distinct client location (from cases.ts only)
 const arcDests = [...new Map(caseIndex.map((c) => [`${c.lat},${c.lon}`, [c.lat, c.lon]])).values()];
 const schema = {
@@ -104,6 +108,28 @@ const schema = {
         <p class="work-intro rv">Every project below is a real business running on what we built. Open the live sites on your phone. That’s the test.</p>
         <WorkIndex />
         <a class="btn btn--ghost" href="/work">See all the work</a>
+      </div>
+    </section>
+
+    <!-- [HOME-04b] LAB: the concept series, drawn by the field as the same dot contact sheet as /lab -->
+    <section class="section hlab" id="lab" data-f="slate" aria-labelledby="lab-h">
+      <div class="container hlab-in">
+        <div class="hlab-copy">
+          <p class="mono rv">Fazed Lab · {pad2(labShipped.length)} of {LAB_TOTAL} concept sites shipped</p>
+          <h2 id="lab-h" class="hlab-h rv"><span>Our lab.</span> <span>Your next site.</span></h2>
+          <p class="hlab-deck rv">Immersive 3D sites for brands that don’t exist, built to test what we’ll build for brands that do.</p>
+          <ol class="hlab-list rv" aria-label="Newest concept sites">
+            {labNew.map((i) => (
+              <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗">
+                <span class="mono hlab-n">{i.n}</span>
+                <span class="hlab-t"><b>{i.brand}</b><span class="mono">{i.category} · {LABEL}</span></span>
+                <span class="hlab-go" aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span>
+              </a></li>
+            ))}
+          </ol>
+          <a class="btn btn--lime rv" href="/lab" data-magnetic>Explore the Lab <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <LabSheetPoster linkBase="/lab" />
       </div>
     </section>
 
@@ -271,6 +297,28 @@ const schema = {
   /* WORK INDEX */
   .work .t-d2 { margin: 1rem 0; }
   .work-intro { max-width: 52ch; margin-bottom: 3rem; }
+
+  /* Lab feature: copy + newest three on the left, the dot contact sheet on the right (same as the /lab hero) */
+  .hlab-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3rem var(--gutter); align-items: center; }
+  .hlab-copy { display: grid; gap: 1.5rem; justify-items: start; }
+  .hlab-h { font-size: clamp(2.5rem, 4.6vw, 4.5rem); line-height: .95; letter-spacing: -.03em; }
+  .hlab-h span { display: block; } .hlab-h span + span { color: var(--gray-400); }
+  .hlab-deck { max-width: 44ch; }
+  .hlab-list { width: 100%; border-top: 1px solid var(--gray-700); }
+  .hlab-list a { display: grid; grid-template-columns: 2.5rem minmax(0, 1fr) auto; align-items: center; gap: 1rem; min-height: 64px; padding-block: 12px; border-bottom: 1px solid var(--gray-700); transition: background-color .2s, padding .3s var(--ease-out); }
+  .hlab-n { color: var(--lime); }
+  .hlab-t { display: grid; gap: .2rem; }
+  .hlab-t b { font-weight: 600; }
+  .hlab-t .mono { font-size: 11px; letter-spacing: .1em; color: var(--gray-400); }
+  .hlab-go { color: var(--gray-400); transition: color .2s, transform .3s var(--ease-out); }
+  .hlab-list a:hover, .hlab-list a:focus-visible { padding-inline: 12px; background: var(--gray-900); }
+  .hlab-list a:hover .hlab-go, .hlab-list a:focus-visible .hlab-go { color: var(--lime); transform: translate(2px, -2px); }
+  .hlab :global(.slate) { justify-self: end; width: min(606px, 46vw); }
+  @media (max-width: 1023px) {
+    .hlab-in { grid-template-columns: 1fr; }
+    .hlab :global(.slate) { justify-self: stretch; width: 100%; }
+  }
+  @media (prefers-reduced-motion: reduce) { .hlab-list a, .hlab-go { transition: none; } }
   /* FLOOD */
   .flood { position: relative; background: var(--lime); color: var(--black); padding-block: var(--section); clip-path: circle(150% at 10% 60%); }
   :global(html.js-motion:not(.rm)) .flood { clip-path: circle(var(--flood, 0%) at 12% 62%); }
