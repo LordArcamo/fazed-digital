@@ -36,7 +36,7 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
         <h1 id="au-h" class="t-d1">Three fixes that bring you <span class="dim">more calls.</span></h1>
         <p class="t-body-l au-deck">Book a free 15-minute call. We’ll look at your website with you and point out the 3 fixes that would bring you the most calls and enquiries. <strong>No site yet? Book anyway.</strong></p>
         <div class="lp-cta au-cta">
-          <a class="btn btn--lime" href={BOOK} target="_blank" rel="noopener" data-book data-magnetic>Book my free check <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the Google Calendar booking page)</span></a>
+          <a class="btn btn--lime" href={BOOK} target="_blank" rel="noopener" data-book data-magnetic>Book my free check <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
           <p class="mono au-note">Free · No obligation</p>
         </div>
         <!-- Illustration of the call: the three checks tick through. No results are shown or implied. -->
@@ -79,15 +79,14 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
         </li>
       ))}</ol>
       <!-- Google's scheduler never sits in the page flow (a 900px cross-origin frame with its own scroll fought the
-           smooth scroll and lagged). Desktop: it opens in a pop-up over the page, loaded on demand. Phones: Google's
-           own full-screen booking page. -->
+           smooth scroll and lagged). It opens in a pop-up over the page, loaded on demand (full screen on phones). -->
       <div class="au-panel">
         <dl class="au-facts">
           <div><dt class="mono">Length</dt><dd>15 minutes</dd></div>
           <div><dt class="mono">Where</dt><dd>Google Meet</dd></div>
           <div><dt class="mono">Cost</dt><dd>Free, no obligation</dd></div>
         </dl>
-        <a class="btn btn--lime au-panel-go" href={BOOK} target="_blank" rel="noopener" data-book>See available times <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the Google Calendar booking page)</span></a>
+        <a class="btn btn--lime au-panel-go" href={BOOK} target="_blank" rel="noopener" data-book>See available times <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
       </div>
       <p class="au-alt">Prefer email? <a class="link" href="mailto:info@fazeddigital.com?subject=Free%20website%20check">info@fazeddigital.com</a></p>
     </section>
@@ -108,21 +107,21 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
     <section class="au-end on-lime" aria-label="Book your free check">
       <div class="container au-end-in">
         <p class="t-h3">Find your 3 fixes in 15 minutes.</p>
-        <a class="btn btn--black" href={BOOK} target="_blank" rel="noopener" data-book>Book my free check <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the Google Calendar booking page)</span></a>
+        <a class="btn btn--black" href={BOOK} target="_blank" rel="noopener" data-book>Book my free check <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
       </div>
     </section>
   </div>
   <dialog class="au-dlg" data-cal aria-labelledby="dlg-h">
     <div class="au-dlg-hd">
-      <p class="mono" id="dlg-h">Free website check · 15 min · Google Meet</p>
+      <p class="mono" id="dlg-h">Free website check<span class="au-dlg-x"> · 15 min · Google Meet</span></p>
       <button type="button" class="au-x" data-cal-close aria-label="Close the booking calendar">×</button>
     </div>
     <iframe data-src={`${BOOK}?gv=true`} title="Book a free 15-minute website check with Fazed Digital (Google Calendar)"></iframe>
   </dialog>
 </Base>
 <script>
-  // Booking: desktop opens Google's scheduler in a pop-up (iframe loaded on first open, page scroll paused);
-  // phones and modified clicks follow the link to Google's own page. Delegated once (ClientRouter-safe).
+  // Booking happens on this page: every Book button opens Google's scheduler in a pop-up (full screen on phones),
+  // loaded on first open, with the page scroll paused. Without JS the link still goes to Google. Delegated once.
   const html = document.documentElement;
   const lenis = () => (window as any).__lenis;
   let opener: HTMLElement | null = null;
@@ -143,7 +142,7 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
       if (!a) return;
       (window as any).gtag?.('event', 'audit_book_click', { from: a.closest('section')?.className.split(' ')[0] ?? '' });
       const d = document.querySelector<HTMLDialogElement>('[data-cal]');
-      if (!d || ev.metaKey || ev.ctrlKey || ev.shiftKey || !matchMedia('(min-width: 768px)').matches) return;
+      if (!d || ev.metaKey || ev.ctrlKey || ev.shiftKey) return; // no JS or a new-tab click: the link goes to Google
       ev.preventDefault();
       const f = d.querySelector('iframe')!;
       if (!f.src) f.src = f.dataset.src!;
@@ -264,6 +263,14 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   .au-x:hover { border-color: var(--lime); color: var(--lime); }
   .au-x:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; }
   .au-dlg iframe { flex: 1; width: 100%; border: 0; background: #fff; }
+  @media (max-width: 767px) {
+    /* phones: a full-screen sheet that slides up; the calendar scrolls inside it */
+    .au-dlg { width: 100vw; height: 100dvh; border: 0; border-radius: 0; padding-top: env(safe-area-inset-top); background: var(--gray-900); }
+    .au-dlg[open] { animation: au-up .36s var(--ease-out); }
+    .au-dlg-x { display: none; }
+    .au-dlg iframe { -webkit-overflow-scrolling: touch; }
+  }
+  @keyframes au-up { from { transform: translateY(100%); } }
   .au-alt { color: var(--gray-300); display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .5rem; }
 
   .au-end { padding: 64px 0; }
@@ -296,7 +303,7 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
     .au-panel { padding: 20px; }
   }
   @media (prefers-reduced-motion: reduce) {
-    .au-tick, .au-tick::after, .vp-tap, .vf-dot, .vf-run, .au-dot::after { animation: none; }
+    .au-tick, .au-tick::after, .vp-tap, .vf-dot, .vf-run, .au-dot::after, .au-dlg[open] { animation: none; }
     .au-tl { --fill: 1; } .au-tl li .au-tk::after { transition: none; }
     .vf-run { transform: translateX(100%); }
     .au-tick { background: var(--lime); border-color: var(--lime); } .au-tick::after { opacity: 1; }
