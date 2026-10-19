@@ -43,7 +43,7 @@ export function initNav() {
   html.classList.remove('lp-dock');
   if (lpd) {
     const seen = new Map<Element, boolean>();
-    const hero = document.querySelector('.lp-cta'), gs = document.getElementById('get-started');
+    const hero = document.querySelector('.lp-cta'), gs = document.getElementById('get-started') ?? document.getElementById('book');
     io = new IntersectionObserver((ents) => {
       ents.forEach((e) => seen.set(e.target, e.isIntersecting));
       html.classList.toggle('lp-dock', !!hero && !seen.get(hero) && !(gs && seen.get(gs)) && scrollY > 200);

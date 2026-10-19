@@ -1,6 +1,6 @@
 /**
  * generate-og.mjs — 1200×630 OG images in the dot-field style (satori + resvg-wasm).
- *   public/og/{home,about,services,work,contact,blog,lp-7day,lp-7day-ph}.png
+ *   public/og/{home,about,services,work,contact,blog,lp-7day,lp-7day-ph,audit}.png
  *   public/og/work/NN.png      one per case
  *   public/og/blog/<slug>.png  one per post (from src/data/.generated/posts.json)
  * Fonts are read from scripts/fonts (unmodified kit/OFL files), so the Vercel build is offline-safe.
@@ -80,6 +80,7 @@ const pages = {
   blog: { eyebrow: 'Insights · practical guides', title: 'Ideas that move brands forward.', meta: 'SEO · Branding · Design · Development · Strategy' },
   'lp-7day': { eyebrow: '7-day website · fixed price', title: 'Your website, live in 7 days.', meta: 'From $499 · You own everything' },
   'lp-7day-ph': { eyebrow: '7-day website · Philippine pricing', title: 'Your website, live in 7 days.', meta: 'From PHP 19,999 · GCash · Maya · Bank' },
+  audit: { eyebrow: 'Free website check · 15 min', title: 'Three fixes that bring you more calls.', meta: 'Free · No obligation · Google Meet' },
 };
 // /lab: counts from src/data/lab.ts (shipped entries; #04 drops out when LAB_04 = 'hide')
 const labSrc = readFileSync(join(ROOT, 'src/data/lab.ts'), 'utf8');

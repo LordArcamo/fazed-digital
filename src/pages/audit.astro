@@ -1,0 +1,180 @@
+---
+// Free website check: landing page for Instagram leads who DM "7Days". One goal: book the 15-minute call.
+// The booking widget is Fazed's Google Calendar appointment schedule (its own copy is the source of truth for
+// what the call covers: phone-friendliness, a working contact form, pages Google can read).
+// Landing-page chrome (lp="audit"): no site navigation, one CTA, no links off the page except new tabs.
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import { prices, results } from '../data/proof';
+import { crumbs, faqPage } from '../lib/schema';
+
+const BOOK = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2L1Fs1oTiHh8854mrEVtm_ny4BEhlyi5Pg-jdTsutFOInmrjHh4L-gxqLYqq_eM8pcUqxot6PF';
+const checks = [
+  ['Is it easy on a phone?', 'Most people meet your business on a phone first. We check they can read it, tap it and find what they came for.'],
+  ['Does your contact form actually work?', 'We check that an enquiry really reaches you. A broken form loses leads quietly, and you never hear about them.'],
+  ['Can Google read your pages?', 'We look at the titles, descriptions and structure Google uses to decide when to show your business.'],
+];
+const steps = [
+  ['Pick a time', 'Choose a 15-minute slot below. Times show in your own timezone.'],
+  ['Join the call', 'You get a Google Meet link by email after booking. Have your website open.'],
+  ['Leave with your 3 fixes', 'Make them yourself, or ask us to. No pressure either way.'],
+];
+const faq = [
+  { q: 'Is it really free?', a: 'Yes. It’s a free 15-minute call with no obligation. If you’d like help afterwards, we’ll tell you what it would take and you decide.' },
+  { q: 'I don’t have a website yet. Should I still book?', a: 'Yes. Book anyway, and we’ll talk about what you need and the simplest way to get your business online.' },
+  { q: 'What should I prepare?', a: 'Just your website link (or your Facebook page if that’s all you have). Join from a laptop if you can, so we can look at it together.' },
+  { q: 'Who will I talk to?', a: 'Someone from the Fazed Digital team, a small web studio in Iligan City, Philippines. We build websites for businesses in the Philippines, the USA and Australia.' },
+  { q: 'What happens after the call?', a: `Nothing, unless you want it to. If you’d like us to make the fixes, ask about our 7-day website: a new site, live in 7 business days, from ${prices.php.starter} or ${prices.usd.starter}.` },
+];
+const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
+---
+<Base title="Free Website Check (15 min) | Fazed Digital" description="Book a free 15-minute website check. We’ll look at your site with you and point out the 3 fixes that would bring you the most calls and enquiries. No site yet? Book anyway." image="/og/audit.png" formation="node" schema={schema} lp="audit">
+  <div class="au">
+    <section class="au-hero" data-f="node" aria-labelledby="au-h">
+      <div class="container au-hero-in">
+        <p class="mono au-eyebrow"><span class="au-dot" aria-hidden="true"></span>Free website check · 15 min · Google Meet</p>
+        <h1 id="au-h" class="t-d1">Three fixes that bring you <span class="dim">more calls.</span></h1>
+        <p class="t-body-l au-deck">Book a free 15-minute call. We’ll look at your website with you and point out the 3 fixes that would bring you the most calls and enquiries. <strong>No site yet? Book anyway.</strong></p>
+        <div class="lp-cta au-cta">
+          <a class="btn btn--lime au-d" href="#book" data-magnetic>Book my free check <span class="arrow" aria-hidden="true">↓</span></a>
+          <a class="btn btn--lime au-m" href={BOOK} target="_blank" rel="noopener" data-book>Book my free check <span class="arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens Google Calendar)</span></a>
+          <p class="mono au-note">Free · No obligation</p>
+        </div>
+        <!-- Illustration of the call: the three checks tick through. No results are shown or implied. -->
+        <div class="au-card" aria-hidden="true">
+          <p class="mono au-card-hd"><span class="au-card-dot"><span class="node-anchor" data-node-anchor></span></span>Website check · live call</p>
+          <ol>{checks.map(([t], i) => <li style={`--i:${i}`}><span class="mono au-k">0{i + 1}</span><span class="au-t">{t.replace('?', '')}</span><span class="au-tick"></span></li>)}</ol>
+          <p class="mono au-card-ft"><span>= Your 3 fixes</span><span>15:00</span></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section container au-checks" aria-labelledby="ck-h">
+      <p class="mono">What we look at</p>
+      <h2 id="ck-h" class="t-d2">Three questions. <span class="dim">Straight answers.</span></h2>
+      <ol class="au-3">{checks.map(([t, b], i) => <li class="rv"><span class="mono au-n">0{i + 1}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    </section>
+
+    <section class="section container au-steps" aria-labelledby="st-h">
+      <p class="mono">How it works</p>
+      <h2 id="st-h" class="t-d2">Fifteen minutes, <span class="dim">start to finish.</span></h2>
+      <ol class="au-3 au-3--steps">{steps.map(([t, b], i) => <li class="rv"><span class="au-node" aria-hidden="true"></span><span class="mono">Step {i + 1}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    </section>
+
+    <section class="section container au-book" id="book" aria-labelledby="bk-h">
+      <div class="au-book-hd">
+        <p class="mono">Book your free check</p>
+        <h2 id="bk-h" class="t-d2">Pick a time.</h2>
+        <p>15 minutes on Google Meet. The link arrives by email after you book.</p>
+      </div>
+      <!-- Desktop: Google's scheduler embedded. Phones: its own full-screen page (2,200px tall when embedded). -->
+      <div class="au-cal au-d">
+        <iframe src={`${BOOK}?gv=true`} title="Book a free 15-minute website check with Fazed Digital (Google Calendar)" loading="lazy"></iframe>
+      </div>
+      <div class="au-mcard au-m">
+        <p class="mono">Free · 15 min · Google Meet</p>
+        <a class="btn btn--lime" href={BOOK} target="_blank" rel="noopener" data-book>See available times <span class="arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens Google Calendar)</span></a>
+        <p>Opens Google Calendar. Pick a slot, add your name and email, and you’re booked.</p>
+      </div>
+      <p class="au-alt"><span class="au-d">Calendar not loading? <a class="link" href={BOOK} target="_blank" rel="noopener">Open the booking page ↗<span class="sr-only"> (opens in a new tab)</span></a> <span class="mono">or</span> email</span><span class="au-m">Prefer email?</span> <a class="link" href="mailto:info@fazeddigital.com?subject=Free%20website%20check">info@fazeddigital.com</a></p>
+    </section>
+
+    <section class="section container au-proof" aria-labelledby="pr-h">
+      <p class="mono">Client results</p>
+      <h2 id="pr-h" class="t-d2">Real clients. <span class="dim">Real results.</span></h2>
+      <ul class="au-3 au-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
+    </section>
+
+    <section class="section container au-faq" aria-labelledby="fq-h">
+      <h2 id="fq-h" class="t-d2">Common questions.</h2>
+      <Faq items={faq} id="audit-faq" />
+    </section>
+
+    <section class="au-end on-lime" aria-label="Book your free check">
+      <div class="container au-end-in">
+        <p class="t-h3">Find your 3 fixes in 15 minutes.</p>
+        <a class="btn btn--black au-d" href="#book">Book my free check <span class="arrow" aria-hidden="true">↑</span></a>
+        <a class="btn btn--black au-m" href={BOOK} target="_blank" rel="noopener" data-book>Book my free check <span class="arrow" aria-hidden="true">↗</span><span class="sr-only"> (opens Google Calendar)</span></a>
+      </div>
+    </section>
+  </div>
+</Base>
+<script>
+  // Count taps on the phone booking buttons (the embedded calendar is cross-origin, so desktop bookings show in Google Calendar only)
+  document.addEventListener('click', (ev) => {
+    const a = (ev.target as Element).closest?.('[data-book]');
+    if (a) (window as any).gtag?.('event', 'audit_book_click', { from: a.closest('section')?.className.split(' ')[0] ?? '' });
+  });
+</script>
+<style>
+  .au-hero { position: relative; min-height: 88svh; display: flex; align-items: center; padding: calc(var(--header-h) + 72px) 0 72px; }
+  .au-hero-in { display: grid; gap: 1.5rem; }
+  @media (min-width: 1024px) {
+    .au-hero-in { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: var(--gutter); align-items: center; }
+    .au-hero-in > :not(.au-card) { grid-column: 1; }
+    .au-card { grid-column: 2; grid-row: 1 / span 4; }
+  }
+  .au-card { border: 1px solid var(--gray-700); background: var(--gray-900); border-radius: 16px; padding: 22px 24px; display: grid; gap: 14px; box-shadow: var(--capsule-sh); }
+  .au-card-hd, .au-card-ft { display: flex; align-items: center; gap: .6rem; color: var(--gray-300); margin: 0; }
+  .au-card-ft { justify-content: space-between; color: var(--lime); border-top: 1px solid var(--gray-700); padding-top: 14px; }
+  .au-card-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+  .au-card-dot .node-anchor { position: absolute; left: 50%; top: 50%; width: 1px; height: 1px; }
+  .au-card ol { display: grid; gap: 10px; }
+  .au-card li { display: grid; grid-template-columns: 2rem 1fr 22px; align-items: center; gap: .5rem; min-height: 52px; padding: 0 14px; border: 1px solid var(--gray-700); border-radius: 10px; background: var(--gray-800); }
+  .au-k { color: var(--gray-400); }
+  .au-t { font-weight: 500; }
+  /* each row "checks" in turn: the ring fills lime, then the row settles; loops slowly */
+  .au-tick { width: 18px; height: 18px; border-radius: 50%; border: 1px solid var(--gray-400); position: relative; animation: au-tick 7.5s calc(var(--i) * 1.4s + .6s) infinite both; }
+  .au-tick::after { content: ''; position: absolute; left: 5px; top: 2px; width: 5px; height: 9px; border: solid var(--black); border-width: 0 2px 2px 0; rotate: 45deg; opacity: 0; animation: au-mark 7.5s calc(var(--i) * 1.4s + .6s) infinite both; }
+  @keyframes au-tick { 0%, 8% { background: transparent; border-color: var(--gray-400); } 14%, 88% { background: var(--lime); border-color: var(--lime); } 100% { background: transparent; border-color: var(--gray-400); } }
+  @keyframes au-mark { 0%, 10% { opacity: 0; } 16%, 88% { opacity: 1; } 100% { opacity: 0; } }
+  .au-hero h1 { max-width: 13ch; }
+  .au-eyebrow { display: inline-flex; align-items: center; gap: .6rem; color: var(--lime); }
+  .au-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px rgba(201, 255, 87, .18); animation: au-pulse 2.4s ease-in-out infinite; }
+  @keyframes au-pulse { 50% { box-shadow: 0 0 0 9px rgba(201, 255, 87, 0); } }
+  .au-deck { max-width: 54ch; }
+  .au-deck strong { color: var(--white); }
+  .au-cta { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
+  .au-note { color: var(--gray-300); }
+
+  .au-checks, .au-steps, .au-book, .au-proof, .au-faq { display: grid; gap: 1.25rem; }
+  .au-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: 1rem; }
+  .au-3 li { display: grid; gap: .5rem; align-content: start; border-top: 1px solid var(--gray-700); padding-top: 1.25rem; }
+  .au-3 p { color: var(--gray-300); }
+  .au-n { color: var(--lime); }
+  .au-3--steps li { position: relative; }
+  .au-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--lime); background: var(--black); }
+  .au-3--steps li:last-child .au-node { background: var(--lime); }
+  .au-res .mono { color: var(--lime); }
+
+  .au-book-hd { display: grid; gap: .75rem; }
+  .au-book-hd p:last-child { color: var(--gray-300); }
+  /* Google's scheduler is a light page: frame it like a sheet of paper on the dark site */
+  .au-cal { border: 1px solid var(--gray-700); border-radius: 16px; overflow: hidden; background: #fff; box-shadow: var(--capsule-sh); }
+  .au-cal iframe { display: block; width: 100%; height: 900px; border: 0; }
+  .au-mcard { display: grid; gap: 1rem; padding: 22px; border: 1px solid var(--gray-700); border-radius: 16px; background: var(--gray-900); }
+  .au-mcard .mono { color: var(--lime); }
+  .au-mcard p:last-child { color: var(--gray-300); }
+  .au-mcard .btn { justify-content: center; min-height: 56px; }
+  /* phones get Google's own booking page; desktop gets the embed */
+  .au-m { display: none !important; }
+  @media (max-width: 767px) { .au-d { display: none !important; } .au-m { display: inline-flex !important; } .au-mcard.au-m { display: grid !important; } }
+  .au-alt { color: var(--gray-300); display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .5rem; }
+  .au-alt .mono { color: var(--gray-400); }
+
+  .au-end { padding: 72px 0; margin-top: 48px; }
+  .au-end-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; }
+  .au-end .t-h3 { color: var(--black); }
+
+  @media (max-width: 1023px) { .au-3 { grid-template-columns: 1fr; gap: 1.5rem; } }
+  @media (max-width: 599px) {
+    .au-hero { min-height: 0; padding-top: calc(var(--header-h) + 48px); }
+    .au-cta .btn { width: 100%; justify-content: center; }
+    .au-end-in .btn { width: 100%; justify-content: center; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .au-dot { animation: none; }
+    .au-tick, .au-tick::after { animation: none; }
+    .au-tick { background: var(--lime); border-color: var(--lime); } .au-tick::after { opacity: 1; }
+  }
+</style>

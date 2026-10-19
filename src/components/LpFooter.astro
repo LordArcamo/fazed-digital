@@ -7,7 +7,7 @@ const { variant = 'usd' } = Astro.props;
     <p class="mono">© {BUILD_YEAR} Fazed Digital · {variant === 'php' ? 'Iligan City, Lanao del Norte, Philippines' : 'Iligan City, Philippines'}</p>
     <nav aria-label="Footer"><ul>
       <!-- Landing-page footer: no exits into the main site; legal opens in a new tab -->
-      <li>{variant === 'php' ? <a href="/lp/7-day-website">USD pricing ($)</a> : <a href="/lp/7-day-website/ph">See peso pricing (₱)</a>}</li>
+      {variant !== 'audit' && <li>{variant === 'php' ? <a href="/lp/7-day-website">USD pricing ($)</a> : <a href="/lp/7-day-website/ph">See peso pricing (₱)</a>}</li>}
       <li><a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></li>
       <li><a href="/privacy" target="_blank" rel="noopener">Privacy<span class="sr-only"> (opens in a new tab)</span></a></li><li><button type="button" data-cookie-settings>Cookie settings</button></li>
     </ul></nav>

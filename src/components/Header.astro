@@ -27,10 +27,13 @@ const cur = menu.find((m) => m.href === current);
     {lp ? <span class="hdr-logo"><Logo /></span> : <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>}
     {lp ? <>
     <p class="hdr-tel mono hdr-tel--lp"><span class="sr-only">Studio in Iligan City, Philippines. We reply in 1 business day.</span><span aria-hidden="true"><span class="t-open" data-open></span> <span class="t-lbl" data-open-l>Studio</span> · <span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-city"> · Reply in 1 business day</span></span></p>
-    <div class="sd-lp" id="sd-lp" role="region" aria-label="Get started">
+    {lp === 'audit' ? <div class="sd-lp" id="sd-lp" role="region" aria-label="Book your free website check">
+      <p class="mono sd-price"><span class="t-city">Free website check · </span>15 min</p>
+      <a href="#book" class="sd-go">Book a time <span aria-hidden="true">→</span></a>
+    </div> : <div class="sd-lp" id="sd-lp" role="region" aria-label="Get started">
       <p class="mono sd-price"><span class="t-city">7-day website · </span>From {lp === 'php' ? '₱19,999' : '$499'}</p>
       <a href="#get-started" class="sd-go">Get started <span aria-hidden="true">→</span></a>
-    </div>
+    </div>}
     </> : <>
     <p class="hdr-tel mono"><span class="sr-only">Studio in Iligan City, Philippines</span><span aria-hidden="true"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></span></p>
     <nav class="sd sd-m" id="sd" aria-label="Primary">

@@ -20,7 +20,7 @@ export interface Props {
   current?: string;
   bodyClass?: string;
   /** landing-page mode: logo + one CTA header, LP footer */
-  lp?: 'usd' | 'php' | false;
+  lp?: 'usd' | 'php' | 'audit' | false;
 }
 const { title, description, image = '/og/home.png', formation = 'lattice', schema, noindex = false, current = '', bodyClass = '', lp = false } = Astro.props;
 const path = Astro.url.pathname.replace(/\/$/, '') || '/';
