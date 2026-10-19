@@ -40,7 +40,7 @@ const org = {
       image: `${SITE_URL}/og/home.png`,
       email: NAP.email,
       telephone: NAP.tel,
-      address: { '@type': 'PostalAddress', addressLocality: NAP.city, addressRegion: NAP.region, addressCountry: NAP.countryCode },
+      address: { '@type': 'PostalAddress', addressLocality: NAP.city, addressRegion: NAP.region, postalCode: NAP.postal, addressCountry: NAP.countryCode },
       geo: { '@type': 'GeoCoordinates', latitude: '8.2280', longitude: '124.2452' },
       description: 'Fazed Digital is a web design, branding and SEO studio in Iligan City, Northern Mindanao, Philippines, building websites, brands and web apps for clients in the USA, Australia and the Philippines.',
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:30', closes: '17:00' }],

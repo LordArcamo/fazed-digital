@@ -1,0 +1,205 @@
+---
+// /web-design-iligan-city: the local service page (docs/seo/strategy.md §4.1). Copy: docs/seo/pages/web-design-iligan-city.md
+// (The Wordsmith + The Navigator), owner answers 2026-10-19: Dotted Studios may be named; Bisaya/Tagalog/English;
+// in person in Iligan and Cagayan de Oro; no client office yet; postcode 9200; custom/SEO peso prices are quoted per project.
+// Facts come from src/data (prices, NAP, caps, cases). No stats, reviews or ratings on this page.
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import { NAP, SITE_URL } from '../data/site';
+import { prices, capsCopy } from '../data/proof';
+import { workImages } from '../data/images';
+import { crumbs, faqPage, ORG_REF } from '../lib/schema';
+
+const P = prices.php;
+// package rows mirror src/components/Lp.astro (PH variant)
+const plans = [
+  { name: 'Starter', price: P.starter, for: 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds'] },
+  { name: 'Growth', price: P.growth, for: 'Growing small businesses', rows: ['8 custom-designed pages', 'Custom design system', 'Advanced on-page SEO', 'Blog + CMS setup', 'Google Analytics + Search Console', '3 revision rounds'] },
+  { name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: ['10+ custom pages', 'Full brand integration', 'Performance optimised', 'E-commerce ready', 'Priority support', 'Unlimited revisions'] },
+];
+const builds = [
+  ['Websites you can update yourself', 'Custom design, never a template. Built mobile-first, because most people meet your business on a phone. WordPress when your team wants to edit everything, Astro when speed matters most. The domain, hosting, logins and files are yours. No lock-in.', '/lp/7-day-website/ph', 'See the 7-day packages'],
+  ['Local SEO and Google Business Profile', 'For businesses that serve an area. We fix the technical basics, plan the keywords people in Iligan actually type, optimise each page and set up your Google Business Profile so you can show on Maps. Setup takes about a month; results usually show in 6–12 months.', '/services#seo', 'How SEO works with us'],
+  ['Brand identity', 'Logo, colours, type and simple guidelines, so your signage, menu, Facebook page and website all look like the same business. Brand projects typically take 4–6 weeks.', '/services#brand', 'See our brand work'],
+  ['Booking systems and custom tools', 'When a spreadsheet and Messenger can’t keep up: bookings, memberships, client portals and admin dashboards built around how your team works. Our system builds have run 8–14 weeks.', '/services#systems', 'Scope a system'],
+];
+const steps = [
+  ['Day 1', 'Kickoff and brief', 'You send your logo, photos and references. We confirm goals and the timeline.'],
+  ['Days 2–3', 'Design', 'Your custom mockups. You send feedback within 24 hours.'],
+  ['Days 4–5', 'Build', 'The full site: mobile-first, fast-loading and set up for Google.'],
+  ['Day 6', 'Review', 'You test it on our staging link. We make the final changes.'],
+  ['Day 7', 'Launch', 'Your site goes live. We connect the domain, set up hosting and hand everything over.'],
+];
+const work = [
+  { slug: '02', name: 'Cleen & Green', where: 'Philippines', what: 'Brand + website', line: 'A premium eco cleaning brand, a WordPress site the team edits themselves, and a franchise section that opened a new growth channel.' },
+  { slug: '06', name: '8Drive', where: 'Philippines', what: 'Booking + fleet system', line: 'Bookings, fleet, customers and chauffeurs for a car rental company, moved from manual work into one system.' },
+  { slug: '01', name: 'A Framing Company', where: 'Utah, USA', what: 'WordPress website', line: 'A portfolio-led site the contractor now uses to pitch new work.' },
+  { slug: '04', name: 'The Telecom Shop', where: 'Australia', what: 'E-commerce migration', line: 'Magento to PrestaShop: catalogue, customers and order history moved with zero data loss.' },
+];
+const faq = [
+  { q: 'How much does a website cost in Iligan City?', a: `Our fixed-price websites start at ${P.starter} for 5 pages (Starter), ${P.growth} for 8 pages with a blog (Growth) and ${P.pro} for 10+ pages, e-commerce ready (Pro). Extra pages are ${P.page} each. Booking systems, custom online shops and SEO retainers are quoted per project, with the price upfront.` },
+  { q: 'How long does it take to build a website?', a: '7 business days on our fixed-price packages, as long as we have your content on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off. Larger custom websites take 4 weeks for simpler builds and 12+ weeks for complex ones.' },
+  { q: 'Do I still need a website if my business is on Facebook?', a: 'Keep your Facebook page. It’s where many customers message you. A website adds what Facebook can’t: pages Google can show when someone searches for what you sell, one place for your services, prices and hours, and a site you own and control. The two work best together.' },
+  { q: 'Can you help my business show up on Google Maps?', a: 'Yes. Local SEO and Google Business Profile setup are part of our SEO service, for businesses that serve an area. Setup takes about a month, and results usually show in 6–12 months, depending on your market and competition. Every website package also includes on-page SEO setup.' },
+  { q: 'Can we meet in person?', a: 'Yes, in Iligan City and in Cagayan de Oro. We don’t have a client office yet, so we meet you at your business or somewhere convenient in the city. Prefer not to? We run the kickoff on a video call. We work Monday to Friday, 8:30am to 5:00pm Philippine time.' },
+  { q: 'Can we talk in Bisaya or Tagalog?', a: 'Yes. We work in Bisaya, Tagalog and English, so talk to us in whichever you’re comfortable with.' },
+  { q: 'How do I pay?', a: 'GCash, Maya (PayMaya), bank transfer (BPI or Metrobank) and Wise.' },
+];
+const url = `${SITE_URL}/web-design-iligan-city`;
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': `${url}#service`, name: 'Web design in Iligan City', serviceType: 'Website design and development',
+    description: `Custom, mobile-first websites, local SEO and branding for businesses in Iligan City, Lanao del Norte and Northern Mindanao, from a studio based in Iligan City. Fixed-price websites from ${P.starter}, live in 7 business days.`,
+    url, provider: ORG_REF,
+    areaServed: [{ '@type': 'City', name: 'Iligan City' }, { '@type': 'AdministrativeArea', name: 'Lanao del Norte' }, { '@type': 'City', name: 'Cagayan de Oro' }, { '@type': 'AdministrativeArea', name: 'Northern Mindanao' }],
+    availableLanguage: ['English', 'Cebuano', 'Tagalog'],
+    offers: plans.map((p) => ({ '@type': 'Offer', name: `${p.name} Website Package`, price: p.price.replace(/[^\d]/g, ''), priceCurrency: 'PHP', url: `${SITE_URL}/lp/7-day-website/ph`, availability: 'https://schema.org/InStock' })),
+  },
+  faqPage(faq),
+  crumbs([['Web design in Iligan City', '/web-design-iligan-city']]),
+];
+---
+<Base title="Web Design in Iligan City: Websites, SEO & Branding | Fazed" description={`Web design, SEO and branding from a studio based in Iligan City. Meet in person, pay by GCash or Maya, and go live in 7 business days from ${P.starter}.`} image="/og/lp-7day-ph.png" formation="lattice" schema={schema}>
+  <Fragment slot="head"><link rel="alternate" hreflang="en-PH" href={url} /></Fragment>
+  <div class="il">
+    <section class="il-hero" aria-labelledby="il-h">
+      <div class="container il-hero-in">
+        <p class="mono il-eye">{NAP.city} {NAP.postal} · {NAP.region} · {NAP.hours}</p>
+        <h1 id="il-h" class="t-d1">Web design in Iligan City, <span class="dim">from a studio based here.</span></h1>
+        <p class="t-body-l il-deck">Fazed Digital is a web design, branding and SEO studio based in Iligan City, Lanao del Norte. We build fast, mobile-first websites for local businesses, set up so customers can find you on Google. <strong>Fixed-price websites start at {P.starter} and go live in 7 business days.</strong> Meet us in person in Iligan, or work with us online.</p>
+        <div class="il-cta">
+          <a class="btn btn--lime" href="/audit" data-magnetic>Book my free 15-minute website check <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="#prices">See peso prices</a>
+        </div>
+        <p class="mono il-note">Free · 15 minutes · Google Meet · No obligation</p>
+      </div>
+    </section>
+
+    <section class="container il-sec il-why" aria-labelledby="why-h">
+      <div class="il-hd"><p class="mono">Why a website</p><h2 id="why-h" class="t-d2">Your customers already search. <span class="dim">Make sure they find you.</span></h2></div>
+      <div class="il-prose">
+        <p>Most Iligan businesses start on Facebook, and that makes sense: it’s where your customers chat, ask about prices and send a message. But when someone types “near me” into Google, or opens Google Maps to find a place to eat, stay or get something fixed, a <a class="link" href="/blog/facebook-page-vs-website">Facebook page alone</a> often isn’t what shows up.</p>
+        <p>A website fixes that. It gives Google a page it can show, gives customers one place to see your services, prices and hours, and gives you something you own, whatever happens to your feed.</p>
+        <ul class="il-ticks">
+          <li>Your enquiries live in Messenger, and some get lost.</li>
+          <li>A competitor shows up on Google Maps and you don’t.</li>
+          <li>You just got your business permit and want to look established from day one.</li>
+          <li>Visitors to the city look you up before they arrive, and find nothing they can book or call from.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="container il-sec" aria-labelledby="build-h">
+      <div class="il-hd"><p class="mono">What we build</p><h2 id="build-h" class="t-d2">For Iligan businesses, <span class="dim">built to be found.</span></h2></div>
+      <ul class="il-cards">{builds.map(([t, b, h, l]) => <li class="rv"><h3 class="t-h3">{t}</h3><p>{b}</p><a class="link" href={h}>{l} →</a></li>)}</ul>
+    </section>
+
+    <section class="container il-sec" aria-labelledby="how-h">
+      <div class="il-hd"><p class="mono">How it works</p><h2 id="how-h" class="t-d2">In person <span class="dim">or online.</span></h2></div>
+      <div class="il-how">
+        <div class="il-prose">
+          <h3 class="t-h3">Meet us in Iligan, or don’t</h3>
+          <p>If you’re in or near Iligan City, we meet in person for the kickoff. We don’t have a client office yet, so we come to your business or somewhere convenient in the city. Prefer not to? We run it on a video call. Either way, you review designs and the test site from your phone or laptop.</p>
+          <p>We’re happy to talk it through in Bisaya, Tagalog or English.</p>
+          <h3 class="t-h3">Same hours as you</h3>
+          <p>Monday to Friday, 8:30am to 5:00pm Philippine time. Call or text <a class="link" href={`tel:${NAP.tel}`}>{NAP.phone}</a>, or email <a class="link" href={`mailto:${NAP.email}`}>{NAP.email}</a>.</p>
+        </div>
+        <ol class="il-steps" aria-label="Your 7 days, step by step">{steps.map(([d, t, b]) => <li class="rv"><span class="mono">{d}</span><b>{t}</b><span>{b}</span></li>)}</ol>
+      </div>
+      <p class="il-promise"><strong>The promise, with its conditions:</strong> we launch in 7 business days as long as we have your content on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.</p>
+    </section>
+
+    <section class="container il-sec" id="prices" aria-labelledby="pr-h">
+      <div class="il-hd"><p class="mono">Peso prices</p><h2 id="pr-h" class="t-d2">Fixed upfront. <span class="dim">Live in 7 business days.</span></h2></div>
+      <ul class="il-plans">{plans.map((p) => <li class="rv"><p class="mono">{p.for}</p><h3 class="t-h3">{p.name}</h3><p class="il-price">{p.price}</p><ul>{p.rows.map((r) => <li>{r}</li>)}</ul></li>)}</ul>
+      <ul class="il-fine">
+        <li>Extra pages: {P.page} each. Maintenance from {P.care}.</li>
+        <li>Booking systems, membership portals, custom online shops and SEO retainers are quoted per project, with the price upfront.</li>
+        <li>Pay by GCash, Maya, bank transfer (BPI or Metrobank) or Wise.</li>
+        <li>{capsCopy.sevenDay}</li>
+      </ul>
+      <a class="btn btn--lime" href="/lp/7-day-website/ph">See the full 7-day package details <span class="arrow" aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="container il-sec" aria-labelledby="work-h">
+      <div class="il-hd"><p class="mono">Our work</p><h2 id="work-h" class="t-d2">The same team <span class="dim">that built these.</span></h2></div>
+      <p class="il-prose">Our newest Iligan project is the website for <strong>Dotted Studios</strong>, a brand and design studio here in Iligan City, launching soon. The case studies below run businesses in the Philippines, Utah and Queensland. They’re the standard your site gets.</p>
+      <ul class="il-work">{work.map((w) => (
+        <li class="rv"><a href={`/work/${w.slug}`}>
+          <Picture src={workImages[w.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 45vw" alt={`${w.name}: ${w.what}`} loading="lazy" decoding="async" />
+          <span class="mono">{w.where} · {w.what}</span><b>{w.name}</b><span>{w.line}</span>
+        </a></li>
+      ))}</ul>
+      <a class="link" href="/work">See all 8 case studies →</a>
+    </section>
+
+    <section class="container il-sec il-cdo" aria-labelledby="cdo-h">
+      <div class="il-hd"><p class="mono">Northern Mindanao</p><h2 id="cdo-h" class="t-d2">Also working with <span class="dim">Cagayan de Oro.</span></h2></div>
+      <p class="il-prose">Cagayan de Oro is an easy trip from Iligan, and we work with businesses there and across Northern Mindanao, with the same peso prices and payment options. We can meet CDO clients in person too; everything else runs online, from the Day 1 brief to launch.</p>
+    </section>
+
+    <section class="container il-sec" aria-labelledby="fq-h">
+      <div class="il-hd"><p class="mono">FAQ</p><h2 id="fq-h" class="t-d2">Questions Iligan owners ask us.</h2></div>
+      <Faq items={faq} id="iligan-faq" />
+      <p class="il-more">More: <a class="link" href="/blog/google-business-profile-optimization">Google Business Profile optimisation</a> · <a class="link" href="/blog/local-seo-small-business-guide">a local SEO guide</a> · <a class="link" href="/blog/web-design-pricing-guide">website prices in the Philippines</a></p>
+    </section>
+
+    <section class="il-end on-lime" aria-label="Get started">
+      <div class="container il-end-in">
+        <div><p class="t-h3">Ready when you are. Start with 15 minutes.</p><p>Book a free website check, or go straight to the 7-day packages. Either way, you talk to the people who build your site.</p></div>
+        <div class="il-end-btns">
+          <a class="btn btn--black" href="/audit">Book my free website check <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="il-end-link" href="/lp/7-day-website/ph">See the 7-day packages (₱)</a>
+        </div>
+      </div>
+    </section>
+  </div>
+</Base>
+<style>
+  .il-hero { padding: calc(var(--header-h) + 96px) 0 64px; }
+  .il-hero-in { display: grid; gap: 1.5rem; }
+  .il-hero h1 { max-width: 15ch; }
+  .il-eye { color: var(--lime); }
+  .il-deck { max-width: 60ch; } .il-deck strong { color: var(--white); }
+  .il-cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .il-note { color: var(--gray-300); }
+  .il-sec { display: grid; gap: 2rem; padding-block: clamp(48px, 6vw, 96px); }
+  .il-hd { display: grid; gap: .75rem; }
+  .il-sec > .btn, .il-sec > .link { justify-self: start; }
+  .il-prose { display: grid; gap: 1rem; max-width: 64ch; color: var(--gray-300); }
+  .il-prose strong, .il-prose h3 { color: var(--white); }
+  .il-ticks { display: grid; gap: .6rem; }
+  .il-ticks li { padding-left: 1.5rem; position: relative; }
+  .il-ticks li::before { content: ''; position: absolute; left: 0; top: .55em; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
+  .il-cards { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
+  .il-cards li { display: grid; gap: .75rem; align-content: start; padding: 24px; border: 1px solid var(--gray-700); border-radius: 14px; background: var(--gray-900); }
+  .il-cards p { color: var(--gray-300); }
+  .il-how { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 2rem var(--gutter); align-items: start; }
+  .il-steps { display: grid; border-top: 1px solid var(--gray-700); }
+  .il-steps li { display: grid; grid-template-columns: 6rem minmax(0, 1fr); column-gap: 1rem; padding-block: 14px; border-bottom: 1px solid var(--gray-700); }
+  .il-steps .mono { color: var(--lime); grid-row: span 2; }
+  .il-steps span:last-child { color: var(--gray-300); }
+  .il-promise { max-width: 72ch; color: var(--gray-300); } .il-promise strong { color: var(--white); }
+  .il-plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  .il-plans > li { display: grid; gap: .5rem; align-content: start; padding: 24px; border: 1px solid var(--gray-700); border-radius: 14px; background: var(--gray-900); }
+  .il-plans > li:nth-child(2) { border-color: var(--lime); }
+  .il-plans .mono { color: var(--gray-400); }
+  .il-price { font-family: var(--font-display); font-size: clamp(1.75rem, 3vw, 2.4rem); font-weight: 600; color: var(--lime); }
+  .il-plans ul { display: grid; gap: .35rem; color: var(--gray-300); margin-top: .5rem; }
+  .il-fine { display: grid; gap: .4rem; color: var(--gray-300); }
+  .il-work { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
+  .il-work a { display: grid; gap: .4rem; }
+  .il-work :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); border-radius: 10px; transition: border-color .2s; }
+  .il-work a:hover :global(img) { border-color: var(--lime); }
+  .il-work .mono { color: var(--lime); font-size: 12px; letter-spacing: .1em; }
+  .il-work span:last-child { color: var(--gray-300); }
+  .il-more { color: var(--gray-300); }
+  .il-end { padding: 64px 0; margin-top: 32px; }
+  .il-end-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .il-end-in p { color: var(--black); max-width: 56ch; }
+  .il-end-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
+  .il-end-link { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: .2em; min-height: 44px; display: inline-flex; align-items: center; }
+  @media (max-width: 1023px) { .il-how, .il-plans { grid-template-columns: 1fr; } }
+  @media (max-width: 767px) { .il-cards, .il-work { grid-template-columns: 1fr; } .il-hero { padding-top: calc(var(--header-h) + 48px); } .il-cta .btn, .il-end-btns .btn { width: 100%; justify-content: center; } }
+</style>

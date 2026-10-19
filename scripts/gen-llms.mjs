@@ -20,6 +20,8 @@ const lines = [
   '## Services',
   ...chapters.map((c) => `- [${c.h2}](${S}/services#${c.id}): ${c.outcome}`),
   `- [7-day website (USD)](${S}/lp/7-day-website) · [Philippine pricing](${S}/lp/7-day-website/ph)`,
+  `- [Web design in Iligan City](${S}/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.`,
+  `- [Free 15-minute website check](${S}/audit): Google Meet call, 3 fixes for more calls and enquiries; no site needed.`,
   '',
   '## Case studies',
   ...caseIndex.map((c) => `- [${c.title}](${S}/work/${c.slug}): ${c.sector}, ${c.country}, ${c.year}. ${c.built}. ${c.resultHeadline}`),
