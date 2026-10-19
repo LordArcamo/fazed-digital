@@ -10,7 +10,7 @@ const { services = false } = Astro.props;
 <div class:list={['windex', { 'windex--svc': services }]} data-windex>
   <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span class="h-built">What we built</span>{services && <span class="w-svc">Services</span>}</div>
   <ul>
-    {caseIndex.map((c) => (
+    {caseIndex.map((c, i) => (
       <li class="wli" data-disc={c.discipline.join(' ')}>
         <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cap={`CASE ${c.slug} · ${c.title} →`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
           <span class="mono w-n">{c.slug}</span>
@@ -20,7 +20,7 @@ const { services = false } = Astro.props;
           <span class="w-year">{c.year}</span>
           <span class="w-built">{c.built}</span>
           {services && <span class="w-svc mono">{c.discipline.join(' · ')}</span>}
-          <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 1023px) 92vw, 420px" alt={c.alt} loading="lazy" decoding="async" />
+          <Picture class="w-thumb" src={workImages[c.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 1023px) 92vw, 420px" alt={c.alt} loading={i === 0 && services ? 'eager' : 'lazy'} fetchpriority={i === 0 && services ? 'high' : 'auto'} decoding="async" />
         </a>
       </li>
     ))}
