@@ -68,9 +68,11 @@ function boot() {
 // <head>), so run once now and de-duplicate per swapped <body>.
 let first = true;
 let lastBody: HTMLElement | null = null;
+let landing = false; // see landNewPage()
 function onPage() {
   if (document.body === lastBody) return;
   lastBody = document.body;
+  landNewPage();
   lastY = scrollY; dockState(scrollY, scrollY + 1);
   initNav();
   if (first) { first = false; boot(); }
@@ -99,17 +101,21 @@ document.addEventListener('astro:before-swap', (e: any) => {
 // back/forward ('traverse') keeps the browser's restored position
 let navType = 'push';
 document.addEventListener('astro:before-preparation', (e: any) => { navType = e.navigationType || 'push'; });
-document.addEventListener('astro:after-swap', () => {
+// Where a forward navigation should open: the top, or the linked section (/lab#lab-06). Applied right after the swap
+// AND again at page-load before any ScrollTrigger.refresh(): Lenis and ScrollTrigger both remember the previous
+// page's position (from the footer that's the bottom of a long page) and would put the new page back there.
+function landNewPage() {
+  if (!landing) return;
   bus.lenis?.resize();
-  if (navType === 'traverse') return;
-  // a link to another page's section (/lab#lab-06): land on that section. The router jumps natively, but Lenis still
-  // holds the previous page's position and would pull the new page back to it.
   const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-  if (target) {
-    bus.lenis?.scrollTo(target, { immediate: true, force: true });
-    return;
-  }
+  if (target) { bus.lenis?.scrollTo(target, { immediate: true, force: true }); return; }
   window.scrollTo(0, 0);
   bus.lenis?.scrollTo(0, { immediate: true, force: true });
+}
+document.addEventListener('astro:after-swap', () => {
+  landing = navType !== 'traverse';
+  if (!landing) { bus.lenis?.resize(); return; }
+  landNewPage();
 });
+document.addEventListener('astro:page-load', () => { landing = false; });
 if (document.readyState !== 'loading') onPage(); else document.addEventListener('DOMContentLoaded', onPage, { once: true });

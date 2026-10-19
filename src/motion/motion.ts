@@ -73,6 +73,10 @@ function pageLoad() {
     const tw = gsap.to(img, { y: () => -Math.max(0, img.offsetHeight - view.offsetHeight), ease: 'none', scrollTrigger: { trigger: plate, start: 'top 75%', end: 'bottom 25%', scrub: 0.6, invalidateOnRefresh: true } });
     pageCleanups.push(() => { tw.scrollTrigger?.kill(); tw.kill(); });
   });
+  // refresh() scrolls to 0, measures, then restores the position it remembers, and its cached value is still the
+  // previous page's. From the footer (bottom of a long page) that dropped the new page at its own bottom, so footer
+  // links looked dead. Forget it first, so refresh records where the router actually put us (top, or a #section).
+  ScrollTrigger.clearScrollMemory();
   ScrollTrigger.refresh();
 }
 
