@@ -58,7 +58,7 @@ const schema = {
 
     <!-- [HOME-02] UNFOLD -->
     <section class="section unfold" id="unfold" data-f="lattice" aria-labelledby="unfold-h">
-      <div class="ruler container" aria-hidden="true">{cols.map((c) => <span class="mono">Col {c}</span>)}<span class="mono ruler-pitch">Pitch 24px</span></div>
+      <div class="ruler container" aria-hidden="true">{cols.map((c) => <span class="mono" data-c={c}></span>)}<span class="mono ruler-pitch"></span></div>
       <div class="container unfold-in">
         <h2 id="unfold-h" class="t-d1 rv">Web design, branding <span class="dim">and SEO from the Philippines.</span></h2>
         <p class="mono rv">Shipping to USA · Australia · Philippines since 2022</p>
@@ -262,6 +262,9 @@ const schema = {
   .ruler { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); margin-bottom: 96px; position: relative; }
   .ruler span { font-size: .625rem; border-left: 1px solid var(--gray-700); padding-left: .4rem; color: var(--gray-400); }
   .ruler .ruler-pitch { position: absolute; right: var(--side); top: 1.5rem; border: 0; }
+  /* the labels are drawn by CSS so text extractors and AI crawlers don't read "Col 01 … Pitch 24px" as page copy */
+  .ruler span::before { content: 'Col ' attr(data-c); }
+  .ruler .ruler-pitch::before { content: 'Pitch 24px'; }
   .unfold-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .unfold-in h2 { grid-column: 1 / span 11; }
   .unfold-in > .mono { grid-column: 1 / span 6; }
