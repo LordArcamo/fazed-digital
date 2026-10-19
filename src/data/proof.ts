@@ -1,12 +1,15 @@
-// UNVERIFIED: user will revise. Do not add new claims.
+// Proof: stats owner-confirmed 2026-10-19 (120+ projects; the rest derived from cases/team/site). Do not add new claims.
 // Mirrors copy/proof.md sections A, B, C, E + copy/answers-2026-10-16.md.
 import { YEARS } from './site';
+import { countries } from './cases';
+import { team } from './team';
 
+// Owner-confirmed 2026-10-19: 120+ projects is real. Every other number is derived from the data files.
 export const stats = [
-  { value: '120', suffix: '+', label: 'Projects delivered', sub: 'Across 14 industries', show: true }, // [TBC-21] S1 USER-REVISE-LATER
-  { value: '98', suffix: '%', label: 'Client satisfaction', sub: 'Based on project reviews', show: true }, // S2 USER-REVISE-LATER
-  { value: String(YEARS), suffix: ' yrs', label: 'In business', sub: 'Iligan City-based since 2022', show: true }, // S4 VERIFIED, computed
-  { value: '4', suffix: 'x', label: 'Avg ROI uplift', sub: 'On SEO & web projects', show: true }, // S3 USER-REVISE-LATER
+  { value: '120', suffix: '+', label: 'Projects delivered', sub: 'Websites, brands and systems since 2022', show: true }, // owner-confirmed
+  { value: String(countries.length), suffix: '', label: 'Countries', sub: 'USA, Australia and the Philippines', show: true }, // from cases.ts
+  { value: String(YEARS), suffix: ' yrs', label: 'In business', sub: 'Iligan City-based since 2022', show: true }, // computed
+  { value: String(team.length), suffix: '', label: 'People', sub: 'One small team, a direct line', show: true }, // from team.ts
 ];
 
 // Home "Connections" results (copy/home.md HOME-07, from the old TestimonialsSection)
@@ -20,11 +23,11 @@ export const results = [
 export const LP_REVIEWS_REAL = false;
 export const lpTestimonials: { quote: string; name: string; role: string }[] = []; // drop real, approved quotes here, then flip the flag
 
-// LP trust bar (S5–S7 USER-REVISE-LATER; [TBC-21] 12+ vs 120+ conflict left as the user decided)
+// LP trust bar: owner confirmed 120+ projects (2026-10-19); the unverified 12+ / 100% on-time / 7x figures were removed
 export const lpTrust = [
-  { value: '12+', label: 'Websites delivered' },
-  { value: '100%', label: 'On-time delivery' },
-  { value: '7x', label: 'Faster than industry avg' },
+  { value: '120+', label: 'Projects delivered' }, // owner-confirmed 2026-10-19
+  { value: String(countries.length), label: 'Countries served' },
+  { value: 'Since 2022', label: 'Iligan City studio' },
 ];
 
 // Case metrics: none real yet (answers #16). Placeholders render while false.
