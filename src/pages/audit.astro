@@ -10,14 +10,14 @@ import { crumbs, faqPage } from '../lib/schema';
 
 const BOOK = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2L1Fs1oTiHh8854mrEVtm_ny4BEhlyi5Pg-jdTsutFOInmrjHh4L-gxqLYqq_eM8pcUqxot6PF';
 const checks = [
-  ['Is it easy on a phone?', 'Most people meet your business on a phone first. We check they can read it, tap it and find what they came for.'],
-  ['Does your contact form actually work?', 'We check that an enquiry really reaches you. A broken form loses leads quietly, and you never hear about them.'],
-  ['Can Google read your pages?', 'We look at the titles, descriptions and structure Google uses to decide when to show your business.'],
+  ['phone', 'Is it easy on a phone?', 'Most people meet your business on a phone first. We check they can read it, tap it and find what they came for.'],
+  ['form', 'Does your contact form actually work?', 'We check that an enquiry really reaches you. A broken form loses leads quietly, and you never hear about them.'],
+  ['google', 'Can Google read your pages?', 'We look at the titles, descriptions and structure Google uses to decide when to show your business.'],
 ];
 const steps = [
-  ['Pick a time', 'Choose a 15-minute slot below. Times show in your own timezone.'],
-  ['Join the call', 'You get a Google Meet link by email after booking. Have your website open.'],
-  ['Leave with your 3 fixes', 'Make them yourself, or ask us to. No pressure either way.'],
+  ['Before', 'Pick a time', 'Choose a 15-minute slot. Times show in your own timezone.'],
+  ['00:00', 'Join the call', 'The Google Meet link arrives by email. Have your website open.'],
+  ['15:00', 'Leave with your 3 fixes', 'Make them yourself, or ask us to. No pressure either way.'],
 ];
 const faq = [
   { q: 'Is it really free?', a: 'Yes. It’s a free 15-minute call with no obligation. If you’d like help afterwards, we’ll tell you what it would take and you decide.' },
@@ -28,7 +28,7 @@ const faq = [
 ];
 const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
 ---
-<Base title="Free Website Check (15 min) | Fazed Digital" description="Book a free 15-minute website check. We’ll look at your site with you and point out the 3 fixes that would bring you the most calls and enquiries. No site yet? Book anyway." image="/og/audit.png" formation="node" schema={schema} lp="audit">
+<Base title="Free Website Check (15 min) | Fazed Digital" description="Book a free 15-minute website check. We’ll look at your site with you and point out the 3 fixes that would bring you the most calls and enquiries. No site yet? Book anyway." image="/og/audit.png" formation="lattice" schema={schema} lp="audit">
   <div class="au">
     <section class="au-hero" data-f="node" aria-labelledby="au-h">
       <div class="container au-hero-in">
@@ -43,25 +43,38 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
         <!-- Illustration of the call: the three checks tick through. No results are shown or implied. -->
         <div class="au-card" aria-hidden="true">
           <p class="mono au-card-hd"><span class="au-card-dot"><span class="node-anchor" data-node-anchor></span></span>Website check · live call</p>
-          <ol>{checks.map(([t], i) => <li style={`--i:${i}`}><span class="mono au-k">0{i + 1}</span><span class="au-t">{t.replace('?', '')}</span><span class="au-tick"></span></li>)}</ol>
+          <ol>{checks.map(([, t], i) => <li style={`--i:${i}`}><span class="mono au-k">0{i + 1}</span><span class="au-t">{t.replace('?', '')}</span><span class="au-tick"></span></li>)}</ol>
           <p class="mono au-card-ft"><span>= Your 3 fixes</span><span>15:00</span></p>
         </div>
       </div>
     </section>
 
-    <section class="section container au-checks" aria-labelledby="ck-h">
-      <p class="mono">What we look at</p>
-      <h2 id="ck-h" class="t-d2">Three questions. <span class="dim">Straight answers.</span></h2>
-      <ol class="au-3">{checks.map(([t, b], i) => <li class="rv"><span class="mono au-n">0{i + 1}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    <section class="container au-sec au-checks" aria-labelledby="ck-h">
+      <div class="au-sec-hd">
+        <p class="mono">What we look at</p>
+        <h2 id="ck-h" class="t-d2">Three questions. <span class="dim">Straight answers.</span></h2>
+      </div>
+      <ol class="au-rows">{checks.map(([k, t, b], i) => (
+        <li class="au-row rv">
+          <div class:list={['au-vis', `au-vis--${k}`]} aria-hidden="true">
+            {k === 'phone' && <span class="vp"><i></i><i></i><i class="s"></i><b class="vp-btn"><em class="vp-tap"></em></b></span>}
+            {k === 'form' && <><span class="vf"><i></i><i></i><b>Send</b></span><span class="vf-wire"><em class="vf-dot"></em></span><span class="vf-in">1</span></>}
+            {k === 'google' && <span class="vg"><span class="mono vg-u">yourbusiness.com</span><i class="vg-t"></i><i></i><i class="s"></i></span>}
+          </div>
+          <div class="au-row-tx"><span class="mono au-n">0{i + 1} / 03</span><h3 class="t-h3">{t}</h3><p>{b}</p></div>
+        </li>
+      ))}</ol>
     </section>
 
-    <section class="section container au-steps" aria-labelledby="st-h">
-      <p class="mono">How it works</p>
-      <h2 id="st-h" class="t-d2">Fifteen minutes, <span class="dim">start to finish.</span></h2>
-      <ol class="au-3 au-3--steps">{steps.map(([t, b], i) => <li class="rv"><span class="au-node" aria-hidden="true"></span><span class="mono">Step {i + 1}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    <section class="container au-sec au-steps" aria-labelledby="st-h">
+      <div class="au-sec-hd">
+        <p class="mono">How it works</p>
+        <h2 id="st-h" class="t-d2">Fifteen minutes, <span class="dim">start to finish.</span></h2>
+      </div>
+      <ol class="au-tl">{steps.map(([ts, t, b]) => <li class="rv"><span class="mono au-ts">{ts}</span><span class="au-tl-node" aria-hidden="true"></span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
     </section>
 
-    <section class="section container au-book" id="book" aria-labelledby="bk-h">
+    <section class="container au-sec au-book" id="book" aria-labelledby="bk-h">
       <div class="au-book-hd">
         <p class="mono">Book your free check</p>
         <h2 id="bk-h" class="t-d2">Pick a time.</h2>
@@ -79,13 +92,15 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
       <p class="au-alt"><span class="au-d">Calendar not loading? <a class="link" href={BOOK} target="_blank" rel="noopener">Open the booking page ↗<span class="sr-only"> (opens in a new tab)</span></a> <span class="mono">or</span> email</span><span class="au-m">Prefer email?</span> <a class="link" href="mailto:info@fazeddigital.com?subject=Free%20website%20check">info@fazeddigital.com</a></p>
     </section>
 
-    <section class="section container au-proof" aria-labelledby="pr-h">
-      <p class="mono">Client results</p>
-      <h2 id="pr-h" class="t-d2">Real clients. <span class="dim">Real results.</span></h2>
-      <ul class="au-3 au-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
+    <section class="container au-sec au-proof" aria-labelledby="pr-h">
+      <div class="au-sec-hd">
+        <p class="mono">Client results</p>
+        <h2 id="pr-h" class="t-d2">Real clients. <span class="dim">Real results.</span></h2>
+      </div>
+      <ul class="au-res">{results.map((r) => <li class="rv"><div class="au-res-h"><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3></div><p>{r.body}</p></li>)}</ul>
     </section>
 
-    <section class="section container au-faq" aria-labelledby="fq-h">
+    <section class="container au-sec au-faq" aria-labelledby="fq-h">
       <h2 id="fq-h" class="t-d2">Common questions.</h2>
       <Faq items={faq} id="audit-faq" />
     </section>
@@ -137,15 +152,53 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   .au-cta { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.25rem; }
   .au-note { color: var(--gray-300); }
 
-  .au-checks, .au-steps, .au-book, .au-proof, .au-faq { display: grid; gap: 1.25rem; }
-  .au-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); margin-top: 1rem; }
-  .au-3 li { display: grid; gap: .5rem; align-content: start; border-top: 1px solid var(--gray-700); padding-top: 1.25rem; }
-  .au-3 p { color: var(--gray-300); }
+  /* tighter rhythm than the site's 192px .section: this page is one scroll to a booking */
+  .au-sec { position: relative; display: grid; gap: 2rem; padding-block: clamp(56px, 7vw, 112px); }
+  .au-sec-hd { display: grid; gap: .75rem; }
   .au-n { color: var(--lime); }
-  .au-3--steps li { position: relative; }
-  .au-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--lime); background: var(--black); }
-  .au-3--steps li:last-child .au-node { background: var(--lime); }
+
+  /* What we look at: each check gets a small drawing of the thing we actually test */
+  .au-rows { display: grid; border-top: 1px solid var(--gray-700); }
+  .au-row { display: grid; grid-template-columns: 220px minmax(0, 1fr); gap: clamp(1.25rem, 3vw, 3rem); align-items: center; padding-block: 28px; border-bottom: 1px solid var(--gray-700); }
+  .au-row-tx { display: grid; gap: .5rem; max-width: 56ch; }
+  .au-row-tx p { color: var(--gray-300); }
+  .au-vis { position: relative; height: 136px; border: 1px solid var(--gray-700); border-radius: 14px; background: radial-gradient(circle at 1px 1px, var(--gray-700) 1px, transparent 1.5px) 0 0 / 12px 12px, var(--gray-900); display: grid; place-items: center; overflow: hidden; }
+  .au-vis i { display: block; height: 5px; border-radius: 3px; background: var(--gray-500); }
+  .au-vis i.s { width: 60%; }
+  /* phone: a screen with text and a lime button being tapped */
+  .vp { position: relative; width: 62px; height: 104px; border: 1.5px solid var(--gray-400); border-radius: 12px; padding: 16px 9px 0; display: grid; align-content: start; gap: 6px; }
+  .vp::before { content: ''; position: absolute; top: 6px; left: 50%; width: 14px; height: 3px; translate: -50% 0; border-radius: 2px; background: var(--gray-500); }
+  .vp-btn { position: absolute; left: 9px; right: 9px; bottom: 12px; height: 14px; border-radius: 7px; background: var(--lime); }
+  .vp-tap { position: absolute; left: 50%; top: 50%; width: 30px; height: 30px; margin: -15px; border-radius: 50%; border: 1.5px solid var(--lime); animation: au-tap 2.4s ease-out infinite; }
+  @keyframes au-tap { 0% { scale: .3; opacity: 1; } 70%, 100% { scale: 1.6; opacity: 0; } }
+  /* form: an enquiry leaves the form and lands in the inbox */
+  .au-vis--form { grid-template-columns: auto 1fr auto; padding: 0 18px; gap: 8px; place-items: center stretch; }
+  .vf { width: 64px; display: grid; gap: 6px; padding: 10px 8px; border: 1px solid var(--gray-500); border-radius: 8px; background: var(--gray-800); }
+  .vf b { font: 700 9px/1 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--black); background: var(--lime); border-radius: 4px; padding: 4px 0; text-align: center; }
+  .vf-wire { position: relative; height: 1px; background: repeating-linear-gradient(90deg, var(--gray-500) 0 4px, transparent 4px 8px); }
+  .vf-dot { position: absolute; top: -3.5px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 10px var(--lime); animation: au-send 2.6s cubic-bezier(.6, 0, .3, 1) infinite; }
+  @keyframes au-send { 0% { left: 0; opacity: 0; } 10% { opacity: 1; } 75% { left: calc(100% - 8px); opacity: 1; } 85%, 100% { left: calc(100% - 8px); opacity: 0; } }
+  .vf-in { width: 34px; height: 34px; border-radius: 50%; border: 1.5px solid var(--lime); display: grid; place-items: center; font: 700 12px/1 var(--font-mono); color: var(--lime); justify-self: center; }
+  /* google: the result Google shows when it can read the page */
+  .vg { width: 168px; display: grid; gap: 7px; padding: 14px; border: 1px solid var(--gray-700); border-radius: 10px; background: var(--gray-800); }
+  .vg-u { font-size: 9px; letter-spacing: .06em; color: var(--gray-400); }
+  .au-vis .vg-t { height: 8px; width: 82%; background: var(--lime); }
+
+  /* How it works: the 15 minutes as a timeline */
+  .au-tl { position: relative; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
+  .au-tl::before { content: ''; position: absolute; left: 0; right: 0; top: calc(1.4em + 18px); height: 1px; background: linear-gradient(90deg, var(--gray-700), var(--lime)); }
+  .au-tl li { display: grid; gap: .5rem; align-content: start; }
+  .au-ts { color: var(--gray-300); font-size: 13px; letter-spacing: .1em; }
+  .au-tl-node { position: relative; z-index: 1; width: 13px; height: 13px; margin: 12px 0 14px; border-radius: 50%; border: 1px solid var(--lime); background: var(--black); }
+  .au-tl li:last-child .au-tl-node { background: var(--lime); box-shadow: 0 0 0 6px rgba(201, 255, 87, .15); }
+  .au-tl p { color: var(--gray-300); max-width: 34ch; }
+
+  /* Client results as editorial rows */
+  .au-res { border-top: 1px solid var(--gray-700); }
+  .au-res li { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: var(--gutter); align-items: end; padding-block: 24px; border-bottom: 1px solid var(--gray-700); }
+  .au-res-h { display: grid; gap: .5rem; }
   .au-res .mono { color: var(--lime); }
+  .au-res li > p { color: var(--gray-300); }
 
   .au-book-hd { display: grid; gap: .75rem; }
   .au-book-hd p:last-child { color: var(--gray-300); }
@@ -162,11 +215,27 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   .au-alt { color: var(--gray-300); display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem .5rem; }
   .au-alt .mono { color: var(--gray-400); }
 
-  .au-end { padding: 72px 0; margin-top: 48px; }
+  .au-end { padding: 64px 0; }
   .au-end-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.25rem; }
   .au-end .t-h3 { color: var(--black); }
 
-  @media (max-width: 1023px) { .au-3 { grid-template-columns: 1fr; gap: 1.5rem; } }
+  @media (min-width: 1024px) {
+    /* headings sit in a left column beside the rows */
+    .au-checks, .au-proof { grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); column-gap: var(--gutter); align-items: start; }
+    .au-checks .au-sec-hd, .au-proof .au-sec-hd { position: sticky; top: calc(var(--header-h) + 24px); }
+  }
+  @media (max-width: 1023px) {
+    .au-res li { grid-template-columns: 1fr; gap: .4rem; }
+  }
+  @media (max-width: 767px) {
+    .au-row { grid-template-columns: 1fr; gap: 1rem; padding-block: 24px; }
+    .au-vis { height: 120px; }
+    .au-tl { grid-template-columns: 1fr; gap: 0; padding-left: 28px; }
+    .au-tl::before { left: 6px; right: auto; top: 6px; bottom: 6px; width: 1px; height: auto; background: linear-gradient(180deg, var(--gray-700), var(--lime) 72%, transparent); }
+    .au-tl li:last-child { padding-bottom: 8px; }
+    .au-tl li { position: relative; padding-bottom: 28px; }
+    .au-tl-node { position: absolute; left: -28px; top: 2px; margin: 0; }
+  }
   @media (max-width: 599px) {
     .au-hero { min-height: 0; padding-top: calc(var(--header-h) + 48px); }
     .au-cta .btn { width: 100%; justify-content: center; }
@@ -174,7 +243,8 @@ const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
   }
   @media (prefers-reduced-motion: reduce) {
     .au-dot { animation: none; }
-    .au-tick, .au-tick::after { animation: none; }
+    .au-tick, .au-tick::after, .vp-tap, .vf-dot { animation: none; }
+    .vf-dot { left: calc(100% - 8px); }
     .au-tick { background: var(--lime); border-color: var(--lime); } .au-tick::after { opacity: 1; }
   }
 </style>

@@ -36,7 +36,9 @@ export function start(flags: Flags) {
       if (!target) return;
       ev.preventDefault();
       ev.stopPropagation();
-      lenis.scrollTo(target); // Lenis already honours html's scroll-padding-top (the header gap)
+      // lock: trackpad momentum left over from the scroll that revealed the button would otherwise cancel the glide
+      // halfway (Lenis stops an animation on any wheel input). Lenis already honours scroll-padding-top.
+      lenis.scrollTo(target, { lock: true });
       history.replaceState(history.state, '', `#${id}`); // keep the router's history entry; just update the hash
     }, true);
   }
