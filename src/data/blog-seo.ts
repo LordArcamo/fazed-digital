@@ -10,7 +10,6 @@ export const seoTitles: Record<string, string> = {
   'web-hosting-small-business-guide': 'Web Hosting for Small Businesses: How to Choose a Plan',
   'homepage-copywriting-that-sells': 'Homepage Copywriting That Turns Visitors Into Customers',
   'website-navigation-design': 'Website Navigation Design: Menus Visitors Understand',
-  'web-design-pricing-guide': 'How Much Should a Website Cost? A Pricing Guide',
   'visual-hierarchy-web-design': 'Visual Hierarchy in Web Design: Guide the Eye to Action',
   'on-page-seo-checklist': 'On-Page SEO Checklist for Small Business Websites',
   'contact-page-design': 'Contact Page Design That Turns Visitors Into Enquiries',

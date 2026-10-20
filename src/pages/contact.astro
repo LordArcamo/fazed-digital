@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import ContactForm from '../components/ContactForm.astro';
 import Faq from '../components/Faq.astro';
 import { NAP, SITE_URL } from '../data/site';
-import { capsCopy } from '../data/proof';
+import { capsCopy, prices } from '../data/proof';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
 const faq = [
   { q: 'How much does a website cost?', a: 'It depends on scope, so we quote every custom project individually. A typical custom website or system runs $5,000–$20,000 depending on features and timeline. If you need something fast and simple, our 7-day packages start at $499 (₱19,999 in the Philippines). You get a detailed quote after the discovery call, with no commitment.' },
@@ -30,7 +30,7 @@ const schema = [
     <div class="container ct-in">
       <p class="mono">Signal · {NAP.coords} · Iligan City, PH</p>
       <h1 id="ct-h" class="t-d1"><span class="h-l1">Start with <span class="ct-hn" aria-hidden="true"><span class="ct-ring poster-art"></span><span class="node-anchor" data-node-anchor></span></span></span> <span class="h-l2">a message.</span></h1>
-      <p class="t-body-l ct-deck">Tell us what you need and when you need it. A real person replies within one business day, Monday to Friday.</p>
+      <p class="t-body-l ct-deck">Tell us what you need and when you need it. A real person at Fazed Digital in {NAP.city}, Philippines replies within one business day, Monday to Friday. Fixed-price websites start at {prices.usd.starter} ({prices.php.starter}). Custom projects are quoted after a short discovery call. Meet us in Iligan or Cagayan de Oro, or online.</p>
       <dl class="ct-cells">
         <div><dt class="mono">Email</dt><dd><a class="link" href={`mailto:${NAP.email}`} aria-label={`Email Fazed Digital at ${NAP.email}`}>{NAP.email}</a></dd></div>
         <div><dt class="mono">Phone</dt><dd><a class="link" href={`tel:${NAP.tel}`} aria-label={`Call Fazed Digital on ${NAP.phone}`}>{NAP.phone}</a></dd></div>
@@ -64,7 +64,7 @@ const schema = [
   .ct-in h1 { max-width: none; }
   /* two-line rhythm like home: line 2 in gray-400 */
   .ct-in h1 .h-l1, .ct-in h1 .h-l2 { display: block; } .ct-in h1 .h-l2 { color: var(--gray-400); }
-  .ct-deck { max-width: 44ch; }
+  .ct-deck { max-width: 56ch; }
   .ct-cells { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 1rem 3rem; margin-top: 1rem; }
   .ct-cells dd { margin-top: .3rem; color: var(--gray-200); font-size: 1.1rem; }
   .ct-cells a { display: inline-flex; min-height: 44px; align-items: center; }

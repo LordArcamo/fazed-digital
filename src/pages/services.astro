@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import Glyph from '../components/Glyph.astro';
 import Faq from '../components/Faq.astro';
 import { chapters, serviceFaq } from '../data/services';
-import { capsCopy } from '../data/proof';
+import { capsCopy, prices } from '../data/proof';
 import { SITE_URL } from '../data/site';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
 
@@ -34,7 +34,7 @@ const schema = [
     <div class="container s-hero-in">
       <p class="mono">What we do · 05 services · 01 system</p>
       <h1 id="s-h" class="t-d1"><span class="h-l1">Five services.</span> <span class="h-l2">One connected brand.</span></h1>
-      <p class="t-body-l s-deck">Brand, website, search, product and systems, built by one team so they actually fit together. Hire us for one piece, or let us connect the lot.</p>
+      <p class="t-body-l s-deck">Fazed Digital is one team in Iligan City, Philippines, with five services that fit together: web design, brand identity, SEO, product design and custom systems. Fixed-price websites start at {prices.usd.starter} ({prices.php.starter}) and go live in 7 business days. Custom builds take 4–12+ weeks and typically run {prices.customRange}. Hire us for one piece, or connect the lot.</p>
       <div class="s-cta">
         <a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a>
         <a class="btn btn--ghost" href="/lp/7-day-website">Get live in 7 days</a>
@@ -107,7 +107,7 @@ const schema = [
   .s-hero h1 .h-l1, .s-hero h1 .h-l2 { display: block; } .s-hero h1 .h-l2 { color: var(--gray-400); }
   .s-hero h1 .h-l1, .s-hero h1 .h-l2 { white-space: nowrap; }
   @media (max-width: 767px) { .s-hero h1 { font-size: min(8.4vw, 3rem); } } /* "One connected brand." fits 358px at 390 with even 16px gutters */
-  .s-deck { max-width: 44ch; }
+  .s-deck { max-width: 56ch; }
   .s-cta { display: flex; gap: .75rem; flex-wrap: wrap; justify-content: center; }
   .s-jump a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); font-family: var(--font-mono); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
   .s-jump a .mono { color: var(--gray-400); }
@@ -168,6 +168,6 @@ const schema = [
     .chap-glyph :global(svg) { width: 56px; height: 56px; }
     :global(html.gl-live) .chap-glyph { visibility: visible; }
     .chap-cols { grid-template-columns: 1fr; }
-    .s-faq-in > * { grid-column: 1 / -1 !important; }
+    .s-faq-in > :global(*) { grid-column: 1 / -1 !important; }
   }
 </style>

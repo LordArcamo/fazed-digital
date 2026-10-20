@@ -8,6 +8,9 @@ import WorkIndex from '../components/WorkIndex.astro';
 import LabSheetPoster from '../components/LabSheetPoster.astro';
 import { labShipped, LAB_TOTAL, LABEL, pad2 } from '../data/lab';
 import { services } from '../data/services';
+import { homeFaq } from '../data/home';
+import Faq from '../components/Faq.astro';
+import { faqPage } from '../lib/schema';
 import { caseIndex, countries } from '../data/cases';
 import { stats, results, capsCopy } from '../data/proof';
 import { team } from '../data/team';
@@ -26,12 +29,15 @@ const steps = [
 const labNew = labShipped.filter((i) => i.n !== '04' && i.url).reverse().slice(0, 3);
 // arcs: Iligan → each distinct client location (from cases.ts only)
 const arcDests = [...new Map(caseIndex.map((c) => [`${c.lat},${c.lon}`, [c.lat, c.lon]])).values()];
-const schema = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: 'Fazed Digital case studies',
-  itemListElement: caseIndex.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.title, url: `${SITE_URL}/work/${c.slug}` })),
-};
+const schema = [
+  {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Fazed Digital case studies',
+    itemListElement: caseIndex.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.title, url: `${SITE_URL}/work/${c.slug}` })),
+  },
+  faqPage(homeFaq),
+];
 ---
 <Base
   title="Web Design & Branding Studio in the Philippines | Fazed"
@@ -207,6 +213,18 @@ const schema = {
       </div>
     </section>
 
+    <!-- [HOME-08b] FAQ: the questions owners ask first (visible copy == FAQPage JSON-LD) -->
+    <section class="section hfaq" id="faq" data-f="lattice" aria-labelledby="hfaq-h">
+      <div class="container hfaq-in">
+        <div>
+          <p class="mono rv">FAQ · {String(homeFaq.length).padStart(2, '0')}</p>
+          <h2 id="hfaq-h" class="t-d2 rv">Questions owners ask first</h2>
+          <a class="link" href="/services#faq">More answers</a>
+        </div>
+        <Faq items={homeFaq} id="hfaq" />
+      </div>
+    </section>
+
     <!-- [HOME-09] CONTACT NODE -->
     <section class="section contact" id="contact" data-f="node" aria-labelledby="ct-h">
       <div class="container contact-in">
@@ -379,6 +397,10 @@ const schema = {
   .people-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; align-items: center; }
   .people-in > div { grid-column: 1 / span 5; display: grid; gap: 1.25rem; justify-items: start; }
   .people-intro { max-width: 42ch; }
+  .hfaq-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
+  .hfaq-in > div:first-child { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; justify-items: start; }
+  .hfaq-in > :global(.faq) { grid-column: 6 / span 7; }
+  @media (max-width: 1023px) { .hfaq-in > :global(*) { grid-column: 1 / -1 !important; } }
   .ppl { grid-column: 7 / span 6; display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
   .person { display: grid; grid-template-columns: 64px 1fr; gap: 1rem; padding: 1.25rem; border: 1px solid var(--gray-700); background: rgba(9, 9, 9, .7); transition: border-color .2s; }
   .person:hover, .person:focus-visible, .person.is-on { border-color: var(--lime); }
