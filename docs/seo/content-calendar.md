@@ -21,7 +21,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 ## Queue (starts 2026-10-20, ends 2027-01-11)
 
 - [x] 2026-10-20 | US | Strategy | Outsourcing Web Development to the Philippines: A US Owner's Guide | outsource web development philippines | /lp/7-day-website → /blog/outsource-web-development-philippines
-- [ ] 2026-10-21 | PH | SEO | SEO in Iligan City: How Local Businesses Get Found on Google | seo iligan | /services#seo
+- [x] 2026-10-21 | PH | SEO | SEO in Iligan City: How Local Businesses Get Found on Google | seo iligan | /services#seo → /blog/seo-iligan-city
 - [ ] 2026-10-22 | AU | Strategy | Working With a Philippine Web Studio From Australia | offshore web design australia | /lp/7-day-website
 - [ ] 2026-10-23 | Global | SEO | Free Website Audit: What a 15-Minute Review Can Find | free website audit | /audit
 - [ ] 2026-10-24 | PH | Strategy | Web Developer in Cagayan de Oro: Local Office or Remote Studio? | web developer cagayan de oro | /lp/7-day-website/ph
