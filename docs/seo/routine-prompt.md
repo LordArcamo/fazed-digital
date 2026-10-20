@@ -26,7 +26,7 @@ Before writing, check the existing-post list from Step 1. If an existing post al
 **If no `- [ ]` line is left** (calendar exhausted): fall back to the rotation. Pick a topic NOT already covered, in a category not used in the last 2 posts, rotating across Web Design & Development ('Design' or 'Development'), SEO & Content ('SEO' or 'Strategy'), Branding ('Branding') and small-business strategy ('Strategy'). Keep it buyer-intent (cost, hiring, "website for [type of business]", choosing a platform or provider), pick a market (PH, US, UK, AU or Global) and a money page from the list above, and append a ticked line for it at the end of the calendar in the same format.
 
 ## Step 3: Date
-`date "+%d %b %Y"` (e.g. 17 Oct 2026). Use that exact string.
+`TZ=Asia/Manila date "+%d %b %Y"` (e.g. 17 Oct 2026). Use that exact string. The run starts around 01:05 Philippine time, so the plain UTC date would be a day early.
 
 ## Step 4: Author (vary; match the topic). Use EXACT values:
 - 'Lord Arcamo' / authorRole 'Founder' / authorPhoto '/images/team/lord.jpeg' (design, brand)
@@ -64,7 +64,7 @@ Slug: built from the primary keyword, kebab-case, 3–7 words, unique (check the
   You may add one link to a real case study (`/work/01` … `/work/08`) when the post genuinely relates to it. No more than 4 internal links in total.
 - **FAQ close.** The last <h2> is `<h2>Frequently asked questions</h2>`, followed by 2–3 short Q&As, each as one paragraph: `<p><strong>Question in the reader's words?</strong> Answer in 1–3 sentences.</p>`. Use questions people actually search (cost, time, "do I need…", "can I…").
 - **One CTA at the end.** The final <p> (after the FAQ answers) is a single clear call to action that matches the post: the free 15-minute website check (`https://www.fazeddigital.com/audit`, Google Meet, free, no obligation), the 7-day website page (`/lp/7-day-website/ph` for PH, `/lp/7-day-website` for others), or `https://www.fazeddigital.com/contact` for custom builds, systems and branding. It may be the money-page link. One CTA, not three.
-- Honesty: never invent Fazed client results, stats, testimonials, reviews, ratings or awards. General industry figures are fine only if widely known; otherwise speak in general terms. Never write "award-winning" or star ratings.
+- Honesty: never invent Fazed client results, stats, testimonials, reviews, ratings or awards. Client stories: you may mention a Fazed client ONLY with facts copied from that client's entry in `src/data/cases.ts` (what we built, country, year, timeline). Never add a quote, a budget, a competitor's quote, a package the client "chose" or a timeline that isn't in cases.ts. Never present Fazed's own prices ($499/$899/$1,499, ₱19,999/₱34,999/₱59,999) as market or industry ranges: call them "our packages". Market price ranges need a named, real source (e.g. a directory such as GoodFirms or DesignRush) or must stay general ("rates vary widely"). General industry figures are fine only if widely known; otherwise speak in general terms. Never write "award-winning" or star ratings.
 - **Numbers.** Use a concrete number only if (a) it comes from `src/data/` (see "Facts you may use") or (b) it is widely known and you name its source in the sentence (e.g. "the ATO says…", "Google's own guidance says…"). Market price ranges: say they are typical ranges from published agency price guides, and keep them as ranges. If you are not sure, speak in general terms. Never invent percentages, conversion lifts, traffic numbers or "studies show".
 - Voice: confident, practical, plain professional English. Short paragraphs. Talk to the owner as "you". No "elevate", "unlock", "synergy", "in today's digital landscape".
 
@@ -82,7 +82,7 @@ Slug: built from the primary keyword, kebab-case, 3–7 words, unique (check the
 - From `src/data/lp.ts` and the 7-day pages: launch in 7 business days if content arrives on Day 1 and feedback within 24 hours at each review, otherwise 20% off the project fee if we miss it on our side; revision rounds 2 (Starter), 3 (Growth), unlimited (Pro); 5 / 8 / 10+ pages; the client owns the domain, site and content; no lock-in contract.
 - From the terms page: standard terms are a 50% deposit before work starts, and IP in the final deliverables passes to the client on full payment.
 - From `src/data/cases.ts`: the client names, countries, what was built, durations and the written results there. No metrics: there are no verified numbers for client results.
-- Do NOT use the stats in `proof.ts` (120+ projects, 98% satisfaction, 4x ROI, 12+ websites, 100% on-time, 7x faster). They are unverified.
+- The only owner-confirmed studio number is "120+ projects since 2022". Countries (USA, Australia, Philippines), years in business and team size come from `src/data/`. Never write any other Fazed number (satisfaction %, ROI, on-time rate, "x faster", website counts).
 
 ## String escaping (a syntax slip breaks the whole site)
 - title and excerpt in DOUBLE quotes. slug, category, date, author, readTime, authorRole, authorPhoto, image in single quotes.
@@ -100,6 +100,9 @@ PATH="$N24:$PATH" npm run build
 ```
 `npm run build` runs extract-posts (checks the blog contract), generates the OG images and llms.txt, builds the site, then lint-dist (blocks fake claims and apex URLs). If anything fails, read the error, fix YOUR post only, and rerun. Never commit a failing build. Never run `npm install` and never edit package.json or package-lock.json.
 Before committing, check your post once more: first paragraph answers the question, the money-page link and one related-post link are present with www URLs, the FAQ H2 is last with 2–3 Q&As, one CTA at the end, word count 700–1100, excerpt ≤ 155 characters.
+
+## Step 7b: Fact check (do NOT skip; a 2026-10-19 post invented a client story)
+Before ticking or committing, list every sentence in your post that mentions a Fazed client, a Fazed number, a price, a timeline, or "we/our/us". For each one, find the matching line in `src/data/` (cases.ts, proof.ts, lp.ts, services.ts, site.ts, team.ts). Delete or rewrite any sentence you cannot match word-for-fact. Also check: no keyword dropped in ungrammatically (e.g. "For seo iligan to work"), titles stay grammatical when shortened, and every third-party name you recommend (directories, tools) is real and current. Then rerun the build.
 
 ## Step 8: Tick the calendar line (only after a clean build)
 In `docs/seo/content-calendar.md`, change today's line from `- [ ]` to `- [x]` and append ` → /blog/<your-slug>` at the end of that same line. Change nothing else in the file. (If the calendar was exhausted, the appended ticked line from Step 2 is your record.)

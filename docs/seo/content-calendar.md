@@ -24,7 +24,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-10-21 | PH | SEO | SEO in Iligan City: How Local Businesses Get Found on Google | seo iligan | /services#seo → /blog/seo-iligan-city
 - [ ] 2026-10-22 | AU | Strategy | Working With a Philippine Web Studio From Australia | offshore web design australia | /lp/7-day-website
 - [ ] 2026-10-23 | Global | SEO | Free Website Audit: What a 15-Minute Review Can Find | free website audit | /audit
-- [ ] 2026-10-24 | PH | Strategy | Web Developer in Cagayan de Oro: Local Office or Remote Studio? | web developer cagayan de oro | /lp/7-day-website/ph
+- [ ] 2026-10-24 | PH | Strategy | Web Developer in Cagayan de Oro: Local Office or Remote Studio? | web developer cagayan de oro | /web-design-iligan-city
 - [ ] 2026-10-25 | US | Strategy | Fixed-Price Website Design: What's Included and What Isn't | fixed price website design | /lp/7-day-website
 - [ ] 2026-10-26 | PH | Development | Ecommerce Website Price in the Philippines: What You Pay For | ecommerce website price philippines | /services#web
 - [ ] 2026-10-27 | AU | Development | Magento to PrestaShop Migration: Lessons From a Real Store Move | magento to prestashop migration | /work/04
@@ -36,7 +36,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [ ] 2026-11-02 | Global | Strategy | How Long Does It Take to Build a Small Business Website? | how long does it take to build a website for a small business | /lp/7-day-website
 - [ ] 2026-11-03 | PH | Development | Online Booking System in the Philippines: Build or Buy? | online booking system philippines | /services#systems
 - [ ] 2026-11-04 | US | Strategy | Small Business Website Cost in the US: A 2027 Price Guide | small business website cost | /lp/7-day-website
-- [ ] 2026-11-05 | PH | SEO | SEO for Cagayan de Oro Businesses: A Local Starter Plan | seo cagayan de oro | /services#seo
+- [ ] 2026-11-05 | PH | SEO | SEO for Cagayan de Oro Businesses: A Local Starter Plan | seo cagayan de oro | /web-design-iligan-city
 - [ ] 2026-11-06 | AU | Design | Tradie Websites in Australia: What Wins Local Jobs | websites for tradies australia | /lp/7-day-website
 - [ ] 2026-11-07 | PH | Branding | Cleaning Business Branding: Lessons From Cleen & Green | cleaning business branding philippines | /work/02
 - [ ] 2026-11-08 | US | Design | Website for a Cleaning Business: Pages That Book Jobs | website for cleaning business | /lp/7-day-website
@@ -51,7 +51,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [ ] 2026-11-17 | AU | Development | Membership Portals for Clubs and Associations: Build vs Buy | membership portal for associations | /work/07
 - [ ] 2026-11-18 | PH | Design | Dental Clinic Website in the Philippines: Pages Patients Need | dental clinic website design philippines | /lp/7-day-website/ph
 - [ ] 2026-11-19 | US | Design | Website Design for Plumbers: What Gets the Phone Ringing | website design for plumbers | /lp/7-day-website
-- [ ] 2026-11-20 | PH | Strategy | Business Permit Done in Iligan? Your Get-Online Checklist | iligan city business permit | /lp/7-day-website/ph
+- [ ] 2026-11-20 | PH | Strategy | Business Permit Done in Iligan? Your Get-Online Checklist | iligan city business permit | /web-design-iligan-city
 - [ ] 2026-11-21 | AU | Strategy | Paying an Overseas Web Studio From Australia: AUD, Wise and GST | gst on overseas services | /lp/7-day-website
 - [ ] 2026-11-22 | Global | Branding | Brand Identity Package: What a Complete One Includes | brand identity package | /services#brand
 - [ ] 2026-11-23 | PH | Design | Real Estate Website in the Philippines: Listings That Sell | website for real estate philippines | /lp/7-day-website/ph
