@@ -26,7 +26,7 @@ const cur = menu.find((m) => m.href === current);
   <div class="hdr-in container">
     {lp ? <span class="hdr-logo"><Logo /></span> : <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>}
     {lp ? <>
-    <p class="hdr-tel mono hdr-tel--lp"><span class="sr-only">Studio in Iligan City, Philippines. We reply in 1 business day.</span><span aria-hidden="true"><span class="t-open" data-open></span> <span class="t-lbl" data-open-l>Studio</span> · <span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-city"> · Reply in 1 business day</span></span></p>
+    <p class="hdr-tel mono hdr-tel--lp"><span class="sr-only">Studio in Iligan City, Philippines. We reply in 1 business day.</span><span aria-hidden="true"><span class="t-open" data-open></span> <span class="t-lbl" data-open-l>Studio</span> · <span class="t-time" data-clock></span> PHT<span class="t-city"> · Reply in 1 business day</span></span></p>
     {lp === 'audit' ? <div class="sd-lp" id="sd-lp" role="region" aria-label="Book your free website check">
       <p class="mono sd-price"><span class="t-city">Free website check · </span>15 min</p>
       <a href="#book" class="sd-go">Book a time <span aria-hidden="true">→</span></a>
@@ -35,7 +35,7 @@ const cur = menu.find((m) => m.href === current);
       <a href="#get-started" class="sd-go">Get started <span aria-hidden="true">→</span></a>
     </div>}
     </> : <>
-    <p class="hdr-tel mono"><span class="sr-only">Studio in Iligan City, Philippines</span><span aria-hidden="true"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></span></p>
+    <p class="hdr-tel mono"><span class="sr-only">Studio in Iligan City, Philippines</span><span aria-hidden="true"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></span></p>
     <nav class="sd sd-m" id="sd" aria-label="Primary">
       <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
       <span class="sd-div" aria-hidden="true"></span>
@@ -56,7 +56,7 @@ const cur = menu.find((m) => m.href === current);
 {!lp && <div class="menu" id="menu" popover aria-label="Site menu" data-word={cur ? cur.label : 'Fazed'}>
   <canvas class="menu-cv" aria-hidden="true"></canvas>
   <span class="menu-flood" aria-hidden="true"></span>
-  <p class="mono menu-tel" aria-hidden="true"><span data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT · <i class="t-open" data-open></i> <span data-open-l>Studio</span><span class="menu-tel-r"> · Reply in 1 business day</span></p>
+  <p class="mono menu-tel" aria-hidden="true"><span data-clock></span> PHT · <i class="t-open" data-open></i> <span data-open-l>Studio</span><span class="menu-tel-r"> · Reply in 1 business day</span></p>
   <button type="button" class="menu-x" popovertarget="menu" popovertargetaction="hide" aria-label="Close menu"><span class="sd-x" aria-hidden="true"></span></button>
   <div class="menu-in container">
     <nav aria-label="Menu">
@@ -66,7 +66,7 @@ const cur = menu.find((m) => m.href === current);
       </ol>
     </nav>
     <div class="menu-foot mono">
-      <p class="menu-st" aria-hidden="true">Studio time <span data-clock>{'--:--'}<span class="t-s">:--</span></span> PHT · <i class="t-open" data-open></i> <span data-open-l>Studio</span><span data-open-x></span></p>
+      <p class="menu-st" aria-hidden="true">Studio time <span data-clock></span> PHT · <i class="t-open" data-open></i> <span data-open-l>Studio</span><span data-open-x></span></p>
       <p><a class="link" href={`mailto:${NAP.email}`}>{NAP.email}</a></p>
       <p><a class="link" href={`tel:${NAP.tel}`}>{NAP.phone}</a></p>
       <p>Iligan City, PH · {NAP.coords}</p>

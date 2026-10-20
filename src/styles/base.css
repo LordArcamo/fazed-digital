@@ -128,3 +128,6 @@ html.cur-nav #cursor { opacity: 0; }
 /* SIGNAL DOCK: keep focus targets and the last CTA clear of the dock */
 html.is-docked { scroll-padding-bottom: 104px; }
 @media (max-width: 1023px) { html { scroll-padding-bottom: 104px; } main.page { padding-bottom: 96px; } }
+
+/* header/menu clock placeholder lives in CSS so crawlers don't read "--:--" as the first text on every page; nav.ts fills the span */
+[data-clock]:empty::before { content: '--:--'; }

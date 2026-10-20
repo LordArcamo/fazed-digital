@@ -7,6 +7,7 @@ import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import LpFooter from '../components/LpFooter.astro';
 import { SITE_URL, NAP, SOCIALS, FOUNDED } from '../data/site';
+import { team } from '../data/team';
 import '../styles/base.css';
 
 export interface Props {
@@ -36,7 +37,7 @@ const org = {
       name: NAP.name,
       url: `${SITE_URL}/`,
       foundingDate: String(FOUNDED),
-      logo: `${SITE_URL}/favicon.svg`,
+      logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo-512.png`, width: 512, height: 512 },
       image: `${SITE_URL}/og/home.png`,
       email: NAP.email,
       telephone: NAP.tel,
@@ -46,9 +47,13 @@ const org = {
       openingHoursSpecification: [{ '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday'], opens: '08:30', closes: '17:00' }],
       priceRange: '$499–$20,000',
       areaServed: [{ '@type': 'Country', name: 'Philippines' }, { '@type': 'Country', name: 'United States' }, { '@type': 'Country', name: 'Australia' }],
-      contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: NAP.email, telephone: NAP.tel, availableLanguage: ['English'] },
+      contactPoint: { '@type': 'ContactPoint', contactType: 'sales', email: NAP.email, telephone: NAP.tel, availableLanguage: ['English', 'Cebuano', 'Tagalog'] },
       knowsAbout: ['Web design', 'Brand identity', 'Search engine optimisation', 'Product design', 'Custom software development', 'WordPress', 'Astro', 'PrestaShop'],
-      founder: { '@type': 'Person', name: 'Lord Arcamo', jobTitle: 'Founder' },
+      founder: [
+        { '@type': 'Person', '@id': `${SITE_URL}/about#lord`, name: 'Lord Arcamo', jobTitle: 'Founder' },
+        { '@type': 'Person', '@id': `${SITE_URL}/about#reancirl`, name: 'Reancirl Balaba', jobTitle: 'Co-Founder' },
+      ],
+      numberOfEmployees: { '@type': 'QuantitativeValue', value: team.length },
       hasOfferCatalog: {
         '@type': 'OfferCatalog', name: 'Digital Agency Services',
         itemListElement: ['Web Design & Development', 'Brand Identity', 'SEO Marketing', 'Product Design', 'Custom Systems'].map((n) => ({ '@type': 'Offer', itemOffered: { '@type': 'Service', name: n } })),

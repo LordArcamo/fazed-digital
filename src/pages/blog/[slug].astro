@@ -2,6 +2,8 @@
 import Base from '../../layouts/Base.astro';
 import BlogCover from '../../components/BlogCover.astro';
 import OfferCard from '../../components/OfferCard.astro';
+import { phPosts } from '../../data/blog-markets';
+import { seoTitles } from '../../data/blog-seo';
 import postsIndex from '../../data/.generated/posts.json';
 import { SITE_URL } from '../../data/site';
 import { crumbs, ORG_REF } from '../../lib/schema';
@@ -1325,7 +1327,9 @@ const sameCat = all.filter((p) => p.category === category && p.slug !== slug);
 const idx = all.findIndex((p) => p.slug === slug);
 const related = [...sameCat].sort((a, b) => Math.abs(all.indexOf(a) - idx) - Math.abs(all.indexOf(b) - idx)).slice(0, 3);
 const svc = SERVICE_FOR[category];
-const pageTitle = title.length > 44 ? title : `${title} | Fazed Digital`;
+// short title tag when the headline runs long (src/data/blog-seo.ts); the H1 keeps the full headline
+const shortTitle = seoTitles[slug] ?? title;
+const pageTitle = shortTitle.length > 51 ? shortTitle : shortTitle.length > 44 ? `${shortTitle} | Fazed` : `${shortTitle} | Fazed Digital`;
 const iso = new Date(date).toISOString();
 const schema = [
   {
@@ -1363,7 +1367,7 @@ const schema = [
           {photo ? <img src={photo} alt={`${author}, ${authorRole} at Fazed Digital`} width="64" height="64" loading="lazy" decoding="async" /> : <span class="a-init mono" aria-hidden="true">{initials(author)}</span>}
           <p>Written by <a class="link" href={`/about#${authorId(author)}`}>{author}</a>, {authorRole} at Fazed Digital.</p>
         </aside>
-        <OfferCard heading="Ready to put this into practice?" body="Get a professional website live in 7 days. It’s custom, mobile-ready and set up for Google from day one, built by the team who wrote this guide." />
+        <OfferCard ph={phPosts.has(slug)} heading="Ready to put this into practice?" body="Get a professional website live in 7 days. It’s custom, mobile-ready and set up for Google from day one, built by the team who wrote this guide." />
       </div>
     </div>
     {related.length > 0 && (

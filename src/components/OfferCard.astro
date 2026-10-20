@@ -1,12 +1,16 @@
 ---
 // copy/blog-index.md [BLOG-OFFER] (lime flood card)
-const { heading = 'Rather we just build it for you?', body = 'Everything on this blog, built into your site: custom design, mobile-ready, set up for Google and live in 7 days at a fixed price.' } = Astro.props;
+// ph: a post written for Philippine readers leads with peso pricing (src/data/blog-markets.ts)
+const { heading = 'Rather we just build it for you?', body = 'Everything on this blog, built into your site: custom design, mobile-ready, set up for Google and live in 7 days at a fixed price.', ph = false } = Astro.props;
 ---
 <aside class="offer on-lime" aria-label="7-day website package">
   <p class="mono">7-day website package</p>
   <h2 class="t-d2">{heading}</h2>
   <p>{body}</p>
-  <div class="offer-cta"><a class="btn btn--black" href="/lp/7-day-website">Get live in 7 days <span class="arrow" aria-hidden="true">→</span></a><a class="offer-link" href="/lp/7-day-website/ph">See peso pricing (₱19,999+)</a></div>
+  {ph
+    ? <div class="offer-cta"><a class="btn btn--black" href="/lp/7-day-website/ph">Get live in 7 days (₱19,999+) <span class="arrow" aria-hidden="true">→</span></a><a class="offer-link" href="/web-design-iligan-city">In Iligan or CDO? Meet us in person</a></div>
+    : <div class="offer-cta"><a class="btn btn--black" href="/lp/7-day-website">Get live in 7 days <span class="arrow" aria-hidden="true">→</span></a><a class="offer-link" href="/lp/7-day-website/ph">See peso pricing (₱19,999+)</a></div>}
+  <p class="offer-alt">Not sure yet? <a class="offer-link" href="/audit">Book a free 15-minute website check</a></p>
 </aside>
 <style>
   .offer { background: var(--lime); padding: clamp(1.5rem, 4vw, 3.5rem); display: grid; gap: 1rem; justify-items: start; }
@@ -15,5 +19,6 @@ const { heading = 'Rather we just build it for you?', body = 'Everything on this
   .offer p:not(.mono) { max-width: 52ch; }
   .offer-cta { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; margin-top: .5rem; }
   .offer .btn--black, .offer .btn--black :global(*) { color: var(--lime); }
+  .offer-alt { margin-top: -.25rem; }
   .offer-link { font-weight: 600; text-decoration: underline; text-underline-offset: .2em; min-height: 44px; display: inline-flex; align-items: center; }
 </style>

@@ -6,15 +6,20 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { caseIndex } = await import(join(ROOT, 'src/data/cases.ts'));
 const { chapters } = await import(join(ROOT, 'src/data/services.ts'));
 const { labShipped } = await import(join(ROOT, 'src/data/lab.ts'));
+const { team } = await import(join(ROOT, 'src/data/team.ts'));
 const posts = JSON.parse(readFileSync(join(ROOT, 'src/data/.generated/posts.json'), 'utf8'));
 const S = 'https://www.fazeddigital.com';
 const lines = [
   '# Fazed Digital',
   '',
-  '> Web design, branding and SEO studio in Iligan City, Lanao del Norte, Philippines (est. 2022). Websites, brands and web apps for clients in the USA, Australia and the Philippines.',
+  '> Web design, branding and SEO studio in Iligan City, Lanao del Norte, Philippines (est. 2022). Websites, brands and web apps for clients in the USA, Australia and the Philippines. 120+ projects delivered since 2022.',
   '',
+  '- Not affiliated with Faze Digital (London), Faze47 Digital, Fuze Digital or FZP Digital. Fazed Digital is the studio at www.fazeddigital.com.',
+  `- Team (${team.length}): ` + team.map((p) => `${p.name} (${p.role})`).join(', ') + ` · ${S}/about`,
+  '- Languages: English, Bisaya (Cebuano) and Tagalog. Meets clients in person in Iligan City and Cagayan de Oro; works online worldwide.',
+  '- Payment: GCash, Maya, bank transfer (BPI, Metrobank) and Wise.',
   `- Contact: info@fazeddigital.com · +63 906 825 3451 · Mon–Fri 8:30am–5:00pm PHT · ${S}/contact`,
-  '- 7-day website package: Starter $499 / Growth $899 / Pro $1,499 (PHP: ₱19,999 / ₱34,999 / ₱59,999). Delivery in 7 business days, or 20% off the project fee.',
+  '- 7-day website package: Starter $499 / Growth $899 / Pro $1,499 (PHP: ₱19,999 / ₱34,999 / ₱59,999). Starter = 5 pages, 2 revision rounds; Growth = 8 pages + blog/CMS, 3 rounds; Pro = 10+ pages, e-commerce ready, unlimited revisions. Delivery in 7 business days, or 20% off the project fee. The client owns the domain, hosting, logins and files.',
   '- Custom websites and systems: typically $5,000–$20,000 depending on scope.',
   '',
   '## Services',

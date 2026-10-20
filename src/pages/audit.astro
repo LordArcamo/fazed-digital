@@ -6,7 +6,7 @@
 import Base from '../layouts/Base.astro';
 import Faq from '../components/Faq.astro';
 import { prices, results } from '../data/proof';
-import { crumbs, faqPage } from '../lib/schema';
+import { crumbs, faqPage, ORG_REF } from '../lib/schema';
 
 const BOOK = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2L1Fs1oTiHh8854mrEVtm_ny4BEhlyi5Pg-jdTsutFOInmrjHh4L-gxqLYqq_eM8pcUqxot6PF';
 const checks = [
@@ -26,7 +26,17 @@ const faq = [
   { q: 'Who will I talk to?', a: 'Someone from the Fazed Digital team, a small web studio in Iligan City, Philippines. We build websites for businesses in the Philippines, the USA and Australia.' },
   { q: 'What happens after the call?', a: `Nothing, unless you want it to. If you’d like us to make the fixes, ask about our 7-day website: a new site, live in 7 business days, from ${prices.php.starter} or ${prices.usd.starter}.` },
 ];
-const schema = [faqPage(faq), crumbs([['Free website check', '/audit']])];
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': 'https://www.fazeddigital.com/audit#service',
+    name: 'Free website check (15 minutes)', serviceType: 'Website review',
+    description: 'A free 15-minute website check on Google Meet with the Fazed Digital team: is the site easy to use on a phone, does the contact form work, and can Google read the pages. You leave with the 3 fixes most likely to bring more calls and enquiries.',
+    provider: ORG_REF, areaServed: 'Worldwide', availableChannel: { '@type': 'ServiceChannel', serviceUrl: 'https://www.fazeddigital.com/audit' },
+    offers: { '@type': 'Offer', price: '0', priceCurrency: 'USD', availability: 'https://schema.org/InStock', url: 'https://www.fazeddigital.com/audit' },
+  },
+  faqPage(faq),
+  crumbs([['Free website check', '/audit']]),
+];
 ---
 <Base title="Free Website Check: 15-Min Review on Google Meet | Fazed" description="Book a free 15-minute website check on Google Meet. We review your site with you and name the 3 fixes likely to bring more calls. No site yet? Book anyway." image="/og/audit.png" formation="lattice" schema={schema} lp="audit">
   <div class="au">

@@ -2,7 +2,7 @@
 import Base from '../layouts/Base.astro';
 import { team } from '../data/team';
 import { stats } from '../data/proof';
-import { NAP, SITE_URL } from '../data/site';
+import { NAP, SITE_URL, YEARS } from '../data/site';
 import { crumbs, ORG_REF } from '../lib/schema';
 const timeline = [
   ['2022', 'Fazed Digital founded in Iligan City'],
@@ -24,7 +24,7 @@ const promises = [
 ];
 const schema = [
   { '@context': 'https://schema.org', '@type': 'AboutPage', url: `${SITE_URL}/about`, name: 'About Fazed Digital', about: ORG_REF },
-  ...team.map((p) => ({ '@context': 'https://schema.org', '@type': 'Person', name: p.name, jobTitle: p.role, worksFor: ORG_REF, url: `${SITE_URL}/about#${p.id}` })),
+  ...team.map((p) => ({ '@context': 'https://schema.org', '@type': 'Person', name: p.name, jobTitle: p.role, worksFor: ORG_REF, url: `${SITE_URL}/about#${p.id}`, '@id': `${SITE_URL}/about#${p.id}` })),
   crumbs([['About', '/about']]),
 ];
 ---
@@ -43,7 +43,7 @@ const schema = [
   <section class="section container a-story" data-f="lattice" aria-labelledby="st-h">
     <div><p class="mono">Our story · 2022 → now</p><h2 id="st-h" class="t-d2">Started small. Think big.</h2></div>
     <div class="a-story-b">
-      <p class="t-body-l">We started as a one-person studio in Iligan City. Four years later we’re a tight-knit team of designers, strategists and developers, and our work runs businesses in Utah, Queensland and here at home.</p>
+      <p class="t-body-l">We started as a one-person studio in Iligan City. {YEARS === 1 ? 'A year' : `${['Zero','One','Two','Three','Four','Five','Six','Seven','Eight','Nine','Ten'][YEARS] ?? YEARS} years`} later we’re a tight-knit team of designers, strategists and developers, and our work runs businesses in Utah, Queensland and here at home.</p>
       <p>We grew by doing the unglamorous things properly: asking the right questions first, quoting the real scope, putting your domain in your name, and answering when you message.</p>
       <p>Every project still starts the same way. Who are you? Who are you talking to? What do you want them to feel? The answers shape everything that follows.</p>
       <ol class="rail">{timeline.map(([y, t]) => <li class="rv"><span class="mono rail-y">{y}</span><span class="rail-dot" aria-hidden="true"></span><p>{t}</p></li>)}</ol>
