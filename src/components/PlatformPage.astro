@@ -1,27 +1,31 @@
 ---
-// /framer and /webflow: one template, data in src/data/nocode.ts. Builds are concept sites for fictional brands
+// /framer, /webflow and /ecommerce: one template, data in src/data/nocode.ts. Builds are concept sites for fictional brands
 // (labelled on every card), never client work. Prices: only the published 7-day packages; platform builds are quoted.
 import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Faq from './Faq.astro';
-import { builds, platforms, choose, NOCODE_LABEL, type Platform } from '../data/nocode';
-import { nocodeImages } from '../data/images';
+import { builds, platforms, choose, NOCODE_LABEL, type Page } from '../data/nocode';
+import { nocodeImages, workImages } from '../data/images';
 import { SITE_URL } from '../data/site';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
 
-const { platform } = Astro.props as { platform: Platform };
+const { platform } = Astro.props as { platform: Page };
 const p = platforms[platform];
-const other = platform === 'framer' ? platforms.webflow : platforms.framer;
-const mine = builds.filter((b) => b.platform === platform);
-const theirs = builds.filter((b) => b.platform !== platform);
+const other = p.also ? platforms[p.also as 'framer' | 'webflow'] : null;
+// /ecommerce leads with the custom-coded 3D stores, then the Framer shop pages
+const mine = builds.filter(p.filter).sort((a, b) => (platform === 'ecommerce' ? Number(b.platform === 'code') - Number(a.platform === 'code') : 0));
+const featured = mine.slice(0, 2), rest = mine.slice(2);
+const allTheirs = other ? builds.filter(other.filter) : [];
+const theirs = allTheirs.slice(0, 3);
+const builtWith = (b: (typeof builds)[number]) => (b.platform === 'code' ? 'Custom code' : b.platform === 'framer' ? 'Framer' : 'Webflow');
 const url = SITE_URL + p.path;
 const fmt = (iso: string) => new Date(iso + 'T00:00:00+08:00').toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Manila' });
 const steps = [
   ['01', 'Short call', 'What the site must do, who it’s for, and what you already have. You get a price and a timeline upfront.'],
   ['02', 'Direction', 'A look and a page plan, agreed before we build, so there are no surprises later.'],
-  ['03', 'Build', `Every page in ${p.name}, designed for desktop, tablet and phone, with forms, motion and SEO basics in place.`],
+  ['03', 'Build', p.stepBuild],
   ['04', 'Review', 'You test it on a staging link and we make the changes.'],
-  ['05', 'Publish and hand over', `We connect your domain and hand over the ${p.name} project, with a walkthrough of how to edit it.`],
+  ['05', platform === 'ecommerce' ? 'Launch and hand over' : 'Publish and hand over', p.stepHand],
 ];
 const schema = [
   {
@@ -29,7 +33,7 @@ const schema = [
     serviceType: `${p.name} website design`, description: p.description, url, provider: ORG_REF, areaServed: 'Worldwide',
   },
   {
-    '@context': 'https://schema.org', '@type': 'ItemList', name: `Fazed Digital ${p.name} concept sites`,
+    '@context': 'https://schema.org', '@type': 'ItemList', name: `Fazed Digital ${p.name.toLowerCase()} concept sites`,
     itemListElement: mine.map((b, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'CreativeWork', name: `${b.brand} (concept site, fictional brand)`, url: b.url, dateCreated: b.date, creator: ORG_REF } })),
   },
   faqPage(p.faq as unknown as { q: string; a: string }[]),
@@ -44,22 +48,22 @@ const schema = [
         <h1 id="pf-h" class="t-d1">{p.h1[0]} <span class="dim">{p.h1[1]}</span></h1>
         <p class="t-body-l pf-deck">{p.deck}</p>
         <div class="pf-cta">
-          <a class="btn btn--lime" href="/contact?service=web" data-magnetic>Talk about your {p.name} site <span class="arrow" aria-hidden="true">→</span></a>
-          <a class="btn btn--ghost" href="#builds">See our {p.name} builds</a>
+          <a class="btn btn--lime" href="/contact?service=web" data-magnetic>{p.cta} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="#builds">{p.see}</a>
         </div>
       </div>
     </section>
 
     <section class="container pf-sec" id="builds" aria-labelledby="b-h">
-      <div class="pf-hd"><p class="mono">Built in {p.name} · {String(mine.length).padStart(2, '0')}</p><h2 id="b-h" class="t-d2">Our {p.name} builds. <span class="dim">Open them, click around.</span></h2></div>
+      <div class="pf-hd"><p class="mono">{p.buildsEye} · {String(mine.length).padStart(2, '0')}</p><h2 id="b-h" class="t-d2">{p.buildsH[0]} <span class="dim">{p.buildsH[1]}</span></h2></div>
       <ul class="pf-builds">
-        {mine.map((b, i) => (
+        {featured.map((b, i) => (
           <li class="pf-b rv">
             <a class="pf-shot" href={b.url} target="_blank" rel="noopener" data-cursor="OPEN ↗" aria-label={`Open the ${b.brand} concept site (opens in a new tab)`}>
               <Picture src={nocodeImages[b.id]} formats={['avif', 'webp']} widths={[640, 1024, 1440]} sizes="(max-width: 1023px) 92vw, 60vw" alt={b.alt} loading={i === 0 ? 'eager' : 'lazy'} decoding="async" />
             </a>
             <div class="pf-b-txt">
-              <p class="mono pf-meta"><span>{b.category}</span><span>{fmt(b.date)}</span></p>
+              <p class="mono pf-meta"><span>{b.category}</span><span>{platform === 'ecommerce' ? builtWith(b) : fmt(b.date)}</span></p>
               <h3 class="t-d2 pf-brand">{b.brand}</h3>
               <p class="pf-line">“{b.line}”</p>
               <p>{b.what}</p>
@@ -69,11 +73,42 @@ const schema = [
           </li>
         ))}
       </ul>
+      {rest.length > 0 && (
+        <ul class="pf-grid">
+          {rest.map((b) => (
+            <li class="pf-g rv">
+              <a class="pf-shot" href={b.url} target="_blank" rel="noopener" data-cursor="OPEN ↗" aria-label={`Open the ${b.brand} concept site (opens in a new tab)`}>
+                <Picture src={nocodeImages[b.id]} formats={['avif', 'webp']} widths={[480, 800, 1200]} sizes="(max-width: 767px) 92vw, 45vw" alt={b.alt} loading="lazy" decoding="async" />
+              </a>
+              <p class="mono pf-meta"><span>{b.category}</span><span>{platform === 'ecommerce' ? builtWith(b) : fmt(b.date)}</span></p>
+              <h3 class="t-h3">{b.brand} <span class="pf-gl">“{b.line}”</span></h3>
+              <p>{b.what}</p>
+              <ul class="pf-chips"><li class="chip chip--lab">{NOCODE_LABEL}</li>{b.chips.map((c) => <li class="chip">{c}</li>)}</ul>
+              <a class="link" href={b.url} target="_blank" rel="noopener">Open {b.brand} ↗<span class="sr-only"> (opens in a new tab)</span></a>
+            </li>
+          ))}
+        </ul>
+      )}
       <p class="pf-honest mono">Concept sites for fictional brands, built by our team. Not client work. Client case studies are on <a class="link" href="/work">Work</a>.</p>
     </section>
 
+    {platform === 'ecommerce' && (
+      <section class="container pf-sec" aria-labelledby="cl-h">
+        <div class="pf-hd"><p class="mono">Client work · Case 04</p><h2 id="cl-h" class="t-d2">A real store we moved. <span class="dim">Zero data loss.</span></h2></div>
+        <a class="pf-client rv" href="/work/04">
+          <Picture src={workImages['04']} formats={['avif', 'webp']} widths={[640, 1024]} sizes="(max-width: 1023px) 92vw, 50vw" alt="The Telecom Shop PrestaShop storefront built by Fazed Digital" loading="lazy" decoding="async" />
+          <div>
+            <p class="mono pf-meta"><span>Australia · Telco retail</span><span>10 weeks</span></p>
+            <h3 class="t-d2 pf-brand">The Telecom Shop</h3>
+            <p>An Australian online retailer of phones, tablets, accessories and plans. We moved their full catalogue, customer data and order history from Magento to PrestaShop with zero data loss and minimal disruption to trading. The new store loads significantly faster, and the team runs its catalogue and promotions without a developer.</p>
+            <span class="link">Read the case study →</span>
+          </div>
+        </a>
+      </section>
+    )}
+
     <section class="container pf-sec" aria-labelledby="s-h">
-      <div class="pf-hd"><p class="mono">What we set up</p><h2 id="s-h" class="t-d2">Everything a {p.name} site needs <span class="dim">to work on day one.</span></h2></div>
+      <div class="pf-hd"><p class="mono">What we set up</p><h2 id="s-h" class="t-d2">{p.setupH[0]} <span class="dim">{p.setupH[1]}</span></h2></div>
       <ul class="pf-cards">{p.setup.map(([t, d]) => <li class="rv"><h3 class="t-h3">{t}</h3><p>{d}</p></li>)}</ul>
     </section>
 
@@ -92,7 +127,7 @@ const schema = [
       <ol class="pf-steps">{steps.map(([n, t, d]) => <li class="rv"><span class="mono">{n}</span><b>{t}</b><span>{d}</span></li>)}</ol>
     </section>
 
-    {theirs.length > 0 && (
+    {other && theirs.length > 0 && (
       <section class="container pf-sec" aria-labelledby="o-h">
         <div class="pf-hd"><p class="mono">Also built in {other.name}</p><h2 id="o-h" class="t-d2">Prefer {other.name}? <span class="dim">We build there too.</span></h2></div>
         <ul class="pf-also">{theirs.map((b) => (
@@ -101,20 +136,20 @@ const schema = [
             <span class="mono">{b.category}</span><b>{b.brand}</b>
           </a></li>
         ))}</ul>
-        <a class="link" href={other.path}>{other.name} websites →</a>
+        <a class="link" href={other.path}>{allTheirs.length > 1 ? `All ${allTheirs.length} ${other.name} builds` : `${other.name} websites`} →</a>
       </section>
     )}
 
     <section class="container pf-sec" aria-labelledby="f-h">
-      <div class="pf-hd"><p class="mono">FAQ</p><h2 id="f-h" class="t-d2">Questions about {p.name}.</h2></div>
+      <div class="pf-hd"><p class="mono">FAQ</p><h2 id="f-h" class="t-d2">{p.faqH}</h2></div>
       <Faq items={p.faq as unknown as { q: string; a: string }[]} id={`${platform}-faq`} />
     </section>
 
     <section class="pf-end on-lime" aria-label="Get started">
       <div class="container pf-end-in">
-        <div><p class="t-h3">Got a {p.name} site in mind?</p><p>Tell us what it needs to do. A real person replies within one business day, with a price and a timeline.</p></div>
+        <div><p class="t-h3">{p.endH}</p><p>Tell us what it needs to do. A real person replies within one business day, with a price and a timeline.</p></div>
         <div class="pf-end-btns">
-          <a class="btn btn--black" href="/contact?service=web">Get a {p.name} quote <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--black" href="/contact?service=web">{p.quote} <span class="arrow" aria-hidden="true">→</span></a>
           <a class="pf-end-link" href="/audit">Or book a free 15-minute website check</a>
         </div>
       </div>
@@ -146,6 +181,16 @@ const schema = [
   .pf-chips { display: flex; flex-wrap: wrap; gap: .4rem; }
   .pf-chips .chip { min-height: 30px; padding: 0 .7rem; font-size: 11px; color: var(--gray-300); }
   .pf-chips .chip--lab { border-color: var(--lime); color: var(--lime); }
+  .pf-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(40px, 5vw, 64px) var(--gutter); }
+  .pf-g { display: grid; gap: .8rem; align-content: start; justify-items: start; }
+  .pf-g .pf-shot { width: 100%; }
+  .pf-g > p:not(.mono) { color: var(--gray-300); }
+  .pf-gl { display: block; margin-top: .3rem; font-size: 1rem; font-weight: 500; color: var(--gray-300); }
+  .pf-client { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 1.5rem var(--gutter); align-items: center; }
+  .pf-client :global(img) { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); border-radius: 12px; transition: border-color .2s; }
+  .pf-client:hover :global(img) { border-color: var(--lime); }
+  .pf-client > div { display: grid; gap: .9rem; justify-items: start; }
+  .pf-client p:not(.mono) { color: var(--gray-300); max-width: 56ch; }
   .pf-honest { color: var(--gray-400); font-size: 12px; letter-spacing: .06em; }
   .pf-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--gutter); }
   .pf-cards li, .pf-choose li { display: grid; gap: .75rem; align-content: start; padding: 24px; border: 1px solid var(--gray-700); border-radius: 14px; background: var(--gray-900); }
@@ -167,12 +212,12 @@ const schema = [
   .pf-end-btns { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem 1.5rem; }
   .pf-end-link { color: var(--black); font-weight: 600; text-decoration: underline; text-underline-offset: .2em; min-height: 44px; display: inline-flex; align-items: center; }
   @media (max-width: 1023px) {
-    .pf-b { grid-template-columns: 1fr; } .pf-b:nth-child(even) .pf-shot { order: 0; }
+    .pf-b, .pf-client { grid-template-columns: 1fr; } .pf-b:nth-child(even) .pf-shot { order: 0; }
     .pf-cards, .pf-choose { grid-template-columns: 1fr 1fr; } .pf-choose li:last-child { grid-column: 1 / -1; }
   }
   @media (max-width: 767px) {
     .pf-hero { padding-top: calc(var(--header-h) + 48px); }
-    .pf-cards, .pf-choose, .pf-also { grid-template-columns: 1fr; }
+    .pf-cards, .pf-choose, .pf-also, .pf-grid { grid-template-columns: 1fr; }
     .pf-steps li { grid-template-columns: 3rem minmax(0, 1fr); } .pf-steps li > span:last-child { grid-column: 2; }
     .pf-cta .btn, .pf-end-btns .btn { width: 100%; justify-content: center; }
   }

@@ -81,6 +81,7 @@ const pages = {
   'lp-7day': { eyebrow: '7-day website · fixed price', title: 'Your website, live in 7 days.', meta: 'From $499 · You own everything' },
   'lp-7day-ph': { eyebrow: '7-day website · Philippine pricing', title: 'Your website, live in 7 days.', meta: 'From PHP 19,999 · GCash · Maya · Bank' },
   framer: { eyebrow: 'Framer · Design and build', title: 'Framer websites, built by one team.', meta: 'Landing pages · Waitlists · CMS blogs · Shop pages' },
+  ecommerce: { eyebrow: 'E-commerce · Design and build', title: 'Online stores that help people buy.', meta: 'Product pages · Carts · 3D buying tools · Migrations' },
   webflow: { eyebrow: 'Webflow · Design and build', title: 'Webflow websites, built by one team.', meta: 'Product sites · Interactions · CMS · Forms' },
   audit: { eyebrow: 'Free website check · 15 min', title: 'Three fixes that bring you more calls.', meta: 'Free · No obligation · Google Meet' },
 };

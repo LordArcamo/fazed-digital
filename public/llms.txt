@@ -18,7 +18,8 @@
 - [Custom system development](https://www.fazeddigital.com/services#systems): Software that fits how your team works.
 - [7-day website (USD)](https://www.fazeddigital.com/lp/7-day-website) · [Philippine pricing](https://www.fazeddigital.com/lp/7-day-website/ph)
 - [Web design in Iligan City](https://www.fazeddigital.com/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.
-- [Framer websites](https://www.fazeddigital.com/framer): Framer design and build (landing pages, waitlists, CMS blogs, shop pages); concept builds Suddle and Ricko are fictional brands, not client work.
+- [Framer websites](https://www.fazeddigital.com/framer): Framer design and build (landing pages, waitlists, CMS blogs, shop pages); 7 concept builds (Suddle, Ricko, Dawdle, Stillroom, Lanewise, YOWCH, Mizzle) are fictional brands, not client work.
+- [E-commerce websites](https://www.fazeddigital.com/ecommerce): online stores, buying tools (3D rug size planner, 3D tile visualiser) and store migrations; client case: The Telecom Shop, Magento to PrestaShop with zero data loss. Concept stores Madder & Weft and Salt & Kiln are fictional brands.
 - [Webflow websites](https://www.fazeddigital.com/webflow): Webflow design and build (product sites, Webflow Interactions, CMS, forms); concept build Signalbox is a fictional brand, not client work.
 - [Free 15-minute website check](https://www.fazeddigital.com/audit): Google Meet call, 3 fixes for more calls and enquiries; no site needed.
 
