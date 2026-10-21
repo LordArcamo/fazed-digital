@@ -102,6 +102,6 @@ export const serviceFaq = [
   { q: 'How much does a website cost?', a: 'Our 7-day packages start at $499 (₱19,999 in the Philippines). Custom projects are quoted after a discovery call, and a typical custom website or system runs $5,000–$20,000 depending on scope.' },
   { q: 'How long does SEO take?', a: 'Setup takes about a month: the technical fixes, keyword plan and tracking. Results usually show in 6–12 months, depending on your market and competition. You get a plain-English report every month.' },
   { q: 'Will I own my website?', a: 'Yes. Your domain, hosting, logins, design files and content are yours once paid for. No lock-in contracts.' },
-  { q: 'Which platforms do you build on?', a: 'WordPress when you want to edit everything yourself. Astro, React or Next.js when performance and flexibility matter most. Webflow when it fits. We recommend the best fit for you.' },
+  { q: 'Which platforms do you build on?', a: 'WordPress when you want to edit everything yourself. Astro, React or Next.js when performance and flexibility matter most. Framer or Webflow when your marketing team wants a site builder they can edit. We recommend the best fit for you.' },
   { q: 'Do you offer support after launch?', a: 'Yes. Monthly maintenance plans start at $99/month (₱3,500 in the Philippines), and SEO retainers are available for continued growth.' },
 ];

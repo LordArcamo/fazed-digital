@@ -16,4 +16,8 @@ import lab05 from '../assets/lab/05.jpg';
 import lab06 from '../assets/lab/06.jpg';
 import lab07 from '../assets/lab/07.jpg';
 import lab08 from '../assets/lab/08.jpg';
+import ncSuddle from '../assets/nocode/suddle.jpg';
+import ncRicko from '../assets/nocode/ricko.jpg';
+import ncSignalbox from '../assets/nocode/signalbox.jpg';
 export const labImages: Record<string, ImageMetadata> = { '01': lab01, '02': lab02, '03': lab03, '04': lab04, '05': lab05, '06': lab06, '07': lab07, '08': lab08 };
+export const nocodeImages: Record<string, ImageMetadata> = { suddle: ncSuddle, ricko: ncRicko, signalbox: ncSignalbox };

@@ -26,6 +26,8 @@ const lines = [
   ...chapters.map((c) => `- [${c.h2}](${S}/services#${c.id}): ${c.outcome}`),
   `- [7-day website (USD)](${S}/lp/7-day-website) · [Philippine pricing](${S}/lp/7-day-website/ph)`,
   `- [Web design in Iligan City](${S}/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.`,
+  `- [Framer websites](${S}/framer): Framer design and build (landing pages, waitlists, CMS blogs, shop pages); concept builds Suddle and Ricko are fictional brands, not client work.`,
+  `- [Webflow websites](${S}/webflow): Webflow design and build (product sites, Webflow Interactions, CMS, forms); concept build Signalbox is a fictional brand, not client work.`,
   `- [Free 15-minute website check](${S}/audit): Google Meet call, 3 fixes for more calls and enquiries; no site needed.`,
   '',
   '## Case studies',
