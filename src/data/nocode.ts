@@ -26,10 +26,10 @@ export const NOCODE_LABEL = 'Concept site · fictional brand';
 export const builds: NoCodeBuild[] = [
   {
     id: 'suddle', platform: 'framer', brand: 'Suddle', category: 'Pet shampoo · waitlist', line: 'Bath time, minus the drama.',
-    what: 'A launch site for a new dog and cat shampoo: waitlist forms in the hero, the page and a pop-up, a Bath Tips blog on Framer CMS, a liquid shader behind the sign-up and bubbles you can drag. A second, playful version of the page has bubbles you pop.',
-    chips: ['Framer CMS blog', 'Waitlist forms', 'Shader', 'Scroll motion', 'Desktop · tablet · phone'],
-    url: 'https://stormy-board-163108.framer.app', host: 'stormy-board-163108.framer.app', date: '2026-10-20',
-    alt: 'Suddle concept site built in Framer: the headline Bath time, minus the drama next to a wet spaniel photo and a waitlist email form.',
+    what: 'The bubbly, playful version of a launch site for a new dog and cat shampoo: soap bubbles you can pop (they grow back), round pebble photos, a foam cloud hero and a waitlist form. The main site adds a Bath Tips blog on Framer CMS, a waitlist pop-up and a liquid shader.',
+    chips: ['Poppable bubbles', 'Framer components', 'Waitlist forms', 'Framer CMS blog', 'Desktop · tablet · phone'],
+    url: 'https://stormy-board-163108.framer.app/playful', host: 'stormy-board-163108.framer.app/playful', date: '2026-10-20',
+    alt: 'Suddle playful concept page built in Framer: the headline Bath time, minus the drama in a foam cloud, with round photos of a wet spaniel and a fluffy cat, soap bubbles and a waitlist email form.',
   },
   {
     id: 'ricko', platform: 'framer', brand: 'Ricko', category: 'Rice milk · shop page', line: 'Shake it like you mean it.',
