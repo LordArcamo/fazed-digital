@@ -38,6 +38,8 @@
   - Halde Ø1 (concept site, fictional brand): https://fazed-halde-o1.vercel.app · OGL, Blender Cycles, Lenis, Seedance clip · 2026-10-17
   - Vitrène Sérum 1.47 (concept site, fictional brand): https://fazed-vitrene-serum.vercel.app · PixiJS, Blender Cycles, GSAP + Lenis, Multi-pass plates · 2026-10-17
   - Saltrae · Casa Ocaso (concept site, fictional brand): https://fazed-casa-ocaso.vercel.app · Three.js, Live lighting, postprocessing, KTX2, GSAP + Lenis · 2026-10-19
+  - Whiting (concept site, fictional brand): https://fazed-whiting.vercel.app · Three.js WebGPU, TSL, Live lighting, Motion capture, Lenis · 2026-10-21
+  - Fazzy · PLAIN TEXT (concept site, fictional brand): https://fazed-plain-text.vercel.app · OGL, Tone.js, GSAP + Lenis, SVG rig · 2026-10-20
 
 ## Guides
 - [SEO in Iligan City: How Local Businesses Get Found on Google](https://www.fazeddigital.com/blog/seo-iligan-city) (SEO, 20 Oct 2026)
@@ -58,7 +60,7 @@
 - [Visual Hierarchy in Web Design: How to Guide Visitors to the Action That Matters](https://www.fazeddigital.com/blog/visual-hierarchy-web-design) (Design, 05 Oct 2026)
 - [Logo Design for Small Businesses: What Makes a Logo Actually Work](https://www.fazeddigital.com/blog/logo-design-small-business) (Branding, 04 Oct 2026)
 - [Google Analytics 4 for Small Businesses: What to Track and How to Set It Up](https://www.fazeddigital.com/blog/google-analytics-4-small-business) (Development, 03 Oct 2026)
-- [How Much Should a Website Cost? A Transparent Pricing Guide for Small Businesses](https://www.fazeddigital.com/blog/web-design-pricing-guide) (Strategy, 03 Oct 2026)
+- [How Much Does a Website Cost in the Philippines in 2026?](https://www.fazeddigital.com/blog/web-design-pricing-guide) (Strategy, 03 Oct 2026)
 - [Local SEO for Small Businesses: How to Get Found on Google Maps](https://www.fazeddigital.com/blog/local-seo-small-business-guide) (SEO, 02 Oct 2026)
 - [When to Rebrand (And When You Really Shouldn't)](https://www.fazeddigital.com/blog/rebranding-when-and-how) (Branding, 25 Sep 2026)
 - [The Anatomy of a High-Converting Landing Page](https://www.fazeddigital.com/blog/landing-page-conversion-design) (Design, 18 Sep 2026)

@@ -14,7 +14,7 @@ export type LabStatus = 'shipped' | 'research' | 'queued';
 export interface LabItem {
   n: string;
   slug: string;
-  /** full fictional brand name */
+  /** full fictional brand name (#08: Fazzy is our real mascot; the album is the fiction) */
   brand: string;
   /** caption on the contact sheet */
   short: string;
@@ -90,8 +90,22 @@ const all: LabItem[] = [
     alt: 'Saltrae Casa Ocaso concept site: a long rammed-earth desert villa at dusk with lit windows, under the headline Built for the last hour of light.',
     desc: 'Concept site for a fictional desert villa. Real-time 3D with live lighting: scroll runs the evening from 17:52 to 21:04.',
   },
-  { n: '07', slug: 'fitness', brand: 'Fitness', short: 'Fitness', category: 'Fitness studio', status: 'queued' },
-  { n: '08', slug: 'music', brand: 'Music', short: 'Music', category: 'Music artist', status: 'queued' },
+  {
+    n: '07', slug: 'whiting', brand: 'Whiting', short: 'Whiting', category: 'Strength studio', line: 'Slow is strong.',
+    sub: 'A chalk-dust athlete forms on the platform and lifts in tempo. Set your own tempo and watch every rep get counted.',
+    chips: ['Three.js WebGPU', 'TSL', 'Live lighting', 'Motion capture', 'Lenis'], built: 'Astro · Three.js',
+    url: 'https://fazed-whiting.vercel.app', date: '2026-10-21', status: 'shipped',
+    alt: 'Whiting concept site: a chalk-dust athlete forming above a barbell with red plates in a dark brick mill, under the headline Slow is strong.',
+    desc: 'Concept site for a fictional strength studio. Real-time 3D with live lighting: a chalk athlete lifts in tempo inside a 1920s mill.',
+  },
+  {
+    n: '08', slug: 'plain-text', brand: 'Fazzy · PLAIN TEXT', short: 'PLAIN TEXT', category: 'Music artist', line: 'PLAIN TEXT',
+    sub: 'Fazzy, our mascot, drops a debut album written as rows of text. Make a beat, remix the songs and scroll to hear them play.',
+    chips: ['OGL', 'Tone.js', 'GSAP + Lenis', 'SVG rig'], built: 'Astro · OGL · Tone.js',
+    url: 'https://fazed-plain-text.vercel.app', date: '2026-10-20', status: 'shipped',
+    alt: 'PLAIN TEXT concept site: Fazzy the Fazed Digital mascot waving in front of rows of lime and white blocks, under a dotted PLAIN TEXT headline.',
+    desc: 'Concept site for a fictional album by Fazzy, the Fazed Digital mascot. Interactive music: make a beat, remix the stems, scroll plays the song.',
+  },
   { n: '09', slug: 'resort', brand: 'Resort', short: 'Resort', category: 'Island resort', status: 'queued' },
   { n: '10', slug: 'headphones', brand: 'Headphones', short: 'Headphones', category: 'Premium headphones', status: 'queued' },
 ];
