@@ -28,7 +28,7 @@ const steps = [
 // Lab feature: the newest three concept sites, newest first (#04 Halde stays off sales pages: CC BY-NC base model)
 const labNew = labShipped.filter((i) => i.n !== '04' && i.url).reverse().slice(0, 3);
 // arcs: Iligan → each distinct client location (from cases.ts only)
-const arcDests = [...new Map(caseIndex.map((c) => [`${c.lat},${c.lon}`, [c.lat, c.lon]])).values()];
+const arcDests = [...new Map(caseIndex.filter((c) => Math.hypot(c.lat - 8.23, c.lon - 124.24) > 1).map((c) => [`${c.lat},${c.lon}`, [c.lat, c.lon]])).values()];
 const schema = [
   {
     '@context': 'https://schema.org',
@@ -109,7 +109,7 @@ const schema = [
     <!-- [HOME-04] WORK INDEX -->
     <section class="section work" id="work" data-f="work" aria-labelledby="work-h">
       <div class="container">
-        <p class="mono rv">Selected work · 08 cases · {String(countries.length).padStart(2, '0')} countries</p>
+        <p class="mono rv">Selected work · {String(caseIndex.length).padStart(2, '0')} cases · {String(countries.length).padStart(2, '0')} countries</p>
         <h2 id="work-h" class="t-d2 rv">Work that’s live, not just pretty.</h2>
         <p class="work-intro rv">Every project below is a real business running on what we built. Open the live sites on your phone. That’s the test.</p>
         <WorkIndex />
@@ -183,7 +183,7 @@ const schema = [
           <ul class="results">
             {results.map((r) => <li class="result rv"><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p><a class="link" href={r.link.href}>{r.link.label}</a></li>)}
           </ul>
-          <p class="mono conn-count">08 cases · {String(countries.length).padStart(2, '0')} countries · Est. 2022</p>
+          <p class="mono conn-count">{String(caseIndex.length).padStart(2, '0')} cases · {String(countries.length).padStart(2, '0')} countries · Est. 2022</p>
         </div>
       </div>
       <div class="container">

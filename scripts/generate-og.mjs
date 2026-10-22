@@ -75,7 +75,7 @@ const pages = {
   home: { eyebrow: 'Web design · Branding · SEO', title: 'Built in Iligan. Live worldwide.', meta: META },
   about: { eyebrow: 'About · 04 people · 01 city', title: 'We make bold brands for ambitious people.', meta: META },
   services: { eyebrow: 'What we do · 05 services', title: 'Services that move the needle.', meta: 'Web · Brand · SEO · Product · Systems' },
-  work: { eyebrow: 'Selected work · 08 cases · 03 countries', title: 'Projects we’re proud of.', meta: 'USA · Australia · Philippines' },
+  work: { eyebrow: 'Selected work · 09 cases · 03 countries', title: 'Projects we’re proud of.', meta: 'USA · Australia · Philippines' },
   contact: { eyebrow: 'Signal · reply within 1 business day', title: 'Let’s build something great.', meta: META },
   blog: { eyebrow: 'Insights · practical guides', title: 'Ideas that move brands forward.', meta: 'SEO · Branding · Design · Development · Strategy' },
   'lp-7day': { eyebrow: '7-day website · fixed price', title: 'Your website, live in 7 days.', meta: 'From $499 · You own everything' },

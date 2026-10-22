@@ -68,7 +68,7 @@ const log = (...a) => console.log('[bake]', ...a);
 /* ── 2. screenshots ───────────────────────────────────────────────────────── */
 const SHOTS = {
   '01': 'work-aframing.jpg', '02': 'work-cleen.jpg', '03': 'work-crate.jpg', '04': 'work-telecom.jpg',
-  '05': 'work-canwell.jpg', '06': 'work-8drive.jpg', '07': 'work-uglq.jpg', '08': 'work-qldlaw.jpg',
+  '05': 'work-canwell.jpg', '06': 'work-8drive.jpg', '07': 'work-uglq.jpg', '08': 'work-qldlaw.jpg', '09': 'work-dotted.jpg',
 };
 export const SHOT_COLS = 181, SHOT_ROWS = 113;
 for (const [id, file] of Object.entries(SHOTS)) {

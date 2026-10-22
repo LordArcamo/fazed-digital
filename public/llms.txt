@@ -32,6 +32,7 @@
 - [8Drive](https://www.fazeddigital.com/work/06): Car rental, Philippines, 2024. Booking + fleet system. From manual bookings to one system.
 - [UGLQ](https://www.fazeddigital.com/work/07): Non-profit, Australia, 2024. Membership portal. One secure portal for a state-wide network.
 - [QLD Law Group](https://www.fazeddigital.com/work/08): Legal, Australia, 2025. Website + web app + mobile app. Three products. One client experience.
+- [Dotted Studios](https://www.fazeddigital.com/work/09): Branding studio, Philippines, 2026. Website + CMS. From a dead link to a site built around the work.
 
 ## Fazed Lab
 - [Fazed Lab](https://www.fazeddigital.com/lab): concept sites with fictional brands, clearly labelled; not client work.

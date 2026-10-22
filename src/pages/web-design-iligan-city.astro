@@ -9,6 +9,7 @@ import Faq from '../components/Faq.astro';
 import { NAP, SITE_URL } from '../data/site';
 import { prices, capsCopy } from '../data/proof';
 import { workImages } from '../data/images';
+import { caseIndex } from '../data/cases';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
 
 const P = prices.php;
@@ -32,9 +33,9 @@ const steps = [
   ['Day 7', 'Launch', 'Your site goes live. We connect the domain, set up hosting and hand everything over.'],
 ];
 const work = [
+  { slug: '09', name: 'Dotted Studios', where: 'Iligan City', what: 'Website + CMS', line: 'A website for an Iligan branding studio, built from their own Figma with a particle field that connects the dots. Live in one week.' },
   { slug: '02', name: 'Cleen & Green', where: 'Philippines', what: 'Brand + website', line: 'A premium eco cleaning brand, a WordPress site the team edits themselves, and a franchise section that opened a new growth channel.' },
   { slug: '06', name: '8Drive', where: 'Philippines', what: 'Booking + fleet system', line: 'Bookings, fleet, customers and chauffeurs for a car rental company, moved from manual work into one system.' },
-  { slug: '01', name: 'A Framing Company', where: 'Utah, USA', what: 'WordPress website', line: 'A portfolio-led site the contractor now uses to pitch new work.' },
   { slug: '04', name: 'The Telecom Shop', where: 'Australia', what: 'E-commerce migration', line: 'Magento to PrestaShop: catalogue, customers and order history moved with zero data loss.' },
 ];
 const faq = [
@@ -124,14 +125,14 @@ const schema = [
 
     <section class="container il-sec" aria-labelledby="work-h">
       <div class="il-hd"><p class="mono">Our work</p><h2 id="work-h" class="t-d2">The same team <span class="dim">that built these.</span></h2></div>
-      <p class="il-prose">Our newest Iligan project is the website for <strong>Dotted Studios</strong>, a brand and design studio here in Iligan City, launching soon. The case studies below run businesses in the Philippines, Utah and Queensland. They’re the standard your site gets.</p>
+      <p class="il-prose">Our newest Iligan project is the website for <strong>Dotted Studios</strong>, a branding studio here in Iligan City, now live at <a class="link" href="https://www.dottedstudios.com" target="_blank" rel="noopener">dottedstudios.com</a>. The case studies below run businesses in Iligan, across the Philippines and in Australia. They’re the standard your site gets.</p>
       <ul class="il-work">{work.map((w) => (
         <li class="rv"><a href={`/work/${w.slug}`}>
           <Picture src={workImages[w.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 45vw" alt={`${w.name}: ${w.what}`} loading="lazy" decoding="async" />
           <span class="mono">{w.where} · {w.what}</span><b>{w.name}</b><span>{w.line}</span>
         </a></li>
       ))}</ul>
-      <a class="link" href="/work">See all 8 case studies →</a>
+      <a class="link" href="/work">See all {caseIndex.length} case studies →</a>
     </section>
 
     <section class="container il-sec il-cdo" aria-labelledby="cdo-h">
