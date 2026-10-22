@@ -23,7 +23,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-10-20 | US | Strategy | Outsourcing Web Development to the Philippines: A US Owner's Guide | outsource web development philippines | /lp/7-day-website → /blog/outsource-web-development-philippines
 - [x] 2026-10-21 | PH | SEO | SEO in Iligan City: How Local Businesses Get Found on Google | seo iligan | /services#seo → /blog/seo-iligan-city
 - [x] 2026-10-22 | AU | Strategy | Working With a Philippine Web Studio From Australia | offshore web design australia | /lp/7-day-website → /blog/offshore-web-design-australia
-- [ ] 2026-10-23 | Global | SEO | Free Website Audit: What a 15-Minute Review Can Find | free website audit | /audit
+- [x] 2026-10-23 | Global | SEO | Free Website Audit: What a 15-Minute Review Can Find | free website audit | /audit → /blog/free-website-audit
 - [ ] 2026-10-24 | PH | Strategy | Web Developer in Cagayan de Oro: Local Office or Remote Studio? | web developer cagayan de oro | /web-design-iligan-city
 - [ ] 2026-10-25 | US | Strategy | Fixed-Price Website Design: What's Included and What Isn't | fixed price website design | /lp/7-day-website
 - [ ] 2026-10-26 | PH | Development | Ecommerce Website Price in the Philippines: What You Pay For | ecommerce website price philippines | /services#web
