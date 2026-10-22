@@ -78,6 +78,20 @@ export const builds: NoCodeBuild[] = [
     alt: 'Mizzle concept site built in Framer: the headline The bottle that remembers for you beside a white bottle and a phone app showing 1,250 ml.',
   },
   {
+    id: 'softlight', platform: 'framer', brand: 'Softlight Dental', category: 'Dental clinic · bookings', line: 'Dentistry that takes its time.',
+    what: 'A calm, editorial site for a family dental clinic: a flip board of the next free appointments that links straight to booking, services, a team section, a clear fees panel, emergency help and a booking form.',
+    chips: ['Flip board', 'Booking form', 'Fees panel', 'Desktop · tablet · phone'],
+    url: 'https://communicative-circumstances-489549.framer.app', host: 'communicative-circumstances-489549.framer.app', date: '2026-10-22',
+    alt: 'Softlight Dental concept site built in Framer: the headline Dentistry that takes its time beside a flip board of next openings and a portrait of a smiling dentist.',
+  },
+  {
+    id: 'tapswitch', platform: 'framer', brand: 'Tap & Switch', category: 'Plumber + electrician · quotes', line: 'Every job, logged in public.',
+    what: 'A site for a combined plumber and electrician: a big tap-to-call button, a before-and-after slider of recent jobs you can drag, suburb chips for the service area, a licences panel and a quote form.',
+    chips: ['Before/after slider', 'Tap to call', 'Service areas', 'Quote form'],
+    url: 'https://breathtaking-ferret-099053.framer.app', host: 'breathtaking-ferret-099053.framer.app', date: '2026-10-22',
+    alt: 'Tap & Switch concept site built in Framer: the headline Every job, logged in public with a lime tap-to-call button and a before-and-after bathroom photo slider.',
+  },
+  {
     id: 'signalbox', platform: 'webflow', brand: 'Signalbox', category: 'AI software · B2B', line: 'Every agent, on the board.',
     what: 'A product site for an AI agent control plane, styled like a railway signal box: a register board of agent runs, a lever that holds every run, a pinned scroll section where routes draw in, pricing, FAQ and a demo-request form. Animated with Webflow Interactions and custom SVG.',
     chips: ['Webflow Interactions', 'Variables', 'SVG', 'Webflow form', 'Structured data'],

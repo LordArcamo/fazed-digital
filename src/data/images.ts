@@ -26,5 +26,7 @@ import ncYowch from '../assets/nocode/yowch.jpg';
 import ncMizzle from '../assets/nocode/mizzle.jpg';
 import ncMadder from '../assets/nocode/madder.jpg';
 import ncSaltkiln from '../assets/nocode/saltkiln.jpg';
+import ncSoftlight from '../assets/nocode/softlight.jpg';
+import ncTapswitch from '../assets/nocode/tapswitch.jpg';
 export const labImages: Record<string, ImageMetadata> = { '01': lab01, '02': lab02, '03': lab03, '04': lab04, '05': lab05, '06': lab06, '07': lab07, '08': lab08 };
-export const nocodeImages: Record<string, ImageMetadata> = { suddle: ncSuddle, ricko: ncRicko, signalbox: ncSignalbox, dawdle: ncDawdle, stillroom: ncStillroom, lanewise: ncLanewise, yowch: ncYowch, mizzle: ncMizzle, madder: ncMadder, saltkiln: ncSaltkiln };
+export const nocodeImages: Record<string, ImageMetadata> = { suddle: ncSuddle, ricko: ncRicko, signalbox: ncSignalbox, dawdle: ncDawdle, stillroom: ncStillroom, lanewise: ncLanewise, yowch: ncYowch, mizzle: ncMizzle, madder: ncMadder, saltkiln: ncSaltkiln, softlight: ncSoftlight, tapswitch: ncTapswitch };
