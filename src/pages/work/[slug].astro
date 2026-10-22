@@ -5,7 +5,9 @@ import { cases, caseIndex } from '../../data/cases';
 import { workImages } from '../../data/images';
 import { CASE_METRICS_REAL } from '../../data/proof';
 import { SITE_URL } from '../../data/site';
-import { crumbs, ORG_REF } from '../../lib/schema';
+import { crumbs, faqPage, ORG_REF } from '../../lib/schema';
+import { caseSeo } from '../../data/case-seo';
+import Faq from '../../components/Faq.astro';
 
 export function getStaticPaths() {
   return cases.map((c) => ({ params: { slug: c.slug }, props: { slug: c.slug } }));
@@ -23,38 +25,47 @@ const platesAll = import.meta.glob<{ default: ImageMetadata }>('../../assets/wor
 const plate = (k: string) => platesAll[`../../assets/work/plates/${slug}-${k}.jpg`]?.default;
 const plateD = plate('desktop'), plateM = plate('mobile');
 const countryCode: Record<string, string> = { USA: 'US', Australia: 'AU', Philippines: 'PH' };
+const seo = caseSeo[slug];
+const where = c.region ? `${c.region}, ${c.country}` : c.country;
+// related: two other cases that share a discipline (then the rest), in index order
+const related = caseIndex.filter((x) => x.slug !== slug).sort((a, b) => Number(b.discipline.some((d) => (c.discipline as string[]).includes(d))) - Number(a.discipline.some((d) => (c.discipline as string[]).includes(d)))).slice(0, 2);
 const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'CreativeWork',
-    name: `${c.title} — Case Study`,
-    headline: c.resultHeadline,
-    description: c.seoDescription,
+    '@id': `${SITE_URL}/work/${slug}#case`,
+    name: `${c.title} case study`,
+    headline: seo ? `${c.title}: ${seo.h1Tail}` : c.resultHeadline,
+    description: seo?.summary ?? c.seoDescription,
     url: `${SITE_URL}/work/${slug}`,
     image: `${SITE_URL}/og/work/${slug}.png`,
     creator: ORG_REF,
     dateCreated: c.year,
     genre: c.category,
-    keywords: c.services.join(', '),
-    about: c.industry,
+    keywords: [seo?.kw, ...c.services, ...(seo?.stack ?? [])].filter(Boolean).join(', '),
+    about: { '@type': 'Organization', name: c.client, ...(c.liveLabel ? { url: c.liveUrl } : {}), address: { '@type': 'PostalAddress', addressCountry: countryCode[c.country] ?? c.country, ...(c.region ? { addressRegion: c.region } : {}) } },
+    isPartOf: { '@type': 'CollectionPage', '@id': `${SITE_URL}/work`, name: 'Fazed Digital case studies' },
+    mainEntityOfPage: `${SITE_URL}/work/${slug}`,
     locationCreated: { '@type': 'Place', name: 'Iligan City, Philippines' },
     countryOfOrigin: { '@type': 'Country', name: 'Philippines' },
     spatialCoverage: { '@type': 'Country', name: c.country, ...(countryCode[c.country] ? { identifier: countryCode[c.country] } : {}) },
   },
+  ...(seo?.faq.length ? [faqPage(seo.faq)] : []),
   crumbs([['Work', '/work'], [c.title, `/work/${slug}`]]),
 ];
 const [lead, ...restSentences] = c.resultCopy[0].split(/(?<=\.)\s+/);
 const resultBody = [restSentences.join(' '), ...c.resultCopy.slice(1)].filter(Boolean);
-const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry], ['Services', c.services.join(', ')], ['Duration', c.duration], ['Year', c.year]];
+const facts: [string, string][] = [['Client', c.client], ['Location', where], ['Industry', c.industry], ['What we built', c.built], ['Services', c.services.join(', ')], ...(seo?.stack.length ? [['Built with', seo.stack.join(', ')] as [string, string]] : []), ['Duration', c.duration], ['Year', c.year]];
 ---
-<Base title={c.seoTitle} description={c.seoDescription} image={`/og/work/${slug}.png`} formation="shot" schema={schema} current="/work">
+<Base title={seo?.seoTitle ?? c.seoTitle} description={seo?.seoDescription ?? c.seoDescription} image={`/og/work/${slug}.png`} formation="shot" schema={schema} current="/work">
   <link slot="head" rel="preload" as="image" type="image/avif" imagesrcset={lcp.srcSet.attribute} imagesizes={HERO_SIZES} fetchpriority="high" />
   <article class="case" data-case={slug}>
     <header class="c-hero container">
       <nav class="crumbs mono" aria-label="Breadcrumb"><ol><li><a href="/">Home</a></li><li><a href="/work">Work</a></li><li aria-current="page">{c.title}</li></ol></nav>
       <p class="mono c-strip">{c.strip}</p>
-      <h1 class="t-d1 c-h1">{c.title}</h1>
+      <h1 class="c-h1-wrap"><span class="t-d1 c-h1">{c.title}</span>{seo && <span class="c-h1-k">{seo.h1Tail}</span>}</h1>
       <p class="t-d2 c-sub">{c.resultHeadline}</p>
+      {seo && <p class="t-body-l c-sum">{seo.summary}</p>}
       <div class="c-actions">
         {c.liveLabel ? <a class="btn btn--lime" href={c.liveUrl} target="_blank" rel="noopener" data-cursor="OPEN ↗">{c.liveLabel} <span aria-hidden="true">↗</span><span class="sr-only"> (opens in a new tab)</span></a> : <span class="chip c-priv">Private system · shown with permission</span>}
         <a class="btn btn--ghost" href="/work">← All work</a>
@@ -104,6 +115,24 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
       <div class="c-svcs"><h2 class="mono">Services used</h2><ul>{c.servicesUsed.map((x) => <li><a class="link" href={x.href}>{x.label}</a></li>)}</ul></div>
     </section>
 
+    {seo && seo.faq.length > 0 && (
+      <section class="section c-faq container" aria-labelledby="cf-h">
+        <h2 id="cf-h" class="mono">Questions about this project</h2>
+        <Faq items={seo.faq} id={`case-${slug}-faq`} />
+      </section>
+    )}
+
+    <section class="section c-rel container" aria-labelledby="rel-h">
+      <h2 id="rel-h" class="mono">Related</h2>
+      <ul class="c-rel-cases">{related.map((x) => (
+        <li class="rv"><a href={`/work/${x.slug}`}>
+          <Picture src={workImages[x.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 40vw" alt={x.alt} loading="lazy" decoding="async" />
+          <span class="mono">Case {x.slug} · {x.sector} · {x.country}</span><b>{x.title}</b><span>{x.changed}</span>
+        </a></li>
+      ))}</ul>
+      {seo && seo.related.length > 0 && <ul class="c-rel-links">{seo.related.map((r) => <li><a class="link" href={r.href}>{r.label} →</a></li>)}</ul>}
+    </section>
+
     <section class="section c-cta container" data-f="node" aria-labelledby="cta-h">
       <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
       <h2 id="cta-h" class="t-d1">Want results like these?</h2>
@@ -130,6 +159,21 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
   .crumbs [aria-current] { color: var(--gray-400); display: inline-flex; min-height: 44px; align-items: center; }
   .c-strip { color: var(--lime); }
   .c-sub { color: var(--gray-400); max-width: 20ch; }
+  .c-h1-wrap { display: grid; gap: .6rem; }
+  .c-h1-k { font-family: var(--font-display); font-weight: 500; font-size: clamp(1.15rem, 2vw, 1.6rem); line-height: 1.25; color: var(--gray-200); max-width: 36ch; letter-spacing: -.005em; }
+  .c-sum { max-width: 62ch; color: var(--gray-300); }
+  .c-faq, .c-rel { display: grid; gap: 1.5rem; }
+  .c-faq > h2, .c-rel > h2 { font-weight: 400; }
+  .c-rel-cases { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--gutter); }
+  .c-rel-cases a { display: grid; gap: .4rem; }
+  .c-rel-cases :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); border-radius: 10px; transition: border-color .2s; }
+  .c-rel-cases a:hover :global(img) { border-color: var(--lime); }
+  .c-rel-cases .mono { color: var(--lime); font-size: 12px; letter-spacing: .1em; }
+  .c-rel-cases b { font-family: var(--font-display); font-size: 1.35rem; }
+  .c-rel-cases span:last-child { color: var(--gray-300); }
+  .c-rel-links { display: flex; flex-wrap: wrap; gap: .5rem 2rem; }
+  .c-rel-links a { display: inline-flex; min-height: 44px; align-items: center; }
+  @media (max-width: 767px) { .c-rel-cases { grid-template-columns: 1fr; } }
   .c-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .5rem; }
   .c-shot { margin-top: 72px; }
   .c-shot-frame { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--gray-700); }
@@ -143,7 +187,7 @@ const facts: [string, string][] = [['Client', c.client], ['Industry', c.industry
   .c-result-h { max-width: 24ch; color: var(--white); }
   .c-result-b { max-width: 60ch; }
   .c-metric { border: 1px dashed var(--gray-500); padding: .75rem 1rem; justify-self: start; }
-  .c-facts { display: grid; grid-template-columns: repeat(6, 1fr); gap: var(--gutter); border-top: 1px solid var(--gray-700); padding-top: 1.5rem; margin-top: 2rem; }
+  .c-facts { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: var(--gutter); border-top: 1px solid var(--gray-700); padding-top: 1.5rem; margin-top: 2rem; }
   .c-facts dd { color: var(--gray-200); margin-top: .35rem; }
   .c-story { display: grid; grid-template-columns: 1fr 1fr; gap: calc(var(--gutter) * 3); padding-top: 0; }
   .c-story h2 { margin-bottom: 1.25rem; font-weight: 400; }
