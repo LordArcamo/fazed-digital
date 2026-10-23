@@ -46,6 +46,7 @@
   - Fazzy · PLAIN TEXT (concept site, fictional brand): https://fazed-plain-text.vercel.app · OGL, Tone.js, GSAP + Lenis, SVG rig · 2026-10-20
 
 ## Guides
+- [Web Developer Cagayan de Oro: Local or Remote Studio?](https://www.fazeddigital.com/blog/web-developer-cagayan-de-oro) (Strategy, 24 Oct 2026)
 - [Free Website Audit: What a 15-Minute Review Can Find](https://www.fazeddigital.com/blog/free-website-audit) (SEO, 23 Oct 2026)
 - [Offshore Web Design Australia: Working With a Philippine Studio](https://www.fazeddigital.com/blog/offshore-web-design-australia) (Strategy, 22 Oct 2026)
 - [SEO in Iligan City: How Local Businesses Get Found on Google](https://www.fazeddigital.com/blog/seo-iligan-city) (SEO, 20 Oct 2026)
