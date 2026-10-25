@@ -26,7 +26,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-10-23 | Global | SEO | Free Website Audit: What a 15-Minute Review Can Find | free website audit | /audit → /blog/free-website-audit
 - [x] 2026-10-24 | PH | Strategy | Web Developer in Cagayan de Oro: Local Office or Remote Studio? | web developer cagayan de oro | /web-design-iligan-city → /blog/web-developer-cagayan-de-oro
 - [x] 2026-10-25 | US | Strategy | Fixed-Price Website Design: What's Included and What Isn't | fixed price website design | /lp/7-day-website → /blog/fixed-price-website-design
-- [ ] 2026-10-26 | PH | Development | Ecommerce Website Price in the Philippines: What You Pay For | ecommerce website price philippines | /services#web
+- [x] 2026-10-26 | PH | Development | Ecommerce Website Price in the Philippines: What You Pay For | ecommerce website price philippines | /services#web → /blog/ecommerce-website-price-philippines
 - [ ] 2026-10-27 | AU | Development | Magento to PrestaShop Migration: Lessons From a Real Store Move | magento to prestashop migration | /work/04
 - [ ] 2026-10-28 | UK | Strategy | How Much Does a Small Business Website Cost in the UK? | small business website cost uk | /lp/7-day-website
 - [ ] 2026-10-29 | PH | Branding | Brand Identity Price in the Philippines: Logo to Guidelines | logo and branding price philippines | /services#brand
