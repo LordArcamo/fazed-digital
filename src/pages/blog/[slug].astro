@@ -13,6 +13,42 @@ import { SERVICE_FOR, catSlug } from '../../lib/cover';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'magento-to-prestashop-migration',
+      title: "Magento to PrestaShop Migration: Lessons From a Real Store Move",
+      category: 'Development',
+      date: '27 Oct 2026',
+      readTime: '5 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: '',
+      image: 'https://images.unsplash.com/photo-1581291518857-4d27a540d9f2?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "A Magento-to-PrestaShop migration moves your catalogue, customers and orders intact. Here is what to plan and what the process looks like in practice.",
+      content: `
+        <p>A Magento to PrestaShop migration moves your entire store — products, customer accounts, order history, and SEO configuration — to a faster, more manageable platform. Done properly, it completes with zero data loss and no long downtime window. Done without a plan, it can cost you rankings, orders, and months of clean-up work afterward.</p>
+        <h2>Why Australian retailers leave Magento</h2>
+        <p>Magento started as an enterprise platform, and for large retailers with dedicated development teams it still serves that purpose well. For small and mid-sized stores, the maintenance overhead tends to grow faster than the business does. Security patches arrive frequently and require developer time to apply. Hosting costs run high because Magento needs significant server resources to perform reliably. As the platform ages, finding developers who know the codebase well gets harder and more expensive.</p>
+        <p>For many Australian store owners, the trigger is a performance issue — slow page loads, a checkout that drops on mobile — or a cost review that reveals how much is going to keep a cumbersome system running. PrestaShop offers a lighter footprint, a back end that non-technical staff can manage, and a more predictable ongoing cost.</p>
+        <h2>What the migration process involves</h2>
+        <p>A Magento to PrestaShop migration is not a simple export and import. A thorough process starts with a data audit: mapping every product attribute, category structure, customer field, and order status to its equivalent in PrestaShop. Any Magento custom attribute or extension behaviour that has no direct PrestaShop equivalent needs a decision before a single record moves.</p>
+        <p>In parallel, the PrestaShop store is built and configured: product pages, filters, payment gateways, and shipping zones all set up and tested before the migration data arrives. The goal is a store that functions correctly first, so the migration is a data transfer into a working environment, not a test of everything at once.</p>
+        <p>Data migrates in stages — products and categories first, then customers and their address books, then order history. Each stage is verified before the next starts. When everything is confirmed clean on staging, a final delta migration captures any new data entered during the build period, and the domain is switched. If the URL structure is kept consistent and redirect mapping is done correctly, your existing search rankings carry over intact.</p>
+        <h2>A real Australian store migration</h2>
+        <p>We ran this process for <a href="https://www.fazeddigital.com/work/04">The Telecom Shop</a>, an Australian retailer selling phones, tablets, accessories, and plans online. Their Magento store had become slow and expensive to maintain. We audited the catalogue, built the PrestaShop store in parallel, then migrated products, customers, and order history in stages. The migration completed with zero data loss and minimal disruption to trading, and the team regained full control of their catalogue without needing ongoing developer involvement for day-to-day operations.</p>
+        <h2>What changes for your team</h2>
+        <p>The most immediate change after migration is back-end management. PrestaShop's admin interface is considerably more accessible for non-technical users than Magento's. Adding products, updating prices, running promotions, and processing returns become tasks a team member can handle directly. If your current workflow requires a developer for routine catalogue updates, that changes.</p>
+        <p>Payment gateways, shipping integrations, and any custom features from your Magento build will need to be configured or rebuilt for PrestaShop. This is separate from the migration work itself and needs to be scoped before you go to brief. A migration that completes on time but is missing a payment integration or a shipping calculator is not ready for go-live.</p>
+        <p>For the wider question of when a platform-based build makes sense versus custom development, the post on <a href="https://www.fazeddigital.com/blog/wordpress-vs-custom-build">WordPress versus a custom build</a> covers the trade-offs that apply to ecommerce decisions as well.</p>
+        <h2>Working across time zones</h2>
+        <p>For Australian clients, most of the build runs asynchronously: a brief, a staging link to review, written updates, and feedback within 24 hours at each stage. Brisbane is two hours ahead of Manila, and Sydney and Melbourne are two to three hours ahead depending on daylight saving — most of the Australian business day falls within our working hours, so scheduled calls are easy to arrange. A kick-off call, a staging review, and a go-live handover call cover the key decisions without needing you outside your working day.</p>
+        <p>Fazed quotes in USD. The AUD amount depends on the exchange rate at the time of engagement. Payment is by Wise or bank transfer, with a 50% deposit before work starts. You own the domain, store code, and all data outright on full payment, with no lock-in contract.</p>
+        <h2>Frequently asked questions</h2>
+        <p><strong>How long does a Magento to PrestaShop migration take?</strong> Timelines depend on catalogue size, data complexity, and how many custom features need to be rebuilt. A focused migration for a small to mid-sized catalogue can span several weeks from brief to go-live. Projects with large catalogues, significant data quality issues, or complex integration requirements will take longer — a data audit before you go to brief is the clearest way to understand scope upfront.</p>
+        <p><strong>Will I lose my search rankings during the migration?</strong> A well-planned migration keeps your URL structure intact where possible and maps 301 redirects for any URLs that change. With the redirect mapping complete and your existing SEO configuration carried over, rankings typically stabilise within a few weeks of go-live. Missing redirects and a rushed cutover are the common cause of ranking drops after a platform move.</p>
+        <p><strong>Can I migrate a large catalogue with years of order history?</strong> Yes. The data audit at the start of the project surfaces any complexity before work begins. If your catalogue has unusual attributes, tiered pricing, or a large volume of historical orders, the audit phase is where those issues get resolved — not discovered during go-live.</p>
+        <p>If you are planning a Magento to PrestaShop migration and want to understand the scope before committing, <a href="https://www.fazeddigital.com/contact">get in touch via our contact page</a> — we can walk through your catalogue size, current setup, and what a realistic brief looks like before you go further.</p>
+      `,
+    },
+    {
       slug: 'ecommerce-website-price-philippines',
       title: "Ecommerce Website Price in the Philippines: What You Pay For",
       category: 'Development',

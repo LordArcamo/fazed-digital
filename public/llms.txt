@@ -46,6 +46,7 @@
   - Fazzy · PLAIN TEXT (concept site, fictional brand): https://fazed-plain-text.vercel.app · OGL, Tone.js, GSAP + Lenis, SVG rig · 2026-10-20
 
 ## Guides
+- [Magento to PrestaShop Migration: Lessons From a Real Store Move](https://www.fazeddigital.com/blog/magento-to-prestashop-migration) (Development, 27 Oct 2026)
 - [Ecommerce Website Price in the Philippines: What You Pay For](https://www.fazeddigital.com/blog/ecommerce-website-price-philippines) (Development, 26 Oct 2026)
 - [Fixed-Price Website Design: What's Included and What Isn't](https://www.fazeddigital.com/blog/fixed-price-website-design) (Strategy, 25 Oct 2026)
 - [Web Developer Cagayan de Oro: Local or Remote Studio?](https://www.fazeddigital.com/blog/web-developer-cagayan-de-oro) (Strategy, 24 Oct 2026)
