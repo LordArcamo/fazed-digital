@@ -28,7 +28,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-10-25 | US | Strategy | Fixed-Price Website Design: What's Included and What Isn't | fixed price website design | /lp/7-day-website → /blog/fixed-price-website-design
 - [x] 2026-10-26 | PH | Development | Ecommerce Website Price in the Philippines: What You Pay For | ecommerce website price philippines | /services#web → /blog/ecommerce-website-price-philippines
 - [x] 2026-10-27 | AU | Development | Magento to PrestaShop Migration: Lessons From a Real Store Move | magento to prestashop migration | /work/04 → /blog/magento-to-prestashop-migration
-- [ ] 2026-10-28 | UK | Strategy | How Much Does a Small Business Website Cost in the UK? | small business website cost uk | /lp/7-day-website
+- [x] 2026-10-28 | UK | Strategy | How Much Does a Small Business Website Cost in the UK? | small business website cost uk | /lp/7-day-website → /blog/small-business-website-cost-uk
 - [ ] 2026-10-29 | PH | Branding | Brand Identity Price in the Philippines: Logo to Guidelines | logo and branding price philippines | /services#brand
 - [ ] 2026-10-30 | US | Design | Website Design for General Contractors: Pages That Win Bids | website design for general contractors | /work/01
 - [ ] 2026-10-31 | PH | Development | GCash Payments on Your Website: Gateway Options Explained | payment gateway philippines gcash | /services#systems
