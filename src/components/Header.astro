@@ -3,6 +3,7 @@ import Logo from './Logo.astro';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 import { NAP, SOCIALS } from '../data/site';
 import { labShipped, pad2 } from '../data/lab';
+import { caseIndex, countries } from '../data/cases';
 const { current = '', lp = false } = Astro.props;
 // Lab sits after Work (its proof sibling). Six links never fit the top rail (measured, lab-spec §7),
 // so Blog leaves the rail only (.sd-blog, undocked ≥1024); it stays in the dock ≥1180, the menu and the footer.
@@ -12,7 +13,7 @@ const links = [
 ];
 const menu = [
   { href: '/', label: 'Home', hint: 'MARK · START HERE' },
-  { href: '/work', label: 'Work', hint: '08 CASES · 3 COUNTRIES' },
+  { href: '/work', label: 'Work', hint: `${pad2(caseIndex.length)} CASES · ${countries.length} COUNTRIES` },
   { href: '/lab', label: 'Lab', hint: `${pad2(labShipped.length)} CONCEPT SITES · OWN ENGINE` },
   { href: '/services', label: 'Services', hint: '05 SERVICES · 01 SYSTEM' },
   { href: '/about', label: 'About', hint: '04 PEOPLE · EST. 2022' },

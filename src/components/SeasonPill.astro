@@ -1,0 +1,52 @@
+---
+// Halloween pill (src/data/season.ts). Rendered on every non-LP page, shown only while html.hw is set by the boot
+// script; dismiss hides it for the session. Never on /halloween itself.
+import { pumpkinDots } from '../../scripts/lib/pumpkin.mjs';
+const dots = pumpkinDots(5.2);
+const col = { body: 'var(--gray-300)', face: 'var(--lime)', stem: 'var(--lime-dark)' } as const;
+---
+<div class="hw-pill" id="hw-pill" transition:persist="hw-pill">
+  <a href="/halloween" class="hw-a" data-cursor="BOO →">
+    <svg class="hw-pk" viewBox="10 20 80 72" aria-hidden="true" focusable="false">{dots.map((d) => <circle cx={d.x} cy={d.y} r={d.role === 'face' ? 2.3 : 1.9} fill={col[d.role]} opacity={d.role === 'body' ? d.shade : 1} class={d.role === 'face' ? 'hw-f' : undefined} />)}</svg>
+    <span class="hw-t">Is your website haunted?</span><span class="hw-go mono">Free check →</span>
+  </a>
+  <button type="button" class="hw-x" data-hw-x aria-label="Hide the Halloween banner">×</button>
+</div>
+<script>
+  // one delegated listener (bundled scripts run once under the ClientRouter)
+  const html = document.documentElement;
+  if (!html.dataset.hwBound) {
+    html.dataset.hwBound = '1';
+    document.addEventListener('click', (e) => {
+      if (!(e.target as Element).closest?.('[data-hw-x]')) return;
+      html.classList.add('hw-off');
+      try { sessionStorage.setItem('hw-x', '1'); } catch {}
+    });
+  }
+</script>
+<style>
+  .hw-pill { display: none; }
+  :global(html.hw:not(.hw-off):not(:has([data-page='halloween']))) .hw-pill { display: flex; }
+  .hw-pill { position: fixed; z-index: 55; right: 16px; bottom: 16px; align-items: center; gap: 4px; padding: 5px 5px 5px 6px; border-radius: 999px; background: var(--capsule); border: 1px solid var(--gray-700); box-shadow: var(--capsule-sh); animation: hw-in .7s cubic-bezier(.2, .8, .2, 1) 1.2s both; }
+  @keyframes hw-in { from { opacity: 0; transform: translateY(24px) scale(.96); } }
+  .hw-a { display: flex; align-items: center; gap: .6rem; min-height: 44px; padding-right: .4rem; color: var(--white); }
+  .hw-pk { width: 34px; height: 30px; flex: none; }
+  .hw-f { animation: hw-flick 2.4s steps(1) infinite; }
+  .hw-f:nth-child(3n) { animation-delay: -.8s; } .hw-f:nth-child(5n) { animation-delay: -1.5s; }
+  @keyframes hw-flick { 0%, 100% { opacity: 1; } 42% { opacity: .55; } 47% { opacity: 1; } 71% { opacity: .75; } }
+  .hw-t { font-weight: 600; font-size: .9rem; white-space: nowrap; }
+  .hw-go { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--black); background: var(--lime); border-radius: 999px; padding: .55rem .8rem; white-space: nowrap; }
+  .hw-a:hover .hw-t { color: var(--lime); }
+  .hw-x { width: 32px; height: 32px; border-radius: 50%; color: var(--gray-300); font-size: 1.1rem; line-height: 1; display: grid; place-items: center; }
+  .hw-x:hover { color: var(--white); background: var(--gray-800); }
+  /* the cookie card owns bottom-left ≥1024; below that the cookie sheet and the dock own the bottom edge */
+  @media (max-width: 1023px) {
+    .hw-pill { right: 50%; translate: 50% 0; bottom: calc(84px + env(safe-area-inset-bottom)); }
+    :global(html:has(#cookie:not([hidden]))) .hw-pill { display: none !important; }
+    /* phones: never over a hero; it arrives once the visitor scrolls (html.is-docked, set by boot/nav.ts) */
+    :global(html:not(.is-docked)) .hw-pill { display: none !important; }
+    .hw-t { font-size: .82rem; }
+  }
+  @media (max-width: 380px) { .hw-go { display: none; } }
+  @media (prefers-reduced-motion: reduce) { .hw-pill, .hw-f { animation: none; } }
+</style>

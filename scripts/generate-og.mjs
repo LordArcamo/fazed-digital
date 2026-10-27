@@ -12,6 +12,7 @@ import { readFileSync, writeFileSync, mkdirSync, existsSync, statSync } from 'no
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { MARK_PATHS, MARK_TRANSFORM } from './lib/mark.mjs';
+import { pumpkinDots } from './lib/pumpkin.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'public/og');
@@ -30,6 +31,14 @@ const markSvg = (size, color) => ({
   type: 'svg',
   props: { viewBox: '372 205 755 1089', width: size * 0.693, height: size, children: [{ type: 'g', props: { transform: MARK_TRANSFORM, fill: color, children: MARK_PATHS.map((d) => ({ type: 'path', props: { d } })) } }] },
 });
+
+// the dot jack-o'-lantern (Halloween takeover); exported shape lives in scripts/lib/pumpkin.mjs
+export function pumpkinSvg(size) {
+  const fill = { body: '#BCBCBC', face: '#C9FF57', stem: '#9FCC2E' };
+  const ch = [{ type: 'circle', props: { cx: 50, cy: 62, r: 30, fill: '#C9FF57', 'fill-opacity': 0.07 } }];
+  for (const d of pumpkinDots()) ch.push({ type: 'circle', props: { cx: d.x, cy: d.y, r: d.role === 'face' ? 0.95 : 0.74, fill: fill[d.role], 'fill-opacity': d.role === 'body' ? d.shade * 0.8 : 1 } });
+  return { type: 'svg', props: { width: size, height: size * 76 / 84, viewBox: '8 18 84 76', children: ch } };
+}
 
 // the /lab contact sheet glyph: 5×2 dotted frames, 01–04 filled, the lime research node in 05
 function sheetSvg(shipped) {
@@ -83,6 +92,7 @@ const pages = {
   framer: { eyebrow: 'Framer · Design and build', title: 'Framer websites, built by one team.', meta: 'Landing pages · Waitlists · CMS blogs · Shop pages' },
   ecommerce: { eyebrow: 'E-commerce · Design and build', title: 'Online stores that help people buy.', meta: 'Product pages · Carts · 3D buying tools · Migrations' },
   webflow: { eyebrow: 'Webflow · Design and build', title: 'Webflow websites, built by one team.', meta: 'Product sites · Interactions · CMS · Forms' },
+  halloween: { eyebrow: 'Halloween · Free website check', title: 'Is your website haunted?', meta: 'Free · 15 minutes · 3 fixes · No tricks', art: pumpkinSvg(380), dep: join(ROOT, 'scripts/lib/pumpkin.mjs') },
   audit: { eyebrow: 'Free website check · 15 min', title: 'Three fixes that bring you more calls.', meta: 'Free · No obligation · Google Meet' },
 };
 // /lab: counts from src/data/lab.ts (shipped entries; #04 drops out when LAB_04 = 'hide')

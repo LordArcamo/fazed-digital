@@ -1,0 +1,110 @@
+---
+// /halloween: seasonal campaign page (src/data/season.ts). The offer is the real free 15-minute website check (/audit)
+// plus the published 7-day packages. No invented discount, no fake urgency. Dot jack-o'-lantern: scripts/lib/pumpkin.mjs.
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import { pumpkinDots } from '../../scripts/lib/pumpkin.mjs';
+import { prices } from '../data/proof';
+import { SITE_URL } from '../data/site';
+import { crumbs, faqPage, ORG_REF } from '../lib/schema';
+
+const dots = pumpkinDots();
+const signs = [
+  ['01', 'Ghost town', 'It loads so slowly that people leave before it appears. On a phone with weak signal, it never appears at all.'],
+  ['02', 'Dead ends', 'Buttons that do nothing, pages that 404, menus that lead in circles. Every broken link is a customer walking out.'],
+  ['03', 'Invisible on Google', 'People search for exactly what you sell and find your competitors. Your site is there, but Google can’t see it.'],
+  ['04', 'The vanishing form', 'Enquiries go into a form nobody checks, or one that quietly broke months ago. You only find out when sales go quiet.'],
+  ['05', 'Stuck in the past', '© 2019 in the footer, old prices, a layout that falls apart on a phone. It makes a good business look closed.'],
+];
+const faq = [
+  { q: 'Is the Halloween website check really free?', a: 'Yes. It’s our free 15-minute website check on Google Meet, with no obligation. We look at your site with you and point out the 3 fixes that would bring you the most calls and enquiries.' },
+  { q: 'What do I need for the call?', a: 'Just your website link and 15 minutes. No site yet? Book anyway, and we’ll talk through what a first website needs.' },
+  { q: 'What if my site needs more than a few fixes?', a: `Then we’ll tell you honestly. If a rebuild makes more sense, our fixed-price 7-day websites start at ${prices.usd.starter} (${prices.php.starter} in the Philippines).` },
+];
+const url = `${SITE_URL}/halloween`;
+const schema = [
+  { '@context': 'https://schema.org', '@type': 'WebPage', '@id': `${url}#page`, name: 'Is your website haunted? Free website check', url, description: 'Five signs your website is haunted, and a free 15-minute website check to find the 3 fixes that bring you more calls and enquiries.', publisher: ORG_REF },
+  faqPage(faq),
+  crumbs([['Is your website haunted?', '/halloween']]),
+];
+---
+<Base title="Is Your Website Haunted? Free Website Check | Fazed" description="Slow pages, dead links, a form that vanishes. Five signs your website is haunted, and a free 15-minute check to find the 3 fixes that bring more enquiries." image="/og/halloween.png" formation="lattice" schema={schema}>
+  <div class="hwp" data-page="halloween">
+    <section class="hwp-hero container" aria-labelledby="hwp-h">
+      <div class="hwp-copy">
+        <p class="mono hwp-eye">Halloween · Free 15-minute website check</p>
+        <h1 id="hwp-h" class="t-d1">Is your website <span class="hwp-hl">haunted?</span></h1>
+        <p class="t-body-l hwp-deck">Slow pages, dead links, a contact form that vanishes into the void. Book a free 15-minute website check and we’ll find the 3 fixes that would bring you the most calls and enquiries. <strong>No tricks.</strong></p>
+        <div class="hwp-cta">
+          <a class="btn btn--lime" href="/audit" data-magnetic>Book my free check <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="#signs">The 5 signs</a>
+        </div>
+        <p class="mono hwp-note">Free · 15 minutes · Google Meet · No site yet? Book anyway</p>
+      </div>
+      <figure class="hwp-pk" aria-hidden="true">
+        <svg viewBox="8 18 84 76">{dots.map((d, i) => <circle cx={d.x} cy={d.y} r={d.role === 'face' ? 0.92 : 0.72} class={`pk-${d.role}`} style={`fill-opacity:${d.role === 'body' ? (d.shade * 0.8).toFixed(2) : 1};--i:${i % 9}`} />)}</svg>
+        <span class="hwp-glow"></span>
+      </figure>
+    </section>
+
+    <section class="container hwp-sec" id="signs" aria-labelledby="s-h">
+      <div class="hwp-hd"><p class="mono">Five signs</p><h2 id="s-h" class="t-d2">Your website might be <span class="dim">haunted if…</span></h2></div>
+      <ol class="hwp-signs">{signs.map(([n, t, d]) => <li class="rv"><span class="mono">{n}</span><h3 class="t-h3">{t}</h3><p>{d}</p></li>)}</ol>
+    </section>
+
+    <section class="container hwp-sec hwp-cure" aria-labelledby="c-h">
+      <div class="hwp-hd"><p class="mono">The cure</p><h2 id="c-h" class="t-d2">15 minutes. <span class="dim">3 fixes. Zero tricks.</span></h2></div>
+      <ol class="hwp-steps">
+        <li><span class="mono">Before</span><b>Pick a time</b><span>Choose a 15-minute slot. Times show in your own timezone.</span></li>
+        <li><span class="mono">00:00</span><b>Join the call</b><span>The Google Meet link arrives by email. Have your website open.</span></li>
+        <li><span class="mono">15:00</span><b>Leave with your 3 fixes</b><span>Make them yourself, or ask us to. No pressure either way.</span></li>
+      </ol>
+      <div class="hwp-cta"><a class="btn btn--lime" href="/audit">Book my free check <span class="arrow" aria-hidden="true">→</span></a><a class="link" href={`/lp/7-day-website`}>Or start fresh: 7-day websites from {prices.usd.starter} ({prices.php.starter})</a></div>
+    </section>
+
+    <section class="container hwp-sec" aria-labelledby="f-h">
+      <div class="hwp-hd"><p class="mono">FAQ</p><h2 id="f-h" class="t-d2">Questions, not ghosts.</h2></div>
+      <Faq items={faq} id="hw-faq" />
+    </section>
+  </div>
+</Base>
+<style>
+  .hwp-hero { padding: calc(var(--header-h) + 72px) 0 48px; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 2rem var(--gutter); align-items: center; }
+  .hwp-copy { display: grid; gap: 1.4rem; justify-items: start; }
+  .hwp-eye { color: var(--lime); }
+  .hwp-hero h1 { max-width: 11ch; }
+  .hwp-hl { color: var(--lime); }
+  .hwp-deck { max-width: 52ch; color: var(--gray-300); } .hwp-deck strong { color: var(--white); }
+  .hwp-cta { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; }
+  .hwp-note { color: var(--gray-400); }
+  .hwp-pk { position: relative; margin: 0; aspect-ratio: 84 / 76; }
+  .hwp-pk svg { position: relative; width: 100%; height: auto; z-index: 1; overflow: visible; }
+  .hwp-glow { position: absolute; inset: 22% 18% 12%; border-radius: 50%; background: radial-gradient(var(--lime-25), transparent 70%); filter: blur(24px); animation: hwp-breathe 3.6s ease-in-out infinite; }
+  @keyframes hwp-breathe { 0%, 100% { opacity: .55; transform: scale(.96); } 50% { opacity: 1; transform: scale(1.04); } }
+  .pk-body { fill: var(--gray-300); opacity: 0; animation: pk-in .6s ease forwards; animation-delay: calc(var(--i) * 70ms + 200ms); }
+  .pk-stem { fill: var(--lime-dark); opacity: 0; animation: pk-in .6s ease .9s forwards; }
+  .pk-face { fill: var(--lime); opacity: 0; animation: pk-on .3s steps(1) 1.4s forwards, pk-flick 2.6s steps(1) 1.8s infinite; animation-delay: 1.4s, calc(1.8s + var(--i) * -0.29s); }
+  @keyframes pk-in { to { opacity: 1; } }
+  @keyframes pk-on { to { opacity: 1; } }
+  @keyframes pk-flick { 0%, 100% { opacity: 1; } 38% { opacity: .5; } 44% { opacity: 1; } 69% { opacity: .72; } }
+  .hwp-sec { display: grid; gap: 2rem; padding-block: clamp(48px, 6vw, 96px); }
+  .hwp-hd { display: grid; gap: .75rem; }
+  .hwp-signs { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--gutter); }
+  .hwp-signs li { display: grid; gap: .6rem; align-content: start; padding: 22px; border: 1px solid var(--gray-700); border-radius: 14px; background: var(--gray-900); }
+  .hwp-signs .mono { color: var(--lime); }
+  .hwp-signs p { color: var(--gray-300); }
+  .hwp-steps { display: grid; border-top: 1px solid var(--gray-700); max-width: 860px; }
+  .hwp-steps li { display: grid; grid-template-columns: 6rem 14rem minmax(0, 1fr); column-gap: 1rem; padding-block: 16px; border-bottom: 1px solid var(--gray-700); }
+  .hwp-steps .mono { color: var(--lime); }
+  .hwp-steps span:last-child { color: var(--gray-300); }
+  @media (max-width: 1100px) { .hwp-signs { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 1023px) { .hwp-hero { grid-template-columns: 1fr; } .hwp-pk { max-width: 420px; justify-self: center; width: 100%; grid-row: 1; } }
+  @media (max-width: 767px) {
+    .hwp-hero { padding-top: calc(var(--header-h) + 32px); }
+    .hwp-signs { grid-template-columns: 1fr; }
+    .hwp-steps li { grid-template-columns: 4.5rem minmax(0, 1fr); } .hwp-steps li > span:last-child { grid-column: 2; }
+    .hwp-cta .btn { width: 100%; justify-content: center; }
+    .hwp-pk { max-width: 280px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .pk-body, .pk-stem, .pk-face, .hwp-glow { animation: none; opacity: 1; } }
+</style>

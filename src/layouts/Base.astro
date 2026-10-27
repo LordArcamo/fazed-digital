@@ -5,6 +5,7 @@ import SpeedInsights from '@vercel/speed-insights/astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
+import SeasonPill from '../components/SeasonPill.astro';
 import LpFooter from '../components/LpFooter.astro';
 import { SITE_URL, NAP, SOCIALS, FOUNDED } from '../data/site';
 import { team } from '../data/team';
@@ -101,7 +102,9 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     if(matchMedia('(prefers-reduced-motion: reduce)').matches)h.classList.add('rm');
     if(/[?&]record/.test(q))h.classList.add('record');
     if(scrollY>120)h.classList.add('is-docked');
-    h.style.setProperty('--screen-h',innerHeight+'px');})(document); /* real visible height, see boot/main.ts */
+    h.style.setProperty('--screen-h',innerHeight+'px');
+    try{var m=q.match(/[?&]season=(\w+)/),S=sessionStorage;if(m)S.setItem('season',m[1]);var f=S.getItem('season'),t=new Date(Date.now()+288e5),md=(t.getUTCMonth()+1)*100+t.getUTCDate();
+    if(f==='halloween'||(f!=='off'&&md>=1020&&md<=1101))h.classList.add('hw');if(S.getItem('hw-x'))h.classList.add('hw-off');}catch(e){}})(document); /* real visible height, see boot/main.ts */
   </script>
   <ClientRouter fallback="swap" />
   <script type="application/ld+json" set:html={JSON.stringify(org)} />
@@ -119,6 +122,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     <slot />
   </main>
   {lp ? <LpFooter variant={lp} /> : <Footer />}
+  {!lp && <SeasonPill />}
   <CookieBanner />
   <div id="route-announcer" class="sr-only" aria-live="polite"></div>
   <Analytics />
