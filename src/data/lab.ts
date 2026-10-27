@@ -106,7 +106,14 @@ const all: LabItem[] = [
     alt: 'PLAIN TEXT concept site: Fazzy the Fazed Digital mascot waving in front of rows of lime and white blocks, under a dotted PLAIN TEXT headline.',
     desc: 'Concept site for a fictional album by Fazzy, the Fazed Digital mascot. Interactive music: make a beat, remix the stems, scroll plays the song.',
   },
-  { n: '09', slug: 'resort', brand: 'Resort', short: 'Resort', category: 'Island resort', status: 'queued' },
+  {
+    n: '09', slug: 'linaw', brand: 'Linaw', short: 'Linaw', category: 'Island resort', line: 'The island keeps the tide’s time.',
+    sub: 'A 14-villa island in the Sulu Sea, built as a cut-away model. Walk the sandbar at low tide, dine on the dry reef, swim with the glow at night.',
+    chips: ['Three.js WebGPU', 'TSL', 'Vue', 'Blender', 'Live audio'], built: 'Astro · Vue · Three.js',
+    url: 'https://fazed-linaw.vercel.app', date: '2026-10-24', status: 'shipped',
+    alt: 'Linaw concept site: a cut-away island model with clear turquoise water over reef and sand under a limestone cliff, beside the headline The island keeps the tide’s time.',
+    desc: 'Concept site for a fictional island resort. A real-time cut-away island in the Sulu Sea, where the tide, the reef and the night glow play out as you scroll.',
+  },
   { n: '10', slug: 'headphones', brand: 'Headphones', short: 'Headphones', category: 'Premium headphones', status: 'queued' },
 ];
 

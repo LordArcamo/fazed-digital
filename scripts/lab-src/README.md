@@ -12,5 +12,6 @@ Copied from the series sites so the build never reaches outside this repo. `scri
 | lab-06.webp | /Users/lordarcamo/Projects/fazed-3d-sites/06-luxury-real-estate/site-rt/public/posters/hero-d.webp (Casa Ocaso hero poster, keyed on warmth R−B so only the house band draws, on a 1920×1200 black canvas) |
 | lab-07.webp | /Users/lordarcamo/Projects/fazed-3d-sites/07-fitness-studio/site/public/gl/poster-1610.webp (Whiting hero poster at 1920×1200, keyed on chalk brightness + plate red; windows and ceiling lights masked out) |
 | lab-08.webp | /Users/lordarcamo/Projects/fazed-3d-sites/08-music-artist/site/public/press/plain-text-hero.webp (Plain Text hero capture at 1920×1200, Fazzy + lime blocks keyed off the light page; headline and copy masked out) |
+| lab-09.webp | /Users/lordarcamo/Projects/fazed-3d-sites/09-island-resort/site/public/posters/hero-l.webp (Linaw hero poster, luma-keyed so only the island model draws) |
 
-All eight are Fazed Digital renders/captures of its own concept sites.
+All nine are Fazed Digital renders/captures of its own concept sites.
