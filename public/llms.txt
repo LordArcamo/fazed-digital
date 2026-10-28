@@ -47,6 +47,7 @@
   - Linaw (concept site, fictional brand): https://fazed-linaw.vercel.app · Three.js WebGPU, TSL, Vue, Blender, Live audio · 2026-10-24
 
 ## Guides
+- [Brand Identity Price in the Philippines: Logo to Guidelines](https://www.fazeddigital.com/blog/brand-identity-price-philippines) (Branding, 29 Oct 2026)
 - [How Much Does a Small Business Website Cost in the UK?](https://www.fazeddigital.com/blog/small-business-website-cost-uk) (Strategy, 28 Oct 2026)
 - [Magento to PrestaShop Migration: Lessons From a Real Store Move](https://www.fazeddigital.com/blog/magento-to-prestashop-migration) (Development, 27 Oct 2026)
 - [Ecommerce Website Price in the Philippines: What You Pay For](https://www.fazeddigital.com/blog/ecommerce-website-price-philippines) (Development, 26 Oct 2026)
