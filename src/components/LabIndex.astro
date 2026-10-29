@@ -5,7 +5,7 @@ import { Picture } from 'astro:assets';
 import { labShipped, labUpcoming, labImaged, LABEL, labDate, hostOf } from '../data/lab';
 import { labImages } from '../data/images';
 import IndexPreview from './IndexPreview.astro';
-const fiction: Record<string, string> = { '01': 'café', '02': 'sneaker brand', '03': 'watch brand', '04': 'electric car brand', '05': 'skincare brand', '06': 'desert villa', '07': 'strength studio', '08': 'album', '09': 'island resort' };
+const fiction: Record<string, string> = { '01': 'café', '02': 'sneaker brand', '03': 'watch brand', '04': 'electric car brand', '05': 'skincare brand', '06': 'desert villa', '07': 'strength studio', '08': 'album', '09': 'island resort', '10': 'headphone brand' };
 const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).join(', ')} and ${a[a.length - 1]}`);
 ---
 <div class="lindex" data-windex data-event="fz:lab">
@@ -37,15 +37,15 @@ const list = (a: string[]) => (a.length < 2 ? a.join('') : `${a.slice(0, -1).joi
       );
     })}
   </ul>
-  <h3 class="sr-only">Next in the lab</h3>
-  <ol class="l-queue">
+  {labUpcoming.length > 0 && <h3 class="sr-only">Next in the lab</h3>}
+  {labUpcoming.length > 0 && <ol class="l-queue">
     {labUpcoming.map((i) => (
       <li class:list={['lq', { 'lq--research': i.status === 'research' }]}>
         <span class="mono l-n">{i.n}</span>
         <span class="lq-b"><span class="lq-name">{i.brand}</span><span class="mono lq-st">{i.status === 'research' ? 'In research' : 'Queued'}</span></span>
       </li>
     ))}
-  </ol>
+  </ol>}
   <div class="lprev" aria-hidden="true" data-wprev data-lab-plate><span class="wprev-scan"></span><span class="wprev-cap mono" data-wcap></span></div>
 </div>
 <IndexPreview />

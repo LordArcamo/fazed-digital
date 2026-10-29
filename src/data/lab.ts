@@ -114,7 +114,14 @@ const all: LabItem[] = [
     alt: 'Linaw concept site: a cut-away island model with clear turquoise water over reef and sand under a limestone cliff, beside the headline The island keeps the tide’s time.',
     desc: 'Concept site for a fictional island resort. A real-time cut-away island in the Sulu Sea, where the tide, the reef and the night glow play out as you scroll.',
   },
-  { n: '10', slug: 'headphones', brand: 'Headphones', short: 'Headphones', category: 'Premium headphones', status: 'queued' },
+  {
+    n: '10', slug: 'tacet', brand: 'TACET Model 01', short: 'TACET', category: 'Premium headphones', line: 'The quietest thing we make is a wave.',
+    sub: 'A noise-cancelling over-ear you watch cancel noise in real time: scroll and the headphones come apart, part by part, while the sound wave flattens to silence.',
+    chips: ['Next.js', 'Three.js', 'Exploded view', 'Live audio', 'Blender'], built: 'Next.js · Three.js',
+    url: 'https://fazed-tacet.vercel.app', date: '2026-10-29', status: 'shipped',
+    alt: 'TACET Model 01 concept site: dark graphite over-ear headphones inside a green ring, beside the headline The quietest thing we make is a wave.',
+    desc: 'Concept site for a fictional headphone brand. Real-time 3D with live audio: the headphones explode into their parts while the noise cancels on screen.',
+  },
 ];
 
 /** in 'hide' mode #04 drops out of every list and count; in 'text' it stays but loses its imagery */

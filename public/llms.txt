@@ -45,6 +45,7 @@
   - Whiting (concept site, fictional brand): https://fazed-whiting.vercel.app · Three.js WebGPU, TSL, Live lighting, Motion capture, Lenis · 2026-10-21
   - Fazzy · PLAIN TEXT (concept site, fictional brand): https://fazed-plain-text.vercel.app · OGL, Tone.js, GSAP + Lenis, SVG rig · 2026-10-20
   - Linaw (concept site, fictional brand): https://fazed-linaw.vercel.app · Three.js WebGPU, TSL, Vue, Blender, Live audio · 2026-10-24
+  - TACET Model 01 (concept site, fictional brand): https://fazed-tacet.vercel.app · Next.js, Three.js, Exploded view, Live audio, Blender · 2026-10-29
 
 ## Guides
 - [Brand Identity Price in the Philippines: Logo to Guidelines](https://www.fazeddigital.com/blog/brand-identity-price-philippines) (Branding, 29 Oct 2026)

@@ -13,5 +13,6 @@ Copied from the series sites so the build never reaches outside this repo. `scri
 | lab-07.webp | /Users/lordarcamo/Projects/fazed-3d-sites/07-fitness-studio/site/public/gl/poster-1610.webp (Whiting hero poster at 1920×1200, keyed on chalk brightness + plate red; windows and ceiling lights masked out) |
 | lab-08.webp | /Users/lordarcamo/Projects/fazed-3d-sites/08-music-artist/site/public/press/plain-text-hero.webp (Plain Text hero capture at 1920×1200, Fazzy + lime blocks keyed off the light page; headline and copy masked out) |
 | lab-09.webp | /Users/lordarcamo/Projects/fazed-3d-sites/09-island-resort/site/public/posters/hero-l.webp (Linaw hero poster, luma-keyed so only the island model draws) |
+| lab-10.webp | /Users/lordarcamo/Projects/fazed-3d-sites/10-premium-headphones/site/public/posters/hero-1440x900.jpg (TACET exploded-view poster at 1920×1200, keyed on neutral brightness so the pink wave field drops out) |
 
-All nine are Fazed Digital renders/captures of its own concept sites.
+All ten are Fazed Digital renders/captures of its own concept sites.
