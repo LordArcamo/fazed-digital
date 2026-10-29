@@ -48,6 +48,7 @@
   - TACET Model 01 (concept site, fictional brand): https://fazed-tacet.vercel.app · Next.js, Three.js, Exploded view, Live audio, Blender · 2026-10-29
 
 ## Guides
+- [Website Design for General Contractors: Pages That Win Bids](https://www.fazeddigital.com/blog/website-design-general-contractors) (Design, 30 Oct 2026)
 - [Brand Identity Price in the Philippines: Logo to Guidelines](https://www.fazeddigital.com/blog/brand-identity-price-philippines) (Branding, 29 Oct 2026)
 - [How Much Does a Small Business Website Cost in the UK?](https://www.fazeddigital.com/blog/small-business-website-cost-uk) (Strategy, 28 Oct 2026)
 - [Magento to PrestaShop Migration: Lessons From a Real Store Move](https://www.fazeddigital.com/blog/magento-to-prestashop-migration) (Development, 27 Oct 2026)
