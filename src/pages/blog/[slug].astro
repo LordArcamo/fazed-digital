@@ -13,6 +13,40 @@ import { SERVICE_FOR, catSlug } from '../../lib/cover';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'payment-gateway-philippines-gcash',
+      title: "GCash Payments on Your Website: Gateway Options Explained",
+      category: 'Development',
+      date: '31 Oct 2026',
+      readTime: '5 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: '',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Adding a payment gateway in the Philippines with GCash support takes more than a QR code. Here's how the main options work and how to choose.",
+      content: `
+        <p>A payment gateway in the Philippines that supports GCash is not the same as a QR code from your GCash business account. To collect payments through your website, you need a third-party gateway — typically PayMongo, Xendit, DragonPay or Paynamics. Each routes transactions differently, charges different fees and connects to your site in a different way.</p>
+        <h2>What a payment gateway in the Philippines actually does</h2>
+        <p>Your GCash business QR code lets customers scan and pay in person, or lets you share a payment link manually. That is convenient for face-to-face and chat-based sales, but it is not a checkout. A payment gateway sits between your website, the customer's chosen payment method and your bank account. When a customer clicks Pay Now, the gateway processes the transaction in real time and triggers whatever your site expects next — an order confirmation, a booking entry, an unlocked download.</p>
+        <p>Without a gateway, your website cannot confirm whether a payment succeeded or failed. You would be waiting for a manual transfer notification, matching it against orders by hand, and hoping nothing slips through. For any business handling more than a handful of transactions a month, that process does not scale.</p>
+        <h2>GCash and the payment gateway options in the Philippines</h2>
+        <p>PayMongo is the most widely used gateway for small businesses and startups in the Philippines. It supports GCash Pay, GrabPay, Maya, credit and debit cards, and bank transfers. Setup involves registering a merchant account, generating API keys and — if you are on WordPress and WooCommerce — installing the official plugin. Transaction fees are charged per transaction with no monthly subscription, which suits lower-volume businesses well.</p>
+        <p>Xendit covers a broader set of channels: GCash, Maya, credit cards, bank transfers, direct debit and over-the-counter payments at convenience stores. It tends to be the choice for businesses expecting higher volumes or needing payout flexibility — for example, disbursing funds to multiple parties. Developer documentation is thorough. Both PayMongo and Xendit hold Bangko Sentral ng Pilipinas (BSP) registration as payment service providers.</p>
+        <p>DragonPay is an older service focused on bank transfers and over-the-counter payment at partner outlets. GCash is among its supported channels, but it is not the primary draw; businesses that rely heavily on e-wallets typically use PayMongo or Xendit instead. Paynamics is another Philippine gateway handling cards, e-wallets and instalment options, often chosen by mid-to-large businesses with established local banking relationships.</p>
+        <h2>How to choose the right option for your business</h2>
+        <p>For most small businesses in the Philippines — a service firm, an online shop or a booking-based business — PayMongo is the clearest starting point. It is the least complicated to set up, well-documented in both English and Filipino developer forums, and the transaction fee structure is predictable. If you need instalment plans, recurring billing, very high volumes or more flexible payout arrangements, Xendit is the stronger fit.</p>
+        <p>The right choice also depends on what your website is built on. A WooCommerce store has ready-made plugins for both PayMongo and Xendit. A custom-built system — a booking engine, a membership portal or an ordering application — needs a developer to integrate the gateway's API directly, which includes writing the checkout flow, configuring webhooks and testing every scenario before going live.</p>
+        <h2>What gateway integration involves on your website</h2>
+        <p>Integrating a payment gateway on a custom site involves more than flipping a switch. A developer registers a merchant account with the provider, installs the API library, builds the checkout user interface, configures the webhook endpoint that the gateway calls when a transaction completes or fails, and runs end-to-end tests in the sandbox environment before switching to production. Each step has edge cases: failed payments, abandoned checkouts, network timeouts and duplicate transactions all need handling.</p>
+        <p>On a WooCommerce store, the official plugins handle most of this, and a developer's job is configuration and testing rather than building from scratch. On a bespoke system, estimate at least several days of development work, more if you need recurring billing, split payouts or custom reporting on transaction data.</p>
+        <p>Our <a href="https://www.fazeddigital.com/services#systems">custom systems and integrations service</a> covers payment gateway setup for businesses that need a checkout built into a bespoke booking, ordering or membership platform — not just a plugin. If you are also scoping the overall cost of an ecommerce build, <a href="https://www.fazeddigital.com/blog/ecommerce-website-price-philippines">our breakdown of ecommerce website prices in the Philippines</a> covers what goes into a full online store.</p>
+        <h2>Frequently asked questions</h2>
+        <p><strong>Can I add GCash payments to any existing website?</strong> You can add GCash as a payment option on most websites that already have a checkout flow, using a gateway such as PayMongo or Xendit. If your site has no checkout — for example, a basic company site with only a contact form — you would need to build one first before a gateway is useful.</p>
+        <p><strong>Do I need a business registration to accept payments online in the Philippines?</strong> Yes. All the major Philippine payment gateways require a verified merchant account before you can collect live payments. That means submitting your business registration documents (DTI, BIR or SEC depending on your structure) and your bank account details. A personal GCash account is not sufficient; you need either a GCash Business account or a separate gateway merchant account.</p>
+        <p><strong>How long does it take to set up a payment gateway?</strong> Merchant account approval with PayMongo or Xendit typically takes three to seven business days once documents are submitted and complete. Developer integration on an existing platform can take another two to five days, depending on complexity. Budget at least two weeks from starting the merchant application to a fully tested, live checkout.</p>
+        <p>If you are building a booking system, ordering platform or any website where customers pay through the site, <a href="https://www.fazeddigital.com/contact">get in touch with us</a> to scope the work. We handle gateway integration as part of our custom systems service.</p>
+      `,
+    },
+    {
       slug: 'website-design-general-contractors',
       title: "Website Design for General Contractors: Pages That Win Bids",
       category: 'Design',
