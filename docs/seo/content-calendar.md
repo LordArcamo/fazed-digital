@@ -32,7 +32,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-10-29 | PH | Branding | Brand Identity Price in the Philippines: Logo to Guidelines | logo and branding price philippines | /services#brand → /blog/brand-identity-price-philippines
 - [x] 2026-10-30 | US | Design | Website Design for General Contractors: Pages That Win Bids | website design for general contractors | /work/01 → /blog/website-design-general-contractors
 - [x] 2026-10-31 | PH | Development | GCash Payments on Your Website: Gateway Options Explained | payment gateway philippines gcash | /services#systems → /blog/payment-gateway-philippines-gcash
-- [ ] 2026-11-01 | AU | Strategy | How Much Does a Website Cost in Australia in 2027? | website cost australia | /lp/7-day-website
+- [x] 2026-11-01 | AU | Strategy | How Much Does a Website Cost in Australia in 2027? | website cost australia | /lp/7-day-website → /blog/website-cost-australia-2027
 - [ ] 2026-11-02 | Global | Strategy | How Long Does It Take to Build a Small Business Website? | how long does it take to build a website for a small business | /lp/7-day-website
 - [ ] 2026-11-03 | PH | Development | Online Booking System in the Philippines: Build or Buy? | online booking system philippines | /services#systems
 - [ ] 2026-11-04 | US | Strategy | Small Business Website Cost in the US: A 2027 Price Guide | small business website cost | /lp/7-day-website

@@ -48,6 +48,7 @@
   - TACET Model 01 (concept site, fictional brand): https://fazed-tacet.vercel.app · Next.js, Three.js, Exploded view, Live audio, Blender · 2026-10-29
 
 ## Guides
+- [How Much Does a Website Cost in Australia in 2027?](https://www.fazeddigital.com/blog/website-cost-australia-2027) (Strategy, 01 Nov 2026)
 - [GCash Payments on Your Website: Gateway Options Explained](https://www.fazeddigital.com/blog/payment-gateway-philippines-gcash) (Development, 31 Oct 2026)
 - [Website Design for General Contractors: Pages That Win Bids](https://www.fazeddigital.com/blog/website-design-general-contractors) (Design, 30 Oct 2026)
 - [Brand Identity Price in the Philippines: Logo to Guidelines](https://www.fazeddigital.com/blog/brand-identity-price-philippines) (Branding, 29 Oct 2026)
