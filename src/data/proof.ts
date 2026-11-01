@@ -6,7 +6,7 @@ import { team } from './team';
 
 // Owner-confirmed 2026-10-19: 120+ projects is real. Every other number is derived from the data files.
 export const stats = [
-  { value: '120', suffix: '+', label: 'Projects delivered', sub: 'Websites, brands and systems since 2022', show: true }, // owner-confirmed
+  { value: '120', suffix: '+', label: 'Projects by our founder', sub: 'Websites, brands and systems delivered since 2022', show: true }, // owner-confirmed; founder's track record (user, 2026-11-01)
   { value: String(countries.length), suffix: '', label: 'Countries', sub: 'USA, Australia and the Philippines', show: true }, // from cases.ts
   { value: String(YEARS), suffix: ' yrs', label: 'In business', sub: 'Iligan City-based since 2022', show: true }, // computed
   { value: String(team.length), suffix: '', label: 'People', sub: 'One small team, a direct line', show: true }, // from team.ts
@@ -25,7 +25,7 @@ export const lpTestimonials: { quote: string; name: string; role: string }[] = [
 
 // LP trust bar: owner confirmed 120+ projects (2026-10-19); the unverified 12+ / 100% on-time / 7x figures were removed
 export const lpTrust = [
-  { value: '120+', label: 'Projects delivered' }, // owner-confirmed 2026-10-19
+  { value: '120+', label: 'Projects by our founder' }, // owner-confirmed 2026-10-19; reworded as the founder's track record (user, 2026-11-01)
   { value: String(countries.length), label: 'Countries served' },
   { value: 'Since 2022', label: 'Iligan City studio' },
 ];
