@@ -44,6 +44,8 @@ const why = [
 ];
 const guarantee = 'We’ll launch your site in 7 business days, as long as we have your content and assets on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.';
 const faq = lpFaq(php);
+// Founding client offer (user, 2026-11-01): PH Starter 25% off, 5 spots, taken at deposit. Display only; the signup form is unchanged. Set to false when the 5 spots are gone.
+const FOUNDING_PH = true;
 ---
 <div class="lp" data-lp={variant}>
   <section class="lp-hero" data-f="days7" aria-labelledby="lp-h">
@@ -51,6 +53,7 @@ const faq = lpFaq(php);
       <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Fast-track website · Fixed price · USD'}</p>
       <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
       <p class="t-body-l lp-deck">{php ? 'We design, build and launch professional websites for Philippine businesses: fully custom, mobile-ready and set up for Google.' : 'We design, build and launch professional websites for small businesses: fully custom, mobile-ready and set up for Google.'} <strong>{php ? 'From ₱19,999, fixed price. Pay via GCash, Maya or bank.' : 'From $499, fixed price. You own everything.'}</strong></p>
+      {php && FOUNDING_PH && <p class="lp-founding" role="note"><strong class="mono">Founding client offer</strong><br /><b>Starter ₱14,999</b> <span class="dim">(save ₱5,000)</span> · 5 spots, secured with a deposit. Extra pages and care plans at regular price.</p>}
       <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
       <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}<i class="ld-t"> · {['Kickoff', 'Design', 'Design', 'Build', 'Build', 'Review', 'Live'][i]}</i></em></li>)}</ol>
       <dl class="lp-trust">
@@ -264,4 +267,6 @@ const faq = lpFaq(php);
     .lp-form > :global(*) { grid-column: 1 / -1 !important; }
   }
   @media (max-width: 599px) { .lp-steps, .lp-4, .lp-tiles { grid-template-columns: 1fr; } .lp-days em { display: none; } }
+  .lp-founding { display: inline-block; max-width: 34rem; margin: 1rem 0 0; padding: .75rem 1rem; border: 1px solid var(--lime, #c6f432); border-radius: 10px; font-size: 1rem; line-height: 1.5; }
+  .lp-founding strong { color: var(--lime, #c6f432); }
 </style>
