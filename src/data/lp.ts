@@ -17,8 +17,10 @@ export const lpFaq = (php: boolean) => {
     { q: 'What if I’m not happy with the design?', a: 'You see your design mockups on Day 2–3, before anything is built. Every package includes revision rounds: 2 for Starter, 3 for Growth, unlimited for Pro. On Day 6 you test the whole site on a staging link before it goes live.' },
     ...(php ? [] : [{ q: 'Who will I be working with?', a: `A small team based in Iligan City, Philippines, led by our founder. You get a direct line to the people designing and building your site. We reply within one business day, ${NAP.hours} (UTC+8).` }]),
     { q: 'Will I own the website?', a: 'Yes. The domain, the site and the content are yours. No lock-in contract.' },
+    { q: 'Are the domain and hosting included?', a: 'We can provide your domain and connect it for you. Hosting is your choice: we launch your site on the host you prefer, in your own account, and every build is optimised to load in under 2 seconds.' },
+    { q: 'What if I change my mind?', a: 'You pay nothing until you approve the quote. If you’ve paid a deposit and change your mind before work starts, it’s refunded.' },
     php
-      ? { q: 'What payment methods do you accept?', a: `GCash, Maya (PayMaya), bank transfer (BPI or Metrobank) and Wise.${FOUNDING_PH.on ? ' Founding client rate spots are secured with a deposit.' : ''}` }
+      ? { q: 'What payment methods do you accept?', a: `GCash, Maya (PayMaya), bank transfer (BPI or Metrobank) and Wise.${FOUNDING_PH.on ? ' Founding client rate spots are secured with a deposit, refundable if you change your mind before work starts.' : ''}` }
       : { q: 'How do I pay?', a: 'By Wise or bank transfer. We confirm the details with your quote.' },
     { q: 'What if I need more pages or custom features?', a: `Extra pages are ${P.page} each. Booking systems, membership portals and custom e-commerce are scoped separately. You get the price upfront, never as a surprise.` },
     { q: 'Do you offer ongoing maintenance?', a: `Yes. Monthly plans start at ${P.care} and cover updates, backups, security monitoring, uptime checks and small content changes.` },

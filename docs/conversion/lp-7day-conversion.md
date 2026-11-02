@@ -334,3 +334,10 @@ A primary CTA appears in sections 1, 4 (after the tiles), 6 (each plan) and 7, t
 10. **H1 "7 days" vs "7 business days".** I kept "7 days" in the H1 to match the ads and meta titles, with "7 business days" in the line directly under it. If any ad promises "7 days" with no qualifier, add "business" to the ad copy too.
 
 No new numbers, reviews, ratings, logos, awards or deadlines were introduced. Every figure renders from `proof.ts`, `offers.ts`, `cases.ts` or `site.ts`.
+
+
+## Owner answers (2026-11-02)
+- Domain: we can provide it. Hosting: the client's preferred host. Applied as a new FAQ + Day 7 copy.
+- Under 2s load: confirmed, it's what we do. Pro row kept.
+- Deposit: refundable. Worded as 'refunded if you change your mind before work starts' to match /terms (non-refundable once work has commenced). Amount not published.
+- Still open: 'Unlimited revisions' on Pro within the 7-day window; 'Our pick' badge is an opinion (fine).
