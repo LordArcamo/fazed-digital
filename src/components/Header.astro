@@ -3,6 +3,7 @@ import Logo from './Logo.astro';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 import { NAP, SOCIALS } from '../data/site';
 import { labShipped, pad2 } from '../data/lab';
+import { offerPrice } from '../data/offers';
 import { caseIndex, countries } from '../data/cases';
 const { current = '', lp = false } = Astro.props;
 // Lab sits after Work (its proof sibling). Six links never fit the top rail (measured, lab-spec §7),
@@ -32,8 +33,8 @@ const cur = menu.find((m) => m.href === current);
       <p class="mono sd-price"><span class="t-city">Free website check · </span>15 min</p>
       <a href="#book" class="sd-go">Book a time <span aria-hidden="true">→</span></a>
     </div> : <div class="sd-lp" id="sd-lp" role="region" aria-label="Get started">
-      <p class="mono sd-price"><span class="t-city">7-day website · </span>From {lp === 'php' ? '₱19,999' : '$499'}</p>
-      <a href="#get-started" class="sd-go">Get started <span aria-hidden="true">→</span></a>
+      <p class="mono sd-price"><span class="t-city">7-day website · </span>{(() => { const o = offerPrice(lp === 'php' ? 'php' : 'usd', 'starter'); return o.founding ? `Founding rate ${o.price}` : `From ${o.price}`; })()}</p>
+      <a href="#get-started" class="sd-go">Get my start date <span aria-hidden="true">→</span></a>
     </div>}
     </> : <>
     <p class="hdr-tel mono"><span class="sr-only">Studio in Iligan City, Philippines</span><span aria-hidden="true"><span class="t-city">Iligan<span class="t-cw"> City</span> · </span><span class="t-time" data-clock></span> PHT<span class="t-open" data-open aria-hidden="true"></span><span class="t-co"> · {NAP.coords}</span></span></p>

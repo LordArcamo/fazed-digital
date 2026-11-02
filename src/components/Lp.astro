@@ -6,8 +6,10 @@ import { Picture } from 'astro:assets';
 import Faq from './Faq.astro';
 import LpForm from './LpForm.astro';
 import { FOUNDING_PH, offerPrice } from '../data/offers';
-import { countries } from '../data/cases';
-import { labImages } from '../data/images';
+import { countries, caseIndex } from '../data/cases';
+import { labImages, workImages } from '../data/images';
+import { team } from '../data/team';
+import { NAP } from '../data/site';
 import { labShipped, LABEL } from '../data/lab';
 import { lpFaq } from '../data/lp';
 import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, results, prices, capsCopy } from '../data/proof';
@@ -43,6 +45,13 @@ const process = [
 const faq = lpFaq(php);
 // Founding client rate: src/data/offers.ts (one switch for the banner, the form and the lead email)
 const FOUNDING = FOUNDING_PH.on;
+// real, named work (cases.ts; no metrics: CASE_METRICS_REAL = false). Dotted Studios = the one real 1-week build.
+const work = [
+  { slug: '09', tag: 'Philippines · Web design + CMS', h: 'Dotted Studios. Live one week after the build started.', b: 'A branding studio in Iligan City. We built the site from their own Figma design and launched it at dottedstudios.com in October 2026.', site: 'dottedstudios.com' },
+  { slug: '01', tag: 'USA · Web design + WordPress', h: 'A Framing Company. A contractor site built around their projects.', b: 'A Utah framing contractor whose old site had no portfolio. We built a WordPress site around their completed builds, and their team updates it without touching code.', site: 'aframingcompany.com' },
+  { slug: '02', tag: 'Philippines · Brand + WordPress', h: 'Cleen & Green. A premium brand and a site built to convert.', b: 'A full rebrand for a Philippine cleaning company, plus a franchise page that opened a channel they couldn’t use before.', site: 'cleenandgreen.com' },
+];
+const lord = team.find((t) => t.id === 'lord')!;
 ---
 <div class="lp" data-lp={variant}>
   <section class="lp-hero" data-f="days7" aria-labelledby="lp-h">
@@ -58,7 +67,23 @@ const FOUNDING = FOUNDING_PH.on;
         {lpTrust.map((t) => <div><dt class="mono">{t.label}</dt><dd>{t.value}</dd></div>)}
         <div><dt class="mono">{st.founding ? 'Founding rate' : 'Starting price'}</dt><dd>{st.price}</dd></div>
       </dl>
+      <p class="mono lp-names"><span>Clients include</span> {caseIndex.map((c) => c.title).join(' · ')}</p>
     </div>
+  </section>
+
+  <section class="section container lp-reviews" aria-labelledby="rv-h">
+    {LP_REVIEWS_REAL && lpTestimonials.length ? <>
+      <p class="mono">Client reviews</p>
+      <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
+      <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
+    </> : <>
+      <!-- Real client results (proof.ts) until approved review quotes exist. Funnel rule: no links off the LP here. -->
+      <p class="mono">Client work · {countries.join(' · ')}</p>
+      <h2 id="rv-h" class="t-d2">Real clients. <span class="dim">Real projects.</span></h2>
+      <p>Our founder has delivered 120+ websites, brands and systems since 2022. Dotted Studios went live one week after the build started. The other two were longer custom builds, made by the same team you’ll work with.</p>
+      <ul class="lp-3 lp-res">{work.map((w) => <li><Picture src={workImages[w.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 30vw" alt={`${w.h.split('.')[0]} website, designed and built by Fazed Digital`} loading="lazy" decoding="async" /><p class="mono">{w.tag}</p><h3 class="t-h3">{w.h}</h3><p>{w.b}</p><p class="mono lp-res-site">{w.site}</p></li>)}</ul>
+      <p class="mono lp-note">Also: The Telecom Shop (Australia, store migration) · CrateOnScene (USA, platform in 5 weeks)</p>
+    </>}
   </section>
 
   {php && (
@@ -74,6 +99,8 @@ const FOUNDING = FOUNDING_PH.on;
     </section>
   )}
 
+
+
   <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
     <p class="mono">How it works · 7 business days · 5 steps</p>
     <h2 id="pc-h" class="t-d2">From brief to live in 7 business days.</h2>
@@ -81,21 +108,10 @@ const FOUNDING = FOUNDING_PH.on;
     <p class="lp-note">Day 1 is your kickoff day, once we have your brief, logo, photos and text. Every day here is a business day, Monday to Friday.</p>
   </section>
 
-  <section class="section container lp-reviews" aria-labelledby="rv-h">
-    {LP_REVIEWS_REAL && lpTestimonials.length ? <>
-      <p class="mono">Client reviews</p>
-      <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
-      <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
-    </> : <>
-      <!-- Real client results (proof.ts) until approved review quotes exist. Funnel rule: no links off the LP here. -->
-      <p class="mono">Client work · {countries.join(' · ')}</p>
-      <h2 id="rv-h" class="t-d2">Real clients. <span class="dim">Real projects.</span></h2>
-      <p>Our founder has delivered 120+ websites, brands and systems since 2022. These three were bigger custom builds, not 7-day sites. Your 7-day site is made by the same team with the same care.</p>
-      <ul class="lp-3 lp-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
-    </>}
+  <section class="section container lp-labsec" aria-labelledby="lw-h">
     <div class="lp-work">
       <p class="mono">Fazed Lab · {String(lpLab.length).padStart(2, '0')} concept sites</p>
-      <h3 id="lw-h" class="t-d2">And what we build for fun.</h3>
+      <h2 id="lw-h" class="t-d2">And what we build for fun.</h2>
       <p>Concept sites for fictional brands, designed and built in-house to push our craft. Your 7-day site is simpler, but it’s made by the same team with the same care.</p>
       <ul class="lp-tiles">
         {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
@@ -130,6 +146,11 @@ const FOUNDING = FOUNDING_PH.on;
         </li>
       ))}
     </ul>
+    <ul class="lp-guarantee">{['Live in 7 business days, or 20% off', 'No payment until you approve the quote', 'Refundable deposit before work starts', 'You own the domain, site and content'].map((x) => <li><span aria-hidden="true">✓</span> {x}</li>)}</ul>
+    <div class="lp-fit">
+      <div><h3 class="t-h3">It’s for you if…</h3><ul><li>You need a clean, custom 5 to 10+ page site, fast.</li><li>You can send your logo, photos and text on Day 1.</li><li>You want a fixed price and a site you own outright.</li></ul></div>
+      <div><h3 class="t-h3">It’s not for you if…</h3><ul><li>You need bookings, a member portal or a custom store. We quote those separately.</li><li>Your content won’t be ready for a few weeks. Book when it is.</li><li>You want a big agency with account managers.</li></ul></div>
+    </div>
     <p class="lp-note mono">{capsCopy.sevenDay}</p>
     <p class="lp-note">Need something custom? <a class="link" href="mailto:info@fazeddigital.com">Email us</a> and we’ll scope it together. No commitment.</p>
     <p class="lp-note mono">Extra pages {P.page} each · Maintenance from {P.care} · Booking systems, portals and custom e-commerce are scoped separately.</p>
@@ -157,6 +178,10 @@ const FOUNDING = FOUNDING_PH.on;
       <h2 id="gs-h" class="t-d2">Get your start date <span class="dim">in one business day.</span></h2>
       <p>A few quick questions, mostly one tap each. A real person replies within one business day, Monday to Friday, with your confirmed start date. No payment now, and no commitment until you approve the quote.</p>
       {php && <p>Have a Facebook page? Add it near the end and we’ll pull your photos and details from it to save you time.</p>}
+      <div class="lp-person">
+        {lord.photo && <img src={lord.photo} alt="Lord Arcamo, founder of Fazed Digital" width="64" height="64" loading="lazy" decoding="async" />}
+        <p><b>{lord.name}, Founder.</b> You’ll work with me and our small team in Iligan City, Philippines. We’re online {NAP.hours}{php ? '' : ' (UTC+8)'}. Rather talk first? Call or text <a class="link" href={`tel:${NAP.tel}`}>{NAP.phone}</a>.</p>
+      </div>
       <ul class="lp-pills">{['No payment now', 'Fixed price, no surprises', '7 business days or 20% off', 'You own your site. No lock-in.'].map((x) => <li><span aria-hidden="true">✓</span> {x}</li>)}</ul>
     </div>
     <LpForm variant={variant} />
@@ -172,7 +197,7 @@ const FOUNDING = FOUNDING_PH.on;
   .lp-deck strong { color: var(--white); }
   .lp-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
   .lp-cta-note { color: var(--gray-300); font-size: .75rem; letter-spacing: .06em; margin-top: -.5rem; }
-  .lp-work { display: grid; gap: 1.25rem; margin-top: clamp(48px, 7vw, 96px); }
+  .lp-work { display: grid; gap: 1.25rem; }
   .plan-was { font-size: .4em; color: var(--gray-400); margin-left: .4em; }
   .lp-days { display: grid; grid-template-columns: repeat(7, 1fr); max-width: 760px; margin-top: 2rem; position: relative; }
   .lp-days::before { content: ''; position: absolute; left: 5px; right: 5px; top: 5px; height: 1px; background: var(--gray-700); }
@@ -224,6 +249,21 @@ const FOUNDING = FOUNDING_PH.on;
   .lp-chips .chip { color: var(--gray-200); min-height: 40px; }
   .lp-res li { border-top: 1px solid var(--gray-700); padding-top: 1.25rem; display: grid; gap: .5rem; align-content: start; }
   .lp-res .mono { color: var(--lime); }
+  .lp-names { color: var(--gray-400); font-size: 12px; letter-spacing: .06em; line-height: 1.7; max-width: 900px; }
+  .lp-names span { color: var(--gray-300); margin-right: .4rem; }
+  .lp-guarantee { display: flex; flex-wrap: wrap; gap: 8px 22px; padding: 14px 18px; border: 1px solid var(--lime); border-radius: 12px; background: var(--lime-06); }
+  .lp-guarantee li { color: var(--white); font-weight: 500; }
+  .lp-guarantee span { color: var(--lime); }
+  .lp-fit { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gutter); }
+  .lp-fit > div { display: grid; gap: .75rem; align-content: start; padding: 20px; border: 1px solid var(--gray-700); border-radius: 12px; }
+  .lp-fit ul { display: grid; gap: .45rem; color: var(--gray-300); padding-left: 1.1rem; list-style: disc; }
+  .lp-labsec { display: grid; gap: 1.25rem; }
+  @media (max-width: 767px) { .lp-fit { grid-template-columns: 1fr; } }
+  .lp-res :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); border-radius: 8px; }
+  .lp-res .lp-res-site { color: var(--gray-400); }
+  .lp-person { display: flex; gap: 14px; align-items: flex-start; padding: 16px; border: 1px solid var(--gray-700); border-radius: 12px; background: var(--gray-900); }
+  .lp-person img { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; flex: none; }
+  .lp-person p { color: var(--gray-200); font-size: .95rem; }
   .lp-steps { display: grid; grid-template-columns: repeat(5, 1fr); gap: var(--gutter); margin-top: 2rem; }
   .lp-steps li, .lp-4 li { display: grid; gap: .6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); position: relative; }
   .lp-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); }
@@ -255,7 +295,7 @@ const FOUNDING = FOUNDING_PH.on;
     .lp-4, .lp-tiles { grid-template-columns: 1fr 1fr; }
     .lp-form > :global(*) { grid-column: 1 / -1 !important; }
   }
-  @media (max-width: 599px) { .lp-steps, .lp-4, .lp-tiles { grid-template-columns: 1fr; } .lp-days em { display: none; } }
+  @media (max-width: 599px) { .lp-steps, .lp-4 { grid-template-columns: 1fr; } .lp-tiles { gap: 12px; } .lp-tiles .tile-l { display: none; } .lp-days em { display: none; } }
   .lp-founding { display: inline-block; max-width: 34rem; margin: 1rem 0 0; padding: .75rem 1rem; border: 1px solid var(--lime); border-radius: 10px; font-size: 1rem; line-height: 1.5; }
   .lp-founding strong { color: var(--lime); }
 </style>

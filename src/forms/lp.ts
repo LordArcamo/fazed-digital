@@ -208,7 +208,9 @@ export function initLpForms() {
       sheet.dataset.dir = dir;
       sheet.dataset.step = s.dataset.q;
       screens.forEach((x) => { const on = x === s; x.hidden = !on; x.inert = !on; });
-      const n = cur + 1, total = list.length;
+      // a package picked on the page counts as step one done: the sheet opens at 02 / 07, not 01 / 06
+      const pre = skip.has('package') && val('package') ? 1 : 0;
+      const n = cur + 1 + pre, total = list.length + pre;
       bar.style.setProperty('--p', String(n / total));
       // goal-gradient: show how little is left (about 10 s a screen), so the end feels close
       const left = (total - n + 1) * 10;
