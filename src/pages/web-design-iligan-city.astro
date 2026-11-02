@@ -6,6 +6,7 @@
 import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import Faq from '../components/Faq.astro';
+import Crumbs from '../components/Crumbs.astro';
 import { NAP, SITE_URL } from '../data/site';
 import { prices, capsCopy } from '../data/proof';
 import { workImages } from '../data/images';
@@ -66,6 +67,7 @@ const schema = [
   <div class="il">
     <section class="il-hero" aria-labelledby="il-h">
       <div class="container il-hero-in">
+        <Crumbs items={[['Web design in Iligan City', '/web-design-iligan-city']]} />
         <p class="mono il-eye">{NAP.city} {NAP.postal} · {NAP.region} · {NAP.hours}</p>
         <h1 id="il-h" class="t-d1">Web design in Iligan City, <span class="dim">from a studio based here.</span></h1>
         <p class="t-body-l il-deck">Fazed Digital is a web design, branding and SEO studio based in Iligan City, Lanao del Norte. We build fast, mobile-first websites for local businesses, set up so customers can find you on Google. <strong>Fixed-price websites start at {P.starter} and go live in 7 business days.</strong> Meet us in person in Iligan, or work with us online.</p>
@@ -137,13 +139,13 @@ const schema = [
 
     <section class="container il-sec il-cdo" aria-labelledby="cdo-h">
       <div class="il-hd"><p class="mono">Northern Mindanao</p><h2 id="cdo-h" class="t-d2">Also working with <span class="dim">Cagayan de Oro.</span></h2></div>
-      <p class="il-prose">Cagayan de Oro is an easy trip from Iligan, and we work with businesses there and across Northern Mindanao, with the same peso prices and payment options. We can meet CDO clients in person too; everything else runs online, from the Day 1 brief to launch.</p>
+      <p class="il-prose">Cagayan de Oro is an easy trip from Iligan, and we work with businesses there and across Northern Mindanao, with the same peso prices and payment options. We can meet CDO clients in person too; everything else runs online, from the Day 1 brief to launch. Weighing a local developer against a remote studio? Read <a class="link" href="/blog/web-developer-cagayan-de-oro">how to choose a web developer in Cagayan de Oro</a>.</p>
     </section>
 
     <section class="container il-sec" aria-labelledby="fq-h">
       <div class="il-hd"><p class="mono">FAQ</p><h2 id="fq-h" class="t-d2">Questions Iligan owners ask us.</h2></div>
       <Faq items={faq} id="iligan-faq" />
-      <p class="il-more">More: <a class="link" href="/blog/google-business-profile-optimization">Google Business Profile optimisation</a> · <a class="link" href="/blog/local-seo-small-business-guide">a local SEO guide</a> · <a class="link" href="/blog/web-design-pricing-guide">website prices in the Philippines</a></p>
+      <p class="il-more">More: <a class="link" href="/blog/seo-iligan-city">how Iligan businesses get found on Google</a> · <a class="link" href="/blog/google-business-profile-optimization">Google Business Profile optimisation</a> · <a class="link" href="/blog/local-seo-small-business-guide">a local SEO guide</a> · <a class="link" href="/blog/web-design-pricing-guide">website prices in the Philippines</a></p>
     </section>
 
     <section class="il-end on-lime" aria-label="Get started">

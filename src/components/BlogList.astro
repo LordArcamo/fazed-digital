@@ -3,6 +3,7 @@ import BlogCover from './BlogCover.astro';
 import OfferCard from './OfferCard.astro';
 import { authorPhoto, initials } from '../lib/authors';
 import { HUBS, SERVICE_FOR, catSlug } from '../lib/cover';
+import { HUB_LINKS } from '../data/links';
 type P = { slug: string; title: string; excerpt: string; category: string; date: string; readTime: string; author: string };
 const { posts, featured, rest, cats, latest, hub = null } = Astro.props as { posts: P[]; featured: P; rest: P[]; cats: string[]; latest: string; hub?: string | null };
 const counts = Object.fromEntries(cats.map((c) => [c, posts.filter((p) => p.category === c).length]));
@@ -13,7 +14,7 @@ const counts = Object.fromEntries(cats.map((c) => [c, posts.filter((p) => p.cate
     <p class="mono">Insights · {posts.length} guides · Updated {latest}</p>
     <h1 id="b-h" class="t-d1">{hub ? `${hub} guides for small business owners.` : 'Ideas that move brands forward.'}</h1>
     <p class="t-body-l b-deck">{hub ? HUBS[hub]?.intro : 'Plain-English guides on websites, search, branding and strategy, written by the team that does this work every day. No fluff, no gatekeeping.'}</p>
-    {hub && SERVICE_FOR[hub] && <p>Need help with this? See our <a class="link" href={SERVICE_FOR[hub].href}>{SERVICE_FOR[hub].label}</a> {SERVICE_FOR[hub].href.startsWith('/services') ? 'service' : 'package'}.</p>}
+    {hub && SERVICE_FOR[hub] && <p>Need help with this? See our <a class="link" href={SERVICE_FOR[hub].href}>{SERVICE_FOR[hub].label}</a> {SERVICE_FOR[hub].href.startsWith('/services') ? 'service' : 'package'}{HUB_LINKS[hub]?.length ? <>, or {HUB_LINKS[hub].map((l, i) => <>{i ? (i === HUB_LINKS[hub].length - 1 ? ' and ' : ', ') : ''}<a class="link" href={l.href}>{l.label}</a></>)}</> : null}.</p>}
   </div>
 </section>
 <section class="b-body container">
@@ -63,6 +64,7 @@ const counts = Object.fromEntries(cats.map((c) => [c, posts.filter((p) => p.cate
   .crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
   .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }
   .crumbs a { color: var(--gray-300); min-height: 44px; display: inline-flex; align-items: center; }
+  .crumbs [aria-current] { color: var(--gray-400); min-height: 44px; display: inline-flex; align-items: center; } /* the current hub sat 12px above the trail */
   .b-body { padding-bottom: var(--section); }
   .b-filter { display: flex; flex-wrap: wrap; gap: .5rem; margin-bottom: 3rem; }
   .b-chip { min-height: 44px; gap: .4rem; color: var(--gray-300); }

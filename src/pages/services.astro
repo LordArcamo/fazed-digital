@@ -6,6 +6,7 @@ import { chapters, serviceFaq } from '../data/services';
 import { capsCopy, prices } from '../data/proof';
 import { SITE_URL } from '../data/site';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
+import { SERVICE_ALSO } from '../data/links';
 
 const schema = [
   {
@@ -66,6 +67,7 @@ const schema = [
           </div>
           {c.timeline && <p class="chap-time"><span class="mono">Timeline</span> {c.timeline} {c.id === 'web' && <a class="link" href="/lp/7-day-website">Get live in 7 days</a>}</p>}
           <p class="chap-read"><span class="mono">Related reading</span> {c.reading.map((r, k) => <>{k ? ' · ' : ''}<a class="link" href={r.href}>{r.label}</a></>)}</p>
+          {SERVICE_ALSO[c.id] && <p class="chap-read chap-also"><span class="mono">Also</span> {SERVICE_ALSO[c.id].lead} {SERVICE_ALSO[c.id].links.map((r, k) => <>{k ? ' · ' : ''}<a class="link" href={r.href}>{r.label}</a></>)}</p>}
           <a class="btn btn--lime chap-cta" href={c.cta.href}>{c.cta.label} <span class="arrow" aria-hidden="true">→</span></a>
         </div>
       </div>
@@ -150,6 +152,7 @@ const schema = [
   @media (max-width: 1023px) { .chap-proof .link { padding-block: 8px; } } /* standalone row: 29 → 45px tap height */
   .chap-time, .chap-read { color: var(--gray-300); }
   .chap-time .mono, .chap-read .mono { margin-right: .75rem; }
+  .chap-also { margin-top: -1.25rem; } /* sits under Related reading as one block */
   .chap-cta { justify-self: start; }
   .s-faq-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .s-faq-in > div:first-child { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }

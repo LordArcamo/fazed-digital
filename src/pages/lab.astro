@@ -11,6 +11,7 @@ import { labShipped, labUpcoming, labImaged, LAB_TOTAL, pad2 } from '../data/lab
 import { labImages } from '../data/images';
 import { SITE_URL } from '../data/site';
 import { crumbs, ORG_REF } from '../lib/schema';
+import { LAB_LINKS } from '../data/links';
 import { getImage } from 'astro:assets';
 
 const plates = Object.fromEntries(await Promise.all(labImaged.map(async (n) => [n, (await getImage({ src: labImages[n], width: 1200, format: 'webp' })).src])));
@@ -112,6 +113,7 @@ const shipped = pad2(labShipped.length);
       <h2 id="lc-h" class="t-d1">Want this engine <span class="dim">on a real brand?</span></h2>
       <p class="t-body-l">Tell us what you’re building. We’ll reply within one business day.</p>
       <div class="l-btns"><a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="/work">See client work</a></div>
+      <p class="l-also">Same team, everyday builds: {LAB_LINKS.map((l, k) => <>{k ? (k === LAB_LINKS.length - 1 ? ' and ' : ', ') : ''}<a class="link" href={l.href}>{l.label}</a></>)}.</p>
     </div>
   </section>
 </Base>
@@ -184,6 +186,7 @@ const shipped = pad2(labShipped.length);
   .l-h1 .h-l1, .l-h1 .h-l2 { display: block; white-space: nowrap; } .l-h1 .h-l2 { color: var(--gray-400); }
   .l-deck { max-width: 44ch; }
   .l-btns { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .l-also { color: var(--gray-300); max-width: 60ch; }
   .l-hero :global(.slate) { justify-self: end; width: min(606px, 46vw); }
   @media (min-width: 1024px) and (max-width: 1279px) { .l-hero :global(.slate) { width: min(520px, 46vw); } .l-h1 { font-size: clamp(2.75rem, 5.6vw, 4.5rem); } }
   @media (max-width: 1023px) {

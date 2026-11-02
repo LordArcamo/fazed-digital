@@ -8,6 +8,7 @@ import { SITE_URL } from '../../data/site';
 import { crumbs, faqPage, ORG_REF } from '../../lib/schema';
 import { caseSeo } from '../../data/case-seo';
 import Faq from '../../components/Faq.astro';
+import { casePlatformLinks } from '../../data/links';
 
 export function getStaticPaths() {
   return cases.map((c) => ({ params: { slug: c.slug }, props: { slug: c.slug } }));
@@ -26,6 +27,7 @@ const plate = (k: string) => platesAll[`../../assets/work/plates/${slug}-${k}.jp
 const plateD = plate('desktop'), plateM = plate('mobile');
 const countryCode: Record<string, string> = { USA: 'US', Australia: 'AU', Philippines: 'PH' };
 const seo = caseSeo[slug];
+const alt = casePlatformLinks(slug, c.discipline);
 const where = c.region ? `${c.region}, ${c.country}` : c.country;
 // related: two other cases that share a discipline (then the rest), in index order
 const related = caseIndex.filter((x) => x.slug !== slug).sort((a, b) => Number(b.discipline.some((d) => (c.discipline as string[]).includes(d))) - Number(a.discipline.some((d) => (c.discipline as string[]).includes(d)))).slice(0, 2);
@@ -131,6 +133,7 @@ const facts: [string, string][] = [['Client', c.client], ['Location', where], ['
         </a></li>
       ))}</ul>
       {seo && seo.related.length > 0 && <ul class="c-rel-links">{seo.related.map((r) => <li><a class="link" href={r.href}>{r.label} →</a></li>)}</ul>}
+      {alt.length > 0 && <p class="c-rel-alt">{slug === '04' ? 'Planning a store of your own? See ' : c.discipline.includes('web') ? 'Prefer a site builder? We also design and build ' : 'Need something similar? See '}{alt.map((l, k) => <>{k ? ' and ' : ''}<a class="link" href={l.href}>{l.label}</a></>)}.</p>}
     </section>
 
     <section class="section c-cta container" data-f="node" aria-labelledby="cta-h">
@@ -173,6 +176,8 @@ const facts: [string, string][] = [['Client', c.client], ['Location', where], ['
   .c-rel-cases span:last-child { color: var(--gray-300); }
   .c-rel-links { display: flex; flex-wrap: wrap; gap: .5rem 2rem; }
   .c-rel-links a { display: inline-flex; min-height: 44px; align-items: center; }
+  .c-rel-alt { color: var(--gray-300); }
+  .c-rel-alt a { display: inline-flex; min-height: 44px; align-items: center; }
   @media (max-width: 767px) { .c-rel-cases { grid-template-columns: 1fr; } }
   .c-actions { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .5rem; }
   .c-shot { margin-top: 72px; }

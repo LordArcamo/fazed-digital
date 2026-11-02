@@ -20,6 +20,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/lp/7-day-website', label: '7-day website from $499' },
       { href: '/services#web', label: 'Web design and development' },
       { href: '/blog/wordpress-vs-custom-build', label: 'WordPress or a custom build?' },
+      { href: '/blog/website-design-general-contractors', label: 'Website design for general contractors' },
     ],
   },
   '02': {
@@ -38,6 +39,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/services#brand', label: 'Brand identity' },
       { href: '/lp/7-day-website/ph', label: '7-day website from ₱19,999' },
       { href: '/blog/rebranding-when-and-how', label: 'When and how to rebrand' },
+      { href: '/blog/brand-identity-price-philippines', label: 'Brand identity prices in the Philippines' },
     ],
   },
   '03': {
@@ -56,12 +58,13 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/services#product', label: 'Product design' },
       { href: '/services#systems', label: 'Custom systems and web apps' },
       { href: '/work/06', label: 'Car rental system case study' },
+      { href: '/blog/how-long-to-build-a-website', label: 'How long a website or MVP takes to build' },
     ],
   },
   '04': {
     kw: 'Magento to PrestaShop migration',
     h1Tail: 'Magento to PrestaShop migration for an Australian telco retailer',
-    seoTitle: 'Magento to PrestaShop Migration, Zero Data Loss | Fazed',
+    seoTitle: 'Magento to PrestaShop Migration Case Study | Fazed',
     seoDescription: 'Magento to PrestaShop migration for The Telecom Shop, an Australian retailer: catalogue, customers and order history moved with zero data loss. 10 weeks.',
     summary: 'The Telecom Shop is an Australian online retailer of phones, tablets, accessories and plans. Fazed Digital migrated its store from Magento to PrestaShop over 10 weeks, moving the full catalogue, customer data and order history in stages. The migration finished with zero data loss and minimal disruption to trading, and the new store is noticeably faster.',
     stack: ['PrestaShop', 'Magento (source platform)'],
@@ -73,6 +76,7 @@ export const caseSeo: Record<string, CaseSeo> = {
     related: [
       { href: '/ecommerce', label: 'E-commerce builds and migrations' },
       { href: '/services#seo', label: 'SEO marketing' },
+      { href: '/blog/magento-to-prestashop-migration', label: 'Magento to PrestaShop: lessons from this store move' },
       { href: '/blog/website-speed-fixes', label: 'Website speed fixes' },
     ],
   },
@@ -92,6 +96,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/services#systems', label: 'Custom systems and portals' },
       { href: '/services#web', label: 'Web design and development' },
       { href: '/work/07', label: 'Membership portal case study' },
+      { href: '/blog/offshore-web-design-australia', label: 'Working with an offshore studio from Australia' },
     ],
   },
   '06': {
@@ -110,6 +115,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/services#systems', label: 'Custom booking and business systems' },
       { href: '/services#product', label: 'Product design' },
       { href: '/work/03', label: 'Event platform MVP case study' },
+      { href: '/web-design-iligan-city', label: 'Booking systems and websites from Iligan City' },
     ],
   },
   '07': {
@@ -165,6 +171,8 @@ export const caseSeo: Record<string, CaseSeo> = {
       { href: '/web-design-iligan-city', label: 'Web design in Iligan City' },
       { href: '/lp/7-day-website/ph', label: '7-day website from ₱19,999' },
       { href: '/services#web', label: 'Web design and development' },
+      { href: '/blog/seo-iligan-city', label: 'SEO in Iligan City' },
+      { href: '/lab', label: 'More three.js work in the Fazed Lab' },
     ],
   },
 };

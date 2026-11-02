@@ -1,0 +1,15 @@
+---
+// Visible breadcrumb trail. Mirrors the page's BreadcrumbList JSON-LD (src/lib/schema.ts crumbs()); the last item is the current page.
+const { items } = Astro.props as { items: [string, string][] };
+const trail: [string, string][] = [['Home', '/'], ...items];
+---
+<nav class="crumbs mono" aria-label="Breadcrumb">
+  <ol>{trail.map(([name, href], i) => (i === trail.length - 1 ? <li aria-current="page">{name}</li> : <li><a href={href}>{name}</a></li>))}</ol>
+</nav>
+<style>
+  .crumbs ol { display: flex; flex-wrap: wrap; gap: .25rem .75rem; }
+  .crumbs li:not(:last-child)::after { content: '/'; margin-left: .75rem; color: var(--gray-500); }
+  .crumbs a { color: var(--gray-300); display: inline-flex; min-height: 44px; align-items: center; }
+  .crumbs a:hover, .crumbs a:focus-visible { color: var(--lime); }
+  .crumbs [aria-current] { color: var(--gray-400); display: inline-flex; min-height: 44px; align-items: center; }
+</style>

@@ -8,7 +8,9 @@ import postsIndex from '../../data/.generated/posts.json';
 import { SITE_URL } from '../../data/site';
 import { crumbs, ORG_REF } from '../../lib/schema';
 import { authorPhoto, authorId, initials } from '../../lib/authors';
-import { SERVICE_FOR, catSlug } from '../../lib/cover';
+import { catSlug } from '../../lib/cover';
+import RelatedLinks from '../../components/RelatedLinks.astro';
+import { postLinks } from '../../data/links';
 
 export function getStaticPaths() {
   const posts = [
@@ -1779,7 +1781,8 @@ const all = (postsIndex as { slug: string; title: string; category: string; date
 const sameCat = all.filter((p) => p.category === category && p.slug !== slug);
 const idx = all.findIndex((p) => p.slug === slug);
 const related = [...sameCat].sort((a, b) => Math.abs(all.indexOf(a) - idx) - Math.abs(all.indexOf(b) - idx)).slice(0, 3);
-const svc = SERVICE_FOR[category];
+// contextual links to services, platform pages and case studies (src/data/links.ts; hand-mapped per post, topic rules for new posts)
+const fits = postLinks(slug, title, category);
 // short title tag when the headline runs long (src/data/blog-seo.ts); the H1 keeps the full headline
 const shortTitle = seoTitles[slug] ?? title;
 const pageTitle = shortTitle.length > 51 ? shortTitle : shortTitle.length > 44 ? `${shortTitle} | Fazed` : `${shortTitle} | Fazed Digital`;
@@ -1815,7 +1818,7 @@ const schema = [
       )}
       <div class="p-body">
         <div class="prose" set:html={html} />
-        {svc && <p class="p-svc">Need help with this? See our <a class="link" href={svc.href}>{svc.label}</a> {svc.href.startsWith('/services') ? 'service' : 'package'}.</p>}
+        <RelatedLinks links={fits} heading="Put this guide to work" eyebrow="Where this fits in our work" id="fit-h" />
         <aside class="author" aria-label="About the author">
           {photo ? <img src={photo} alt={`${author}, ${authorRole} at Fazed Digital`} width="64" height="64" loading="lazy" decoding="async" /> : <span class="a-init mono" aria-hidden="true">{initials(author)}</span>}
           <p>Written by <a class="link" href={`/about#${authorId(author)}`}>{author}</a>, {authorRole} at Fazed Digital.</p>
@@ -1870,7 +1873,6 @@ const schema = [
   .prose :global(a) { color: var(--white); text-decoration: underline; text-decoration-color: var(--gray-500); text-underline-offset: .2em; background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0 100%; background-repeat: no-repeat; transition: background-size .25s, color .2s; }
   .prose :global(a:hover), .prose :global(a:focus-visible) { background-size: 100% 100%; color: var(--black); }
   .prose :global(blockquote) { border-left: 2px solid var(--lime); padding-left: 1.25rem; color: var(--white); margin: 1.5em 0; }
-  .p-svc { color: var(--gray-300); border-top: 1px solid var(--gray-700); padding-top: 1.5rem; }
   .author { display: flex; gap: 1rem; align-items: center; }
   .author img, .a-init { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; object-position: top; flex: none; }
   .a-init { border: 1.5px solid var(--lime); color: var(--lime); display: inline-flex; align-items: center; justify-content: center; }

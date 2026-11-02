@@ -1,0 +1,26 @@
+---
+// Contextual "where this fits" links (data: src/data/links.ts). Plain HTML, no JS.
+import type { RelLink } from '../data/links';
+const { links, heading, eyebrow, id = 'rl-h', level = 2 } = Astro.props as { links: RelLink[]; heading: string; eyebrow?: string; id?: string; level?: 2 | 3 };
+const H = level === 3 ? 'h3' : 'h2';
+---
+{links.length > 0 && (
+  <section class="rl" aria-labelledby={id}>
+    {eyebrow && <p class="mono rl-eye">{eyebrow}</p>}
+    <H id={id} class="t-h3 rl-h">{heading}</H>
+    <ul class="rl-list">
+      {links.map((l) => (
+        <li><a class="link rl-a" href={l.href}>{l.label} <span aria-hidden="true">→</span></a>{l.note && <span class="rl-note">{l.note}</span>}</li>
+      ))}
+    </ul>
+  </section>
+)}
+<style>
+  .rl { display: grid; gap: 1rem; border-top: 1px solid var(--gray-700); padding-top: 1.5rem; }
+  .rl-eye { color: var(--lime); }
+  .rl-h { font-weight: 600; }
+  .rl-list { display: grid; gap: .25rem; }
+  .rl-list li { display: grid; gap: .1rem; padding-block: .35rem; }
+  .rl-a { display: inline-block; padding-block: .6rem; line-height: 1.35; justify-self: start; color: var(--white); font-weight: 600; } /* inline-block: a wrapped label keeps its arrow on the last line; ≥44px tap height */
+  .rl-note { color: var(--gray-300); font-size: .95rem; line-height: 1.45; margin-top: -.4rem; }
+</style>
