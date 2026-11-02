@@ -340,4 +340,4 @@ No new numbers, reviews, ratings, logos, awards or deadlines were introduced. Ev
 - Domain: we can provide it. Hosting: the client's preferred host. Applied as a new FAQ + Day 7 copy.
 - Under 2s load: confirmed, it's what we do. Pro row kept.
 - Deposit: refundable. Worded as 'refunded if you change your mind before work starts' to match /terms (non-refundable once work has commenced). Amount not published.
-- Still open: 'Unlimited revisions' on Pro within the 7-day window; 'Our pick' badge is an opinion (fine).
+- Unlimited revisions on Pro: confirmed by Lord (2026-11-02), wording kept. 'Our pick' badge is an opinion (fine).
