@@ -36,7 +36,7 @@ const id = `lpq-${variant}`;
     <p class="qf-card-sub">6 quick questions. No payment now. You can change your package later.</p>
     <div class="qf-card-pk">{pkgs.map((p) => (
       <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} href="#get-started" data-start={p.value}>
-        <span class="qt-b">{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Most popular</span>}<span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span></span>
+        <span class="qt-b">{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span></span>
       </a>
     ))}</div>
     <p class="mono qf-proof">{php && FOUNDING_PH.on ? `Founding rate: ${FOUNDING_PH.spots} spots only · ` : ''}120+ projects by our founder · {capsCopy.sevenDay.replace('We take on ', '').replace(', max.', ' max')}</p>
@@ -67,7 +67,7 @@ const id = `lpq-${variant}`;
               <div class="q-opts q-opts--cards">{pkgs.map((p, i) => (
                 <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} data-chip={chipOf(p)}>
                   <input type="radio" name="package" value={p.value} />
-                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span>{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Most popular</span>}<span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
+                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span>{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
                 </label>
               ))}</div>
               <p class="q-err" data-err role="alert" id={`${id}-err-package`}></p>

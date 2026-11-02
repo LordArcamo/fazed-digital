@@ -5,7 +5,8 @@
 import { Picture } from 'astro:assets';
 import Faq from './Faq.astro';
 import LpForm from './LpForm.astro';
-import { FOUNDING_PH } from '../data/offers';
+import { FOUNDING_PH, offerPrice } from '../data/offers';
+import { countries } from '../data/cases';
 import { labImages } from '../data/images';
 import { labShipped, LABEL } from '../data/lab';
 import { lpFaq } from '../data/lp';
@@ -17,17 +18,19 @@ const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 const lpLab = labShipped.filter((i) => i.n !== '04' && labImages[i.n] && i.url).reverse().slice(0, 4);
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
+const st = offerPrice(variant, 'starter'); // { price, founding }: the founding rate while FOUNDING_PH.on, else the standard price
 const plans = [
-  { id: 'starter', name: 'Starter', price: P.starter, for: 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+  { id: 'starter', name: 'Starter', price: st.price, was: st.founding ? P.starter : '', tag: st.founding ? `Founding rate · ${FOUNDING_PH.spots} spots` : '', for: st.founding ? `New businesses getting online. Founding rate for our first ${FOUNDING_PH.spots} clients, secured with a deposit.` : 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
   { id: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', popular: true, rows: ['8 custom-designed pages', 'Custom design system', 'Advanced on-page SEO', 'Blog + CMS setup · Google Analytics + Search Console', '3 revision rounds', '7-day delivery'] },
   { id: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: ['10+ custom pages', 'Full brand integration', 'Performance optimised (under 2s load)', 'E-commerce ready · Priority support', 'Unlimited revisions', '7-day delivery'] },
 ];
+// no competitor numbers: nothing in src/data backs them (docs/conversion/lp-7day-conversion.md #9)
 const pain = [
-  ['6–10 week delivery', 'Live in 7 days'],
-  [php ? '₱150,000–₱500,000+ minimum budget' : '$3,000–$15,000+ minimum budget', `Fixed price from ${P.starter}`],
+  ['Launch dates measured in weeks or months', 'Live in 7 business days'],
+  ['Price on request, after a sales call', `Fixed price from ${st.price}, listed below`],
   ['Hourly rates and surprise invoices', 'One flat fee. No surprises.'],
   ['Vague revision process', '2, 3 or unlimited revision rounds, agreed upfront'],
-  ['Multiple hand-offs and delays', 'One team, a direct line'],
+  ['Multiple hand-offs and delays', 'One small team, a direct line'],
   ['Lock-in contracts', 'You own it all. No lock-in.'],
 ];
 const process = [
@@ -37,13 +40,6 @@ const process = [
   ['Day 6', 'Review & revise', 'You test it on our staging link. We make the final changes.'],
   ['Day 7', 'Launch', 'Your site goes live. We connect the domain, set up hosting and hand everything over.'],
 ];
-const why = [
-  ['Live in 7 days', 'Most agency builds take weeks or months. We design, build and launch in 7 business days without cutting corners.'],
-  ['Fixed price', 'No hourly rates, no scope-creep surprises. One price, one timeline, everything listed.'],
-  ['Ready for Google', 'Every page ships with meta tags, schema, clean structure and fast load times.'],
-  ['Mobile-first', 'Most people will meet your business on a phone first, so we design for the phone first.'],
-];
-const guarantee = 'We’ll launch your site in 7 business days, as long as we have your content and assets on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.';
 const faq = lpFaq(php);
 // Founding client rate: src/data/offers.ts (one switch for the banner, the form and the lead email)
 const FOUNDING = FOUNDING_PH.on;
@@ -51,15 +47,16 @@ const FOUNDING = FOUNDING_PH.on;
 <div class="lp" data-lp={variant}>
   <section class="lp-hero" data-f="days7" aria-labelledby="lp-h">
     <div class="container lp-hero-in">
-      <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Fast-track website · Fixed price · USD'}</p>
+      <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Small business websites · Fixed price in USD'}</p>
       <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
-      <p class="t-body-l lp-deck">{php ? 'We design, build and launch professional websites for Philippine businesses: fully custom, mobile-ready and set up for Google.' : 'We design, build and launch professional websites for small businesses: fully custom, mobile-ready and set up for Google.'} <strong>{php ? 'From ₱19,999, fixed price. Pay via GCash, Maya or bank.' : 'From $499, fixed price. You own everything.'}</strong></p>
-      {php && FOUNDING && <p class="lp-founding" role="note"><strong class="mono">Founding client rate</strong><br /><b>Starter {FOUNDING_PH.price}</b> <span class="dim">(standard {FOUNDING_PH.standard})</span> · {FOUNDING_PH.spots} founding spots, secured with a deposit. In exchange, we ask for an honest review and permission to feature your build. Extra pages and care plans at the standard rate.</p>}
-      <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
+      <p class="t-body-l lp-deck">{php ? 'A custom website for your Philippine business that looks established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.' : 'A custom website that makes your business look established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.'} <strong>{php ? `Fixed price from ${st.price}. Pay via GCash, Maya or bank.` : `Fixed price from ${st.price}. You own everything.`}</strong></p>
+      <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my start date <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
+      <p class="mono lp-cta-note">No payment now · Reply within one business day · 7 business days or 20% off</p>
+      {php && FOUNDING && <p class="lp-founding" role="note"><strong class="mono">Founding client rate · {FOUNDING_PH.spots} spots</strong><br /><b>Starter {FOUNDING_PH.price}</b> <span class="dim">instead of {FOUNDING_PH.standard}</span>. For our first {FOUNDING_PH.spots} clients, secured with a deposit. In return, we ask for an honest review and permission to feature your build. Extra pages and care plans are at the standard rate.</p>}
       <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}<i class="ld-t"> · {['Kickoff', 'Design', 'Design', 'Build', 'Build', 'Review', 'Live'][i]}</i></em></li>)}</ol>
       <dl class="lp-trust">
         {lpTrust.map((t) => <div><dt class="mono">{t.label}</dt><dd>{t.value}</dd></div>)}
-        <div><dt class="mono">Starting price</dt><dd>{P.starter}</dd></div>
+        <div><dt class="mono">{st.founding ? 'Founding rate' : 'Starting price'}</dt><dd>{st.price}</dd></div>
       </dl>
     </div>
   </section>
@@ -77,6 +74,36 @@ const FOUNDING = FOUNDING_PH.on;
     </section>
   )}
 
+  <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
+    <p class="mono">How it works · 7 business days · 5 steps</p>
+    <h2 id="pc-h" class="t-d2">From brief to live in 7 business days.</h2>
+    <ol class="lp-steps" data-days-anchor>{process.map(([d, t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><span class="mono">{d}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    <p class="lp-note">Day 1 is your kickoff day, once we have your brief, logo, photos and text. Every day here is a business day, Monday to Friday.</p>
+  </section>
+
+  <section class="section container lp-reviews" aria-labelledby="rv-h">
+    {LP_REVIEWS_REAL && lpTestimonials.length ? <>
+      <p class="mono">Client reviews</p>
+      <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
+      <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
+    </> : <>
+      <!-- Real client results (proof.ts) until approved review quotes exist. Funnel rule: no links off the LP here. -->
+      <p class="mono">Client work · {countries.join(' · ')}</p>
+      <h2 id="rv-h" class="t-d2">Real clients. <span class="dim">Real projects.</span></h2>
+      <p>Our founder has delivered 120+ websites, brands and systems since 2022. These three were bigger custom builds, not 7-day sites. Your 7-day site is made by the same team with the same care.</p>
+      <ul class="lp-3 lp-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
+    </>}
+    <div class="lp-work">
+      <p class="mono">Fazed Lab · {String(lpLab.length).padStart(2, '0')} concept sites</p>
+      <h3 id="lw-h" class="t-d2">And what we build for fun.</h3>
+      <p>Concept sites for fictional brands, designed and built in-house to push our craft. Your 7-day site is simpler, but it’s made by the same team with the same care.</p>
+      <ul class="lp-tiles">
+        {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
+      </ul>
+      <p class="lp-work-more">Like what you see? <a class="btn btn--lime" href="#get-started">Get my start date <span class="arrow" aria-hidden="true">→</span></a></p>
+    </div>
+  </section>
+
   <section class="section container lp-pain" aria-labelledby="pain-h">
     <h2 id="pain-h" class="t-d2">Why not just hire a regular agency?</h2>
     <p>Here’s what you’re usually signing up for.</p>
@@ -88,91 +115,49 @@ const FOUNDING = FOUNDING_PH.on;
 
   <section class="section container lp-price" id="pricing" aria-labelledby="pr-h">
     <p class="mono">Simple, fixed pricing · {php ? 'PHP' : 'USD'}</p>
-    <h2 id="pr-h" class="t-d2">Pick a package. <span class="dim">We handle the rest.</span></h2>
-    {php && <p>All prices in Philippine peso. Pay via GCash, Maya or bank transfer.</p>}
+    <h2 id="pr-h" class="t-d2">One fixed price. <span class="dim">Everything listed.</span></h2>
+    <p>Every package launches in 7 business days. Not sure which fits? Pick “Not sure yet” in the brief and we’ll suggest one. You can change your package later.</p>
+    {php && <><p>All prices in Philippine peso. Pay the way you already do:</p><ul class="lp-chips">{['GCash', 'Maya', 'BPI', 'Metrobank', 'Wise'].map((x) => <li class="chip">{x}</li>)}</ul></>}
     <ul class="lp-plans">
       {plans.map((p) => (
-        <li class:list={['plan', { 'plan--pop': p.popular }]} aria-label={`${p.name} package, ${p.price}`}>
-          {p.popular && <p class="mono plan-pop">Most popular</p>}
+        <li class:list={['plan', { 'plan--pop': php && st.founding ? !!p.tag : p.popular }]} aria-label={`${p.name} package, ${p.price}`}>
+          {p.tag ? <p class="mono plan-pop">{p.tag}</p> : p.popular && <p class="mono plan-pop">Our pick for most businesses</p>}
           <h3 class="t-h3">{p.name}</h3>
-          <p class="plan-price">{p.price}</p>
+          <p class="plan-price">{p.price}{p.was && <s class="plan-was"> {p.was}</s>}</p>
           <p class="plan-for">{p.for}</p>
           <ul class="plan-rows">{p.rows.map((r) => <li>{r}</li>)}</ul>
-          <a class:list={['btn', p.popular ? 'btn--lime' : 'btn--ghost']} href="#get-started" data-choose={p.id}>Choose {p.name} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class:list={['btn', (php && st.founding ? !!p.tag : p.popular) ? 'btn--lime' : 'btn--ghost']} href="#get-started" data-choose={p.id}>Choose {p.name} <span class="arrow" aria-hidden="true">→</span></a>
         </li>
       ))}
     </ul>
+    <p class="lp-note mono">{capsCopy.sevenDay}</p>
     <p class="lp-note">Need something custom? <a class="link" href="mailto:info@fazeddigital.com">Email us</a> and we’ll scope it together. No commitment.</p>
     <p class="lp-note mono">Extra pages {P.page} each · Maintenance from {P.care} · Booking systems, portals and custom e-commerce are scoped separately.</p>
   </section>
 
-  {php && (
-    <section class="section container lp-pay" aria-labelledby="pay-h">
-      <p class="mono">Accepted payments</p>
-      <h2 id="pay-h" class="t-h3">Pay the way you already do.</h2>
-      <ul class="lp-chips">{['GCash', 'Maya', 'BPI', 'Metrobank', 'Wise'].map((x) => <li class="chip">{x}</li>)}</ul>
-    </section>
-  )}
-
-  <section class="section container lp-reviews" aria-labelledby="rv-h">
-    {LP_REVIEWS_REAL && lpTestimonials.length ? <>
-      <p class="mono">Client reviews</p>
-      <h2 id="rv-h" class="t-d2">Don’t take our word for it.</h2>
-      <ul class="lp-3">{lpTestimonials.map((t) => <li><blockquote><p>“{t.quote}”</p></blockquote><p class="mono">{t.name} · {t.role}</p></li>)}</ul>
-    </> : <>
-      <!-- Real client results (proof.ts) until approved review quotes exist. Funnel rule: no links off the LP here. -->
-      <p class="mono">Client results</p>
-      <h2 id="rv-h" class="t-d2">Real clients. <span class="dim">Real results.</span></h2>
-      <ul class="lp-3 lp-res">{results.map((r) => <li><p class="mono">{r.tag}</p><h3 class="t-h3">{r.statement}</h3><p>{r.body}</p></li>)}</ul>
-    </>}
-  </section>
-
-  <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
-    <p class="mono">How it works · 7 days · 5 steps</p>
-    <h2 id="pc-h" class="t-d2">From brief to live in 7 days.</h2>
-    <ol class="lp-steps" data-days-anchor>{process.map(([d, t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><span class="mono">{d}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
-  </section>
-
-  <section class="section container lp-guar" aria-labelledby="g-h">
-    <h2 id="g-h" class="t-d2">The 7-day promise</h2>
-    <p class="t-body-l">{guarantee}</p>
-  </section>
-
-  <section class="lp-mid on-lime" aria-label="Get started">
+  <section class="lp-mid on-lime" aria-labelledby="g-h">
     <div class="container lp-mid-in">
-      <p class="t-h3">Ready? Let’s get you live in 7 days.</p>
-      <p>No commitment until you approve the quote.</p>
-      <a class="btn btn--black" href="#get-started">Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a>
+      <p class="mono">The 7-day promise</p>
+      <h2 id="g-h" class="t-d2">Live in 7 business days, or 20% off.</h2>
+      <p>Send your content and assets on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.</p>
+      <a class="btn btn--black" href="#get-started">Get my start date <span class="arrow" aria-hidden="true">→</span></a>
+      <p>No payment now. No commitment until you approve the quote.</p>
     </div>
   </section>
 
-  <section class="section container lp-why" aria-labelledby="w-h">
-    <h2 id="w-h" class="t-d2">Speed meets quality.</h2>
-    <ul class="lp-4">{why.map(([t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ul>
-  </section>
-
-  <section class="section container lp-work" aria-labelledby="lw-h">
-    <p class="mono">Fazed Lab · {String(lpLab.length).padStart(2, '0')} concept sites</p>
-    <h2 id="lw-h" class="t-d2">See what we can build.</h2>
-    <p>Concept sites for fictional brands, designed and built in-house to push our craft. Your 7-day site is simpler, but it’s made by the same team with the same care.</p>
-    <ul class="lp-tiles">
-      {lpLab.map((i) => <li><a href={i.url} target="_blank" rel="noopener" data-cursor="OPEN ↗"><Picture src={labImages[i.n]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 33vw" alt={i.alt ?? `${i.brand} concept site`} loading="lazy" decoding="async" /><span class="mono">{i.category} · {LABEL}</span><span class="tile-t">{i.brand} <span aria-hidden="true">↗</span><span class="sr-only"> (opens the live concept site in a new tab)</span></span>{i.line && <span class="tile-l">{i.line}</span>}</a></li>)}
-    </ul>
-    <p class="lp-work-more">Like what you see? <a class="btn btn--lime" href="#get-started">Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a></p>
-  </section>
-
   <section class="section container lp-faq" aria-labelledby="fq-h">
-    <h2 id="fq-h" class="t-d2">Common questions.</h2>
+    <h2 id="fq-h" class="t-d2">Before you send your brief.</h2>
     <Faq items={faq} id={`lpfaq-${variant}`} />
   </section>
 
   <section class="section container lp-form" id="get-started" aria-labelledby="gs-h">
     <div class="lp-form-side">
       <p class="mono lp-cap">{capsCopy.sevenDay}</p>
-      <h2 id="gs-h" class="t-d2">Ready to go live <span class="dim">in 7 days?</span></h2>
-      <p>A few quick questions, mostly one tap each. We’ll reply within one business day with a confirmed start date. No commitment until you approve.</p>
+      {php && FOUNDING && <p class="mono lp-cap">Founding rate: Starter {FOUNDING_PH.price} for our first {FOUNDING_PH.spots} clients.</p>}
+      <h2 id="gs-h" class="t-d2">Get your start date <span class="dim">in one business day.</span></h2>
+      <p>A few quick questions, mostly one tap each. A real person replies within one business day, Monday to Friday, with your confirmed start date. No payment now, and no commitment until you approve the quote.</p>
       {php && <p>Have a Facebook page? Add it near the end and we’ll pull your photos and details from it to save you time.</p>}
-      <ul class="lp-pills">{['No lock-in contracts', 'Fixed price, no surprises', '7 business days or 20% off', 'You own your site'].map((x) => <li><span aria-hidden="true">✓</span> {x}</li>)}</ul>
+      <ul class="lp-pills">{['No payment now', 'Fixed price, no surprises', '7 business days or 20% off', 'You own your site. No lock-in.'].map((x) => <li><span aria-hidden="true">✓</span> {x}</li>)}</ul>
     </div>
     <LpForm variant={variant} />
   </section>
@@ -186,6 +171,9 @@ const FOUNDING = FOUNDING_PH.on;
   .lp-deck { max-width: 52ch; }
   .lp-deck strong { color: var(--white); }
   .lp-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .lp-cta-note { color: var(--gray-300); font-size: .75rem; letter-spacing: .06em; margin-top: -.5rem; }
+  .lp-work { display: grid; gap: 1.25rem; margin-top: clamp(48px, 7vw, 96px); }
+  .plan-was { font-size: .4em; color: var(--gray-400); margin-left: .4em; }
   .lp-days { display: grid; grid-template-columns: repeat(7, 1fr); max-width: 760px; margin-top: 2rem; position: relative; }
   .lp-days::before { content: ''; position: absolute; left: 5px; right: 5px; top: 5px; height: 1px; background: var(--gray-700); }
   .lp-days li { display: grid; gap: .5rem; position: relative; }
@@ -268,6 +256,6 @@ const FOUNDING = FOUNDING_PH.on;
     .lp-form > :global(*) { grid-column: 1 / -1 !important; }
   }
   @media (max-width: 599px) { .lp-steps, .lp-4, .lp-tiles { grid-template-columns: 1fr; } .lp-days em { display: none; } }
-  .lp-founding { display: inline-block; max-width: 34rem; margin: 1rem 0 0; padding: .75rem 1rem; border: 1px solid var(--lime, #c6f432); border-radius: 10px; font-size: 1rem; line-height: 1.5; }
-  .lp-founding strong { color: var(--lime, #c6f432); }
+  .lp-founding { display: inline-block; max-width: 34rem; margin: 1rem 0 0; padding: .75rem 1rem; border: 1px solid var(--lime); border-radius: 10px; font-size: 1rem; line-height: 1.5; }
+  .lp-founding strong { color: var(--lime); }
 </style>
