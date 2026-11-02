@@ -444,10 +444,10 @@ export function initLpForms() {
       const ok = $('[data-ok]');
       const first = p.name.split(/\s+/)[0];
       ok.querySelector('[data-ok-lead]')!.textContent = p.timeline === 'exploring'
-        ? `Thanks, ${first}. We’ll email ${p.email} within one business day with next steps. No pressure.`
+        ? `Thanks, ${first}. We’ll email ${p.email} within one business day with next steps. No pressure. A copy of your answers is on its way to your inbox now.`
         : p.package === 'unsure'
-          ? `Thanks, ${first}. We’ll email ${p.email} within one business day with the package we’d suggest, a confirmed start date and what we need for Day 1.`
-          : `Thanks, ${first}. We’ll email ${p.email} within one business day with your confirmed start date and what we need for Day 1.`;
+          ? `Thanks, ${first}. We’ll email ${p.email} within one business day with the package we’d suggest, a confirmed start date and what we need for Day 1. A copy of your answers is on its way to your inbox now.`
+          : `Thanks, ${first}. We’ll email ${p.email} within one business day with your confirmed start date and what we need for Day 1. A copy of your answers is on its way to your inbox now.`;
       ok.querySelector<HTMLElement>('[data-ok-fb]')?.toggleAttribute('hidden', !(php && p.facebookPage));
       const m = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Manila' }));
       const mins = m.getHours() * 60 + m.getMinutes();

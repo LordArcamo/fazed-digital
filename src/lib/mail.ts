@@ -11,7 +11,7 @@ const GMAIL_APP_PASSWORD = String(import.meta.env.GMAIL_APP_PASSWORD ?? '').repl
 const RESEND_API_KEY = import.meta.env.RESEND_API_KEY;
 const RESEND_FROM = import.meta.env.RESEND_FROM ?? 'Fazed Digital <onboarding@resend.dev>';
 
-export interface LeadMail { to: string[]; subject: string; html: string; replyTo: string }
+export interface LeadMail { to: string[]; subject: string; html: string; replyTo: string; text?: string; fromName?: string }
 export type SentVia = 'gmail' | 'resend' | false;
 
 // Reused across warm invocations so we don't open a new SMTP session per lead.
@@ -31,12 +31,12 @@ function gmailTransport(): Transporter | null {
   return gmail;
 }
 
-/** Sends the lead email. Never throws: returns which service delivered it, or false. */
+/** Sends a lead email (the team alert, or the lead's own confirmation via fromName). Never throws: returns which service delivered it, or false. */
 export async function sendLead(m: LeadMail): Promise<SentVia> {
   const t = gmailTransport();
   if (t) {
     try {
-      await t.sendMail({ from: `"Fazed Digital Leads" <${GMAIL_USER}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html: m.html });
+      await t.sendMail({ from: `"${m.fromName ?? 'Fazed Digital Leads'}" <${GMAIL_USER}>`, to: m.to, replyTo: m.replyTo, subject: m.subject, html: m.html, text: m.text });
       return 'gmail';
     } catch (err) {
       console.error('Gmail send failed, falling back to Resend:', err);
@@ -51,7 +51,7 @@ export async function sendLead(m: LeadMail): Promise<SentVia> {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${RESEND_API_KEY}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: RESEND_FROM, to: m.to, reply_to: m.replyTo, subject: m.subject, html: m.html }),
+      body: JSON.stringify({ from: RESEND_FROM, to: m.to, reply_to: m.replyTo, subject: m.subject, html: m.html, text: m.text }),
     });
     if (!res.ok) {
       console.error('Resend send failed:', res.status, await res.text().catch(() => ''));

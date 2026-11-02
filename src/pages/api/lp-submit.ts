@@ -4,6 +4,7 @@ import type { APIRoute } from 'astro';
 import { sendLead } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
 import { offerPrice, FOUNDING_PH } from '../../data/offers';
+import { NAP, SITE_URL } from '../../data/site';
 
 // Every lead: Gmail alert to the team (src/lib/mail.ts) + a HubSpot contact for the leads list (src/lib/hubspot.ts).
 const LEAD_TO = [
@@ -43,6 +44,15 @@ interface LpSubmitBody {
 // Marked only after a successful send, so a retry after a failure always goes through.
 // (Lives in the warm function instance; the client also blocks double taps.)
 const sent = new Map<string, number>();
+// One confirmation per address per 10 minutes, so the form can't be used to flood someone's inbox.
+const confirmed = new Map<string, number>();
+function confirmAllowed(email: string): boolean {
+  const now = Date.now(), k = email.toLowerCase();
+  for (const [e, at] of confirmed) if (now - at > 600_000) confirmed.delete(e);
+  if (confirmed.has(k)) return false;
+  confirmed.set(k, now);
+  return true;
+}
 function sentRecently(id: string): boolean {
   const now = Date.now();
   for (const [k, at] of sent) if (now - at > 600_000) sent.delete(k);
@@ -109,6 +119,19 @@ export const POST: APIRoute = async ({ request }) => {
   // Nothing reached the team: tell the visitor, so the form keeps their answers and offers "Email it instead".
   if (!mail && hs !== 'ok') return json({ error: 'Your brief didn’t send. Please try again, or email it to info@fazeddigital.com.' }, 502);
   if (s(body.idem)) sent.set(s(body.idem), Date.now());
+
+  // The lead's own copy: what happens next + their answers. Only once the team has it, never for a [fast] send.
+  if (!fast && confirmAllowed(d.email)) {
+    const c = await sendLead({
+      to: [d.email],
+      replyTo: NAP.email,
+      fromName: 'Lord at Fazed Digital',
+      subject: `Got it, ${firstName(d.name)}. Your 7-day website brief is in`,
+      html: buildConfirmHtml(d, pkgLabel),
+      text: buildConfirmText(d, pkgLabel),
+    });
+    console.log(`LP confirmation: ${c || 'failed'}`);
+  }
   return json({ ok: true });
 };
 
@@ -177,6 +200,110 @@ function buildHtml(d: Lead, pkgLabel: string): string {
       Reply directly to this email to reach <strong style="color:#aaa;">${escape(d.name)}</strong> at ${escape(d.email)}. Also saved in HubSpot.
     </div>
   </div>
+</body></html>`;
+}
+
+/* ── The lead's confirmation email ── */
+const firstName = (n: string) => n.split(/\s+/)[0] || 'there';
+
+function nextSteps(d: Lead): string[] {
+  const founding = d.variant === 'php' && offerPrice('php', d.pkg).founding;
+  return [
+    d.pkg === 'unsure'
+      ? 'Within one business day, we reply with the package we’d suggest, your confirmed start date and a fixed quote.'
+      : 'Within one business day, we reply with your confirmed start date and a fixed quote.',
+    founding
+      ? 'No payment until you approve the quote. Your founding-rate deposit is refundable before work starts.'
+      : 'No payment until you approve the quote.',
+    d.variant === 'php' && d.facebookPage
+      ? 'Day 1: you send your logo, photos and text, or we pull them from your Facebook page. Missing something? We’ll help.'
+      : 'Day 1: you send your logo, photos and text. Missing something? We’ll help.',
+    'Day 7: your site goes live on the host you prefer. If we miss the deadline on our side, you get 20% off.',
+  ];
+}
+
+/** The answers worth showing back to the lead (contact details left out: they know them). */
+function confirmRows(d: Lead, pkgLabel: string): [string, string][] {
+  return rows(d, pkgLabel).filter(([k]) => !['Page', 'Name', 'Email', 'Phone', 'Source', 'Heard from'].includes(k))
+    .map(([k, v]) => [k, k === 'Package' ? pkgLabel : v]);
+}
+
+function buildConfirmText(d: Lead, pkgLabel: string): string {
+  return [
+    `Hi ${firstName(d.name)},`,
+    '',
+    `Thanks for sending your brief${d.businessName ? ` for ${d.businessName}` : ''}. It’s with our team now, and a real person will reply.`,
+    '',
+    'WHAT HAPPENS NEXT',
+    ...nextSteps(d).map((t, i) => `${i + 1}. ${t}`),
+    '',
+    'YOUR BRIEF',
+    ...confirmRows(d, pkgLabel).map(([k, v]) => `${k}: ${v}`),
+    '',
+    'Want to add something or change an answer? Just reply to this email.',
+    '',
+    'Lord Arcamo',
+    'Founder, Fazed Digital',
+    `${NAP.phone} (call or text) · ${NAP.hours}`,
+    SITE_URL,
+    '',
+    `While you wait: Dotted Studios went live one week after the build started. ${SITE_URL}/work/09`,
+  ].join('\n');
+}
+
+function buildConfirmHtml(d: Lead, pkgLabel: string): string {
+  const font = "-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif";
+  const mono = "'SFMono-Regular',Menlo,Consolas,monospace";
+  const steps = nextSteps(d).map((t, i) => `
+      <tr>
+        <td style="width:34px;padding:0 0 14px;vertical-align:top;"><div style="width:24px;height:24px;border-radius:12px;background:#090909;color:#C9FF57;font:700 12px/24px ${mono};text-align:center;">${i + 1}</div></td>
+        <td style="padding:2px 0 14px;font:15px/1.55 ${font};color:#222;">${escape(t)}</td>
+      </tr>`).join('');
+  const brief = confirmRows(d, pkgLabel).map(([k, v]) => `
+      <tr>
+        <td style="padding:9px 0;border-bottom:1px solid #e6e5e0;font:11px/1.5 ${mono};letter-spacing:.06em;text-transform:uppercase;color:#77766f;width:130px;vertical-align:top;">${escape(k)}</td>
+        <td style="padding:9px 0;border-bottom:1px solid #e6e5e0;font:14px/1.5 ${font};color:#222;white-space:pre-wrap;">${escape(v)}</td>
+      </tr>`).join('');
+  const preheader = 'A real person replies within one business day with your start date and a fixed quote.';
+
+  return `<!doctype html>
+<html><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light"><title>Your brief is in</title></head>
+<body style="margin:0;padding:0;background:#F5F4F0;">
+  <div style="display:none;max-height:0;overflow:hidden;opacity:0;">${escape(preheader)}</div>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#F5F4F0;"><tr><td align="center" style="padding:28px 14px;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:600px;background:#ffffff;border:1px solid #e6e5e0;border-radius:16px;overflow:hidden;">
+      <tr><td style="background:#090909;padding:22px 28px;">
+        <div style="font:700 18px/1 ${font};letter-spacing:.14em;color:#F5F4F0;">FAZED<span style="color:#C9FF57;">.</span></div>
+        <div style="margin-top:14px;font:11px/1.4 ${mono};letter-spacing:.12em;text-transform:uppercase;color:#C9FF57;">Brief received · 7-day website</div>
+      </td></tr>
+      <tr><td style="padding:28px 28px 8px;">
+        <h1 style="margin:0 0 12px;font:700 24px/1.25 ${font};letter-spacing:-.02em;color:#090909;">Thanks, ${escape(firstName(d.name))}. Your brief is in.</h1>
+        <p style="margin:0;font:15px/1.6 ${font};color:#444;">It’s with our team now${d.businessName ? `, and we’re already looking at <strong style="color:#090909;">${escape(d.businessName)}</strong>` : ''}. A real person will reply, not a bot.</p>
+      </td></tr>
+      <tr><td style="padding:22px 28px 6px;">
+        <div style="font:11px/1.4 ${mono};letter-spacing:.12em;text-transform:uppercase;color:#77766f;margin-bottom:14px;">What happens next</div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${steps}</table>
+      </td></tr>
+      <tr><td style="padding:10px 28px 4px;">
+        <div style="font:11px/1.4 ${mono};letter-spacing:.12em;text-transform:uppercase;color:#77766f;margin-bottom:4px;">Your brief</div>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0">${brief}</table>
+        <p style="margin:14px 0 0;font:14px/1.55 ${font};color:#444;">Want to add something or change an answer? Just reply to this email.</p>
+      </td></tr>
+      <tr><td style="padding:24px 28px;">
+        <table role="presentation" cellpadding="0" cellspacing="0"><tr>
+          <td style="padding-right:14px;vertical-align:middle;"><img src="${SITE_URL}/images/team/lord.jpeg" width="52" height="52" alt="Lord Arcamo" style="display:block;border-radius:26px;object-fit:cover;"></td>
+          <td style="vertical-align:middle;font:14px/1.5 ${font};color:#444;">
+            <strong style="color:#090909;">Lord Arcamo</strong><br>Founder, Fazed Digital<br>
+            <a href="tel:${NAP.tel}" style="color:#090909;">${NAP.phone}</a> (call or text) · ${NAP.hours}
+          </td>
+        </tr></table>
+      </td></tr>
+      <tr><td style="background:#090909;padding:18px 28px;font:14px/1.55 ${font};color:#cfcec9;">
+        While you wait: <a href="${SITE_URL}/work/09" style="color:#C9FF57;">see Dotted Studios</a>, live one week after the build started.
+      </td></tr>
+    </table>
+    <p style="margin:16px 0 0;font:12px/1.5 ${font};color:#77766f;">You’re getting this because you sent a brief at <a href="${SITE_URL}" style="color:#77766f;">fazeddigital.com</a>. ${NAP.city}, ${NAP.country}.</p>
+  </td></tr></table>
 </body></html>`;
 }
 
