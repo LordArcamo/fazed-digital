@@ -2,17 +2,25 @@
 // 7-Day Website questionnaire. Inline start card (entry · resume · no-JS) + a <dialog> "focus takeover"
 // with one question per screen and a live brief rail on desktop (docs/forms-redesign/ux-directions.md §6).
 // Copy: docs/forms-redesign/copy.md. Logic: src/forms/lp.ts. API: /api/lp-submit (Gmail alert + HubSpot record).
-import { prices } from '../data/proof';
+import { prices, capsCopy } from '../data/proof';
+import { offerPrice, FOUNDING_PH } from '../data/offers';
 import { NAP } from '../data/site';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
+const pk = (value: string, name: string, forWho: string, detail: string, popular = false) => {
+  const o = offerPrice(variant, value);
+  return { value, name, price: o.price, founding: o.founding, was: o.founding ? P[value as 'starter'] : '', for: forWho, detail, popular };
+};
 const pkgs = [
-  { value: 'starter', name: 'Starter', price: P.starter, for: 'New businesses getting online', detail: '5 pages · 2 revision rounds' },
-  { value: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', detail: '8 pages · blog + CMS · 3 revision rounds' },
-  { value: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', detail: '10+ pages · e-commerce ready · unlimited revisions' },
-  { value: 'unsure', name: 'Not sure yet', price: '', for: 'Help me choose', detail: 'We’ll suggest one when we reply.' },
+  pk('starter', 'Starter', 'New businesses getting online', '5 pages · 2 revision rounds'),
+  pk('growth', 'Growth', 'Growing small businesses', '8 pages · blog + CMS · 3 revision rounds', true),
+  pk('pro', 'Pro', 'Businesses ready to scale', '10+ pages · e-commerce ready · unlimited revisions'),
+  { value: 'unsure', name: 'Not sure yet', price: '', founding: false, was: '', for: 'Help me choose', detail: 'We’ll suggest one when we reply.', popular: false },
 ];
+const chipOf = (p: (typeof pkgs)[number]) => (p.price ? `${p.name} · ${p.price}${p.founding ? ' founding rate' : ''}` : p.name);
+// what makes people press Send: risk reversal next to the button (all true: lp.ts FAQ, terms, LP guarantee)
+const reassure = ['No payment now. No commitment until you approve the quote.', 'A real person replies within one business day.', 'Live in 7 business days or 20% off.', 'You own the domain, the site and the content.'];
 const industries = [php ? 'Food & catering' : 'Food & restaurants', 'Retail & shops', 'Beauty & salon', 'Health & wellness', 'Professional services', 'Real estate', 'Construction & trades', 'Education & training', 'Online store', 'Other'];
 const goals = [['leads', 'Bring in more enquiries'], ['sell', 'Sell online'], ['credibility', 'Look more established'], ['replace', 'Replace my old website'], ['launch', 'Launch a new business'], ['other', 'Something else']];
 const timelines = [['asap', 'As soon as possible'], ['month', 'Within a month'], ['quarter', 'In 1–3 months'], ['exploring', 'Just exploring for now']];
@@ -23,14 +31,15 @@ const id = `lpq-${variant}`;
 <div class="qf" data-lp-form data-variant={variant}>
   <!-- Inline start card: real package tiles. One tap opens the sheet at the next question. -->
   <div class="qf-card" data-card>
-    <p class="mono qf-eyebrow">Your 7-day brief{php && ' · Peso pricing'}</p>
-    <h3 class="t-h3 qf-card-h">Which package fits?</h3>
-    <p class="qf-card-sub">Pick one to start. You can change it later.</p>
+    <p class="mono qf-eyebrow">Your 7-day brief{php && ' · Peso pricing'} · about 60 seconds</p>
+    <h3 class="t-h3 qf-card-h">Pick a package to get your start date.</h3>
+    <p class="qf-card-sub">6 quick questions. No payment now. You can change your package later.</p>
     <div class="qf-card-pk">{pkgs.map((p) => (
-      <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure']} href="#get-started" data-start={p.value}>
-        <span class="qt-b"><span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span></span>
+      <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} href="#get-started" data-start={p.value}>
+        <span class="qt-b">{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Most popular</span>}<span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span></span>
       </a>
     ))}</div>
+    <p class="mono qf-proof">{php && FOUNDING_PH.on ? `Founding rate: ${FOUNDING_PH.spots} spots only · ` : ''}120+ projects by our founder · {capsCopy.sevenDay.replace('We take on ', '').replace(', max.', ' max')}</p>
     <p class="qf-resume" data-resume hidden><button type="button" class="btn btn--lime" data-resume-btn><span data-resume-label>Continue your brief · <span data-resume-n></span> of 7 answered</span> <span class="arrow" aria-hidden="true">→</span></button></p>
     <div class="qf-card-ok" data-card-ok hidden><p class="mono qf-eyebrow">Brief sent</p><p class="t-h3">Brief received. You’re in the queue.</p><p>We’ll reply within one business day with your confirmed start date.</p></div>
     <p class="qf-card-fine">Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
@@ -54,11 +63,11 @@ const id = `lpq-${variant}`;
 
             <fieldset class="q" data-q="package" data-kind="choice">
               <legend><h2 class="q-h" data-h tabindex="-1">Which package fits?</h2></legend>
-              <p class="q-sub">{php ? 'Fixed peso prices. Pay via GCash, Maya or bank.' : 'Every package is fixed price, with 7-day delivery.'}</p>
+              <p class="q-sub">{php ? 'Fixed peso prices. Pay via GCash, Maya or bank, and only after you approve the quote.' : 'Fixed prices, 7-day delivery. Nothing to pay until you approve the quote.'}</p>
               <div class="q-opts q-opts--cards">{pkgs.map((p, i) => (
-                <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure']} data-chip={p.price ? `${p.name} · ${p.price}` : p.name}>
+                <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} data-chip={chipOf(p)}>
                   <input type="radio" name="package" value={p.value} />
-                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
+                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span>{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Most popular</span>}<span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
                 </label>
               ))}</div>
               <p class="q-err" data-err role="alert" id={`${id}-err-package`}></p>
@@ -66,7 +75,7 @@ const id = `lpq-${variant}`;
 
             <fieldset class="q" data-q="industry" data-kind="choice" hidden>
               <legend><h2 class="q-h" data-h tabindex="-1">What kind of business is it?</h2></legend>
-              <p class="q-sub">Pick the closest match.</p>
+              <p class="q-sub">Pick the closest match. It helps us plan pages your customers expect.</p>
               <div class="q-opts q-opts--chips">{industries.map((x, i) => (
                 <label class="qt qt--chip"><input type="radio" name="industry" value={x} /><span class="qt-b">{i < 9 && <span class="qt-k" aria-hidden="true">{i + 1}</span>}<span class="qt-t" data-opt>{x}</span></span></label>
               ))}</div>
@@ -76,7 +85,7 @@ const id = `lpq-${variant}`;
 
             <fieldset class="q" data-q="goal" data-kind="choice" hidden>
               <legend><h2 class="q-h" data-h tabindex="-1">What should the site do for you?</h2></legend>
-              <p class="q-sub">Pick the one that matters most.</p>
+              <p class="q-sub">Pick the one that matters most. We design the whole site around it.</p>
               <div class="q-opts q-opts--rows">{goals.map(([v, l], i) => (
                 <label class="qt"><input type="radio" name="goal" value={v} /><span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{l}</span><span class="qt-node" aria-hidden="true"></span></span></label>
               ))}</div>
@@ -103,7 +112,7 @@ const id = `lpq-${variant}`;
 
             <fieldset class="q" data-q="business" data-kind="text" hidden>
               <legend><h2 class="q-h" data-h tabindex="-1">What’s your business called?</h2></legend>
-              <p class="q-sub">A working name is fine.</p>
+              <p class="q-sub">A working name is fine. One more step after this.</p>
               <div class="q-fields">
                 <div class="f"><label for={`${id}-bn`}>Business name</label><input id={`${id}-bn`} name="businessName" autocomplete="organization" autocapitalize="words" enterkeyhint="next" placeholder={php ? 'e.g. Santos Bakeshop' : 'e.g. Sunrise Coffee Co.'} /></div>
                 {php && <div class="f"><label for={`${id}-fb`}>Facebook page (optional)</label><input id={`${id}-fb`} name="facebookPage" inputmode="url" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder="facebook.com/santosbakeshop" aria-describedby={`${id}-fb-h`} /><p class="f-h" id={`${id}-fb-h`}>We’ll pull your photos and details from it to save you time.</p></div>}
@@ -114,7 +123,7 @@ const id = `lpq-${variant}`;
 
             <fieldset class="q" data-q="contact" data-kind="text" hidden>
               <legend><h2 class="q-h" data-h tabindex="-1">Where do we send your start date?</h2></legend>
-              <p class="q-sub">We reply within one business day, Monday to Friday.</p>
+              <p class="q-sub">Last step. A real person replies within one business day, Monday to Friday.</p>
               <div class="q-fields">
                 <div class="f"><label for={`${id}-n`}>Your name</label><input id={`${id}-n`} name="name" autocomplete="name" autocapitalize="words" enterkeyhint="next" placeholder={php ? 'e.g. Maria Santos' : 'e.g. Jane Smith'} /></div>
                 <div class="f"><label for={`${id}-e`}>Email</label><input id={`${id}-e`} name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" placeholder={php ? 'maria.santos@gmail.com' : 'you@yourbusiness.com'} aria-describedby={`${id}-e-h`} /><p class="f-h" id={`${id}-e-h`}>Your start date and what we need for Day 1 go here.</p><p class="q-typo" data-typo hidden>Did you mean <button type="button" data-typo-fix></button>?</p></div>
@@ -127,13 +136,13 @@ const id = `lpq-${variant}`;
 
             <div class="q-nav">
               <button type="button" class="btn btn--lime q-next" data-next hidden>Continue <span class="arrow" aria-hidden="true">→</span></button>
-              <button type="submit" class="btn btn--lime q-send" data-submit hidden data-cursor="SEND"><span data-label>Send my 7-day brief</span> <span class="arrow" aria-hidden="true">→</span></button>
+              <button type="submit" class="btn btn--lime q-send" data-submit hidden data-cursor="SEND"><span data-label>Get my start date</span> <span class="arrow" aria-hidden="true">→</span></button>
               <p class="q-hint mono" data-hint aria-hidden="true"></p>
               <p class="q-status" data-status></p>
             </div>
             <p class="q-mail" data-mail hidden><a class="link" data-mail-link href="mailto:info@fazeddigital.com">Email it instead</a></p>
             <div class="q-fine" data-fine hidden>
-              <p>No commitment until you approve the quote.</p>
+              <ul class="q-sure">{reassure.map((r) => <li>{r}</li>)}</ul>
               <p>Protected by reCAPTCHA. Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply. We’ll only use your details to reply to you. <a class="link" href="/privacy" target="_blank" rel="noopener">Our privacy policy<span class="sr-only"> (opens in a new tab)</span></a></p>
             </div>
             <p class="sr-only" data-live role="status" aria-live="polite"></p>
@@ -181,7 +190,8 @@ const id = `lpq-${variant}`;
   .qf-card-sub, .qf-card-fine { color: var(--gray-400); }
   .qf-card-fine { font-size: .875rem; }
   .qf-card-pk { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  .qf-card-pk .qt-b { min-height: 104px; }
+  .qf-card-pk .qt-b { min-height: 104px; justify-content: flex-start; }
+  .qf-proof { color: var(--gray-300); font-size: 12px; letter-spacing: .08em; }
   .qf-resume[hidden], .qf-card-ok[hidden] { display: none; }
   .qf-resume .btn { white-space: normal; width: 100%; height: auto; min-height: 56px; padding-block: 12px; justify-content: center; text-align: center; }
   .qf-card-ok { display: grid; gap: .5rem; }
@@ -212,6 +222,14 @@ const id = `lpq-${variant}`;
   .qt-for { color: var(--gray-300); font-weight: 400; }
   .qt-d { color: var(--gray-400); font-size: .875rem; font-weight: 400; }
   .qt--unsure .qt-b { border-style: dashed; }
+  .qt-tag { align-self: flex-start; font-size: 10.5px; letter-spacing: .1em; text-transform: uppercase; color: var(--black); background: var(--lime); padding: 3px 8px; border-radius: 999px; margin-bottom: 4px; }
+  .qt-tag--dim { color: var(--lime); background: var(--lime-12); }
+  .qt--founding .qt-b { border-color: var(--lime); }
+  .qt-was { margin-left: .5rem; font-size: .9rem; font-weight: 500; color: var(--gray-400); text-decoration-thickness: 1.5px; }
+  .q-sure { list-style: none; padding: 0; margin: 0 0 4px; display: grid; gap: 6px; color: var(--gray-200); font-size: .9rem; }
+  .q-sure li { position: relative; padding-left: 1.4rem; }
+  .q-sure li::before { content: '✓'; position: absolute; left: 0; color: var(--lime); font-weight: 700; }
+  .brief-count .brief-eta { color: var(--gray-400); }
   /* Style mini-specimens: CSS drawings in the palette, decorative only */
   .qt--style .qt-b { min-height: 128px; }
   .qt-spec { position: relative; display: block; width: 100%; height: 48px; margin-bottom: 6px; }
@@ -330,8 +348,12 @@ const id = `lpq-${variant}`;
     .brief-hd { height: 56px; }
     .brief-cols { display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
     .brief-main { overflow: visible; padding: 24px 16px; flex: 1; }
-    fieldset.q[data-kind='choice'] { flex: 1; }
-    fieldset.q[data-kind='choice'] .q-opts { margin-top: auto; }
+    /* options sit right under the question (the bottom-anchored "thumb zone" left half the screen empty) */
+    .q-sub { margin-bottom: 18px; }
+    .q-opts--rows .qt-b { min-height: 60px; }
+    /* Continue / Send stay in the thumb zone instead: a sticky bar at the bottom of the sheet */
+    .q-nav { position: sticky; bottom: 0; z-index: 2; margin: 20px -16px 0; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(to top, var(--black) 78%, transparent); }
+    .q-nav:not(:has(> .btn:not([hidden])), > .q-status:not(:empty)) { padding: 0; margin: 0; background: none; }
     .q-opts--cards { grid-template-columns: 1fr; }
     .q-opts--style { grid-template-columns: repeat(auto-fit, minmax(min(100%, 9.5rem), 1fr)); }
     .q-nav .btn { width: 100%; min-height: 56px; justify-content: center; }
@@ -339,10 +361,16 @@ const id = `lpq-${variant}`;
     /* the last step lists the whole brief under Send as the review, so the fields come first */
     .brief[data-step='contact'] .brief-rail { display: flex; flex: none; overflow: visible; border-top: 1px solid var(--gray-700); }
     .q[data-q='package'] .qt-d { display: none; }
-    .q[data-q='package'] .qt--card .qt-b { min-height: 96px; padding-block: 14px; }
+    .q[data-q='package'] .q-opts--cards { grid-template-columns: 1fr 1fr; }
+    .q[data-q='package'] .qt--card .qt-b { min-height: 132px; padding: 14px 32px 14px 14px; justify-content: flex-start; }
+    .q[data-q='package'] .qt-price, .qf-card-pk .qt-price { font-size: 1.5rem; }
+    .q[data-q='package'] .qt--card .qt-t, .qf-card-pk .qt--card .qt-t { font-size: 1.15rem; }
+    .q[data-q='package'] .qt-for, .qf-card-pk .qt-for { font-size: .82rem; line-height: 1.3; }
+    .qt--card .qt-node { right: 12px; top: 14px; }
+    .qt-was { display: block; margin: 2px 0 0; font-size: .8rem; }
     .brief[data-step='contact'] .brief-pills, .brief[data-step='contact'] .brief-rail-empty { display: none; }
   }
-  @media (max-width: 479px) { .qf-card-pk { grid-template-columns: 1fr; } }
+  @media (max-width: 479px) { .qf-card-pk .qt--card .qt-b { min-height: 128px; padding: 14px; justify-content: flex-start; } }
 
   @media (prefers-reduced-motion: reduce) {
     .brief[open], .q:not([hidden]), .qt-b, .brief-bar span, .brief-row::after { transition-duration: .12s; translate: none; scale: none; }

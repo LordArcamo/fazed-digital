@@ -210,7 +210,9 @@ export function initLpForms() {
       screens.forEach((x) => { const on = x === s; x.hidden = !on; x.inert = !on; });
       const n = cur + 1, total = list.length;
       bar.style.setProperty('--p', String(n / total));
-      count.innerHTML = `<b>${pad(n)}</b> / ${pad(total)}`;
+      // goal-gradient: show how little is left (about 10 s a screen), so the end feels close
+      const left = (total - n + 1) * 10;
+      count.innerHTML = `<b>${pad(n)}</b> / ${pad(total)}<span class="brief-eta"> · ${n === total ? 'last step' : `about ${left}s left`}</span>`;
       // screen readers hear the position as part of the question heading
       const h = s.querySelector<HTMLElement>('[data-h]')!;
       h.querySelector('.sr-only')?.remove();
@@ -432,7 +434,7 @@ export function initLpForms() {
         clearTimeout(slow); clearTimeout(kill);
         send.removeAttribute('aria-busy');
         hint.hidden = done;
-        sendLabel.textContent = 'Send my 7-day brief';
+        sendLabel.textContent = 'Get my start date';
       }
     });
 

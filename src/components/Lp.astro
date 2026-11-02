@@ -5,6 +5,7 @@
 import { Picture } from 'astro:assets';
 import Faq from './Faq.astro';
 import LpForm from './LpForm.astro';
+import { FOUNDING_PH } from '../data/offers';
 import { labImages } from '../data/images';
 import { labShipped, LABEL } from '../data/lab';
 import { lpFaq } from '../data/lp';
@@ -44,8 +45,8 @@ const why = [
 ];
 const guarantee = 'We’ll launch your site in 7 business days, as long as we have your content and assets on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off the project fee.';
 const faq = lpFaq(php);
-// Founding client offer (user, 2026-11-01): PH Starter 25% off, 5 spots, taken at deposit. Display only; the signup form is unchanged. Set to false when the 5 spots are gone.
-const FOUNDING_PH = true;
+// Founding client rate: src/data/offers.ts (one switch for the banner, the form and the lead email)
+const FOUNDING = FOUNDING_PH.on;
 ---
 <div class="lp" data-lp={variant}>
   <section class="lp-hero" data-f="days7" aria-labelledby="lp-h">
@@ -53,7 +54,7 @@ const FOUNDING_PH = true;
       <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Fast-track website · Fixed price · USD'}</p>
       <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
       <p class="t-body-l lp-deck">{php ? 'We design, build and launch professional websites for Philippine businesses: fully custom, mobile-ready and set up for Google.' : 'We design, build and launch professional websites for small businesses: fully custom, mobile-ready and set up for Google.'} <strong>{php ? 'From ₱19,999, fixed price. Pay via GCash, Maya or bank.' : 'From $499, fixed price. You own everything.'}</strong></p>
-      {php && FOUNDING_PH && <p class="lp-founding" role="note"><strong class="mono">Founding client rate</strong><br /><b>Starter ₱14,999</b> <span class="dim">(standard ₱19,999)</span> · 5 founding spots, secured with a deposit. In exchange, we ask for an honest review and permission to feature your build. Extra pages and care plans at the standard rate.</p>}
+      {php && FOUNDING && <p class="lp-founding" role="note"><strong class="mono">Founding client rate</strong><br /><b>Starter {FOUNDING_PH.price}</b> <span class="dim">(standard {FOUNDING_PH.standard})</span> · {FOUNDING_PH.spots} founding spots, secured with a deposit. In exchange, we ask for an honest review and permission to feature your build. Extra pages and care plans at the standard rate.</p>}
       <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my 7-day website <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
       <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}<i class="ld-t"> · {['Kickoff', 'Design', 'Design', 'Build', 'Build', 'Review', 'Live'][i]}</i></em></li>)}</ol>
       <dl class="lp-trust">

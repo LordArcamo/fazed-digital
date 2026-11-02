@@ -3,7 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { sendLead } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
-import { prices } from '../../data/proof';
+import { offerPrice, FOUNDING_PH } from '../../data/offers';
 
 // Every lead: Gmail alert to the team (src/lib/mail.ts) + a HubSpot contact for the leads list (src/lib/hubspot.ts).
 const LEAD_TO = [
@@ -122,7 +122,8 @@ interface Lead {
 function packageLabel(pkg: string, variant: 'usd' | 'php'): string {
   const name = PACKAGE_NAMES[pkg];
   if (!name) return pkg || 'Package not selected';
-  const price = (prices[variant] as Record<string, string>)[pkg];
+  const { price, founding } = offerPrice(variant, pkg);
+  if (founding) return `${name} (${price} founding rate, standard ${FOUNDING_PH.standard})`;
   return price ? `${name} (${price})` : name;
 }
 
