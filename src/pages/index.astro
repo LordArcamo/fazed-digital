@@ -12,7 +12,7 @@ import { homeFaq } from '../data/home';
 import Faq from '../components/Faq.astro';
 import { faqPage } from '../lib/schema';
 import { caseIndex, countries } from '../data/cases';
-import { stats, results, capsCopy } from '../data/proof';
+import { stats, results, capsCopy, prices } from '../data/proof';
 import { team } from '../data/team';
 import { workImages } from '../data/images';
 import { NAP, SITE_URL } from '../data/site';
@@ -75,34 +75,32 @@ const schema = [
       </div>
     </section>
 
-    <!-- [HOME-03] SERVICES -->
-    <section class="services" id="services" data-f="pentagon" aria-labelledby="svc-h">
-      <div class="svc-pin">
-        <div class="container svc-in">
-          <div class="svc-head">
-            <p class="mono">What we do · 05 services</p>
-            <h2 id="svc-h" class="t-d2">Five services. One connected system.</h2>
-            <p class="svc-intro">Hire us for one, or let them work together. Brand feeds the site, the site feeds search, search feeds the business.</p>
-            <div class="svc-steps" role="group" aria-label="Step through the five services">
-              {services.map((s, i) => <button type="button" class="svc-step" data-step={i} aria-pressed={i === 0 ? 'true' : 'false'} aria-controls={`svc-${s.id}`}><span class="sr-only">Show </span>{s.n}<span class="sr-only"> {s.title}</span></button>)}
-            </div>
-          </div>
-          <ol class="svc-list">
-            {services.map((s, i) => (
-              <li class="svc" id={`svc-${s.id}`} data-i={i}>
-                <Glyph id={s.id} size={56} />
+    <!-- [HOME-03] SERVICES: a solid sheet over a quiet field, so the services are what the eye lands on -->
+    <section class="services" id="services" data-f="lattice" data-fquiet="0.35" aria-labelledby="svc-h">
+      <div class="container svc-in">
+        <div class="svc-head">
+          <p class="mono">What we do · 05 services</p>
+          <h2 id="svc-h" class="t-d2">Five services. One connected system.</h2>
+          <p class="svc-intro">Hire us for one, or let them work together. Brand feeds the site, the site feeds search, search feeds the business.</p>
+          <a class="btn btn--black svc-all" href="/services">See all five services <span class="arrow" aria-hidden="true">→</span></a>
+        </div>
+        <ol class="svc-list">
+          {services.map((s, i) => (
+            <li class:list={['rv', { 'svc-lead': i === 0 }]} id={`svc-${s.id}`}>
+              <article class="svc">
                 <div class="svc-body">
-                  <p class="mono svc-n">Node {s.n}/05</p>
-                  <h3 class="t-h3 svc-t"><a href={`/services#${s.id}`}>{s.title}</a></h3>
+                  <div class="svc-top"><span class="mono svc-n">{s.n}</span><Glyph id={s.id} size={i === 0 ? 48 : 40} /></div>
+                  <h3 class="svc-t"><a href={`/services#${s.id}`}>{s.title}</a></h3>
                   <p class="svc-line">{s.line}</p>
                   <ul class="svc-scope mono" aria-label={`${s.title} scope`}>{s.scope.map((x) => <li>{x}</li>)}</ul>
-                  <a class="mono svc-proof link" href={s.proof.href}>{s.proof.label} <span class="sr-only">{s.proof.name}</span></a>
+                  {i === 0 && <p class="svc-more">Need it in a week? <a href="/lp/7-day-website">7-day websites from {prices.usd.starter}</a>. Also on <a href="/webflow">Webflow</a>, <a href="/framer">Framer</a> and <a href="/ecommerce">e-commerce</a>.</p>}
+                  <a class="mono svc-proof" href={s.proof.href}>{s.proof.name} <span aria-hidden="true">→</span></a>
                 </div>
-              </li>
-            ))}
-          </ol>
-          <a class="btn btn--ghost svc-all" href="/services">See all five services</a>
-        </div>
+                {i === 0 && <div class="svc-shot"><Picture src={workImages['01']} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 1023px) 92vw, 340px" alt={caseIndex.find((c) => c.slug === '01')!.alt} loading="lazy" decoding="async" /></div>}
+              </article>
+            </li>
+          ))}
+        </ol>
       </div>
     </section>
 
@@ -289,35 +287,54 @@ const schema = [
   .unfold-body { grid-column: 7 / span 6; display: grid; gap: 1.25rem; }
   @media (max-width: 1023px) { .ruler { grid-template-columns: repeat(4, 1fr); } .ruler span:nth-child(n + 5):not(.ruler-pitch) { display: none; } .unfold-in > * { grid-column: 1 / -1 !important; } }
 
-  /* SERVICES */
-  .services { position: relative; }
-  .svc-pin { padding-block: var(--section); }
-  .svc-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 3rem; }
-  .svc-head { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-content: start; }
+  /* SERVICES: paper sheet, black tiles. The only bright, still thing on screen; the field just frames it. */
+  .services { position: relative; margin-inline: clamp(8px, 1.2vw, 20px); padding-block: clamp(56px, 5.5vw, 88px); border-radius: 28px; background: var(--white); color: var(--gray-700); }
+  .svc-in { display: grid; grid-template-columns: repeat(12, 1fr); gap: 16px; }
+  .svc-head { grid-column: 1 / span 5; display: grid; gap: 1.25rem; align-content: center; justify-items: start; padding-right: 2rem; }
+  .svc-head .mono { color: var(--gray-700); }
+  .svc-head h2 { color: var(--black); }
   .svc-intro { max-width: 40ch; }
-  .svc-steps { display: none; gap: .5rem; }
-  .svc-step { min-width: 48px; min-height: 48px; border-radius: 999px; border: 1px solid var(--gray-700); font-family: var(--font-mono); font-size: .8rem; color: var(--gray-300); }
-  .svc-step[aria-pressed='true'] { background: var(--lime); color: var(--black); border-color: var(--lime); }
-  @media (max-width: 1023px) { .svc-head { grid-column: 1 / -1; } }
-  .svc-list { grid-column: 1 / -1; display: grid; gap: 0; border-top: 1px solid var(--gray-700); }
-  .svc { display: flex; gap: 1.5rem; padding: 2rem 0; border-bottom: 1px solid var(--gray-700); }
-  .svc-body { display: grid; gap: .6rem; }
-  .svc-t a:hover { color: var(--lime); }
-  .svc-scope { display: flex; flex-wrap: wrap; gap: .25rem 1.25rem; color: var(--gray-300); }
-  .svc-scope li::before { content: '· '; color: var(--lime); }
-  .svc-proof { justify-self: start; display: inline-flex; align-items: center; min-height: 44px; color: var(--lime); text-decoration: none; }
-  .svc-proof:hover, .svc-proof:focus-visible { color: var(--black); }
-  .svc-all { grid-column: 1 / -1; justify-self: start; }
-  /* desktop pinned mode (motion adds .svc-live): one node at a time, left column */
-  @media (min-width: 1024px) {
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pin { min-height: 100vh; display: flex; align-items: center; padding-block: calc(var(--header-h) + 24px) 48px; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-steps { display: flex; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-list { grid-column: 1 / span 5; position: relative; border: 0; min-height: 300px; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc { position: absolute; inset: 0 0 auto 0; border: 0; opacity: 0; visibility: hidden; transform: translateY(16px); transition: opacity .45s var(--ease-out), transform .45s var(--ease-out), visibility 0s .45s; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc.is-on { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc .t-h3 { font-size: var(--fs-d2); line-height: .95; }
-    :global(html.gl-live) .svc-live .svc :global(.glyph) { display: none; }
+  .svc-all:focus-visible { outline-color: var(--black); }
+  .svc-list { display: contents; }
+  .svc-list > li { grid-column: span 3; display: grid; }
+  .svc-list > .svc-lead { grid-column: span 7; }
+  .svc { --ink: var(--white); --soft: var(--gray-300); --accent: var(--lime); position: relative; display: flex; gap: 1.5rem; padding: 24px; border-radius: 18px; background: var(--black); color: var(--soft); transition: background-color .25s var(--ease-out), transform .25s var(--ease-out); }
+  .svc-body { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: .75rem; }
+  .svc-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .75rem; }
+  .svc-n { color: var(--accent); transition: color .25s; }
+  .svc-t { font-size: clamp(1.625rem, 2.2vw, 2.125rem); line-height: 1.05; letter-spacing: -.015em; color: var(--ink); transition: color .25s; }
+  .svc-lead .svc-t { font-size: clamp(1.875rem, 3vw, 3rem); line-height: 1; }
+  .svc-t a::after { content: ''; position: absolute; inset: 0; border-radius: inherit; } /* the whole tile opens the service */
+  .svc-line { line-height: 1.5; color: var(--soft); transition: color .25s; }
+  .svc-scope { display: flex; flex-wrap: wrap; gap: .15rem 1rem; color: var(--soft); letter-spacing: .08em; transition: color .25s; }
+  .svc-scope li::before { content: '· '; color: var(--accent); transition: color .25s; }
+  .svc-more { position: relative; z-index: 1; font-size: .9375rem; line-height: 1.5; color: var(--soft); transition: color .25s; }
+  .svc-more a { color: var(--ink); text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: .2em; transition: color .25s; }
+  .svc-proof { position: relative; z-index: 1; margin-top: auto; align-self: flex-start; display: inline-flex; align-items: center; gap: .4em; min-height: 44px; color: var(--accent); transition: color .25s; }
+  .svc-proof:hover { text-decoration: underline; text-underline-offset: .25em; }
+  .svc-shot { position: relative; flex: 0 0 38%; min-width: 0; border-radius: 10px; overflow: hidden; }
+  .svc-shot :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; }
+  /* one tile at a time takes the lime; pointer and keyboard get the same state */
+  .svc:focus-within { --ink: var(--black); --soft: var(--black); --accent: var(--black); background: var(--lime); }
+  .svc:focus-within :focus-visible { outline-color: var(--black); }
+  .svc:focus-within :global(.glyph) { filter: brightness(0); }
+  @media (hover: hover) {
+    .svc:hover { --ink: var(--black); --soft: var(--black); --accent: var(--black); background: var(--lime); transform: translateY(-4px); }
+    .svc:hover :global(.glyph) { filter: brightness(0); }
   }
+  @media (max-width: 1023px) {
+    .svc-head { grid-column: 1 / -1; padding: 0 0 1.5rem; }
+    .svc-list > li { grid-column: span 6; }
+    .svc-list > .svc-lead { grid-column: 1 / -1; }
+  }
+  @media (max-width: 767px) {
+    .services { border-radius: 20px; }
+    .svc-list > li, .svc-list > .svc-lead { grid-column: 1 / -1; }
+    .svc { flex-direction: column; padding: 20px; }
+    .svc-top { margin-bottom: .5rem; }
+    .svc-shot { flex: none; aspect-ratio: 16 / 10; }
+  }
+  @media (prefers-reduced-motion: reduce) { .svc { transition: none; } .svc:hover { transform: none; } }
 
   /* WORK INDEX */
   .work .t-d2 { margin: 1rem 0; }

@@ -214,13 +214,18 @@ export async function start(g: Gate, flags: Flags) {
     morphTween = gsap.to(u.uMorph, { value: 1, duration: dur, ease });
   };
   let beatEl: Element | null = null;
+  // data-fquiet on a section: hold the field at that brightness so the content leads (home services)
+  const dimFor = (id: string, el?: Element | null) => {
+    const q = (el as HTMLElement | null | undefined)?.dataset?.fquiet;
+    return q ? +q : id === 'work' || id === 'flood' ? 0.35 : id === 'lab' ? 0.6 : 1;
+  };
   const setBeat = (id: string, el?: Element | null) => {
-    if (id === beat) return;
+    if (id === beat) { gsap.to(u.uDim, { value: dimFor(id, el), duration: 0.6 }); return; }
     const prev = beat;
     beat = id;
     beatEl = el ?? null;
     // per-beat uniforms
-    gsap.to(u.uDim, { value: id === 'work' || id === 'flood' ? 0.35 : id === 'lab' ? 0.6 : 1, duration: 0.6 });
+    gsap.to(u.uDim, { value: dimFor(id, el), duration: 0.6 });
     gsap.to(u.uBack, { value: id === 'globe' ? 1 : 0, duration: 0.6 });
     u.uLight.value = id === 'wordmark' && desktop() ? 1 : 0;
     field.setArcs(null);
@@ -338,11 +343,6 @@ export async function start(g: Gate, flags: Flags) {
     if (foot && desktop()) {
       triggers.push(ScrollTrigger.create({ trigger: foot, start: 'top 85%', end: 'bottom top', onToggle: (s) => { if (s.isActive && word) { setBeat('wordmark', foot); foot.classList.add('gl-owned'); } } }));
     }
-    on('fz:svc', ((e: CustomEvent) => {
-      svcStep = e.detail;
-      if (beat !== 'pentagon') return;
-      morph(build('pentagon', beatEl), 0.6, 'power2.out');
-    }) as EventListener);
     on('fz:shot', (async (e: CustomEvent) => {
       if (beat !== 'work') return;
       const d = e.detail as { id: string; el: HTMLElement } | null;
