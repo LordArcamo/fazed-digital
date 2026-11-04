@@ -1,10 +1,15 @@
 // Home DOM choreography (§5.1). The field listens to the same events (fz:* on document).
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { initServices } from './services';
 
 const emit = (type: string, detail?: unknown) => document.dispatchEvent(new CustomEvent(type, { detail }));
 
 export function initHome(rm: boolean) {
   const offs: (() => void)[] = [];
+
+  /* §3 services: the desktop wall (phones and reduced motion keep the stacked rows) */
+  const svc = document.getElementById('services');
+  if (svc && !rm && matchMedia('(min-width: 1024px)').matches) offs.push(initServices(svc));
 
   /* §5 flood: circle wipe from Day 1 (scrub), then days light 1→7 */
   const flood = document.getElementById('flood');
