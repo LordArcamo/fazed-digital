@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
+import { saveToCrm, markCrmAlert } from '../../lib/crm';
 
 // ─── reCAPTCHA v3 config ─────────────────────────────────────────────────────
 const RECAPTCHA_SECRET = import.meta.env.RECAPTCHA_SECRET_KEY;
@@ -62,18 +63,20 @@ export const POST: APIRoute = async ({ request }) => {
 
   const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
-  /* ── Always log, then email the lead to info@ (a lead is never lost) ── */
+  /* ── Always log, then save and email the lead at once (a lead is never lost) ── */
   console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message, source }));
-  const emailed = await sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source });
-
-  /* ── Save to HubSpot (the leads list) ─────────────────── */
-  const hs = await saveToHubSpot({
-    name, email, message: fullMessage, serviceLabel,
-    pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
-    pageName: 'Fazed Digital — Contact',
-  });
-  // Neither the email nor HubSpot got the lead: the visitor must retry. Otherwise the lead is safe.
-  if (!emailed && hs !== 'ok') {
+  const [crm, emailed, hs] = await Promise.all([
+    saveToCrm({ form: 'contact', name, email, phone, business: company, service: serviceLabel, budget, message, source }),
+    sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source }),
+    saveToHubSpot({
+      name, email, message: fullMessage, serviceLabel,
+      pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
+      pageName: 'Fazed Digital — Contact',
+    }),
+  ]);
+  await markCrmAlert(crm, emailed);
+  // Nothing got the lead: the visitor must retry. Otherwise the lead is safe.
+  if (!crm && !emailed && hs !== 'ok') {
     return json({ error: 'Something went wrong on our side and your message didn’t send. Please try again, or email us at info@fazeddigital.com.' }, 502);
   }
 

@@ -3,6 +3,7 @@ export const prerender = false;
 import type { APIRoute } from 'astro';
 import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
+import { saveToCrm, markCrmAlert } from '../../lib/crm';
 import { offerPrice, FOUNDING_PH } from '../../data/offers';
 import { NAP, SITE_URL } from '../../data/site';
 
@@ -94,7 +95,13 @@ export const POST: APIRoute = async ({ request }) => {
 
   const pkgLabel = packageLabel(d.pkg, variant);
   const pageUri = referer || `https://www.fazeddigital.com/lp/7-day-website${variant === 'php' ? '/ph' : ''}`;
-  const [mail, hs] = await Promise.all([
+  const [crm, mail, hs] = await Promise.all([
+    saveToCrm({
+      ref: s(body.idem), form: 'seven-day', pipeline: variant === 'php' ? 'ph' : 'us',
+      name: d.name, email: d.email, phone: d.phone, business: d.businessName, website: d.currentWebsite,
+      service: '7-Day Website Package', package: pkgLabel, message: d.notes, source: d.source,
+      details: Object.fromEntries(rows(d, pkgLabel).filter(([k]) => !['Package', 'Page', 'Business', 'Current website', 'Name', 'Email', 'Phone', 'Notes', 'Source'].includes(k))),
+    }),
     sendLead({
       to: LEAD_TO,
       cc: LEAD_CC,
@@ -108,10 +115,11 @@ export const POST: APIRoute = async ({ request }) => {
       message: briefText(d, pkgLabel),
     }),
   ]);
-  console.log(`LP lead: email=${mail || 'failed'} hubspot=${hs}`);
+  console.log(`LP lead: email=${mail || 'failed'} hubspot=${hs} crm=${crm ?? 'off'}`);
+  await markCrmAlert(crm, !!mail);
 
-  // Nothing reached the team: tell the visitor, so the form keeps their answers and offers "Email it instead".
-  if (!mail && hs !== 'ok') return json({ error: 'Your brief didn’t send. Please try again, or email it to info@fazeddigital.com.' }, 502);
+  // Nothing got the lead: tell the visitor, so the form keeps their answers and offers "Email it instead".
+  if (!crm && !mail && hs !== 'ok') return json({ error: 'Your brief didn’t send. Please try again, or email it to info@fazeddigital.com.' }, 502);
   if (s(body.idem)) sent.set(s(body.idem), Date.now());
 
   // The lead's own copy: what happens next + their answers. Only once the team has it, never for a [fast] send.
