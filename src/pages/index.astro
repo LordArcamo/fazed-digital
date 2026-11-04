@@ -1,5 +1,4 @@
 ---
-import { Picture } from 'astro:assets';
 import Base from '../layouts/Base.astro';
 import MarkPoster from '../components/MarkPoster.astro';
 import ContactForm from '../components/ContactForm.astro';
@@ -11,11 +10,21 @@ import { homeFaq } from '../data/home';
 import Faq from '../components/Faq.astro';
 import { faqPage } from '../lib/schema';
 import { caseIndex, countries } from '../data/cases';
-import { stats, results, capsCopy, prices } from '../data/proof';
+import { stats, results, capsCopy } from '../data/proof';
 import { team } from '../data/team';
-import { workImages } from '../data/images';
 import { NAP, SITE_URL } from '../data/site';
+import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 
+// The top sheets of the services deck are miniatures of this page, so the copy they repeat is written once, here.
+const pageTitle = 'Web Design & Branding Studio in the Philippines | Fazed';
+const pageDesc = 'Custom websites, brands, SEO and web apps from Iligan City, Philippines, for businesses in the USA, Australia and the Philippines. 7-day sites from $499.';
+const heroLines = ['Built in Iligan.', 'Live worldwide.'];
+const heroDeck = 'Websites, brands and web apps for owners who want to be found, trusted and chosen. Made in the Philippines, shipped to the USA, Australia and home.';
+const unfoldLines = ['Web design, branding', 'and SEO from the Philippines.'];
+const searchLine = unfoldLines.join(' ').replace(/\.$/, '');
+const navLabels = ['Work', 'Lab', 'Services', 'About', 'Blog', 'Contact'];
+const caseListName = 'Fazed Digital case studies';
+const schemaLine = `[{ "@type": "ItemList", "name": "${caseListName}" }, { "@type": "FAQPage" }]`;
 const cols = Array.from({ length: 12 }, (_, i) => String(i + 1).padStart(2, '0'));
 const days = ['Day 1 · Brief', 'Day 2 · Design', 'Day 3 · Design', 'Day 4 · Build', 'Day 5 · Build', 'Day 6 · Review', 'Day 7 · Launch'];
 const steps = [
@@ -32,15 +41,15 @@ const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
-    name: 'Fazed Digital case studies',
+    name: caseListName,
     itemListElement: caseIndex.map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.title, url: `${SITE_URL}/work/${c.slug}` })),
   },
   faqPage(homeFaq),
 ];
 ---
 <Base
-  title="Web Design & Branding Studio in the Philippines | Fazed"
-  description="Custom websites, brands, SEO and web apps from Iligan City, Philippines, for businesses in the USA, Australia and the Philippines. 7-day sites from $499."
+  title={pageTitle}
+  description={pageDesc}
   formation="mark"
   schema={schema}
   current="/"
@@ -51,8 +60,8 @@ const schema = [
       <MarkPoster />
       <div class="container hero-in">
         <p class="mono hero-strip"><span class="hs-d">Iligan City, PH · {NAP.coords} · Est. 2022</span><span class="hs-m" aria-hidden="true">Iligan, PH · {NAP.coords.split(" N")[0]} N · Est. 2022</span></p>
-        <h1 id="hero-h" class="hero-h"><span class="hero-l1">Built in Iligan.</span> <span class="hero-l2">Live worldwide.</span></h1>
-        <p class="t-body-l hero-deck">Websites, brands and web apps for owners who want to be found, trusted and chosen. Made in the Philippines, shipped to the USA, Australia and home.</p>
+        <h1 id="hero-h" class="hero-h"><span class="hero-l1">{heroLines[0]}</span> <span class="hero-l2">{heroLines[1]}</span></h1>
+        <p class="t-body-l hero-deck">{heroDeck}</p>
         <div class="hero-cta">
           <a class="btn btn--lime" href="/contact" data-magnetic data-cursor="GO →">Start a project <span class="arrow" aria-hidden="true">→</span></a>
           <a class="btn btn--ghost" href="/work">See the work</a>
@@ -65,7 +74,7 @@ const schema = [
     <section class="section unfold" id="unfold" data-f="lattice" aria-labelledby="unfold-h">
       <div class="ruler container" aria-hidden="true">{cols.map((c) => <span class="mono" data-c={c}></span>)}<span class="mono ruler-pitch"></span></div>
       <div class="container unfold-in">
-        <h2 id="unfold-h" class="t-d1 rv">Web design, branding <span class="dim">and SEO from the Philippines.</span></h2>
+        <h2 id="unfold-h" class="t-d1 rv">{unfoldLines[0]} <span class="dim">{unfoldLines[1]}</span></h2>
         <div class="unfold-body">
           <p class="t-body-l rv">Fazed Digital is a small studio in <a class="link" href="/web-design-iligan-city">Iligan City</a>, Mindanao. We design and build the websites, brand systems and custom tools that small and mid-sized businesses run on, from a framing contractor in Utah to a law firm in Queensland.</p>
           <p class="rv">Every project starts with the same three questions: who are you, who are you talking to, and what do you want them to feel? The answers shape everything that follows.</p>
@@ -79,24 +88,63 @@ const schema = [
       </div>
     </section>
 
-    <!-- [HOME-03] SERVICES: a wall of five words. The dot grid swells into the real work behind each one (motion/services.ts). -->
+    <!-- [HOME-03] SERVICES: a flat miniature of this page tips back into five sheets, one per service (motion/services.ts). -->
     <section class="services" id="services" data-f="lattice" data-fquiet="0.35" aria-labelledby="svc-h">
-      <div class="svc-pin">
-        <div class="container svc-in">
-          <div class="svc-head">
-            <h2 id="svc-h" class="svc-h">Five services. <span class="dim">One connected system.</span></h2>
-            <p class="svc-intro">Hire us for one, or let them work together. Brand feeds the site, the site feeds search, search feeds the business. <a class="link" href="/services">See all five services</a></p>
+      <div class="container svc-head">
+        <h2 id="svc-h" class="svc-h rv">This page is five layers deep.</h2>
+        <p class="svc-intro rv">Web design on top. Branding, SEO, product design and custom systems underneath. Five services, one connected system. <a class="link" href="/services">See all five</a></p>
+      </div>
+      <div class="rig">
+        <div class="stage">
+          <div class="scene" aria-hidden="true">
+            <a class="plane p-web" style="--i:0" href={`/services#${services[0].id}`} tabindex="-1" data-i="0"><div class="pl-in">
+              <svg class="p-mark" viewBox={MARK_VIEWBOX.join(' ')}><defs><g id="sv-mark" transform={MARK_TRANSFORM}>{MARK_PATHS.map((d) => <path d={d} />)}</g><pattern id="sv-dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="9.5" fill="currentColor" /></pattern><mask id="sv-mask"><use class="t-mask" href="#sv-mark" /></mask></defs><rect x={MARK_VIEWBOX[0]} y={MARK_VIEWBOX[1]} width={MARK_VIEWBOX[2]} height={MARK_VIEWBOX[3]} fill="url(#sv-dots)" mask="url(#sv-mask)" /></svg>
+              <span class="bar">{navLabels.map((l) => <span>{l}</span>)}<b>7 Days →</b></span>
+              <div class="big">{heroLines[0]}<span>{heroLines[1]}</span></div>
+              <p>{heroDeck}</p>
+              <span class="go">Start a project →</span>
+            </div><i class="shade"></i></a>
+            <a class="plane p-brand" style="--i:1" href={`/services#${services[1].id}`} tabindex="-1" data-i="1"><div class="pl-in">
+              <svg class="p-mark" viewBox={MARK_VIEWBOX.join(' ')}><use class="t-solid" href="#sv-mark" /></svg>
+              <div class="aa">Aa</div>
+              <div class="sw"><i></i><i></i><i></i></div>
+              <div class="fonts">#090909 #F5F4F0 #C9FF57<br />Clash Display / Plus Jakarta Sans / Space Mono</div>
+            </div><i class="shade"></i></a>
+            <a class="plane p-seo" style="--i:2" href={`/services#${services[2].id}`} tabindex="-1" data-i="2"><div class="pl-in">
+              <div class="q"><i></i>{searchLine}</div>
+              <div><div class="url">www.fazeddigital.com</div><div class="ttl">{pageTitle}</div><div class="dsc">{pageDesc}</div></div>
+              <pre>{schemaLine}</pre>
+            </div><i class="shade"></i></a>
+            <a class="plane p-prod" style="--i:3" href={`/services#${services[3].id}`} tabindex="-1" data-i="3"><div class="pl-in">
+              <div><div class="fh">Send us your brief</div><div class="fld">Your name<i></i></div><div class="fld">Email address<i></i></div><div class="fld">What do you need?<i></i></div></div>
+              <div><div class="fld">Rough budget (optional)<i></i></div><div class="fld tall">Tell us about the project<i>What are you building, who is it for, and when do you need it?</i></div><div class="sel">Send my brief →</div></div>
+            </div><i class="shade"></i></a>
+            <a class="plane p-sys" style="--i:4" href={`/services#${services[4].id}`} tabindex="-1" data-i="4"><div class="pl-in">
+              <svg class="trip" viewBox="0 0 1000 625"><g transform="translate(-6.5 24)">
+                <g class="t-link"><path d="M240 250h44" /><path d="M481 250h44" /><path d="M722 250h44" /></g>
+                <g class="t-tip"><path d="m276 238 14 12-14 12" /><path d="m517 238 14 12-14 12" /><path d="m758 238 14 12-14 12" /></g>
+                <g class="t-tile"><rect x="50" y="110" width="190" height="280" /><rect x="291" y="110" width="190" height="280" /><rect x="532" y="110" width="190" height="280" /></g>
+                <rect class="t-lime" x="773" y="110" width="190" height="280" />
+                <g class="t-ink"><rect x="78" y="146" width="134" height="38" /><rect x="78" y="204" width="134" height="38" /><rect x="78" y="262" width="134" height="62" /></g>
+                <rect class="t-lime" x="78" y="340" width="86" height="26" rx="13" />
+                <rect class="t-lime" x="319" y="146" width="134" height="46" />
+                <g class="t-ink"><rect x="319" y="208" width="134" height="46" /><rect x="319" y="270" width="134" height="46" /><path d="M319 350h134" /></g>
+                <g class="t-ink"><rect x="562" y="176" width="130" height="96" /><path d="m562 176 65 56 65-56" /></g>
+                <circle class="t-lime" cx="692" cy="176" r="19" />
+                <path class="t-dark" d="M805 158h126v92h-72l-30 32v-32h-24z" />
+                <path class="t-check" d="m838 202 18 18 34-38" />
+                <text class="t-word" x="50" y="456">Form</text><text class="t-word" x="291" y="456">Inbox</text><text class="t-word" x="532" y="456">Gmail alert</text><text class="t-word t-word--hot" x="773" y="456">Follow-up</text>
+              </g></svg>
+            </div><i class="shade"></i></a>
           </div>
-          <ol class="svc-list">
+          <ol class="layers">
             {services.map((s, i) => (
-              <li class:list={['svc', { 'is-on': i === 0 }]} id={`svc-${s.id}`} data-i={i}>
-                <h3 class="svc-name"><a href={`/services#${s.id}`}><span class="mono svc-n" aria-hidden="true">{s.n}</span><span class="svc-word">{s.short}</span><span class="sr-only">: {s.title}</span></a></h3>
-                <div class="svc-pic rv"><Picture src={workImages[s.shot]} formats={['avif', 'webp']} widths={[640, 960, 1280]} sizes="(max-width: 1023px) 92vw, 46vw" alt={caseIndex.find((c) => c.slug === s.shot)!.alt} loading="lazy" decoding="async" /></div>
-                <div class="svc-detail">
-                  <p class="svc-title">{s.title}</p>
-                  <p class="svc-line">{s.line}</p>
-                  <ul class="svc-scope mono" aria-label={`${s.title} scope`}>{s.scope.map((x) => <li>{x}</li>)}</ul>
-                  <a class="mono svc-proof" href={s.proof.href}>See {s.proof.name} <span aria-hidden="true">→</span></a>
+              <li class="layer" id={`svc-${s.id}`} data-i={i}>
+                <h3><a href={`/services#${s.id}`}>{s.short}<span class="sr-only">: {s.title}</span></a></h3>
+                <p class="line">{s.line}</p>
+                <div class="more">
+                  <ul class="mono scope" aria-label={`${s.title} scope`}>{s.scope.map((x) => <li>{x}</li>)}</ul>
+                  <a class="mono proof" href={s.proof.href}>See {s.proof.name} <span aria-hidden="true">→</span></a>
                 </div>
               </li>
             ))}
@@ -296,64 +344,140 @@ const schema = [
   #conn-h { font-size: min(var(--fs-d1), 6.75rem); }
   #ct-h { font-size: min(var(--fs-d1), 5.5rem); }
 
-  /* SERVICES: stacked by default (phones, reduced motion, no JS); motion adds .svc-live for the desktop wall */
-  @property --dot { syntax: '<length>'; inherits: true; initial-value: 0px; }
+  /* SERVICES. The default below is the printed version: each service stacked beside its own flat sheet (no JS, reduced
+     motion, windows too short for a deck). The two live layouts opt in through media queries that motion/services.ts
+     repeats, so the section's height is settled by CSS before first paint and never changes when JS arrives. */
   .services { position: relative; }
-  .svc-pin { padding-block: var(--section); }
-  .svc-in { display: grid; gap: 3rem; }
-  .svc-head { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 1rem; align-items: end; }
-  .svc-h { grid-column: 1 / span 6; font-size: var(--fs-h3); line-height: 1.15; letter-spacing: -.01em; }
-  .svc-intro { grid-column: 7 / -1; max-width: 62ch; color: var(--gray-300); }
-  .svc-list { display: grid; gap: clamp(3.5rem, 8vw, 6rem); }
-  .svc { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 1.25rem; align-items: start; }
-  .svc-name { grid-column: 1 / span 6; font-size: clamp(3.5rem, 7.6vw, 7.5rem); line-height: .98; letter-spacing: -.03em; font-weight: 600; }
-  .svc-name a { display: flex; align-items: flex-start; gap: .14em; }
-  .svc-n { padding-top: .9em; font-size: var(--fs-mono); letter-spacing: .1em; color: var(--lime); }
-  .svc-word { display: block; color: var(--white); }
-  .svc-pic { grid-column: 7 / -1; grid-row: 1 / span 2; aspect-ratio: 16 / 10; background: var(--gray-900); overflow: hidden; }
-  .svc-pic :global(img) { display: block; width: 100%; height: 100%; object-fit: cover; object-position: top center; }
-  .svc-detail { grid-column: 1 / span 6; display: grid; gap: .6rem; justify-items: start; }
-  .svc-title { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); line-height: 1.15; letter-spacing: -.01em; color: var(--white); }
-  .svc-line { max-width: 46ch; color: var(--gray-200); }
-  .svc-scope { display: flex; flex-wrap: wrap; gap: .1rem 1.25rem; color: var(--gray-300); letter-spacing: .08em; }
-  .svc-scope li::before { content: '· '; color: var(--lime); }
-  .svc-proof { display: inline-flex; align-items: center; gap: .5em; min-height: 44px; color: var(--lime); }
-  .svc-proof span { transition: transform .25s var(--ease-out); }
-  .svc-proof:hover span, .svc-proof:focus-visible span { transform: translateX(4px); }
-  /* the same dots, stacked mode: each picture opens out of the 24px grid as it reveals */
-  :global(html.js-motion:not(.rm)) .svc-pic :global(img) { --dot: 0px; -webkit-mask: radial-gradient(circle, #000 var(--dot), transparent calc(var(--dot) + 1px)) 0 0 / var(--pitch) var(--pitch); mask: radial-gradient(circle, #000 var(--dot), transparent calc(var(--dot) + 1px)) 0 0 / var(--pitch) var(--pitch); transition: --dot .9s var(--ease-io) .1s; }
-  :global(html.js-motion:not(.rm)) .svc-pic:global(.rv-in) :global(img) { --dot: var(--pitch); }
+  .svc-head { padding-top: var(--section); padding-bottom: clamp(40px, 7vh, 72px); }
+  .svc-h { font-size: min(var(--fs-d1), 7.4rem); line-height: .94; letter-spacing: -.03em; }
+  .svc-intro { max-width: 52ch; margin-top: 1.5rem; font-size: clamp(1.125rem, 1.5vw, 1.375rem); line-height: 1.45; color: var(--white); }
+  .stage { max-width: var(--container); margin-inline: auto; padding: 0 var(--side) var(--section); display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2.5rem, 6vw, 4.5rem) clamp(2rem, 4vw, 4rem); align-items: center; }
+  .scene, .layers { display: contents; }
+  .layer { grid-column: 1; }
+  .layer:nth-child(1), .plane:nth-child(1) { grid-row: 1; } .layer:nth-child(2), .plane:nth-child(2) { grid-row: 2; } .layer:nth-child(3), .plane:nth-child(3) { grid-row: 3; } .layer:nth-child(4), .plane:nth-child(4) { grid-row: 4; } .layer:nth-child(5), .plane:nth-child(5) { grid-row: 5; }
+  .layer h3 { font-size: clamp(3rem, 5.4vw, 5.25rem); line-height: 1; letter-spacing: -.02em; }
+  .layer h3 a { display: inline-block; color: var(--white); transition: color .25s, transform .45s var(--ease-out); }
+  .layer h3 a:hover { color: var(--lime); }
+  .line { max-width: 36ch; margin-top: .6rem; font-size: 1.0625rem; line-height: 1.42; color: var(--gray-300); transition: color .25s; }
+  .more { margin-top: .6rem; }
+  .scope { display: flex; flex-wrap: wrap; gap: .1rem 1.1rem; color: var(--gray-300); letter-spacing: .08em; }
+  .scope li::before { content: '· '; color: var(--lime); }
+  .proof { display: inline-flex; align-items: center; gap: .5em; min-height: 44px; color: var(--lime); letter-spacing: .08em; }
+  .proof span { transition: transform .25s var(--ease-out); }
+  .proof:hover span, .proof:focus-visible span { transform: translateX(4px); }
+  /* the five sheets: everything inside is sized in cqw, so a sheet is the same drawing at any width */
+  .plane { grid-column: 2; position: relative; display: block; width: 100%; aspect-ratio: 16 / 10; container-type: inline-size; text-rendering: geometricPrecision; }
+  .pl-in { position: absolute; inset: 0; overflow: hidden; }
+  .shade { position: absolute; inset: 0; background: var(--black); opacity: 0; pointer-events: none; }
+  .p-mark { position: absolute; height: auto; }
+  .t-mask { fill: var(--white); }
+  .t-solid { fill: currentColor; }
 
-  @media (max-width: 1023px) {
-    .svc-pin { padding-block: var(--section); }
-    .svc-h, .svc-intro { grid-column: 1 / -1; }
-    .svc-name, .svc-pic, .svc-detail { grid-column: 1 / -1; grid-row: auto; }
-  }
+  .p-web { color: var(--white); }
+  .p-web .pl-in { background-color: var(--black); box-shadow: inset 0 0 0 1px var(--gray-700); background-image: radial-gradient(circle at center, var(--gray-700) .2cqw, transparent .3cqw); background-size: 2.4cqw 2.4cqw; padding: 5cqw; display: flex; flex-direction: column; justify-content: flex-end; }
+  .p-web .bar { position: absolute; top: 2.4cqw; left: 50%; translate: -50% 0; display: flex; gap: 2cqw; align-items: center; background: var(--gray-900); border-radius: 99cqw; padding: .9cqw .9cqw .9cqw 2.2cqw; font: 400 1.05cqw var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gray-300); white-space: nowrap; }
+  .p-web .bar b { background: var(--lime); color: var(--black); border-radius: 99cqw; padding: .7cqw 1.5cqw; font-weight: 400; }
+  .p-web .big { font: 600 7.6cqw/.9 var(--font-display); letter-spacing: -.035em; }
+  .p-web .big span { display: block; color: var(--gray-400); }
+  .p-web p { font-size: 1.75cqw; line-height: 1.5; max-width: 42cqw; margin-top: 1.8cqw; color: var(--gray-300); }
+  .p-web .go { display: inline-block; margin-top: 2cqw; background: var(--lime); color: var(--black); font-weight: 600; font-size: 1.7cqw; line-height: 1.6; border-radius: 99cqw; padding: 1.1cqw 2.4cqw; width: max-content; }
+  .p-web .p-mark { right: 6cqw; top: 8cqw; width: 30cqw; color: var(--lime); }
+
+  .p-brand { color: var(--black); }
+  .p-brand .pl-in { background: var(--lime); }
+  .p-brand .p-mark { right: -4cqw; top: -7cqw; width: 52cqw; }
+  .p-brand .aa { position: absolute; left: 5cqw; top: 4cqw; font: 600 20cqw/.86 var(--font-display); letter-spacing: -.04em; }
+  .p-brand .sw { position: absolute; left: 5cqw; bottom: 12.5cqw; display: flex; gap: 1.2cqw; }
+  .p-brand .sw i { width: 7cqw; height: 7cqw; border-radius: 50%; display: block; background: var(--black); }
+  .p-brand .sw i:nth-child(2) { background: var(--white); }
+  .p-brand .sw i:nth-child(3) { background: var(--lime); box-shadow: inset 0 0 0 .3cqw var(--black); }
+  .p-brand .fonts { position: absolute; left: 5cqw; bottom: 4.5cqw; font: 400 1.5cqw/1.5 var(--font-mono); }
+
+  .p-seo { color: var(--black); }
+  .p-seo .pl-in { background: var(--white); padding: 4.6cqw 5cqw; display: flex; flex-direction: column; justify-content: space-between; gap: 2cqw; }
+  .p-seo .q { display: flex; align-items: center; gap: 1.4cqw; border-radius: 99cqw; padding: 1.5cqw 2.6cqw; font-size: 2.1cqw; line-height: 1.5; box-shadow: inset 0 0 0 .14cqw var(--gray-200); }
+  .p-seo .q i { width: 1.5cqw; height: 1.5cqw; border-radius: 50%; border: .3cqw solid var(--black); }
+  .p-seo .url { font-size: 1.6cqw; line-height: 1.5; color: var(--gray-800); }
+  .p-seo .ttl { font: 600 5cqw/1.06 var(--font-display); letter-spacing: -.015em; margin: .5cqw 0 1cqw; }
+  .p-seo .dsc { font-size: 2.2cqw; line-height: 1.45; max-width: 80cqw; }
+  .p-seo pre { font: 400 1.7cqw/1.5 var(--font-mono); background: var(--black); color: var(--lime); padding: 1.6cqw 2.2cqw; white-space: pre-wrap; }
+
+  .p-prod { color: var(--white); }
+  .p-prod .pl-in { background-color: var(--gray-800); background-image: radial-gradient(circle at center, var(--gray-500) .12cqw, transparent .2cqw); background-size: 2cqw 2cqw; padding: 4.6cqw 7cqw 4.6cqw 5cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 4cqw; align-items: end; }
+  .p-prod .fld { display: grid; gap: .8cqw; margin-bottom: 2.2cqw; font-size: 1.9cqw; line-height: 1.4; color: var(--gray-300); }
+  .p-prod .fld i { display: block; height: 6cqw; padding: 1.1cqw 1.3cqw; font-style: normal; font-size: 1.7cqw; line-height: 1.4; color: var(--gray-400); box-shadow: inset 0 0 0 .14cqw var(--gray-400); }
+  .p-prod .fld.tall i { height: 15.4cqw; }
+  .p-prod .sel { position: relative; margin-block: 1cqw .7cqw; height: 6cqw; background: var(--lime); color: var(--black); font-weight: 600; font-size: 2.1cqw; display: flex; align-items: center; justify-content: center; outline: .14cqw solid var(--white); outline-offset: .7cqw; }
+  .p-prod .sel::after { content: '48'; position: absolute; right: -4.4cqw; font: 400 1.4cqw var(--font-mono); color: var(--white); } /* the real button is 48px tall */
+  .p-prod .fh { font: 600 5cqw/1.05 var(--font-display); letter-spacing: -.02em; margin-bottom: 3.4cqw; }
+
+  /* layer 5: the road a lead travels, drawn. No code, no internal names */
+  .p-sys .pl-in { background: var(--gray-900); box-shadow: inset 0 0 0 1px var(--gray-700); }
+  .trip { position: absolute; inset: 0; width: 100%; height: 100%; }
+  .t-tile rect { fill: var(--gray-800); stroke: var(--gray-500); stroke-width: 2; }
+  .t-ink rect, .t-ink path { fill: none; stroke: var(--gray-300); stroke-width: 3; }
+  .t-link path { fill: none; stroke: var(--lime); stroke-width: 4; stroke-dasharray: 2 9; stroke-linecap: round; }
+  .t-tip path { fill: none; stroke: var(--lime); stroke-width: 4; stroke-linejoin: round; }
+  .t-lime { fill: var(--lime); }
+  .t-dark { fill: var(--black); }
+  .t-check { fill: none; stroke: var(--lime); stroke-width: 10; stroke-linecap: round; stroke-linejoin: round; }
+  .t-word { font: 600 30px var(--font-display); letter-spacing: -.01em; fill: var(--white); }
+  .t-word--hot { fill: var(--lime); }
+
   @media (max-width: 767px) {
-    .svc-name { font-size: clamp(3.25rem, 17vw, 5rem); }
-    .svc-n { padding-top: .6em; }
+    .stage { grid-template-columns: minmax(0, 1fr); gap: 1.25rem; }
+    .plane, .layer { grid-column: 1; }
+    .plane:nth-child(1) { grid-row: 1; } .layer:nth-child(1) { grid-row: 2; } .plane:nth-child(2) { grid-row: 3; } .layer:nth-child(2) { grid-row: 4; } .plane:nth-child(3) { grid-row: 5; } .layer:nth-child(3) { grid-row: 6; } .plane:nth-child(4) { grid-row: 7; } .layer:nth-child(4) { grid-row: 8; } .plane:nth-child(5) { grid-row: 9; } .layer:nth-child(5) { grid-row: 10; }
+    .layer:not(:last-child) { padding-bottom: 1.75rem; }
   }
 
-  /* desktop wall: all five words stay on screen; the active one lights, its real work blooms beside it */
-  @media (min-width: 1024px) {
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pin { height: 100vh; height: 100svh; padding-block: calc(var(--header-h) + 20px) 28px; overflow: hidden; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-in { height: 100%; grid-template-rows: auto minmax(0, 1fr); gap: clamp(1rem, 2.5vh, 2rem); }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-list { --col: calc(50% + var(--gutter) / 2); --detail: 196px; position: relative; display: flex; flex-direction: column; justify-content: space-between; gap: 0; min-height: 0; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc { display: block; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-name { width: calc(50% - var(--gutter)); font-size: min(8.3vw, 14.4vh, 7.6rem); line-height: .96; letter-spacing: -.012em; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-name a { width: 100%; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-word { color: transparent; -webkit-text-stroke: 1.5px var(--gray-400); transition: color .35s var(--ease-out), transform .5s var(--ease-out), -webkit-text-stroke-color .35s; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-n { color: var(--gray-400); transition: color .35s; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-name a:hover .svc-word { -webkit-text-stroke-color: var(--white); }
-    :global(html.js-motion:not(.rm)) .svc-live .svc.is-on .svc-word { color: var(--lime); -webkit-text-stroke-color: var(--lime); transform: translateX(.06em); }
-    :global(html.js-motion:not(.rm)) .svc-live .svc.is-on .svc-n { color: var(--lime); }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pic,
-    :global(html.js-motion:not(.rm)) .svc-live :global(.svc-dots) { position: absolute; left: var(--col); top: 0; width: calc(50% - var(--gutter) / 2 + (100vw - 100%) / 2); height: var(--shot, calc(100% - var(--detail))); aspect-ratio: auto; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pic { visibility: hidden; opacity: 1; transform: none; background: none; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pic:global(.is-shown) { visibility: visible; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-pic :global(img) { -webkit-mask: none; mask: none; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc-detail { position: absolute; left: var(--col); right: 0; top: calc(var(--shot, 100% - var(--detail)) + 16px); height: calc(var(--detail) - 16px); align-content: start; opacity: 0; visibility: hidden; transform: translateY(12px); transition: opacity .35s var(--ease-out), transform .35s var(--ease-out), visibility 0s .35s; }
-    :global(html.js-motion:not(.rm)) .svc-live .svc.is-on .svc-detail { opacity: 1; visibility: visible; transform: none; transition-delay: .12s, .12s, 0s; }
+  /* live: the deck */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) and (min-height: 560px) {
+    .rig { --PW: calc(var(--W) * var(--S)); --PH: calc(var(--PW) * .625); position: relative; }
+    .scene { display: block; position: relative; perspective: calc(var(--W) * 2.95); perspective-origin: 50% 24%; }
+    /* a sheet is laid out at the largest size it ever reaches and only ever scales down from there: Chrome holds a
+       will-change layer at its layout resolution, so scaling up from a smaller box is what would soften the text */
+    .plane { position: absolute; left: 50%; top: 50%; width: var(--PW); height: var(--PH); aspect-ratio: auto; margin: calc(var(--PH) / -2) 0 0 calc(var(--PW) / -2); backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; pointer-events: none; z-index: calc(10 - var(--i)); transform: translate3d(0, calc((var(--i) - 2) * var(--fan)), 0) rotateX(68deg) scale(calc(1 / var(--S))); }
+    .pl-in { pointer-events: auto; }
+    .shade { will-change: opacity; }
+    .layer.is-on h3 a { color: var(--lime); }
+    .layer.is-on .line { color: var(--white); }
+  }
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) and (min-height: 560px) and (min-width: 1024px) {
+    .rig { --W: min(40vw, 66svh); --S: 1.34; --fan: calc((100svh - 180px - var(--W) * .25) / 4 * .92); height: 340svh; }
+    .stage { position: sticky; top: 0; height: 100svh; max-width: 1640px; padding: 88px var(--side) 92px; grid-template-columns: minmax(0, 1fr) var(--W) minmax(0, 1fr); grid-template-rows: repeat(5, minmax(0, 1fr)); gap: 0 clamp(36px, 4vw, 72px); align-items: stretch; }
+    .scene { grid-column: 2; grid-row: 1 / -1; z-index: 10; }
+    .layer { align-self: center; }
+    .layer:nth-child(1) { grid-area: 1 / 1; } .layer:nth-child(2) { grid-area: 2 / 3; } .layer:nth-child(3) { grid-area: 3 / 1; } .layer:nth-child(4) { grid-area: 4 / 3; } .layer:nth-child(5) { grid-area: 5 / 1; }
+    .layer:nth-child(odd) { text-align: right; }
+    .layer:nth-child(odd) .line { margin-left: auto; }
+    .layer h3 { font-size: min(4.4vw, 9.4svh, 5.25rem); }
+    .line { max-width: 34ch; margin-top: .4rem; font-size: clamp(.9375rem, 1.15vw, 1.0625rem); }
+    .layer:nth-child(odd).is-on h3 a { transform: translateX(-.08em); }
+    .layer:nth-child(even).is-on h3 a { transform: translateX(.08em); }
+    /* one line under the deck: scope and proof for whichever sheet is standing */
+    .more { position: absolute; z-index: 30; left: 50%; bottom: 14px; translate: -50% 0; margin: 0; display: flex; align-items: center; gap: 1.1rem; padding-inline: .9rem; white-space: nowrap; opacity: 0; background: var(--black); pointer-events: none; transition: opacity .3s; }
+    .scope { flex-wrap: nowrap; }
+    .layer.is-on .more { opacity: 1; pointer-events: auto; }
+    :global(html:not(.js-motion)) .layer:is(:hover, :focus-within) .more { opacity: 1; pointer-events: auto; }
+  }
+  /* phones and tablets: the deck holds at the top of the screen while the five services scroll under it */
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) and (min-height: 560px) and (max-width: 1023px) {
+    .rig { --W: min(80vw, 58svh, 560px); --S: 1.12; --sh: max(calc(var(--screen-h, 100svh) * .47), 300px); --fan: calc((var(--sh) - var(--W) * .25) / 4 * .92); }
+    .stage { display: block; max-width: none; padding: 0 var(--side) 24px; }
+    .scene { position: sticky; top: 0; height: var(--sh); margin-inline: calc(var(--side) * -1); background: var(--black); z-index: 20; overflow: clip; }
+    .layers { display: block; }
+    .layer, .layer:not(:last-child) { min-height: calc(var(--screen-h, 100svh) * .36); padding-block: 1.75rem; }
+    /* keyboard and #svc-* links: land below the deck, not behind it */
+    .layer, .layer a { scroll-margin-top: calc(var(--sh) + 1rem); }
+    .layer h3 { font-size: clamp(3rem, 15vw, 5rem); }
+    .more { margin-top: .75rem; }
+  }
+  @media (scripting: enabled) and (prefers-reduced-motion: no-preference) and (min-height: 560px) and (min-width: 640px) and (max-width: 1023px) {
+    .layer { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: var(--gutter); align-content: start; }
+    .layer h3 { grid-row: 1 / span 2; font-size: clamp(3rem, 8.4vw, 5rem); }
+    .line, .more { grid-column: 2; }
+    .line { margin-top: .3rem; }
   }
 
   /* WORK INDEX */

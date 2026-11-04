@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept A · Five Layers Deep · Fazed Digital services</title>
+<link rel="stylesheet" href="assets/context.css">
+<script>document.documentElement.classList.add('js')</script>
+<style>
+  /* ── head ── */
+  .svc { position: relative; }
+  .svc-head { padding-top: var(--section); padding-bottom: clamp(40px, 7vh, 72px); }
+  .svc-h { font-size: min(var(--fs-d1), 7.4rem); line-height: .94; letter-spacing: -.03em; }
+  .svc-intro { max-width: 52ch; margin-top: 1.5rem; font-size: clamp(1.125rem, 1.5vw, 1.375rem); line-height: 1.45; color: var(--white); }
+
+  /* ── rig + stage ── */
+  .rig { position: relative; --W: min(40vw, 66svh); --H: calc(var(--W) * .625); }
+  html.js .rig { height: 380svh; }
+  .stage { position: relative; height: 100svh; min-height: 620px; max-width: 1640px; margin-inline: auto; padding: 88px var(--side) 92px; display: grid; grid-template-columns: minmax(0, 1fr) var(--W) minmax(0, 1fr); grid-template-rows: repeat(5, minmax(0, 1fr)); column-gap: clamp(36px, 4vw, 72px); }
+  html.js .stage { position: sticky; top: 0; }
+  .layers { display: contents; }
+  .layer { align-self: center; transition: opacity .35s; }
+  .layer:nth-child(1) { grid-area: 1 / 1; } .layer:nth-child(2) { grid-area: 2 / 3; } .layer:nth-child(3) { grid-area: 3 / 1; } .layer:nth-child(4) { grid-area: 4 / 3; } .layer:nth-child(5) { grid-area: 5 / 1; }
+  .layer:nth-child(odd) { text-align: right; justify-items: end; }
+  .layer h3 { font-size: min(4.4vw, 9.4svh, 5.25rem); line-height: 1; letter-spacing: -.02em; }
+  .layer h3 a { display: inline-block; color: var(--white); transition: color .25s, transform .45s var(--ease-out); }
+  .layer .line { color: var(--gray-300); font-size: clamp(.9375rem, 1.15vw, 1.0625rem); line-height: 1.42; margin-top: .4rem; max-width: 34ch; transition: color .25s; }
+  .layer:nth-child(odd) .line { margin-left: auto; }
+  .layer.is-on h3 a { color: var(--lime); }
+  .layer.is-on .line { color: var(--white); }
+  .layer:nth-child(odd).is-on h3 a { transform: translateX(-.08em); }
+  .layer:nth-child(even).is-on h3 a { transform: translateX(.08em); }
+  .layer h3 a:hover { color: var(--lime); }
+
+  /* one readout for the live layer, under the deck */
+  .more { position: absolute; z-index: 30; left: 50%; bottom: 14px; translate: -50% 0; width: min(calc(var(--W) + 18vw), calc(100vw - 2 * var(--side))); display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: .1rem 1.1rem; text-align: center; opacity: 0; background: var(--black); pointer-events: none; transition: opacity .3s; }
+  .layer.is-on .more { opacity: 1; pointer-events: auto; }
+  .scope { display: flex; flex-wrap: wrap; justify-content: center; gap: .1rem 1.1rem; color: var(--gray-300); letter-spacing: .08em; }
+  .scope li::before { content: '· '; color: var(--lime); }
+  .proof { display: inline-flex; align-items: center; gap: .5em; min-height: 44px; color: var(--lime); letter-spacing: .08em; }
+  .proof span { transition: transform .25s var(--ease-out); }
+  .proof:hover span, .proof:focus-visible span { transform: translateX(4px); }
+
+  /* ── the deck ── */
+  .scene { grid-column: 2; grid-row: 1 / -1; position: relative; perspective: 1700px; perspective-origin: 50% 24%; z-index: 10; }
+  .plane { position: absolute; left: 0; top: 50%; width: var(--W); height: var(--H); margin-top: calc(var(--H) / -2); display: block; container-type: inline-size; overflow: hidden; backface-visibility: hidden; transform-origin: 50% 50%; will-change: transform; }
+  .plane::after { content: ''; position: absolute; inset: 0; background: var(--black); opacity: var(--shade, 0); pointer-events: none; }
+  .pl-in { position: absolute; inset: 0; }
+
+  /* layer 1: this site */
+  .p-web { background: var(--black); color: var(--white); box-shadow: inset 0 0 0 1px var(--gray-700); }
+  .p-web .pl-in { background-image: radial-gradient(circle at center, var(--gray-700) .2cqw, transparent .3cqw); background-size: 2.4cqw 2.4cqw; padding: 5cqw; display: flex; flex-direction: column; justify-content: flex-end; }
+  .p-web .bar { position: absolute; top: 2.4cqw; left: 50%; translate: -50% 0; display: flex; gap: 2cqw; align-items: center; background: var(--gray-900); border-radius: 99cqw; padding: .9cqw .9cqw .9cqw 2.2cqw; font: 400 1.05cqw var(--font-mono); letter-spacing: .14em; color: var(--gray-300); white-space: nowrap; }
+  .p-web .bar b { background: var(--lime); color: var(--black); border-radius: 99cqw; padding: .7cqw 1.5cqw; font-weight: 400; }
+  .p-web .big { font: 600 7.6cqw/.9 var(--font-display); letter-spacing: -.035em; }
+  .p-web .big span { display: block; color: var(--gray-400); }
+  .p-web p { font-size: 1.75cqw; line-height: 1.5; max-width: 40cqw; margin-top: 1.8cqw; color: var(--gray-300); }
+  .p-web .go { display: inline-block; margin-top: 2cqw; background: var(--lime); color: var(--black); font-weight: 600; font-size: 1.7cqw; border-radius: 99cqw; padding: 1.1cqw 2.4cqw; width: max-content; }
+  .p-web svg { position: absolute; right: 6cqw; top: 8cqw; width: 30cqw; height: auto; color: var(--lime); }
+
+  /* layer 2: the brand */
+  .p-brand { background: var(--lime); color: var(--black); }
+  .p-brand svg { position: absolute; right: -4cqw; top: -7cqw; width: 52cqw; height: auto; color: var(--black); }
+  .p-brand .aa { position: absolute; left: 5cqw; top: 4cqw; font: 600 20cqw/.86 var(--font-display); letter-spacing: -.04em; }
+  .p-brand .sw { position: absolute; left: 5cqw; bottom: 12.5cqw; display: flex; gap: 1.2cqw; }
+  .p-brand .sw i { width: 7cqw; height: 7cqw; border-radius: 50%; display: block; }
+  .p-brand .fonts { position: absolute; left: 5cqw; bottom: 4.5cqw; font: 400 1.5cqw/1.5 var(--font-mono); }
+
+  /* layer 3: what search reads */
+  .p-seo { background: var(--white); color: var(--black); }
+  .p-seo .pl-in { padding: 4.6cqw 5cqw; display: flex; flex-direction: column; justify-content: space-between; gap: 2.4cqw; }
+  .p-seo .q { display: flex; align-items: center; gap: 1.4cqw; background: var(--white); border-radius: 99cqw; padding: 1.5cqw 2.6cqw; font-size: 2.1cqw; box-shadow: inset 0 0 0 .14cqw var(--gray-200); }
+  .p-seo .q i { width: 1.5cqw; height: 1.5cqw; border-radius: 50%; border: .3cqw solid var(--black); }
+  .p-seo .url { font-size: 1.6cqw; color: var(--gray-800); }
+  .p-seo .ttl { font: 600 5cqw/1.06 var(--font-display); letter-spacing: -.015em; margin: .5cqw 0 1cqw; }
+  .p-seo .dsc { font-size: 2.2cqw; line-height: 1.45; max-width: 76cqw; }
+  .p-seo pre { font: 400 1.7cqw/1.5 var(--font-mono); background: var(--black); color: var(--lime); padding: 1.6cqw 2.2cqw; white-space: pre-wrap; }
+
+  /* layer 4: the product, in wireframe */
+  .p-prod { background: var(--gray-800); color: var(--white); }
+  .p-prod .pl-in { background-image: radial-gradient(circle at center, var(--gray-500) .12cqw, transparent .2cqw); background-size: 2cqw 2cqw; padding: 4cqw 7cqw 4cqw 5cqw; display: grid; grid-template-columns: 1fr 1fr; gap: 4cqw; align-items: end; }
+  .p-prod .fld { display: grid; gap: .6cqw; margin-bottom: 1.5cqw; font-size: 1.55cqw; color: var(--gray-300); }
+  .p-prod .fld i { display: block; height: 4.2cqw; box-shadow: inset 0 0 0 .14cqw var(--gray-400); }
+  .p-prod .fld.tall i { height: 12cqw; }
+  .p-prod .sel { position: relative; margin-top: 1cqw; height: 5.2cqw; background: var(--lime); color: var(--black); font-weight: 600; font-size: 1.8cqw; display: flex; align-items: center; justify-content: center; outline: .14cqw solid var(--white); outline-offset: .7cqw; }
+  .p-prod .sel::after { content: '48'; position: absolute; right: -4.4cqw; font: 400 1.4cqw var(--font-mono); color: var(--white); }
+  .p-prod h4 { font: 600 3.4cqw/1.05 var(--font-display); letter-spacing: -.02em; margin-bottom: 2.2cqw; }
+
+  /* layer 5: the system behind the form */
+  .p-sys { background: var(--gray-900); color: var(--white); box-shadow: inset 0 0 0 1px var(--gray-700); }
+  .p-sys .pl-in { padding: 4.2cqw 5cqw; display: flex; flex-direction: column; justify-content: space-between; gap: 2cqw; }
+  .p-sys .flow { display: flex; align-items: center; gap: 1.4cqw; font: 400 2cqw var(--font-mono); }
+  .p-sys .flow b { font-weight: 400; background: var(--gray-700); padding: 1.1cqw 1.6cqw; white-space: nowrap; }
+  .p-sys .flow b.hot { background: var(--lime); color: var(--black); }
+  .p-sys .flow i { flex: 1; height: .3cqw; background: var(--gray-400); min-width: 1cqw; }
+  .p-sys pre { font: 400 2.65cqw/1.62 var(--font-mono); color: var(--gray-200); white-space: pre-wrap; }
+  .p-sys pre em { font-style: normal; color: var(--lime); }
+
+  /* no script / reduced motion: the deck rests fanned, as a printed exploded view */
+  html.rm .rig { height: auto; }
+  html.rm .stage { position: relative; }
+  html:not(.js) .more { position: static; translate: none; width: auto; opacity: 1; pointer-events: auto; justify-content: inherit; background: none; }
+
+  /* ── phone: the deck holds at the top of the screen while the five services scroll under it ── */
+  @media (max-width: 1023px) {
+    .rig { --W: min(80vw, 58svh, 560px); }
+    html.js .rig { height: auto; }
+    .stage { display: block; height: auto; min-height: 0; padding: 0 var(--side) 24px; }
+    html.js .stage { position: relative; }
+    .scene { position: sticky; top: 0; height: 47svh; min-height: 300px; margin-inline: calc(var(--side) * -1); background: var(--black); z-index: 20; perspective: 900px; overflow: clip; }
+    .plane { left: 50%; margin-left: calc(var(--W) / -2); }
+    .layers { display: block; }
+    .layer, .layer:nth-child(n) { text-align: left; justify-items: normal; min-height: 36svh; padding-block: 1.75rem; }
+    .layer:nth-child(odd) .line { margin-left: 0; }
+    .layer:nth-child(n).is-on h3 a { transform: none; }
+    .layer h3 { font-size: clamp(3rem, 15vw, 5rem); }
+    .layer .line { font-size: 1.0625rem; margin-top: .6rem; max-width: 36ch; }
+    .more, .layer.is-on .more { position: static; translate: none; width: auto; opacity: 1; pointer-events: auto; display: block; text-align: left; margin-top: .75rem; }
+    .scope { justify-content: flex-start; }
+  }
+</style>
+</head>
+<body>
+<div class="lattice" aria-hidden="true"></div>
+<div id="ctx-nav"></div>
+<main class="page">
+  <div id="ctx-above"></div>
+
+  <!-- CONCEPT A -->
+  <section class="svc" id="services" aria-labelledby="svc-h">
+    <div class="container svc-head">
+      <h2 id="svc-h" class="svc-h">This page is five layers deep.</h2>
+      <p class="svc-intro">Web design on top. Branding, SEO, product design and custom systems underneath. Five services, one connected system. <a class="link" href="/services">See all five</a></p>
+    </div>
+    <div class="rig" id="rig">
+      <div class="stage">
+        <div class="scene" aria-hidden="true">
+          <a class="plane p-web" href="/services#web" tabindex="-1" data-i="0"><div class="pl-in">
+            <svg viewBox="372 205 755 1089"><defs><pattern id="pd" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="9.5" fill="currentColor"/></pattern><mask id="pm"><use href="#fz-mark" style="color:var(--white)"/></mask></defs><rect x="372" y="205" width="755" height="1089" fill="url(#pd)" mask="url(#pm)"/></svg>
+            <span class="bar">WORK &nbsp;LAB &nbsp;SERVICES &nbsp;ABOUT &nbsp;BLOG &nbsp;CONTACT <b>7 DAYS →</b></span>
+            <div class="big">Built in Iligan.<span>Live worldwide.</span></div>
+            <p>Websites, brands and web apps for owners who want to be found, trusted and chosen.</p>
+            <span class="go">Start a project →</span>
+          </div></a>
+          <a class="plane p-brand" href="/services#brand" tabindex="-1" data-i="1"><div class="pl-in">
+            <svg viewBox="372 205 755 1089"><use href="#fz-mark"/></svg>
+            <div class="aa">Aa</div>
+            <div class="sw"><i style="background:#090909"></i><i style="background:#F5F4F0"></i><i style="background:#9FCC2E"></i></div>
+            <div class="fonts">#090909 #F5F4F0 #C9FF57<br>Clash Display / Plus Jakarta Sans / Space Mono</div>
+          </div></a>
+          <a class="plane p-seo" href="/services#seo" tabindex="-1" data-i="2"><div class="pl-in">
+            <div class="q"><i></i>web design studio philippines</div>
+            <div><div class="url">www.fazeddigital.com</div><div class="ttl">Web Design &amp; Branding Studio in the Philippines | Fazed</div><div class="dsc">Custom websites, brands, SEO and web apps from Iligan City, Philippines, for businesses in the USA, Australia and the Philippines.</div></div>
+            <pre>[{ "@type": "ItemList", "name": "Fazed Digital case studies" }, { "@type": "FAQPage" }]</pre>
+          </div></a>
+          <a class="plane p-prod" href="/services#product" tabindex="-1" data-i="3"><div class="pl-in">
+            <div><h4>Tell us about the project</h4><div class="fld">Your name<i></i></div><div class="fld">Email address<i></i></div><div class="fld">What do you need?<i></i></div></div>
+            <div><div class="fld">Rough budget (optional)<i></i></div><div class="fld tall">What are you building, who is it for?<i></i></div><div class="sel">Send my brief →</div></div>
+          </div></a>
+          <a class="plane p-sys" href="/services#systems" tabindex="-1" data-i="4"><div class="pl-in">
+            <div class="flow"><b>Contact form</b><i></i><b>/api/contact</b><i></i><b>Gmail alert</b><i></i><b class="hot">Private CRM</b></div>
+<pre><em>saveToCrm</em>(lead)  // a Gmail failure can't lose a lead
+{
+  ref, form, pipeline,
+  name, email, phone, business,
+  service, package, budget, message,
+  <em>source</em>   // first touch, kept on every form
+}</pre>
+          </div></a>
+        </div>
+
+        <ol class="layers" id="layers">
+          <li class="layer" data-i="0"><h3><a href="/services#web">Websites<span class="sr-only">: Web design &amp; development</span></a></h3>
+            <p class="line">Fast, mobile-first sites you can update yourself, built to bring in enquiries.</p>
+            <div class="more"><ul class="scope mono" aria-label="Web design scope"><li>Custom design</li><li>WordPress / Astro</li><li>Core Web Vitals</li><li>CMS handover</li></ul><a class="mono proof" href="/work/09">See Dotted Studios <span aria-hidden="true">→</span></a></div></li>
+          <li class="layer" data-i="1"><h3><a href="/services#brand">Brands<span class="sr-only">: Brand identity</span></a></h3>
+            <p class="line">Logos, colour, type and guidelines that make a good business look as good as it is.</p>
+            <div class="more"><ul class="scope mono" aria-label="Brand identity scope"><li>Logo system</li><li>Colour + type</li><li>Guidelines</li><li>Templates</li></ul><a class="mono proof" href="/work/02">See Cleen &amp; Green <span aria-hidden="true">→</span></a></div></li>
+          <li class="layer" data-i="2"><h3><a href="/services#seo">SEO<span class="sr-only">: SEO marketing</span></a></h3>
+            <p class="line">Get found by the people already searching for what you sell, locally or worldwide.</p>
+            <div class="more"><ul class="scope mono" aria-label="SEO scope"><li>Technical audit</li><li>Keywords</li><li>On-page</li><li>GA4 + Search Console</li></ul><a class="mono proof" href="/work/01">See A Framing Company <span aria-hidden="true">→</span></a></div></li>
+          <li class="layer" data-i="3"><h3><a href="/services#product">Products<span class="sr-only">: Product design</span></a></h3>
+            <p class="line">Research, flows and UI for apps and platforms people actually finish using.</p>
+            <div class="more"><ul class="scope mono" aria-label="Product design scope"><li>UX research</li><li>Wireframes</li><li>Figma UI</li><li>Design systems</li></ul><a class="mono proof" href="/work/05">See Canwell <span aria-hidden="true">→</span></a></div></li>
+          <li class="layer" data-i="4"><h3><a href="/services#systems">Systems<span class="sr-only">: Custom systems</span></a></h3>
+            <p class="line">Booking, membership and admin tools built around how your team really works.</p>
+            <div class="more"><ul class="scope mono" aria-label="Custom systems scope"><li>Web apps</li><li>Portals</li><li>APIs</li><li>Automation</li></ul><a class="mono proof" href="/work/06">See 8Drive <span aria-hidden="true">→</span></a></div></li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <div id="ctx-work"></div>
+</main>
+<script src="assets/context.js"></script>
+<script>
+(() => {
+  const rm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (rm) document.documentElement.classList.add('rm');
+  const rig = document.getElementById('rig'), scene = rig.querySelector('.scene');
+  const planes = [...rig.querySelectorAll('.plane')], labels = [...rig.querySelectorAll('.layer')];
+  const N = 5, lerp = (a, b, t) => a + (b - a) * t, clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const ease = (t) => 1 - Math.pow(1 - t, 3);
+  const act = planes.map(() => 0);
+  let active = rm ? 0 : -1, hold = -1, e = rm ? 1 : 0, eT = e, A = 0, raf = 0, last = -2;
+
+  const phone = () => innerWidth < 1024;
+  const setActive = (i) => { if (i === last) return; last = i; labels.forEach((l, k) => l.classList.toggle('is-on', k === i)); planes.forEach((p, k) => { p.style.zIndex = k === i ? 20 : 10 - k; }); };
+
+  function frame() {
+    const sh = scene.clientHeight, H = planes[0].offsetHeight;
+    const k = hold >= 0 ? hold : active;
+    e = rm ? eT : lerp(e, eT, .14);
+    const proj = H * .4, step = (sh - proj) / (N - 1) * .94;
+    let moving = Math.abs(e - eT) > .001;
+    planes.forEach((p, i) => { const t = i === k ? 1 : 0; act[i] = rm ? t : lerp(act[i], t, .13); if (Math.abs(act[i] - t) > .002) moving = true; });
+    A = Math.max(...act);
+    const ee = ease(e), standH = 1.12, grown = phone() ? 1 : lerp(1.34, 1, ee);
+    planes.forEach((p, i) => {
+      const a = act[i], kd = k < 0 ? 0 : Math.sign(i - k);
+      let y = (i - 2) * step * ee * lerp(1, .72, A) + kd * (H * .2) * A;
+      let th = lerp(0, 68, ee), z = 0, s = grown;
+      if (i === 0 && e < .02) th = 0;
+      y = lerp(y, 0, a * .92); th = lerp(th, 5, a); s = lerp(grown, standH, a);
+      if (ee < .999 && i > 0) p.style.visibility = ee < .02 ? 'hidden' : 'visible';
+      else p.style.visibility = 'visible';
+      p.style.transform = `translate3d(0,${y.toFixed(1)}px,${z.toFixed(1)}px) rotateX(${th.toFixed(2)}deg) scale(${s.toFixed(3)})`;
+      p.style.setProperty('--shade', (A * (1 - a) * .42).toFixed(3));
+    });
+    labels.forEach((l) => { l.style.opacity = phone() ? 1 : clamp((e - .35) / .4).toFixed(3); });
+    raf = moving ? requestAnimationFrame(frame) : 0;
+  }
+  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
+
+  function onScroll() {
+    if (rm) { kick(); return; }
+    const vh = innerHeight, r = rig.getBoundingClientRect();
+    if (phone()) {
+      eT = clamp((vh * .6 - r.top) / (vh * .5));
+      const line = scene.getBoundingClientRect().bottom + 40; let best = 0;
+      labels.forEach((l, i) => { if (l.getBoundingClientRect().top < line + vh * .12) best = i; });
+      active = r.top > vh * .05 ? -1 : best;
+    } else {
+      eT = clamp((vh * .1 - r.top) / (vh * .6));
+      const q = clamp(-r.top / (r.height - vh));
+      active = q < .3 ? -1 : Math.min(N - 1, Math.floor((q - .3) / .7 * N));
+    }
+    setActive(hold >= 0 ? hold : active);
+    kick();
+  }
+  const over = (ev) => { const n = ev.target.closest('[data-i]'); if (n) { hold = +n.dataset.i; setActive(hold); kick(); } };
+  const out = () => { hold = -1; setActive(active); kick(); };
+  rig.addEventListener('pointerover', over);
+  rig.addEventListener('focusin', (ev) => { over(ev); const n = ev.target.closest('[data-i]'); if (!n || rm || phone()) return; const r = rig.getBoundingClientRect(), span = r.height - innerHeight; if (r.top > 0 || r.bottom < innerHeight) scrollTo({ top: r.top + scrollY + span * (.3 + .7 * (+n.dataset.i + .5) / N) }); });
+  rig.querySelector('.stage').addEventListener('pointerleave', out); rig.addEventListener('focusout', out);
+  addEventListener('scroll', onScroll, { passive: true }); addEventListener('resize', onScroll);
+  if (rm) setActive(0);
+  onScroll(); frame();
+  window.__seek = onScroll;
+})();
+</script>
+</body>
+</html>

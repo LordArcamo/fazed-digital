@@ -7,9 +7,9 @@ const emit = (type: string, detail?: unknown) => document.dispatchEvent(new Cust
 export function initHome(rm: boolean) {
   const offs: (() => void)[] = [];
 
-  /* §3 services: the desktop wall (phones and reduced motion keep the stacked rows) */
+  /* §3 services: the layered deck (reduced motion keeps the stacked rows) */
   const svc = document.getElementById('services');
-  if (svc && !rm && matchMedia('(min-width: 1024px)').matches) offs.push(initServices(svc));
+  if (svc && !rm) offs.push(initServices(svc));
 
   /* §5 flood: circle wipe from Day 1 (scrub), then days light 1→7 */
   const flood = document.getElementById('flood');
