@@ -44,7 +44,7 @@
   --gutter: var(--pitch);
   --side: clamp(1rem, 4vw, 4rem);
   --container: 1340px;
-  --section: 192px; /* 8 × pitch */
+  --section: clamp(80px, 7.5vw, 112px); /* per side, so two neighbouring sections sit about 220px apart */
   /* lattice origin = container content-left edge */
   --lattice-x: calc((100vw - min(100vw, var(--container))) / 2 + var(--side));
 
@@ -57,7 +57,7 @@
   --capsule-sh: inset 0 1px 0 rgba(245, 244, 240, .09), inset 0 -10px 18px rgba(9, 9, 9, .45), 0 2px 6px rgba(0, 0, 0, .5), 0 18px 48px rgba(0, 0, 0, .65);
 }
 @media (max-width: 767px) {
-  :root { --pitch: 16px; --section: 96px; }
+  :root { --pitch: 16px; --section: 64px; }
 }
 @media (max-width: 399px) {
   :root { --fs-mega: 3.6rem; }

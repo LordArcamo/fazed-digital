@@ -107,6 +107,29 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     try{var m=q.match(/[?&]season=(\w+)/),S=sessionStorage;if(m)S.setItem('season',m[1]);var f=S.getItem('season'),t=new Date(Date.now()+288e5),md=(t.getUTCMonth()+1)*100+t.getUTCDate();
     if(f==='halloween'||(f!=='off'&&md>=1020&&md<=1101))h.classList.add('hw');if(S.getItem('hw-x'))h.classList.add('hw-off');}catch(e){}})(document); /* real visible height, see boot/main.ts */
   </script>
+  <script is:inline>
+    // Market swap: pesos and the PH line for visitors in the Philippines, dollars and the US line everywhere else.
+    // The HTML stays complete for crawlers. Time zone decides before first paint; /api/geo (IP country) has the final say.
+    // Blog article text (.prose) is left alone. Test with ?geo=ph or ?geo=intl.
+    (function(w,d){var S;try{S=sessionStorage}catch(e){}
+    var m=location.search.match(/[?&]geo=(ph|intl)/),g=m&&m[1],k='fz-geo',saved=S&&S.getItem(k);
+    if(!g&&/bot|crawl|spider|slurp|lighthouse|pagespeed|headless/i.test(navigator.userAgent))return;
+    if(g&&S)S.setItem(k,g);
+    var tz='';try{tz=Intl.DateTimeFormat().resolvedOptions().timeZone}catch(e){}
+    g=g||saved||(tz==='Asia/Manila'?'ph':'intl');
+    var LP='/lp/7-day-website',PH=LP+'/ph',toUS={'19,999':'$499','34,999':'$899','59,999':'$1,499','14,999':'$499','2,500':'$79','3,500':'$99','60,000':'$1,500'},toPH={'1,499':'₱59,999','899':'₱34,999','499':'₱19,999','99':'₱3,500','79':'₱2,500'};
+    function mark(){d.documentElement.dataset.geo=g;var p=location.pathname.replace(/\/$/,'');
+    if(g==='intl'&&p===PH)location.replace(LP+location.search);if(g==='ph'&&p===LP)location.replace(PH+location.search)}
+    function fix(s){return (g==='ph'?s.replace(/\$[\d,]+(\/month)? \((₱[\d,]+)(\/month)?[^)]*\)/g,function(x,a,b,c){return b+(a||c||'')}).replace(/\$[\d,]+(\/month)? (?:or|\/) (₱[\d,]+)(\/month)?/g,function(x,a,b,c){return b+(a||c||'')}).replace(/(₱[\d,]+(?:\/month)?) \(\$[^)]*\)/g,'$1').replace(/\$(1,499|899|499|99|79)(?!,?\d)/g,function(x,a){return toPH[a]})
+    :s.replace(/₱[\d,]+(?:\/month)? \((\$[^)]*)\)/g,'$1').replace(/ \([^()]*₱[^()]*\)/g,'').replace(/ (?:or|\/) ₱[\d,]+(?:\/month)?/g,'').replace(/ Paying in pesos\?[^.]*\./g,'').replace(/₱(19,999|34,999|59,999|14,999|2,500|3,500|60,000)(?!,?\d)/g,function(x,a){return toUS[a]}).replace(/\+63 906 825 3451/g,'+1 302-405-2423')).replace(/([₱$][\d,]+)( · | or | \/ )\1(?!,?\d)/g,'$1')}
+    function apply(){var b=d.body;if(!b)return;var t=d.createTreeWalker(b,4,{acceptNode:function(n){var p=n.parentNode;return !/[₱$]|\+63|pesos/.test(n.nodeValue)||!p||/^(SCRIPT|STYLE)$/.test(p.nodeName)||p.closest('.prose')?2:1}}),l=[],n;while(n=t.nextNode())l.push(n);
+    l.forEach(function(x){var v=fix(x.nodeValue);if(v!==x.nodeValue)x.nodeValue=v});
+    if(g==='intl'){d.querySelectorAll('a[href="tel:+639068253451"]').forEach(function(a){a.href='tel:+13024052423';var l=a.getAttribute('aria-label');if(l)a.setAttribute('aria-label',fix(l))});d.querySelectorAll('a.btn[href="'+PH+'"]').forEach(function(a){a.setAttribute('href',LP)})}
+    else d.querySelectorAll('a[href="'+LP+'"]:not(.ftr a)').forEach(function(a){a.setAttribute('href',PH)})}
+    mark();w.__geoApply=apply;d.addEventListener('astro:after-swap',function(){mark();apply()});
+    if(!saved&&!/[?&]geo=/.test(location.search))fetch('/api/geo').then(function(r){return r.json()}).then(function(j){if(!j.country)return;var c=j.country==='PH'?'ph':'intl';if(S)S.setItem(k,c);if(c!==g)location.reload()}).catch(function(){})
+    })(window,document);
+  </script>
   <ClientRouter fallback="swap" />
   <script type="application/ld+json" set:html={JSON.stringify(org)} />
   {pageSchema.map((s) => <script type="application/ld+json" set:html={JSON.stringify(s)} />)}
@@ -128,6 +151,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
   <div id="route-announcer" class="sr-only" aria-live="polite"></div>
   <Analytics />
   <SpeedInsights />
+  <script is:inline>window.__geoApply&&window.__geoApply()</script>
   <script>
     import '../boot/main';
   </script>

@@ -107,7 +107,20 @@ export async function start(g: Gate, flags: Flags) {
         // the unfold ruler: one row of lime dots on the 12 column lines
         const cols = [...document.querySelectorAll('.ruler span:not(.ruler-pitch)')].map((e) => e.getBoundingClientRect()).filter((r) => r.width > 0);
         const ry = cols[0] ? cols[0].top + cols[0].height / 2 : -1e4;
-        return F.lattice(v, n, { lit: (x, y) => (Math.abs(y - ry) <= v.pitch / 2 && cols.some((c) => Math.abs(c.left - x) <= v.pitch / 2) ? 2 : 0) });
+        const f = F.lattice(v, n, { lit: (x, y) => (Math.abs(y - ry) <= v.pitch / 2 && cols.some((c) => Math.abs(c.left - x) <= v.pitch / 2) ? 2 : 0) });
+        // the lit row belongs to the ruler, so it scrolls away with it instead of staying on screen over the copy
+        const ruler = cols[0] ? document.querySelector('.ruler') : null;
+        if (ruler) {
+          const sy = scrollY();
+          anchorEl = ruler;
+          anchorTop0 = ruler.getBoundingClientRect().top;
+          anchorSy0 = sy;
+          for (let i = 0; i < f.visible; i++) {
+            const o = i * 4;
+            if (f.data[o + 3] > 1.5) { f.data[o + 2] = 2; f.data[o + 1] += sy; }
+          }
+        }
+        return f;
       }
       case 'work': case 'lab': return F.lattice(v, n);
       case 'slate': {
@@ -249,7 +262,7 @@ export async function start(g: Gate, flags: Flags) {
       if (morphTween) morphTween.eventCallback('onComplete', draw); else draw();
       return;
     }
-    morph(f, prev === 'hero' ? 1.1 : 1.1);
+    morph(f, prev === 'hero' ? 0.6 : 1.1); // the mark clears fast, so it's gone before the copy arrives
   };
   /** case hero: dots resolve into the screenshot, a scan line passes, the real image crossfades in */
   const resolveShot = (host: HTMLElement) => {

@@ -131,3 +131,8 @@ html.is-docked { scroll-padding-bottom: 104px; }
 
 /* header/menu clock placeholder lives in CSS so crawlers don't read "--:--" as the first text on every page; nav.ts fills the span */
 [data-clock]:empty::before { content: '--:--'; }
+
+/* market swap (geo script in Base.astro): each market only sees its own prices and links */
+html[data-geo='intl'] [data-market='ph'], html[data-geo='ph'] [data-market='usd'] { display: none !important; }
+html[data-geo='intl'] a[href='/lp/7-day-website/ph']:not(.btn), html[data-geo='intl'] li:has(> a[href='/lp/7-day-website/ph']:not(.btn)) { display: none !important; }
+html[data-geo='ph'] .ftr li:has(> a[href='/lp/7-day-website']) { display: none !important; }

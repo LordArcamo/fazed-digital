@@ -206,6 +206,7 @@ function buildHtml(d: Lead, pkgLabel: string): string {
 }
 
 /* ── The lead's confirmation email ── */
+const phoneFor = (d: Lead) => (d.variant === 'php' ? { phone: NAP.phone, tel: NAP.tel } : { phone: NAP.phoneUS, tel: NAP.telUS });
 const firstName = (n: string) => n.split(/\s+/)[0] || 'there';
 
 function nextSteps(d: Lead): string[] {
@@ -246,7 +247,7 @@ function buildConfirmText(d: Lead, pkgLabel: string): string {
     '',
     'Lord Arcamo',
     'Founder, Fazed Digital',
-    `${NAP.phone} (call or text) · ${NAP.hours}`,
+    `${phoneFor(d).phone} (call or text) · ${NAP.hours}`,
     SITE_URL,
     '',
     `While you wait: Dotted Studios went live one week after the build started. ${SITE_URL}/work/09`,
@@ -296,7 +297,7 @@ function buildConfirmHtml(d: Lead, pkgLabel: string): string {
           <td style="padding-right:14px;vertical-align:middle;"><img src="${SITE_URL}/images/team/lord.jpeg" width="52" height="52" alt="Lord Arcamo" style="display:block;border-radius:26px;object-fit:cover;"></td>
           <td style="vertical-align:middle;font:14px/1.5 ${font};color:#444;">
             <strong style="color:#090909;">Lord Arcamo</strong><br>Founder, Fazed Digital<br>
-            <a href="tel:${NAP.tel}" style="color:#090909;">${NAP.phone}</a> (call or text) · ${NAP.hours}
+            <a href="tel:${phoneFor(d).tel}" style="color:#090909;">${phoneFor(d).phone}</a> (call or text) · ${NAP.hours}
           </td>
         </tr></table>
       </td></tr>

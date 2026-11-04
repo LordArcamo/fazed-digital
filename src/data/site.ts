@@ -7,6 +7,8 @@ export const NAP = {
   email: 'info@fazeddigital.com',
   phone: '+63 906 825 3451',
   tel: '+639068253451',
+  phoneUS: '+1 302-405-2423', // shown to everyone outside the Philippines (geo script in Base.astro)
+  telUS: '+13024052423',
   city: 'Iligan City', region: 'Lanao del Norte', country: 'Philippines', countryCode: 'PH', postal: '9200', // owner-confirmed 2026-10-19; no street address (no client office yet)
   hours: 'Mon–Fri 8:30am–5:00pm PHT',
   coords: '8.2280° N 124.2452° E',
