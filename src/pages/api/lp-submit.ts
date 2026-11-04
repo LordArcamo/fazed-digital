@@ -1,19 +1,12 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { sendLead } from '../../lib/mail';
+import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
 import { offerPrice, FOUNDING_PH } from '../../data/offers';
 import { NAP, SITE_URL } from '../../data/site';
 
 // Every lead: Gmail alert to the team (src/lib/mail.ts) + a HubSpot contact for the leads list (src/lib/hubspot.ts).
-const LEAD_TO = [
-  'reancirl@gmail.com',
-  'russeljessheyrana@gmail.com',
-  'lordrynkartracydwight@gmail.com',
-  'justinjacobsumaya8@gmail.com',
-  'info@fazeddigital.com',
-];
 
 const PACKAGE_NAMES: Record<string, string> = { starter: 'Starter', growth: 'Growth', pro: 'Pro', unsure: 'Not sure, help me choose' };
 const GOAL_LABELS: Record<string, string> = {
@@ -104,6 +97,7 @@ export const POST: APIRoute = async ({ request }) => {
   const [mail, hs] = await Promise.all([
     sendLead({
       to: LEAD_TO,
+      cc: LEAD_CC,
       replyTo: d.email,
       subject: `${fast ? '[fast] ' : ''}New 7-Day Website lead: ${d.businessName || d.name} (${pkgLabel})`,
       html: buildHtml(d, pkgLabel),

@@ -5,7 +5,9 @@ import { initMenu, bindMenuOnce } from './menu';
 import { initCookies } from './cookies';
 import { initNav, dockState, bindNavOnce } from './nav';
 import { bus } from '../lib/bus';
+import { leadSource } from '../lib/source';
 
+leadSource(); // remember where this visit came from, before any page swap
 const flags = readFlags();
 const html = document.documentElement;
 // --screen-h: the real visible height, measured once (and again only when the width changes, i.e. rotation).

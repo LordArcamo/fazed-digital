@@ -1,11 +1,8 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { sendLead } from '../../lib/mail';
+import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
-
-// ─── Lead notification (Google Workspace first, Resend fallback: src/lib/mail.ts) ──
-const LEAD_TO = ['info@fazeddigital.com'];
 
 // ─── reCAPTCHA v3 config ─────────────────────────────────────────────────────
 const RECAPTCHA_SECRET = import.meta.env.RECAPTCHA_SECRET_KEY;
@@ -23,16 +20,16 @@ const SERVICE_LABELS: Record<string, string> = {
 
 export const POST: APIRoute = async ({ request }) => {
   /* ── Parse body ─────────────────────────────────────────── */
-  let body: { name?: string; email?: string; phone?: string; service?: string; message?: string; company?: string; budget?: string; website?: string; captchaToken?: string };
+  let body: { name?: string; email?: string; phone?: string; service?: string; message?: string; company?: string; budget?: string; website?: string; captchaToken?: string; source?: string };
   try {
     body = await request.json();
   } catch {
     return json({ error: 'Invalid request' }, 400);
   }
 
-  const { name = '', email = '', phone = '', service = '', message = '', company = '', budget = '', website = '', captchaToken = '' } = body;
+  const { name = '', email = '', phone = '', service = '', message = '', company = '', budget = '', website = '', captchaToken = '', source = '' } = body;
   // optional fields are folded into the message so the HubSpot form needs no new properties
-  const fullMessage = [message, company && `Business: ${company}`, phone && `Phone: ${phone}`, budget && `Budget: ${budget}`].filter(Boolean).join('\n\n');
+  const fullMessage = [message, company && `Business: ${company}`, phone && `Phone: ${phone}`, budget && `Budget: ${budget}`, source && `Source: ${source}`].filter(Boolean).join('\n\n');
 
   /* ── Bots fill the hidden honeypot; pretend success, send nothing ── */
   if (website.trim()) {
@@ -66,8 +63,8 @@ export const POST: APIRoute = async ({ request }) => {
   const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
   /* ── Always log, then email the lead to info@ (a lead is never lost) ── */
-  console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message }));
-  const emailed = await sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message });
+  console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message, source }));
+  const emailed = await sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source });
 
   /* ── Save to HubSpot (the leads list) ─────────────────── */
   const hs = await saveToHubSpot({
@@ -84,10 +81,11 @@ export const POST: APIRoute = async ({ request }) => {
 };
 
 // ─── Lead notification email ──────────────────────────────────────────────────
-// Returns true when Gmail or Resend accepted the email. Never throws: a failed email must not block the form.
-async function sendLeadEmail(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string }): Promise<boolean> {
+// Returns true when Gmail accepted the email. Never throws: a failed email must not block the form.
+async function sendLeadEmail(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string; source: string }): Promise<boolean> {
   const via = await sendLead({
     to: LEAD_TO,
+    cc: LEAD_CC,
     replyTo: d.email,
     subject: `New contact lead: ${d.company || d.name} (${d.serviceLabel})`,
     html: buildHtml(d),
@@ -96,7 +94,7 @@ async function sendLeadEmail(d: { name: string; email: string; phone: string; se
   return via !== false;
 }
 
-function buildHtml(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string }): string {
+function buildHtml(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string; source: string }): string {
   const rows: [string, string][] = [
     ['Service',  d.serviceLabel],
     ['Name',     d.name],
@@ -105,6 +103,7 @@ function buildHtml(d: { name: string; email: string; phone: string; serviceLabel
     ['Business', d.company || '—'],
     ['Budget',   d.budget || '—'],
     ['Message',  d.message],
+    ['Source',   d.source || '—'],
   ];
   const tableRows = rows.map(([k, v]) => `
     <tr>

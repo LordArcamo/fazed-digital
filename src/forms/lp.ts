@@ -3,6 +3,7 @@
 // or a number key (never on arrow keys); answers persist for the visit; the brief rail mirrors every answer.
 import { captcha, loadRecaptcha } from './captcha';
 import { bus } from '../lib/bus';
+import { leadSource } from '../lib/source';
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const digits = (v: string) => v.replace(/\D/g, '').length;
@@ -29,20 +30,6 @@ const MSG = {
   network: 'Your brief didn’t send. That’s on us. Try again, or email it to info@fazeddigital.com.',
   offline: 'You’re offline. Your answers are still here. Reconnect, then tap Send again.',
 };
-
-// First-touch lead source for the whole visit (ClientRouter swaps pages without reloading).
-function leadSource(): string {
-  const KEY = 'fz-src';
-  try { const s = sessionStorage.getItem(KEY); if (s) return s; } catch {}
-  const q = new URLSearchParams(location.search);
-  const parts = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'].filter((k) => q.get(k)).map((k) => `${k.slice(4)}=${q.get(k)}`);
-  if (q.get('gclid')) parts.push('google-ads click');
-  if (q.get('fbclid')) parts.push('facebook click');
-  try { const r = document.referrer && new URL(document.referrer); if (r && r.host !== location.host) parts.push(`ref=${r.host}`); } catch {}
-  const s = [parts.join(' · ') || 'direct / unknown', `landing=${location.pathname}`].join(' · ');
-  try { sessionStorage.setItem(KEY, s); } catch {}
-  return s;
-}
 
 // One edit away from a common mail domain → suggest it (gmial.com → gmail.com).
 function typoFix(email: string): string {

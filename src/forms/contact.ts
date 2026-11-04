@@ -1,4 +1,5 @@
 import { captcha, loadRecaptcha } from './captcha';
+import { leadSource } from '../lib/source';
 export { captcha, loadRecaptcha };
 // Vanilla contact form (ports ContactSection.tsx). Payload to /api/contact keeps the same
 // shape { name, email, service, message, captchaToken } plus optional company + budget.
@@ -85,7 +86,7 @@ export function initContactForms() {
         const ac = new AbortController();
         const kill = setTimeout(() => ac.abort(), 20000);
         let res: Response;
-        try { res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...p, captchaToken }), signal: ac.signal }); }
+        try { res = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ...p, captchaToken, source: leadSource() }), signal: ac.signal }); }
         catch { throw new Error(MSG.network); }
         finally { clearTimeout(kill); }
         if (res.status === 429) throw new Error(MSG.rate);
