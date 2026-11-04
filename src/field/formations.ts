@@ -286,7 +286,7 @@ export function node(c: P2, n: number, v: View): Formation {
 export function path4(rect: { left: number; top: number; width: number; height: number }, n: number, v: View, vertical = false, lit = 4): Formation {
   const pts: Pt[] = [];
   const P = vertical
-    ? [{ x: rect.left + rect.width * 0.12, y: rect.top }, { x: rect.left + rect.width * 0.5, y: rect.top + rect.height * 0.33 }, { x: rect.left - rect.width * 0.2, y: rect.top + rect.height * 0.66 }, { x: rect.left + rect.width * 0.12, y: rect.top + rect.height }]
+    ? [{ x: rect.left + rect.width * 0.5, y: rect.top }, { x: rect.left + rect.width, y: rect.top + rect.height * 0.33 }, { x: rect.left, y: rect.top + rect.height * 0.66 }, { x: rect.left + rect.width * 0.5, y: rect.top + rect.height }]
     : [{ x: rect.left, y: rect.top + rect.height * 0.7 }, { x: rect.left + rect.width * 0.33, y: rect.top - rect.height * 0.2 }, { x: rect.left + rect.width * 0.66, y: rect.top + rect.height * 1.2 }, { x: rect.left + rect.width, y: rect.top + rect.height * 0.3 }];
   const bez = (t: number) => {
     const u = 1 - t;

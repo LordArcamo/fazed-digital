@@ -293,6 +293,9 @@ const schema = [
   .unfold-facts dd { color: var(--white); font-weight: 500; }
   @media (max-width: 1023px) { .ruler { grid-template-columns: repeat(4, 1fr); } .ruler span:nth-child(n + 5):not(.ruler-pitch) { display: none; } .unfold-in > * { grid-column: 1 / -1 !important; } }
 
+  #conn-h { font-size: min(var(--fs-d1), 6.75rem); }
+  #ct-h { font-size: min(var(--fs-d1), 5.5rem); }
+
   /* SERVICES: stacked by default (phones, reduced motion, no JS); motion adds .svc-live for the desktop wall */
   @property --dot { syntax: '<length>'; inherits: true; initial-value: 0px; }
   .services { position: relative; }
@@ -409,7 +412,7 @@ const schema = [
   .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-bottom: 3rem; }
   .step { display: grid; gap: .75rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
   .step-n { color: var(--lime); }
-  @media (max-width: 1023px) { .steps { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 1023px) { .steps { grid-template-columns: 1fr 1fr; padding-left: 28px; } } /* room for the dot rail */
   @media (max-width: 767px) { .steps { grid-template-columns: 1fr; } }
 
   /* CONNECTIONS */
@@ -422,7 +425,7 @@ const schema = [
   .result .t-h3 { font-size: clamp(1.6rem, 2.6vw, 2.4rem); }
   .result .link { justify-self: start; }
   .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gutter); margin-top: 120px; border-top: 1px solid var(--gray-700); }
-  .stat { padding-top: 1.5rem; display: grid; gap: .5rem; }
+  .stat { padding-top: 1.5rem; display: grid; gap: .5rem; align-content: start; }
   .stat dd { display: grid; gap: .5rem; }
   .stat-v { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-d2); color: var(--white); line-height: 1; }
   @media (max-width: 1023px) { .conn-globe { grid-column: 1 / -1; position: relative; top: 0; max-width: 420px; justify-self: center; width: 80vw; } .conn-text { grid-column: 1 / -1; grid-row: 2; } .stats { grid-template-columns: 1fr 1fr; row-gap: 2rem; } }

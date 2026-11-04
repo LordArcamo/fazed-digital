@@ -15,13 +15,21 @@ function loadGA() {
   s.src = `https://www.googletagmanager.com/gtag/js?id=${GA}`;
   document.head.appendChild(s);
 }
+let stopWait: (() => void) | null = null;
 export function initCookies() {
   const el = document.getElementById('cookie');
   const v = localStorage.getItem(KEY);
   if (v === 'granted') loadGA();
   if (gaLoaded && location.pathname) (window as any).gtag?.('event', 'page_view', { page_path: location.pathname });
   if (!el) return;
-  if (!v && !document.documentElement.classList.contains('record')) el.hidden = false;
+  // waits for the first scroll (or 4s) so it never covers the first screen's buttons; GA stays off until consent either way
+  stopWait?.();
+  if (!v && !document.documentElement.classList.contains('record')) {
+    const show = () => { stopWait?.(); if (!localStorage.getItem(KEY)) el.hidden = false; };
+    const t = setTimeout(show, 4000);
+    addEventListener('scroll', show, { passive: true });
+    stopWait = () => { clearTimeout(t); removeEventListener('scroll', show); stopWait = null; };
+  }
   if (el.dataset.bound) return;
   el.dataset.bound = '1';
   el.addEventListener('click', (e) => {

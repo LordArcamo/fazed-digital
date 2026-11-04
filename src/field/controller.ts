@@ -150,7 +150,8 @@ export async function start(g: Gate, flags: Flags) {
       case 'path4': {
         const r = rectOf(within(el, '[data-path-anchor]'));
         if (!r) return null;
-        return attach(F.path4({ left: r.left, top: r.top - 40, width: r.width, height: 60 }, n, v, !desktop()));
+        // stacked steps: the path runs down a narrow rail beside them, at their real height
+        return attach(desktop() ? F.path4({ left: r.left, top: r.top - 40, width: r.width, height: 60 }, n, v) : F.path4({ left: r.left, top: r.top, width: 14, height: r.height }, n, v, true));
       }
       case 'globe': {
         const gel = within(el, '[data-globe]');
@@ -341,7 +342,8 @@ export async function start(g: Gate, flags: Flags) {
       if (id === 'mark') return;
       if (id === 'pentagon' && !desktop()) return; // mobile: unpinned rows, field stays lattice
       triggers.push(ScrollTrigger.create({
-        trigger: el, start: 'top 55%', end: 'bottom 45%',
+        // the flood covers the screen itself, so the field holds the section above until the wipe is nearly done
+        trigger: el, start: id === 'flood' ? 'top 12%' : 'top 55%', end: 'bottom 45%',
         onToggle: (s) => {
           if (!s.isActive) return;
           if (el.dataset.step !== undefined) {
