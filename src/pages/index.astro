@@ -66,11 +66,16 @@ const schema = [
       <div class="ruler container" aria-hidden="true">{cols.map((c) => <span class="mono" data-c={c}></span>)}<span class="mono ruler-pitch"></span></div>
       <div class="container unfold-in">
         <h2 id="unfold-h" class="t-d1 rv">Web design, branding <span class="dim">and SEO from the Philippines.</span></h2>
-        <p class="mono rv">Shipping to USA · Australia · Philippines since 2022</p>
         <div class="unfold-body">
           <p class="t-body-l rv">Fazed Digital is a small studio in <a class="link" href="/web-design-iligan-city">Iligan City</a>, Mindanao. We design and build the websites, brand systems and custom tools that small and mid-sized businesses run on, from a framing contractor in Utah to a law firm in Queensland.</p>
           <p class="rv">Every project starts with the same three questions: who are you, who are you talking to, and what do you want them to feel? The answers shape everything that follows.</p>
         </div>
+        <dl class="unfold-facts rv">
+          <div><dt class="mono">Based in</dt><dd>Iligan City, Philippines</dd></div>
+          <div><dt class="mono">Shipping to</dt><dd>{countries.join(', ')}</dd></div>
+          <div><dt class="mono">Since</dt><dd>2022</dd></div>
+          <div><dt class="mono">Live work</dt><dd><a class="link" href="/work">{caseIndex.length} case studies</a></dd></div>
+        </dl>
       </div>
     </section>
 
@@ -278,9 +283,14 @@ const schema = [
   .ruler span::before { content: 'Col ' attr(data-c); }
   .ruler .ruler-pitch::before { content: 'Pitch 24px'; }
   .unfold-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
-  .unfold-in h2 { grid-column: 1 / span 11; }
-  .unfold-in > .mono { grid-column: 1 / span 6; }
-  .unfold-body { grid-column: 7 / span 6; display: grid; gap: 1.25rem; }
+  /* sized so the headline holds three full lines across the column at every desktop width */
+  .unfold-in h2 { grid-column: 1 / -1; font-size: min(var(--fs-d1), 7.4rem); text-wrap: wrap; }
+  .unfold-body { grid-column: 1 / span 7; display: grid; gap: 1.25rem; align-content: start; }
+  .unfold-body .t-body-l { font-size: clamp(1.25rem, 1.7vw, 1.625rem); line-height: 1.4; color: var(--white); }
+  .unfold-facts { grid-column: 9 / -1; display: grid; align-content: start; }
+  .unfold-facts div { display: grid; gap: .1rem; padding-block: .8rem; border-top: 1px solid var(--gray-700); }
+  .unfold-facts div:last-child { border-bottom: 1px solid var(--gray-700); }
+  .unfold-facts dd { color: var(--white); font-weight: 500; }
   @media (max-width: 1023px) { .ruler { grid-template-columns: repeat(4, 1fr); } .ruler span:nth-child(n + 5):not(.ruler-pitch) { display: none; } .unfold-in > * { grid-column: 1 / -1 !important; } }
 
   /* SERVICES: stacked by default (phones, reduced motion, no JS); motion adds .svc-live for the desktop wall */
