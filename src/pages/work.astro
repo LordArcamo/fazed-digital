@@ -5,6 +5,7 @@ import { caseIndex, countries } from '../data/cases';
 import { SITE_URL } from '../data/site';
 import { crumbs } from '../lib/schema';
 const count = (d: string) => caseIndex.filter((c) => (c.discipline as string[]).includes(d)).length;
+const nextRow = String(caseIndex.length + 1).padStart(2, '0');
 const filters = [['all', 'All', caseIndex.length], ['brand', 'Brand', count('brand')], ['web', 'Web', count('web')], ['systems', 'Systems', count('systems')]] as const;
 const schema = [
   { '@context': 'https://schema.org', '@type': 'ItemList', name: 'Fazed Digital case studies', itemListElement: caseIndex.map((c, i) => ({ '@type': 'ListItem', position: i + 1, url: `${SITE_URL}/work/${c.slug}`, name: c.title })) },
@@ -39,7 +40,7 @@ const schema = [
   <section class="section w-cta" data-f="node" aria-labelledby="w-cta-h">
     <div class="container w-cta-in">
       <span class="node-anchor" data-node-anchor aria-hidden="true"></span>
-      <h2 id="w-cta-h" class="t-d1">Want to be <span class="dim">row 09?</span></h2>
+      <h2 id="w-cta-h" class="t-d1">Want to be <span class="dim">row {nextRow}?</span></h2>
       <p class="t-body-l">Tell us what you’re building. We’ll reply within one business day.</p>
       <div class="w-btns"><a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="/lp/7-day-website">Get live in 7 days</a></div>
     </div>
