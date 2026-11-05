@@ -1,0 +1,39 @@
+---
+// Site chat launcher: a small capsule, nothing more until someone opens it (src/chat/panel.ts is a dynamic import).
+// Rendered only when the key exists and never on the ad pages (Base.astro). Hidden from bots by src/chat/launcher.ts.
+// is:inline, because Astro ships a component's scoped styles on every page that imports it, even when it isn't rendered.
+import { BOT } from '../chat/links';
+---
+<div id="fz-chat" hidden transition:persist="chat" transition:animate="none">
+  <button class="fc-btn" type="button" aria-haspopup="dialog" aria-expanded="false"><span class="fc-n" aria-hidden="true"></span>Ask {BOT}</button>
+  <style is:inline>
+    /* its own layer: the router's view transition makes this a stacking context, so the z-index has to live here */
+    #fz-chat { position: relative; z-index: 70; }
+    #fz-chat[hidden] { display: none; }
+    .fc-btn {
+      position: fixed; right: 16px; bottom: 16px; display: inline-flex; align-items: center; gap: 10px; height: 48px; padding: 0 18px 0 16px;
+      border-radius: 999px; background: var(--capsule); border: 1px solid var(--gray-700); box-shadow: var(--capsule-sh); color: var(--white);
+      font-family: var(--font-mono); font-size: 12px; letter-spacing: .14em; text-transform: uppercase; white-space: nowrap;
+      transition: border-color .2s, opacity .24s, transform .36s var(--ease-out);
+    }
+    .fc-btn:hover { border-color: var(--lime); }
+    .fc-btn:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+    .fc-n { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 4px var(--lime-12); }
+    .fc-n::after { content: ''; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--lime); animation: fc-ping 3.2s var(--ease-out) infinite; }
+    @keyframes fc-ping { 0% { transform: scale(1); opacity: .9; } 45%, 100% { transform: scale(3.2); opacity: 0; } }
+    html.rm .fc-n::after { animation: none; opacity: 0; }
+    /* steps aside for the panel, the menu and (below) whatever the dock steps aside for */
+    #fz-chat[data-open] .fc-btn, html.menu-open .fc-btn { opacity: 0; pointer-events: none; visibility: hidden; }
+    @media (max-width: 1023px) {
+      /* sits on the dock's top edge, 10px clear of it. Waits for the first scroll, so it never covers the hero's buttons */
+      .fc-btn { right: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); height: 44px; padding: 0 15px 0 14px; font-size: 11px; }
+      html:not(.is-docked) .fc-btn, html.dock-kb .fc-btn, html:has(#cookie:not([hidden])) .fc-btn { transform: translateY(16px); opacity: 0; pointer-events: none; visibility: hidden; transition: opacity .24s, transform .36s var(--ease-out), visibility 0s .24s; }
+    }
+    @media (min-width: 1024px) { html:has(#hw-pill) .fc-btn { bottom: 72px; } }
+  </style>
+</div>
+<script>
+  import { initChat } from '../chat/launcher';
+  initChat();
+  document.addEventListener('astro:page-load', initChat);
+</script>

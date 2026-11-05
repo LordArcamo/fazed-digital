@@ -1,7 +1,7 @@
 ---
 import Legal from '../layouts/Legal.astro';
 ---
-<Legal title="Privacy policy" metaTitle="Privacy Policy — Fazed Digital" description="Fazed Digital's privacy policy. How we collect, use, and protect your personal information." intro="What we collect, why, and how to ask us to delete it." path="/privacy">
+<Legal title="Privacy policy" metaTitle="Privacy Policy — Fazed Digital" description="Fazed Digital's privacy policy. How we collect, use, and protect your personal information." intro="What we collect, why, and how to ask us to delete it." path="/privacy" updated="5 November 2026">
 <h2>1. Who We Are</h2>
         <p>Fazed Digital ("we", "us", "our") operates <strong>www.fazeddigital.com</strong>. We are a web design, branding and SEO studio based in Iligan City, Philippines. Contact: <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a>.</p>
 
@@ -10,6 +10,7 @@ import Legal from '../layouts/Legal.astro';
         <ul>
           <li>Contact form submissions (name, email address, phone number, message content)</li>
           <li>Project enquiry details</li>
+          <li>Messages you type into the website chat, and any details you choose to send through its form (see section 5)</li>
         </ul>
         <p>We also collect information automatically through your use of our website:</p>
         <ul>
@@ -33,10 +34,15 @@ import Legal from '../layouts/Legal.astro';
         <h2>4. Cookies</h2>
         <p>We use essential storage for the site to work (for example, remembering your cookie choice). Google Analytics only loads if you choose <strong>Accept analytics</strong> in the cookie banner; if you choose <strong>Essential only</strong>, it never loads. Vercel Web Analytics is cookieless and counts page views without identifying you. Our forms use Google reCAPTCHA to keep spam out, and it loads only when you start filling in a form. No ads, no selling your data. You can change your choice any time with <strong>Cookie settings</strong> in the footer.</p>
 
-        <h2>5. Data Retention</h2>
-        <p>We retain personal data for as long as necessary to provide our services and comply with legal obligations. Contact form data is retained for 24 months. You may request deletion of your data at any time by contacting us.</p>
+        <h2 id="chat">5. Website Chat</h2>
+        <p>Fazzy, the chat on our website, is an AI assistant, not a person. What you type goes through our server to Anthropic, the company that runs the AI model, so it can write a reply. Please don’t share anything sensitive in the chat.</p>
+        <p>We don’t save your chat on our own systems. Our server logs technical counts only, such as how many messages a chat had, and never what you wrote. Your IP address is used in scrambled form, briefly, to stop abuse. The conversation stays in your browser’s session storage (not a cookie) and clears when you close the tab.</p>
+        <p>If you choose to send your details through the form in the chat, we receive your name, email, any phone number or business name you add, the chat transcript, a short AI-written summary of it, the page you were on and how you found our site. We handle it exactly like a contact form submission: it reaches our inbox and our lead records, and it’s kept for the period in section 6. We only receive these details if you tick the box and press send.</p>
 
-        <h2>6. Your Rights (Data Privacy Act)</h2>
+        <h2>6. Data Retention</h2>
+        <p>We retain personal data for as long as necessary to provide our services and comply with legal obligations. Contact form data, including details sent through the website chat, is retained for 24 months. You may request deletion of your data at any time by contacting us.</p>
+
+        <h2>7. Your Rights (Data Privacy Act)</h2>
         <p>Under the Philippines Data Privacy Act of 2012 (RA 10173), you have the right to:</p>
         <ul>
           <li>Access the personal information we hold about you</li>
@@ -46,23 +52,24 @@ import Legal from '../layouts/Legal.astro';
         </ul>
         <p>To exercise these rights, contact us at <a href="mailto:info@fazeddigital.com">info@fazeddigital.com</a>.</p>
 
-        <h2>7. Security</h2>
+        <h2>8. Security</h2>
         <p>We take reasonable precautions to protect your personal information from unauthorised access, disclosure, or misuse. Our website uses HTTPS encryption. However, no method of transmission over the internet is 100% secure.</p>
 
-        <h2>8. Third-Party Services</h2>
+        <h2>9. Third-Party Services</h2>
         <p>Our website may use the following third-party services, each with their own privacy policies:</p>
         <ul>
           <li>Google Analytics 4 (analytics, only after you accept analytics)</li>
           <li>Vercel Web Analytics (cookieless page-view analytics) and Vercel hosting</li>
           <li>Google reCAPTCHA v3 (spam protection on our forms)</li>
           <li>HubSpot (receives contact form submissions)</li>
+          <li>Anthropic (runs the AI model behind the website chat)</li>
           <li>Google Workspace (delivers form submissions to our inbox by email)</li>
         </ul>
 
-        <h2>9. Changes to This Policy</h2>
+        <h2>10. Changes to This Policy</h2>
         <p>We may update this policy from time to time. We will post the updated policy on this page with a revised "last updated" date. We encourage you to review this policy periodically.</p>
 
-        <h2>10. Contact</h2>
+        <h2>11. Contact</h2>
         <p>If you have questions about this privacy policy or how we handle your information, please contact us:</p>
         <p>
           <strong>Fazed Digital</strong><br />

@@ -10,5 +10,6 @@ Marketing site for Fazed Digital (www.fazeddigital.com). **Astro 7.4 (static) + 
 - **ClientRouter:** bundled scripts run once. Page work goes through `bus.onPage` / `bus.onSwap` (`src/lib/bus.ts`), and every component script guards with `dataset.bound` and calls its init immediately + on `astro:page-load`.
 - **Pre-3D JS ≤ 12 KB gz:** never import gsap/three from a component script; the motion and GL chunks are dynamic imports in `src/boot/main.ts`.
 - **Field:** formations are CPU-generated (`src/field/formations.ts`) and morphed in a stateless TSL vertex stage (`points.tsl.ts`). Sections opt in with `data-f="<formation>"`. Focus-layer formations (layer ≥ 1) are in page space and follow `uFocusY`.
+- **Chat (Fazzy):** off until `ANTHROPIC_API_KEY` is set. Knowledge is built from `src/data/*` in `src/lib/chat/knowledge.ts`; never type facts there. Prices stay out of the shared block; `scripts/lint-chat.mjs` fails the build otherwise.
 - Never switch an effect off to fix a problem without asking. Tune it and report.
 - Dev: `npm run dev` (port 4351). If Vite shows 504 "Outdated Optimize Dep", delete `node_modules/.vite` and restart.

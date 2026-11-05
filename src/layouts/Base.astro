@@ -5,6 +5,7 @@ import SpeedInsights from '@vercel/speed-insights/astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
+import ChatLauncher from '../components/ChatLauncher.astro';
 import SeasonPill from '../components/SeasonPill.astro';
 import { HALLOWEEN_LIVE } from '../data/season';
 import LpFooter from '../components/LpFooter.astro';
@@ -65,6 +66,8 @@ const org = {
     { '@type': 'WebSite', '@id': `${SITE_URL}/#website`, url: `${SITE_URL}/`, name: 'Fazed Digital', inLanguage: 'en', publisher: { '@id': `${SITE_URL}/#organization` } },
   ],
 };
+// Site chat: nothing ships until ANTHROPIC_API_KEY is set (see src/pages/api/chat.ts). Off on the ad pages: they have one job.
+const chatOn = !lp && !!(import.meta.env.ANTHROPIC_API_KEY ?? process.env.ANTHROPIC_API_KEY);
 const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
 ---
 <!doctype html>
@@ -148,6 +151,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
   {lp ? <LpFooter variant={lp} /> : <Footer />}
   {!lp && HALLOWEEN_LIVE && <SeasonPill />}
   <CookieBanner />
+  {chatOn && <ChatLauncher />}
   <div id="route-announcer" class="sr-only" aria-live="polite"></div>
   <Analytics />
   <SpeedInsights />

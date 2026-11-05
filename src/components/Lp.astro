@@ -11,7 +11,7 @@ import { labImages, workImages } from '../data/images';
 import { team } from '../data/team';
 import { NAP } from '../data/site';
 import { labShipped, LABEL } from '../data/lab';
-import { lpFaq } from '../data/lp';
+import { lpFaq, lpPlans, lpProcess } from '../data/lp';
 import { lpTrust, LP_REVIEWS_REAL, lpTestimonials, results, prices, capsCopy } from '../data/proof';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 // Example sites = Fazed Lab concept sites (fictional brands, always labelled as such).
@@ -21,11 +21,7 @@ const lpLab = labShipped.filter((i) => i.n !== '04' && labImages[i.n] && i.url).
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
 const st = offerPrice(variant, 'starter'); // { price, founding }: the founding rate while FOUNDING_PH.on, else the standard price
-const plans = [
-  { id: 'starter', name: 'Starter', price: st.price, was: st.founding ? P.starter : '', tag: st.founding ? `Founding rate · ${FOUNDING_PH.spots} spots` : '', for: st.founding ? `New businesses getting online. Founding rate for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit.` : 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
-  { id: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', popular: true, rows: ['8 custom-designed pages', 'Custom design system', 'Advanced on-page SEO', 'Blog + CMS setup · Google Analytics + Search Console', '3 revision rounds', '7-day delivery'] },
-  { id: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: ['10+ custom pages', 'Full brand integration', 'Performance optimised (under 2s load)', 'E-commerce ready · Priority support', 'Unlimited revisions', '7-day delivery'] },
-];
+const plans = lpPlans(variant);
 // no competitor numbers: nothing in src/data backs them (docs/conversion/lp-7day-conversion.md #9)
 const pain = [
   ['Launch dates measured in weeks or months', 'Live in 7 business days'],
@@ -34,13 +30,6 @@ const pain = [
   ['Vague revision process', '2, 3 or unlimited revision rounds, agreed upfront'],
   ['Multiple hand-offs and delays', 'One small team, a direct line'],
   ['Lock-in contracts', 'You own it all. No lock-in.'],
-];
-const process = [
-  ['Day 1', 'Kickoff & brief', 'You fill in a short brief and send your logo, photos and references. We confirm goals and the timeline.'],
-  ['Day 2–3', 'Design', 'We design your custom mockups. You review and send feedback within 24 hours.'],
-  ['Day 4–5', 'Build', 'We build the full site: mobile-first, fast-loading and set up for search.'],
-  ['Day 6', 'Review & revise', 'You test it on our staging link. We make the final changes.'],
-  ['Day 7', 'Launch', 'Your site goes live. We connect your domain, launch on the host you prefer and hand everything over.'],
 ];
 const faq = lpFaq(php);
 // Founding client rate: src/data/offers.ts (one switch for the banner, the form and the lead email)
@@ -104,7 +93,7 @@ const lord = team.find((t) => t.id === 'lord')!;
   <section class="section container lp-proc" data-f="days7" aria-labelledby="pc-h">
     <p class="mono">How it works · 7 business days · 5 steps</p>
     <h2 id="pc-h" class="t-d2">From brief to live in 7 business days.</h2>
-    <ol class="lp-steps" data-days-anchor>{process.map(([d, t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><span class="mono">{d}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
+    <ol class="lp-steps" data-days-anchor>{lpProcess.map(([d, t, b]) => <li class="rv"><span class="lp-node" aria-hidden="true"></span><span class="mono">{d}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
     <p class="lp-note">Day 1 is your kickoff day, once we have your brief, logo, photos and text. Every day here is a business day, Monday to Friday.</p>
   </section>
 

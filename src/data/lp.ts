@@ -2,7 +2,7 @@
 // Order = strongest objection first (docs/conversion/lp-7day-conversion.md §1 #7). Every answer is a fact already
 // on the site: prices/caps (proof.ts), founding rate (offers.ts), hours (site.ts), process + guarantee (Lp.astro).
 import { prices } from './proof';
-import { FOUNDING_PH } from './offers';
+import { FOUNDING_PH, offerPrice } from './offers';
 import { NAP } from './site';
 
 export const lpFaq = (php: boolean) => {
@@ -31,3 +31,22 @@ export const lpFaq = (php: boolean) => {
     ] : []),
   ];
 };
+
+// The 3 packages and the 7-day process: shown on the LPs (Lp.astro) and read by the site chat (src/lib/chat/knowledge.ts).
+export const lpPlans = (variant: 'usd' | 'php') => {
+  const P = variant === 'php' ? prices.php : prices.usd;
+  const st = offerPrice(variant, 'starter'); // { price, founding }: the founding rate while FOUNDING_PH.on, else the standard price
+  return [
+    { id: 'starter', name: 'Starter', price: st.price, was: st.founding ? P.starter : '', tag: st.founding ? `Founding rate · ${FOUNDING_PH.spots} spots` : '', for: st.founding ? `New businesses getting online. Founding rate for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit.` : 'New businesses getting online', rows: ['5 custom-designed pages', 'Mobile-responsive layout', 'On-page SEO setup', 'Contact form', '2 revision rounds', '7-day delivery'] },
+    { id: 'growth', name: 'Growth', price: P.growth, for: 'Growing small businesses', popular: true, rows: ['8 custom-designed pages', 'Custom design system', 'Advanced on-page SEO', 'Blog + CMS setup · Google Analytics + Search Console', '3 revision rounds', '7-day delivery'] },
+    { id: 'pro', name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: ['10+ custom pages', 'Full brand integration', 'Performance optimised (under 2s load)', 'E-commerce ready · Priority support', 'Unlimited revisions', '7-day delivery'] },
+  ];
+};
+
+export const lpProcess = [
+  ['Day 1', 'Kickoff & brief', 'You fill in a short brief and send your logo, photos and references. We confirm goals and the timeline.'],
+  ['Day 2–3', 'Design', 'We design your custom mockups. You review and send feedback within 24 hours.'],
+  ['Day 4–5', 'Build', 'We build the full site: mobile-first, fast-loading and set up for search.'],
+  ['Day 6', 'Review & revise', 'You test it on our staging link. We make the final changes.'],
+  ['Day 7', 'Launch', 'Your site goes live. We connect your domain, launch on the host you prefer and hand everything over.'],
+];
