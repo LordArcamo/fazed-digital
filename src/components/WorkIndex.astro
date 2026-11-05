@@ -5,12 +5,13 @@ import { Picture } from 'astro:assets';
 import { caseIndex } from '../data/cases';
 import { workImages } from '../data/images';
 import IndexPreview from './IndexPreview.astro';
-const { services = false } = Astro.props;
+const { services = false, skip = [] } = Astro.props;
+const rows = caseIndex.filter((c) => !skip.includes(c.slug));
 ---
 <div class:list={['windex', { 'windex--svc': services }]} data-windex>
   <div class="wrow wrow--head mono" aria-hidden="true"><span>№</span><span>Client</span><span>Sector</span><span>Country</span><span>Year</span><span class="h-built">What we built</span>{services && <span class="w-svc">Services</span>}</div>
   <ul>
-    {caseIndex.map((c, i) => (
+    {rows.map((c, i) => (
       <li class="wli" data-disc={c.discipline.join(' ')}>
         <a class="wrow" href={`/work/${c.slug}`} data-shot={c.slug} data-cap={`CASE ${c.slug} · ${c.title} →`} aria-label={`Case ${c.slug}: ${c.title}, ${c.sector.toLowerCase()}, ${c.country}, ${c.year}. ${c.built}. Read the case study.`}>
           <span class="mono w-n">{c.slug}</span>
@@ -37,8 +38,8 @@ const { services = false } = Astro.props;
   a.wrow:hover, a.wrow:focus-visible { color: var(--white); }
   .w-thumb { display: none; }
   /* the preview lives in a fixed slot over the right-hand columns, which step out while it shows: never over live text */
-  .w-built, .w-svc, .wrow--head .h-built, .wrow--head .w-svc { transition: opacity .2s; }
-  .windex.has-on .w-built, .windex.has-on .w-svc, .windex.has-on .h-built { opacity: 0; }
+  .w-year, .w-built, .w-svc, .wrow--head .h-built, .wrow--head .w-svc { transition: opacity .2s; }
+  .windex.has-on .w-year, .windex.has-on .w-built, .windex.has-on .w-svc, .windex.has-on .h-built { opacity: 0; }
   .wprev { position: fixed; right: var(--lattice-x); top: 50%; width: min(400px, 30vw); aspect-ratio: 16 / 10; translate: 0 -50%; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 2; border: 1px solid var(--gray-700); overflow: hidden; }
   .wprev.is-on { opacity: 1; }
   .wprev :global(img) { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top; opacity: 0; transition: opacity .25s .12s; }

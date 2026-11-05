@@ -8,6 +8,14 @@ import uglq from '../assets/work/work-uglq.jpg';
 import qldlaw from '../assets/work/work-qldlaw.jpg';
 import dotted from '../assets/work/work-dotted.jpg';
 export const workImages: Record<string, ImageMetadata> = { '01': aframing, '02': cleen, '03': crate, '04': telecom, '05': canwell, '06': drive, '07': uglq, '08': qldlaw, '09': dotted };
+// Home featured cases: the top of each full-page capture (plates/), which scrolls inside its frame
+import f01d from '../assets/work/feature/01-desktop.jpg';
+import f01m from '../assets/work/feature/01-mobile.jpg';
+import f05d from '../assets/work/feature/05-desktop.jpg';
+import f05m from '../assets/work/feature/05-mobile.jpg';
+import f09d from '../assets/work/feature/09-desktop.jpg';
+import f09m from '../assets/work/feature/09-mobile.jpg';
+export const featureImages: Record<string, { desktop: ImageMetadata; mobile: ImageMetadata }> = { '01': { desktop: f01d, mobile: f01m }, '05': { desktop: f05d, mobile: f05m }, '09': { desktop: f09d, mobile: f09m } };
 // Fazed Lab plates: fresh 1440×900 captures of the live concept sites (media/lab-design/captures, scripts/capture-lab.mjs)
 import lab01 from '../assets/lab/01.jpg';
 import lab02 from '../assets/lab/02.jpg';

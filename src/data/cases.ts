@@ -286,3 +286,5 @@ export const CASE_EXTRA: Record<string, CaseExtra> = {
 export const caseIndex = [...cases].sort((a, b) => a.slug.localeCompare(b.slug)).map((c) => ({ ...c, ...CASE_EXTRA[c.slug] }));
 export type CaseFull = (typeof caseIndex)[number];
 export const countries = [...new Set(caseIndex.map((c) => c.country))];
+// Home featured cases, one per market. Each needs a live site and an entry in featureImages.
+export const FEATURED = ['01', '05', '09'];

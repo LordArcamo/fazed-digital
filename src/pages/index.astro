@@ -3,13 +3,14 @@ import Base from '../layouts/Base.astro';
 import MarkPoster from '../components/MarkPoster.astro';
 import ContactForm from '../components/ContactForm.astro';
 import WorkIndex from '../components/WorkIndex.astro';
+import FeaturedWork from '../components/FeaturedWork.astro';
 import LabSheetPoster from '../components/LabSheetPoster.astro';
 import { labShipped, LAB_TOTAL, LABEL, pad2 } from '../data/lab';
 import { services } from '../data/services';
 import { homeFaq } from '../data/home';
 import Faq from '../components/Faq.astro';
 import { faqPage } from '../lib/schema';
-import { caseIndex, countries } from '../data/cases';
+import { caseIndex, countries, FEATURED } from '../data/cases';
 import { stats, results, capsCopy } from '../data/proof';
 import { team } from '../data/team';
 import { NAP, SITE_URL } from '../data/site';
@@ -159,7 +160,9 @@ const schema = [
         <p class="mono rv">Selected work · {String(caseIndex.length).padStart(2, '0')} cases · {String(countries.length).padStart(2, '0')} countries</p>
         <h2 id="work-h" class="t-d2 rv">Work that’s live, not just pretty.</h2>
         <p class="work-intro rv">Every project below is a real business running on what we built. Open the live sites on your phone. That’s the test.</p>
-        <WorkIndex />
+        <FeaturedWork />
+        <p class="mono work-more rv">More cases</p>
+        <WorkIndex skip={FEATURED} />
         <a class="btn btn--ghost" href="/work">See all the work</a>
       </div>
     </section>
@@ -483,6 +486,7 @@ const schema = [
   /* WORK INDEX */
   .work .t-d2 { margin: 1rem 0; }
   .work-intro { max-width: 52ch; margin-bottom: 3rem; }
+  .work-more { margin-bottom: .5rem; }
 
   /* Lab feature: copy + newest three on the left, the dot contact sheet on the right (same as the /lab hero) */
   .hlab-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 3rem var(--gutter); align-items: center; }

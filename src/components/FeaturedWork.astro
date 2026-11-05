@@ -1,0 +1,78 @@
+---
+// Home §4 lead: three live client sites, one per market, in place of the table's top rows. The domain
+// is the headline and opens the real site; the frames show its real pages, desktop and phone (motion/featured.ts).
+import { Picture } from 'astro:assets';
+import { caseIndex, FEATURED } from '../data/cases';
+import { featureImages } from '../data/images';
+// the domains set in Clash at 600, measured in em, so each one fills the row
+const fit: Record<string, number> = { '01': 11.36, '05': 7.45, '09': 9.13 };
+const domain = (url: string) => url.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '');
+const cases = FEATURED.map((slug) => caseIndex.find((c) => c.slug === slug)!);
+---
+<div class="fws" data-featured>
+  {cases.map((c, i) => (
+    <article class:list={['fw', { 'fw--flip': i % 2 }]} style={`--em:${fit[c.slug]}`}>
+      <p class="mono fw-meta rv"><span class="fw-live">Live</span><span>{c.sector} · {c.region ? `${c.region}, ${c.country}` : c.country} · {c.year}</span></p>
+      <a class="fw-url rv" href={c.liveUrl} target="_blank" rel="noopener" data-cursor="OPEN ↗"><span>{domain(c.liveUrl)}</span><span class="sr-only"> (opens the live site in a new tab)</span></a>
+      <div class="fw-row">
+        <a class="fw-shots" href={`/work/${c.slug}`} data-shots data-cursor="READ THE CASE →" aria-label={`Read the ${c.title} case study`}>
+          <span class="fw-frame fw-frame--d"><Picture src={featureImages[c.slug].desktop} formats={['avif', 'webp']} widths={[640, 960, 1440]} sizes="(max-width: 1023px) 92vw, 800px" quality={60} alt="" loading="lazy" decoding="async" /></span>
+          <span class="fw-frame fw-frame--m"><Picture src={featureImages[c.slug].mobile} formats={['avif', 'webp']} widths={[240, 480]} sizes="240px" quality={60} alt="" loading="lazy" decoding="async" /></span>
+        </a>
+        <div class="fw-copy">
+          <h3 class="fw-client rv">{c.title}</h3>
+          <p class="fw-line rv">{c.changed}</p>
+          <p class="mono fw-built rv">{c.built}</p>
+          <a class="link rv" href={`/work/${c.slug}`}>Read the case<span class="sr-only">: {c.title}</span></a>
+        </div>
+      </div>
+    </article>
+  ))}
+</div>
+<style>
+  .fws { display: grid; gap: clamp(64px, 7vw, 104px); margin-bottom: clamp(56px, 6vw, 88px); }
+  .fw-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .4rem 1rem; color: var(--gray-300); }
+  .fw-live { display: inline-flex; align-items: center; gap: .5em; color: var(--lime); }
+  .fw-live::before { content: ''; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); animation: fw-pulse 2.4s var(--ease-io) infinite; }
+  @keyframes fw-pulse { 50% { opacity: .3; } }
+  /* --em is the domain's width in em: the size that makes it span the container */
+  .fw-url { display: block; width: fit-content; max-width: 100%; margin: .15em 0 .25em; font-family: var(--font-display); font-weight: 600; font-size: min(calc((100vw - 2 * var(--side)) / var(--em)), calc((var(--container) - 2 * var(--side)) / var(--em))); line-height: 1.1; letter-spacing: -.02em; color: var(--white); white-space: nowrap; }
+  .fw-url > span:first-child { background-image: linear-gradient(var(--lime), var(--lime)); background-size: 0% 100%; background-repeat: no-repeat; transition: background-size .35s var(--ease-out), color .2s; }
+  .fw-url:hover > span:first-child, .fw-url:focus-visible > span:first-child { background-size: 100% 100%; color: var(--black); }
+  .fw-row { display: grid; grid-template-columns: minmax(0, 1fr) clamp(230px, 20vw, 270px); gap: var(--gutter) calc(var(--gutter) * 2); align-items: end; }
+  /* the columns carry the two aspect ratios, so both frames come out the same height */
+  .fw-shots { display: grid; grid-template-columns: 1.6fr .4737fr; gap: var(--gutter); }
+  .fw-frame { display: block; position: relative; overflow: hidden; background: var(--gray-900); border: 1px solid var(--gray-700); transition: border-color .2s; }
+  .fw-frame--d { aspect-ratio: 16 / 10; }
+  .fw-frame--m { aspect-ratio: 9 / 19; }
+  .fw-frame :global(img) { display: block; width: 100%; height: auto; max-width: none; }
+  .fw-shots:hover .fw-frame, .fw-shots:focus-visible .fw-frame { border-color: var(--lime); }
+  .fw--flip .fw-row { grid-template-columns: clamp(230px, 20vw, 270px) minmax(0, 1fr); }
+  .fw--flip .fw-shots { order: 2; grid-template-columns: .4737fr 1.6fr; }
+  .fw--flip .fw-frame--m { order: -1; }
+  .fw-client { font-family: var(--font-body); font-size: var(--fs-body); font-weight: 600; color: var(--white); }
+  .fw-line { margin: .6rem 0 1rem; font-family: var(--font-display); font-weight: 600; font-size: clamp(1.75rem, 2.7vw, 2.5rem); line-height: 1.08; letter-spacing: -.01em; color: var(--white); }
+  .fw-built { color: var(--gray-300); margin-bottom: 1.25rem; }
+  /* the develop: dots at the field's pitch, then a solid wave across them (motion/featured.ts takes the mask off when done) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js-motion) .fw-frame:not(.is-set) {
+      --r: 0; --w: 0;
+      -webkit-mask-image: radial-gradient(circle, #000 calc(var(--r) * 1px), transparent calc(var(--r) * 1px + .75px)), radial-gradient(circle at 0% 100%, #000 calc(var(--w) * 1% - 18%), transparent calc(var(--w) * 1%));
+      mask-image: radial-gradient(circle, #000 calc(var(--r) * 1px), transparent calc(var(--r) * 1px + .75px)), radial-gradient(circle at 0% 100%, #000 calc(var(--w) * 1% - 18%), transparent calc(var(--w) * 1%));
+      -webkit-mask-size: var(--pitch) var(--pitch), 100% 100%;
+      mask-size: var(--pitch) var(--pitch), 100% 100%;
+      -webkit-mask-repeat: repeat, no-repeat;
+      mask-repeat: repeat, no-repeat;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) { .fw-live::before { animation: none; } }
+  @media (max-width: 1023px) {
+    .fw-row, .fw--flip .fw-row { grid-template-columns: minmax(0, 1fr); }
+    .fw--flip .fw-shots { order: 0; }
+    .fw-line { font-size: clamp(1.5rem, 4vw, 2rem); }
+  }
+  @media (max-width: 767px) {
+    .fw-shots, .fw--flip .fw-shots { grid-template-columns: minmax(0, 1fr); }
+    .fw-frame--m { display: none; }
+  }
+</style>

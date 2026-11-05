@@ -1,6 +1,7 @@
 // Home DOM choreography (§5.1). The field listens to the same events (fz:* on document).
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { initServices } from './services';
+import { initFeatured } from './featured';
 
 const emit = (type: string, detail?: unknown) => document.dispatchEvent(new CustomEvent(type, { detail }));
 
@@ -10,6 +11,10 @@ export function initHome(rm: boolean) {
   /* §3 services: the layered deck (reduced motion keeps the stacked rows) */
   const svc = document.getElementById('services');
   if (svc && !rm) offs.push(initServices(svc));
+
+  /* §4 featured cases: sites develop out of the dots, then scroll inside their frames */
+  const feat = document.querySelector<HTMLElement>('[data-featured]');
+  if (feat && !rm) offs.push(initFeatured(feat));
 
   /* §5 flood: circle wipe from Day 1 (scrub), then days light 1→7 */
   const flood = document.getElementById('flood');
