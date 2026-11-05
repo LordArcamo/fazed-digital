@@ -74,11 +74,8 @@ export const POST: APIRoute = async ({ request }) => {
     packageFrom: s(body.packageFrom),
   };
 
-  /* ── Bots fill the hidden honeypot; pretend success, send nothing ── */
-  if (s(body.website)) {
-    console.warn('LP honeypot hit, dropped:', JSON.stringify({ email: d.email, source: d.source }));
-    return json({ ok: true });
-  }
+  /* ── A filled honeypot is flagged, never dropped: autofill can fill hidden fields. Inbox only, so bots stay out of HubSpot and the CRM ── */
+  const flagged = !!s(body.website);
 
   if (!d.name || !d.email) return json({ error: 'Please fill in all required fields.' }, 400);
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(d.email)) return json({ error: 'Please enter a valid email address.' }, 400);
@@ -91,12 +88,12 @@ export const POST: APIRoute = async ({ request }) => {
   const fast = typeof body.t === 'number' && body.t > 0 && body.t < 2500;
 
   /* ── Always log first, so a lead is never lost even if every service fails ── */
-  console.log('LP form submission:', JSON.stringify(d));
+  console.log('LP form submission:', JSON.stringify({ ...d, flagged }));
 
   const pkgLabel = packageLabel(d.pkg, variant);
   const pageUri = referer || `https://www.fazeddigital.com/lp/7-day-website${variant === 'php' ? '/ph' : ''}`;
   const [crm, mail, hs] = await Promise.all([
-    saveToCrm({
+    flagged ? null : saveToCrm({
       ref: s(body.idem), form: 'seven-day', pipeline: variant === 'php' ? 'ph' : 'us',
       name: d.name, email: d.email, phone: d.phone, business: d.businessName, website: d.currentWebsite,
       service: '7-Day Website Package', package: pkgLabel, message: d.notes, source: d.source,
@@ -106,10 +103,10 @@ export const POST: APIRoute = async ({ request }) => {
       to: LEAD_TO,
       cc: LEAD_CC,
       replyTo: d.email,
-      subject: `${fast ? '[fast] ' : ''}New 7-Day Website lead: ${d.businessName || d.name} (${pkgLabel})`,
+      subject: `${flagged ? '[check] ' : ''}${fast ? '[fast] ' : ''}New 7-Day Website lead: ${d.businessName || d.name} (${pkgLabel})`,
       html: buildHtml(d, pkgLabel),
     }),
-    saveToHubSpot({
+    flagged ? null : saveToHubSpot({
       name: d.name, email: d.email, serviceLabel: '7-Day Website Package', pageUri,
       pageName: `Fazed Digital — 7-Day LP (${variant.toUpperCase()})`,
       message: briefText(d, pkgLabel),
@@ -122,8 +119,8 @@ export const POST: APIRoute = async ({ request }) => {
   if (!crm && !mail && hs !== 'ok') return json({ error: 'Your brief didn’t send. Please try again, or email it to info@fazeddigital.com.' }, 502);
   if (s(body.idem)) sent.set(s(body.idem), Date.now());
 
-  // The lead's own copy: what happens next + their answers. Only once the team has it, never for a [fast] send.
-  if (!fast && confirmAllowed(d.email)) {
+  // The lead's own copy: what happens next + their answers. Only once the team has it, never for a [fast] or [check] send.
+  if (!fast && !flagged && confirmAllowed(d.email)) {
     const c = await sendLead({
       to: [d.email],
       replyTo: NAP.email,

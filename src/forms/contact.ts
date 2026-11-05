@@ -11,7 +11,7 @@ export interface ContactPayload { name: string; email: string; phone: string; co
 export function serialise(form: HTMLFormElement): ContactPayload {
   const d = new FormData(form);
   const g = (k: string) => String(d.get(k) ?? '').trim();
-  return { name: g('name'), email: g('email'), phone: g('phone'), company: g('company'), service: g('service'), budget: g('budget'), message: g('message'), website: g('website') };
+  return { name: g('name'), email: g('email'), phone: g('phone'), company: g('company'), service: g('service'), budget: g('budget'), message: g('message'), website: g('fz_check') };
 }
 export function validate(p: ContactPayload): Record<string, string> {
   const e: Record<string, string> = {};

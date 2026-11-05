@@ -32,11 +32,8 @@ export const POST: APIRoute = async ({ request }) => {
   // optional fields are folded into the message so the HubSpot form needs no new properties
   const fullMessage = [message, company && `Business: ${company}`, phone && `Phone: ${phone}`, budget && `Budget: ${budget}`, source && `Source: ${source}`].filter(Boolean).join('\n\n');
 
-  /* ── Bots fill the hidden honeypot; pretend success, send nothing ── */
-  if (website.trim()) {
-    console.warn('Contact honeypot hit, dropped:', JSON.stringify({ email }));
-    return json({ ok: true });
-  }
+  /* ── A filled honeypot is flagged, never dropped: autofill can fill hidden fields. Inbox only, so bots stay out of HubSpot and the CRM ── */
+  const flagged = !!website.trim();
 
   /* ── Verify reCAPTCHA v3 token ──────────────────────────── */
   // TODO: re-enable hard block once correct secret key is confirmed in Vercel
@@ -64,11 +61,11 @@ export const POST: APIRoute = async ({ request }) => {
   const serviceLabel = SERVICE_LABELS[service] ?? 'Not specified';
 
   /* ── Always log, then save and email the lead at once (a lead is never lost) ── */
-  console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message, source }));
+  console.log('Contact form submission:', JSON.stringify({ name, email, phone, service: serviceLabel, company, budget, message, source, flagged }));
   const [crm, emailed, hs] = await Promise.all([
-    saveToCrm({ form: 'contact', name, email, phone, business: company, service: serviceLabel, budget, message, source }),
-    sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source }),
-    saveToHubSpot({
+    flagged ? null : saveToCrm({ form: 'contact', name, email, phone, business: company, service: serviceLabel, budget, message, source }),
+    sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source, flagged }),
+    flagged ? null : saveToHubSpot({
       name, email, message: fullMessage, serviceLabel,
       pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
       pageName: 'Fazed Digital — Contact',
@@ -85,12 +82,12 @@ export const POST: APIRoute = async ({ request }) => {
 
 // ─── Lead notification email ──────────────────────────────────────────────────
 // Returns true when Gmail accepted the email. Never throws: a failed email must not block the form.
-async function sendLeadEmail(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string; source: string }): Promise<boolean> {
+async function sendLeadEmail(d: { name: string; email: string; phone: string; serviceLabel: string; company: string; budget: string; message: string; source: string; flagged: boolean }): Promise<boolean> {
   const via = await sendLead({
     to: LEAD_TO,
     cc: LEAD_CC,
     replyTo: d.email,
-    subject: `New contact lead: ${d.company || d.name} (${d.serviceLabel})`,
+    subject: `${d.flagged ? '[check] ' : ''}New contact lead: ${d.company || d.name} (${d.serviceLabel})`,
     html: buildHtml(d),
   });
   if (via) console.log(`Contact lead emailed via ${via}`);

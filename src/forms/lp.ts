@@ -386,7 +386,7 @@ export function initLpForms() {
         variant, package: val('package'), packageFrom: skip.has('package') ? 'pricing' : 'asked', industry, goal: val('goal'),
         timeline: val('timeline'), styleVibe: val('styleVibe'), businessName: val('businessName'), facebookPage: val('facebookPage'),
         currentWebsite: val('goal') === 'replace' ? val('currentWebsite') : '', name: val('name'), email: val('email'),
-        phone: val('phone'), notes: val('notes'), source, website: val('website'), t: openedAt ? Date.now() - openedAt : 0, idem,
+        phone: val('phone'), notes: val('notes'), source, website: val('fz_check'), t: openedAt ? Date.now() - openedAt : 0, idem,
       };
       sending = true;
       send.disabled = true;

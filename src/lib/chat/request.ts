@@ -9,7 +9,7 @@ const MAX_REPLY_TOKENS = 500;
 
 export const FORM_TOOL: Anthropic.Tool = {
   name: 'show_lead_form',
-  description: 'Opens a short form in the chat where the visitor types their own name, email and phone for the team. Only call this after the visitor agreed to leave their details, or directly asked to be contacted.',
+  description: 'Opens a short form in the chat where the visitor types their own name, email and phone for the team. Only call this after the visitor agreed to leave their details, directly asked to be contacted, or said they are ready to go ahead.',
   input_schema: { type: 'object', properties: {}, additionalProperties: false },
 };
 

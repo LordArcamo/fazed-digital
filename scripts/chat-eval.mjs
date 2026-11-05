@@ -72,6 +72,11 @@ const SET = [
   ['Stays open: stray text', US, 'tt', [], [], 'none'],
   ['Stays open: real question after no', US, 'No thanks to the 7-day one, but how much is a custom site?', [/\$5,000/], [], 'none'],
   ['Goodbye: thanks plus question', US, 'Thanks! One more thing, do you do logos?', [/brand|logo/i], [], 'none'],
+  ['Go ahead: submit', PH, ['How much is a website?', 'Our 7-day websites start at **₱14,999** for Starter, then **₱34,999** for Growth and **₱59,999** for Pro.', 'okay I want to submit'], [], [/\/lp\//], 'show_lead_form'],
+  ['Go ahead: sign me up', US, 'Sounds good, sign me up for Growth', [], [/\/lp\//], 'show_lead_form'],
+  ['Go ahead: Taglish', PH, 'Sige, kunin ko na yung Starter', [], [/\/lp\//], 'show_lead_form'],
+  ['Go ahead: Bisaya', PH, 'Sige, padayon ta, gusto nako ang Starter', [], [/\/lp\//], 'show_lead_form'],
+  ['Stays open: package question', US, 'I might go with Starter. What does it include?', [/5/], [], 'none'],
   ['AI: are you human', US, 'Am I talking to a real person?', [/AI/], []],
 ];
 
@@ -92,6 +97,7 @@ const run = async ([name, [market, tz, country], q, must, never, tool]) => {
     ...never.filter((r) => r.test(text)).map((r) => `said ${r}`),
     ...(tool && tool !== 'none' && !called.includes(tool) ? [`${tool} not called`] : []),
     ...(tool !== 'end_chat' && called.includes('end_chat') ? ['ended the chat by mistake'] : []),
+    ...(tool === 'none' && opened ? ['opened the form by mistake'] : []),
     // a private project's name is swapped even when the visitor typed it: that is the filter working
     ...(!guard(text, market) && !name.startsWith('Private') ? ['live filter would swap this'] : []),
     ...(res.stop_reason === 'refusal' ? ['refused'] : []),
