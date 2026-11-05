@@ -4,7 +4,7 @@ import type { APIRoute } from 'astro';
 import Anthropic from '@anthropic-ai/sdk';
 import { LIMITS } from '../../chat/links';
 import type { Market } from '../../lib/chat/knowledge';
-import { DEFAULT_MODEL, FORM_TOOL, chatRequest } from '../../lib/chat/request';
+import { DEFAULT_MODEL, END_TOOL, FORM_TOOL, chatRequest } from '../../lib/chat/request';
 import { guard, SAFE_LINE } from '../../lib/chat/guard';
 import { liveNote, validZone } from '../../lib/chat/live';
 import { API_BASE, API_KEY, allow, gate, ipKey, json, readBody, signReply, validReply } from '../../lib/chat/security';
@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const stream = new ReadableStream({
     async start(ctrl) {
       const send = (o: object) => ctrl.enqueue(enc.encode(`${JSON.stringify(o)}\n`));
-      const finish = (text: string, form: boolean) => send({ t: 'end', form, sig: signReply(sid, replyIndex, text) });
+      const finish = (text: string, form: boolean, done = false) => send({ t: 'end', form, done, sig: signReply(sid, replyIndex, text) });
       let full = '';
       try {
         const reply = client!.messages.stream(chatRequest(MODEL, mkt, note, turns), { signal: request.signal });
@@ -89,10 +89,11 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
           send({ t: 'swap', v: SAFE_LINE });
           finish(SAFE_LINE, false);
         } else {
-          const form = final.content.some((b) => b.type === 'tool_use' && b.name === FORM_TOOL.name);
-          const text = full.trim() || 'Sure. Pop your details in below and the team will reply within one business day.';
+          const called = (tool: Anthropic.Tool) => final.content.some((b) => b.type === 'tool_use' && b.name === tool.name);
+          const form = called(FORM_TOOL), done = called(END_TOOL);
+          const text = full.trim() || (done ? 'Thanks for stopping by. I’m here if you need anything.' : 'Sure. Pop your details in below and the team will reply within one business day.');
           if (text !== full) send({ t: 'swap', v: text });
-          finish(text, form);
+          finish(text, form, done);
         }
       } catch (err) {
         if (!request.signal.aborted) {

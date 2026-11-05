@@ -8,6 +8,8 @@ import { leadSource } from '../lib/source';
 
 interface Msg { role: 'user' | 'assistant'; content: string; sig?: string }
 const KEY = 'fz-chat';
+const STALE = 30 * 60_000; // a chat left this long starts fresh
+const PLACEHOLDER = 'Ask about a website, price or timeline';
 const html = document.documentElement;
 const phone = () => matchMedia('(max-width: 767px)').matches;
 const geo = () => (html.dataset.geo === 'ph' ? 'ph' : 'intl');
@@ -19,7 +21,7 @@ const FALLBACK = ' You can also [send us a brief](/contact#brief), and a real pe
 const ERRORS: Record<string, string> = {
   rate: `You’re moving fast, so I’ve paused for a few minutes.${FALLBACK}`,
   busy: `I’m at capacity for today.${FALLBACK}`,
-  turns: `We’ve reached the end of what I can do in one chat.${FALLBACK}`,
+  turns: `That’s as far as I can go in one chat.${FALLBACK} Press New chat to start again.`,
   long: `That message is a bit long for me. Could you shorten it?`,
   other: `Something went wrong on my side.${FALLBACK}`,
 };
@@ -29,17 +31,20 @@ const two = (pose: 'wave' | 'walk', cls: string) => `<span class="fzy-2 ${cls}" 
 
 let state = load();
 let root: HTMLElement | null = null, trigger: HTMLElement | null = null;
-let panel: HTMLElement, log: HTMLElement, input: HTMLTextAreaElement, sendBtn: HTMLButtonElement, status: HTMLElement, chips: HTMLElement, count: HTMLElement;
-let busy = false, pinned = true;
+let panel: HTMLElement, log: HTMLElement, input: HTMLTextAreaElement, sendBtn: HTMLButtonElement, newBtn: HTMLButtonElement, status: HTMLElement, chips: HTMLElement, count: HTMLElement;
+let busy = false, pinned = true, restartTimer = 0;
 
-function load(): { sid: string; msgs: Msg[]; notes: Record<number, string>; leadSent: boolean } {
+function fresh(leadSent = false) {
+  return { sid: uid(), msgs: [] as Msg[], notes: {} as Record<number, string>, leadSent, ended: false, at: Date.now() };
+}
+function load(): ReturnType<typeof fresh> {
   try {
     const s = JSON.parse(sessionStorage.getItem(KEY) ?? 'null');
-    if (s?.sid && Array.isArray(s.msgs)) return { notes: {}, leadSent: false, ...s };
+    if (s?.sid && Array.isArray(s.msgs)) return s.ended || Date.now() - s.at > STALE ? fresh(s.leadSent) : { ...fresh(), ...s };
   } catch {}
-  return { sid: uid(), msgs: [], notes: {}, leadSent: false };
+  return fresh();
 }
-const save = () => { try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
+const save = () => { state.at = Date.now(); try { sessionStorage.setItem(KEY, JSON.stringify(state)); } catch {} };
 
 /* ── text: links, bold, the two phone numbers and the email ── */
 const TOKENS = /\[([^\]]+)\]\(([^)\s]+)\)|\*\*([^*]+)\*\*|(\+\d[\d\s-]{8,}\d)|([\w.+-]+@[\w-]+\.[\w.-]*\w)/g;
@@ -92,15 +97,45 @@ function note(text: string) {
 function setBusy(on: boolean) {
   busy = on;
   sendBtn.disabled = on;
+  newBtn.disabled = on;
   panel.toggleAttribute('data-busy', on);
+}
+function greet() {
+  entry('bot', GREETING).insertAdjacentHTML('afterend', two('wave', 'fm-wave'));
+}
+/** Back to step one: the greeting and the starter questions, with a new conversation behind them. */
+function restart() {
+  clearTimeout(restartTimer);
+  state = fresh(state.leadSent);
+  save();
+  log.replaceChildren();
+  greet();
+  chips.hidden = false;
+  newBtn.hidden = true;
+  input.disabled = false;
+  input.placeholder = PLACEHOLDER;
+  input.value = '';
+  fitInput();
+  status.textContent = 'New chat started.';
+  if (!panel.hidden && !phone()) input.focus();
+}
+/** The chat is over: nothing more can be sent. With a delay it resets by itself; New chat always works. */
+function endChat(delay?: number) {
+  state.ended = true;
+  save();
+  input.disabled = true;
+  input.placeholder = delay ? 'Starting a new chat…' : 'Press New chat to start again';
+  newBtn.hidden = false;
+  if (delay) restartTimer = window.setTimeout(restart, delay);
+  if (!phone()) newBtn.focus(); // the box is locked, and keyboard users still need Esc
 }
 const atLimit = () => state.msgs.filter((m) => m.role === 'user').length >= LIMITS.turns;
 
 /* ── a turn ── */
 async function ask(text: string) {
   if (busy || !text.trim()) return;
-  if (atLimit()) { note(ERRORS.turns); return; }
   chips.hidden = true;
+  newBtn.hidden = false;
   state.msgs.push({ role: 'user', content: text });
   save();
   entry('you', text);
@@ -118,7 +153,7 @@ async function ask(text: string) {
   status.textContent = `${BOT} is writing`;
   const body = li.querySelector<HTMLElement>('.fm-t')!;
 
-  let reply = '', sig = '', form = false, failed = '';
+  let reply = '', sig = '', form = false, over = false, failed = '';
   try {
     const res = await fetch('/api/chat', {
       method: 'POST',
@@ -143,7 +178,7 @@ async function ask(text: string) {
           const ev = JSON.parse(row);
           if (ev.t === 'd') reply += ev.v;
           else if (ev.t === 'swap') reply = ev.v;
-          else if (ev.t === 'end') { sig = ev.sig; form = ev.form; }
+          else if (ev.t === 'end') { sig = ev.sig; form = ev.form; over = ev.done; }
           else if (ev.t === 'err') failed = 'other';
         }
         frame ||= requestAnimationFrame(paint);
@@ -167,12 +202,13 @@ async function ask(text: string) {
     state.msgs.push({ role: 'assistant', content: reply, sig });
     save();
     status.textContent = `${BOT} says: ${body.textContent}`;
-    if (form && !state.leadSent) leadForm();
-    else if (atLimit()) note(ERRORS.turns);
+    if (over) endChat(5000);
+    else if (form && !state.leadSent) leadForm();
+    else if (atLimit()) { note(ERRORS.turns); endChat(); }
   }
   setBusy(false);
   scroll();
-  if (!phone()) input.focus();
+  if (!phone()) (input.disabled ? newBtn : input).focus();
 }
 
 /* ── the visitor's own details: the only way a lead is sent ── */
@@ -255,7 +291,7 @@ function leadForm() {
       const done = 'Got it, thanks. It’s with the team now, and a real person will reply within one business day.';
       note(done).insertAdjacentHTML('beforeend', sprite(fazzyRows('hype'), 'fm-hype'));
       status.textContent = done;
-      if (!phone()) input.focus();
+      endChat(8000);
     } catch (x) {
       err.textContent = (x as Error).message || 'That didn’t send. Please try again, or email info@fazeddigital.com.';
       send.disabled = false;
@@ -300,13 +336,14 @@ function build(host: HTMLElement) {
     <header class="fcp-hd">
       ${sprite(HEAD, 'fcp-head')}
       <div><h2 id="fcp-h" class="fcp-name" tabindex="-1"></h2><p class="fcp-sub">AI assistant · Fazed Digital</p></div>
+      <button class="fcp-new" type="button" hidden>New chat</button>
       <button class="fcp-x" type="button" aria-label="Close chat"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>
     </header>
     <ol class="fcp-log" aria-label="Conversation" tabindex="0"></ol>
     <div class="fcp-chips"></div>
     <form class="fcp-in">
       <label class="sr-only" for="fcp-q">Your message</label>
-      <textarea id="fcp-q" rows="1" enterkeyhint="send" placeholder="Ask about a website, price or timeline"></textarea>
+      <textarea id="fcp-q" rows="1" enterkeyhint="send" ></textarea>
       <span class="fcp-count" aria-hidden="true"></span>
       <button class="fcp-send" type="submit" aria-label="Send message"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.6" fill="none"/></svg></button>
     </form>
@@ -317,18 +354,22 @@ function build(host: HTMLElement) {
   log = panel.querySelector('.fcp-log')!;
   input = panel.querySelector('textarea')!;
   input.maxLength = LIMITS.userChars;
+  input.placeholder = PLACEHOLDER;
+  newBtn = panel.querySelector('.fcp-new')!;
+  newBtn.addEventListener('click', restart);
   sendBtn = panel.querySelector('.fcp-send')!;
   status = panel.querySelector('[role=status]')!;
   chips = panel.querySelector('.fcp-chips')!;
   count = panel.querySelector('.fcp-count')!;
 
-  entry('bot', GREETING).insertAdjacentHTML('afterend', two('wave', 'fm-wave'));
+  greet();
   state.msgs.forEach((m, i) => {
     if (state.notes[i]) entry('bot', state.notes[i]);
     entry(m.role === 'user' ? 'you' : 'bot', m.content);
   });
   if (state.notes[state.msgs.length]) entry('bot', state.notes[state.msgs.length]);
   chips.hidden = state.msgs.length > 0;
+  newBtn.hidden = !state.msgs.length;
   for (const [label, act] of CHIPS) {
     const b = document.createElement('button');
     b.type = 'button';
@@ -357,6 +398,7 @@ export function openChat(host: HTMLElement, btn: HTMLElement) {
   root = host;
   trigger = btn;
   if (!panel || !host.contains(panel)) { state = load(); build(host); }
+  else if (!state.ended && state.msgs.length && Date.now() - state.at > STALE) restart();
   panel.hidden = false;
   panel.setAttribute('aria-modal', String(phone()));
   host.dataset.open = '';

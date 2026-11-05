@@ -76,6 +76,7 @@ Off until `ANTHROPIC_API_KEY` is set in Vercel and the site is redeployed (no bu
 - **Server:** `src/pages/api/chat.ts` streams NDJSON from Claude. Default model `claude-sonnet-5-5` (thinking off, low effort); `CHAT_MODEL` swaps it. Two prompt-cache points: rules + shared knowledge, then the market block. The live note (open/closed, time zones) sits after them.
 - **Knowledge:** `src/lib/chat/knowledge.ts` arranges `src/data/*`; the hand-written part is the rules. Money only ever appears in the market blocks. `scripts/lint-chat.mjs` checks this in the build, and that no key reaches the static output.
 - **Safety:** `src/lib/chat/security.ts` (same-site check, UA, size caps, per-IP/session/site limits, signed bot replies so history can't be forged) and `src/lib/chat/guard.ts` (swaps a reply with the wrong market's prices, a private project or a leaked prompt). The limits live in the warm function instance, so the Anthropic Console's monthly spend limit is the hard ceiling.
+- **Endings:** a chat is capped at 10 visitor messages. The `end_chat` tool (visitor is done), a sent lead, the header's New chat button or 30 idle minutes reset it to the greeting.
 - **Leads:** only through the form in the chat (`show_lead_form` tool, `/api/chat-lead`): Gmail + CRM + HubSpot, `source` starts with `chat`, summary + transcript included.
 - **Logged:** market, turn and token counts. No visitor text, no IPs. Contact details are logged only for sent leads, like the other forms.
 

@@ -13,6 +13,12 @@ export const FORM_TOOL: Anthropic.Tool = {
   input_schema: { type: 'object', properties: {}, additionalProperties: false },
 };
 
+export const END_TOOL: Anthropic.Tool = {
+  name: 'end_chat',
+  description: 'Ends this chat and resets it to the start. Call it right after a one-sentence goodbye when the visitor says they are done or need nothing else.',
+  input_schema: { type: 'object', properties: {}, additionalProperties: false },
+};
+
 // Two cache points: rules + knowledge are shared by everyone, the market block by that market. The live note stays after them.
 const shared = `${RULES}\n\n${sharedKnowledge()}`;
 const market = { ph: marketKnowledge('ph'), intl: marketKnowledge('intl') };
@@ -23,7 +29,7 @@ export function chatRequest(model: string, mkt: Market, note: string, messages: 
     max_tokens: MAX_REPLY_TOKENS,
     thinking: (model === DEFAULT_MODEL ? { type: 'between_tools' } : { type: 'disabled' }) as unknown as Anthropic.ThinkingConfigParam,
     output_config: { effort: 'low' },
-    tools: [FORM_TOOL],
+    tools: [FORM_TOOL, END_TOOL],
     system: [
       { type: 'text', text: shared, cache_control: { type: 'ephemeral' } },
       { type: 'text', text: market[mkt], cache_control: { type: 'ephemeral' } },
