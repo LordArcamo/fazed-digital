@@ -203,8 +203,10 @@ function leadForm() {
   rich(txt, 'Fazed Digital can contact me about this and keep a copy of this chat. [Privacy](/privacy#chat)');
   consent.append(box, txt);
   const trap = document.createElement('input');
-  Object.assign(trap, { type: 'text', name: 'website', tabIndex: -1, autocomplete: 'off', className: 'fl-hp' });
+  Object.assign(trap, { type: 'text', name: 'fz_check', tabIndex: -1, autocomplete: 'off', className: 'fl-hp' });
   trap.setAttribute('aria-hidden', 'true');
+  trap.setAttribute('data-1p-ignore', '');
+  trap.setAttribute('data-lpignore', 'true');
   const err = document.createElement('p');
   err.className = 'fl-e';
   err.setAttribute('role', 'alert');
@@ -241,7 +243,7 @@ function leadForm() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name, email, phone: d.get('phone'), business: d.get('business'), website: d.get('website'), consent: box.checked, idem,
+          name, email, phone: d.get('phone'), business: d.get('business'), website: d.get('fz_check'), consent: box.checked, idem,
           market: geo(), page: location.pathname, source: leadSource(), transcript: state.msgs.map(({ role, content }) => ({ role, content })),
         }),
       });

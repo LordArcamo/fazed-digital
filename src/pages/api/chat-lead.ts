@@ -44,8 +44,9 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const body = await readBody<LeadBody>(request, LIMITS.bodyBytes);
   if (!body) return json({ error: 'Invalid request' }, 400);
 
-  /* ── Bots fill the hidden honeypot; pretend success, send nothing ── */
-  if (s(body.website, 200)) return json({ ok: true });
+  // A filled honeypot is flagged in the subject, never dropped: browser autofill can fill hidden fields, and this visitor
+  // ticked the consent box. The rate limit below handles real bots.
+  const flagged = !!s(body.website, 200);
 
   const name = s(body.name, 160), email = s(body.email, 200), phone = s(body.phone, 60), business = s(body.business, 200);
   if (!name || !email) return json({ error: 'Please add your name and email.' }, 400);
@@ -67,7 +68,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
   const transcript = turns.map((t) => `${t.role === 'user' ? 'Visitor' : BOT}: ${s(t.content, LIMITS.botChars)}`).join('\n').slice(-5000);
 
   /* ── Always log first, so a lead is never lost even if every service fails ── */
-  console.log('Chat lead:', JSON.stringify({ name, email, phone, business, market: ph ? 'ph' : 'intl', page, source }));
+  console.log('Chat lead:', JSON.stringify({ name, email, phone, business, market: ph ? 'ph' : 'intl', page, source, flagged }));
 
   const summary = await summarise(transcript);
   const message = [summary && `Summary: ${summary}`, transcript && `Chat transcript:\n${transcript}`].filter(Boolean).join('\n\n') || 'Left their details in the site chat.';
@@ -77,7 +78,7 @@ export const POST: APIRoute = async ({ request, clientAddress }) => {
       ref: idem, form: 'contact', pipeline: ph ? 'ph' : 'us', name, email, phone, business, service: 'Website chat', message, source,
       details: { Market: ph ? 'Philippines (₱)' : 'International ($)', Page: page },
     }),
-    sendLead({ to: LEAD_TO, cc: LEAD_CC, replyTo: email, subject: `New chat lead: ${business || name}`, html: buildHtml({ name, email, phone, business, ph, page, source, summary, transcript }) }),
+    sendLead({ to: LEAD_TO, cc: LEAD_CC, replyTo: email, subject: `${flagged ? '[check] ' : ''}New chat lead: ${business || name}`, html: buildHtml({ name, email, phone, business, ph, page, source, summary, transcript }) }),
     saveToHubSpot({
       name, email, serviceLabel: 'Website chat', pageUri: `https://www.fazeddigital.com${page.startsWith('/') ? page : ''}`, pageName: 'Fazed Digital — Website chat',
       message: [message, business && `Business: ${business}`, phone && `Phone: ${phone}`, `Source: ${source}`].filter(Boolean).join('\n\n'),
