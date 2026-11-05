@@ -63,6 +63,14 @@ const SET = [
   ['Goodbye: no thanks', US, 'No thanks, that is all I needed.', [], [/\?/, /\/lp\//], 'end_chat'],
   ['Goodbye: Taglish', PH, 'Okay na po, wala na. Salamat!', [], [/\?/], 'end_chat'],
   ['Goodbye: Bisaya', PH, 'Mao ra na, salamat kaayo.', [], [/\?/], 'end_chat'],
+  ['Goodbye: never mind', US, 'never mind im good', [], [/\?/, /\/audit|\/lp\/|\/contact/, /anytime|any time/i], 'end_chat'],
+  ['Goodbye: nah', US, 'nah all good', [], [/\?/, /\/audit|\/lp\//], 'end_chat'],
+  ['Goodbye: just looking', AU, 'Just looking for now, cheers', [], [/\?/, /\/audit|\/lp\//], 'end_chat'],
+  ['Goodbye: mid-chat', US, ['Show me your work', 'Here are some cases: [our case studies](/work). If you tell me your industry, I\u2019ll point out the closest match.', 'never mind im good'], [], [/\?/, /\/audit|\/lp\//, /anytime|any time/i], 'end_chat'],
+  ['Goodbye: ayaw na', PH, 'Ayaw na lang, salamat', [], [/\?/], 'end_chat'],
+  ['Goodbye: sige na lang', PH, 'Sige wag na lang po', [], [/\?/], 'end_chat'],
+  ['Stays open: stray text', US, 'tt', [], [], 'none'],
+  ['Stays open: real question after no', US, 'No thanks to the 7-day one, but how much is a custom site?', [/\$5,000/], [], 'none'],
   ['Goodbye: thanks plus question', US, 'Thanks! One more thing, do you do logos?', [/brand|logo/i], [], 'none'],
   ['AI: are you human', US, 'Am I talking to a real person?', [/AI/], []],
 ];
@@ -74,7 +82,7 @@ const rows = [];
 const run = async ([name, [market, tz, country], q, must, never, tool]) => {
   const t0 = Date.now();
   const note = liveNote({ market, country, tz, page: '/', leadSent: false, now: when });
-  const res = await client.messages.create(chatRequest(model, market, note, [{ role: 'user', content: q }]));
+  const res = await client.messages.create(chatRequest(model, market, note, Array.isArray(q) ? q.map((content, i) => ({ role: i % 2 ? 'assistant' : 'user', content })) : [{ role: 'user', content: q }]));
   const text = res.content.filter((b) => b.type === 'text').map((b) => b.text).join('').trim();
   const called = res.content.filter((b) => b.type === 'tool_use').map((b) => b.name);
   const opened = called.includes('show_lead_form');
@@ -103,4 +111,4 @@ const rate = model.includes('haiku') ? { i: 0.1, c: 0.01, w: 0.125, o: 0.5 } : {
 const cost = (usage.in * rate.i + usage.cached * rate.c + usage.wrote * rate.w + usage.out * rate.o) / 1e6;
 const avg = Math.round(rows.reduce((s, r) => s + r.ms, 0) / rows.length);
 console.log(`\n${model}: ${pass}/${SET.length} passed · about $${cost.toFixed(3)} · average ${avg} ms · tokens ${JSON.stringify(usage)}`);
-if (outFile) writeFileSync(outFile, [`# Fazzy test set: ${model}`, `${pass}/${SET.length} passed, about $${cost.toFixed(3)}, average ${avg} ms per full reply.`, '', ...rows.map((r) => `## ${r.problems.length ? '⚠️ ' : ''}${r.name}\n**Visitor:** ${r.q}\n\n**Fazzy:** ${r.text}${r.opened ? '\n\n*(opened the details form)*' : ''}${r.ended ? '\n\n*(ended the chat)*' : ''}${r.problems.length ? `\n\n*Check: ${r.problems.join('; ')}*` : ''}\n`)].join('\n'));
+if (outFile) writeFileSync(outFile, [`# Fazzy test set: ${model}`, `${pass}/${SET.length} passed, about $${cost.toFixed(3)}, average ${avg} ms per full reply.`, '', ...rows.map((r) => `## ${r.problems.length ? '⚠️ ' : ''}${r.name}\n**Visitor:** ${[r.q].flat().at(-1)}\n\n**Fazzy:** ${r.text}${r.opened ? '\n\n*(opened the details form)*' : ''}${r.ended ? '\n\n*(ended the chat)*' : ''}${r.problems.length ? `\n\n*Check: ${r.problems.join('; ')}*` : ''}\n`)].join('\n'));

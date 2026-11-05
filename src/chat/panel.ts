@@ -308,7 +308,10 @@ function leadForm() {
 /* ── the panel ── */
 function fitInput() {
   input.style.height = 'auto';
-  input.style.height = `${Math.min(input.scrollHeight, 120)}px`;
+  // scrollHeight leaves out the 2px of border; short of that, the box shows a scrollbar on one line
+  const h = input.scrollHeight + 2;
+  input.style.height = `${Math.min(h, 120)}px`;
+  input.style.overflowY = h > 120 ? 'auto' : 'hidden';
   const left = LIMITS.userChars - input.value.length;
   count.textContent = left < 100 ? String(left) : '';
 }
@@ -335,7 +338,7 @@ function build(host: HTMLElement) {
   panel.innerHTML = `
     <header class="fcp-hd">
       ${sprite(HEAD, 'fcp-head')}
-      <div><h2 id="fcp-h" class="fcp-name" tabindex="-1"></h2><p class="fcp-sub">AI assistant · Fazed Digital</p></div>
+      <div><h2 id="fcp-h" class="fcp-name" tabindex="-1"></h2><p class="fcp-sub">AI assistant</p></div>
       <button class="fcp-new" type="button" hidden>New chat</button>
       <button class="fcp-x" type="button" aria-label="Close chat"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>
     </header>
