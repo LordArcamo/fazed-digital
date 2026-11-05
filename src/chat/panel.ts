@@ -2,6 +2,7 @@
 // The conversation lives in sessionStorage (this tab only). Text is only ever set as text nodes; links must pass isSitePath.
 import css from './panel.css?inline';
 import { BOT, LIMITS, isSitePath } from './links';
+import { HEAD, fazzyRows, sprite } from './fazzy';
 import { bus } from '../lib/bus';
 import { leadSource } from '../lib/source';
 
@@ -22,6 +23,9 @@ const ERRORS: Record<string, string> = {
   long: `That message is a bit long for me. Could you shorten it?`,
   other: `Something went wrong on my side.${FALLBACK}`,
 };
+
+const TINY_HEAD = sprite(HEAD, 'fm-h');
+const two = (pose: 'wave' | 'walk', cls: string) => `<span class="fzy-2 ${cls}" aria-hidden="true">${sprite(fazzyRows(pose, 0))}${sprite(fazzyRows(pose, 1))}</span>`;
 
 let state = load();
 let root: HTMLElement | null = null, trigger: HTMLElement | null = null;
@@ -73,6 +77,7 @@ function entry(who: 'bot' | 'you', text: string) {
   b.className = 'fm-t';
   rich(b, text);
   li.append(k, b);
+  if (who === 'bot') li.insertAdjacentHTML('afterbegin', TINY_HEAD);
   log.append(li);
   scroll();
   return b;
@@ -106,7 +111,7 @@ async function ask(text: string) {
 
   const li = document.createElement('li');
   li.className = 'fm fm--bot fm--wait';
-  li.innerHTML = '<p class="fm-k"></p><p class="fm-t"><span class="fm-dots" aria-hidden="true"><i></i><i></i><i></i></span></p>';
+  li.innerHTML = `${TINY_HEAD}<p class="fm-k"></p><p class="fm-t">${two('walk', 'fm-walk')}</p>`;
   li.querySelector('.fm-k')!.textContent = BOT;
   log.append(li);
   scroll();
@@ -246,7 +251,7 @@ function leadForm() {
       save();
       li.remove();
       const done = 'Got it, thanks. It’s with the team now, and a real person will reply within one business day.';
-      note(done);
+      note(done).insertAdjacentHTML('beforeend', sprite(fazzyRows('hype'), 'fm-hype'));
       status.textContent = done;
       if (!phone()) input.focus();
     } catch (x) {
@@ -291,7 +296,7 @@ function build(host: HTMLElement) {
   panel.setAttribute('data-lenis-prevent', '');
   panel.innerHTML = `
     <header class="fcp-hd">
-      <span class="fcp-n" aria-hidden="true"></span>
+      ${sprite(HEAD, 'fcp-head')}
       <div><h2 id="fcp-h" class="fcp-name" tabindex="-1"></h2><p class="fcp-sub">AI assistant · Fazed Digital</p></div>
       <button class="fcp-x" type="button" aria-label="Close chat"><svg viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="M3 3l10 10M13 3L3 13" stroke="currentColor" stroke-width="1.5" fill="none"/></svg></button>
     </header>
@@ -315,7 +320,7 @@ function build(host: HTMLElement) {
   chips = panel.querySelector('.fcp-chips')!;
   count = panel.querySelector('.fcp-count')!;
 
-  entry('bot', GREETING);
+  entry('bot', GREETING).insertAdjacentHTML('afterend', two('wave', 'fm-wave'));
   state.msgs.forEach((m, i) => {
     if (state.notes[i]) entry('bot', state.notes[i]);
     entry(m.role === 'user' ? 'you' : 'bot', m.content);

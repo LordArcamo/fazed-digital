@@ -71,6 +71,7 @@ Category hubs live at `/blog/category/{seo,branding,design,development,strategy}
 
 ## Site chat (Fazzy)
 Off until `ANTHROPIC_API_KEY` is set in Vercel and the site is redeployed (no button, no code in the pages, `/api/chat` and `/api/chat-lead` answer 404). Never on the ad pages (`lp` in `Base.astro`).
+- **Fazzy:** `src/chat/fazzy.ts` holds the pixel art as text rows (from the #08 site) and draws it as SVG; colours are the `--fazzy-*` tokens.
 - **Browser:** `src/chat/launcher.ts` is all that loads with the page. `src/chat/panel.ts` + `panel.css` are a dynamic import on first hover, focus or tap. The chat lives in sessionStorage (`fz-chat`).
 - **Server:** `src/pages/api/chat.ts` streams NDJSON from Claude. Default model `claude-sonnet-5-5` (thinking off, low effort); `CHAT_MODEL` swaps it. Two prompt-cache points: rules + shared knowledge, then the market block. The live note (open/closed, time zones) sits after them.
 - **Knowledge:** `src/lib/chat/knowledge.ts` arranges `src/data/*`; the hand-written part is the rules. Money only ever appears in the market blocks. `scripts/lint-chat.mjs` checks this in the build, and that no key reaches the static output.

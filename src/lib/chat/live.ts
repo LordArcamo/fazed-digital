@@ -33,14 +33,15 @@ export function liveNote(o: { market: Market; country: string; tz: string; page:
   const day = local.getUTCDay(), mins = local.getUTCHours() * 60 + local.getUTCMinutes();
   const open = day >= 1 && day <= 5 && mins >= 510 && mins < 1020;
   const [a, b] = studioDay(now);
-  const span = (tz: string) => `${at(a, tz)} to ${at(b, tz)}`;
+  const friday = (d: Date) => new Date(d.getTime() + 4 * 86_400_000);
+  const span = (tz: string) => `first workday ${at(a, tz)} to ${at(b, tz)}; last workday ${at(friday(a), tz)} to ${at(friday(b), tz)}`;
   const zones = [...(o.tz ? [['Visitor’s own time zone', o.tz] as [string, string]] : []), ...ZONES[o.market]];
   return [
     '## Right now',
     `In Iligan it is ${at(now, MANILA)}. The studio is ${open ? 'open' : 'closed, and a reply comes the next business day'}.`,
     o.country ? `Visitor's country code: ${o.country}.` : '',
     `Visitor is on the page ${o.page}.`,
-    zones.length ? `A studio workday starts and ends at these local times (each weekday, Monday shown):\n${zones.map(([l, tz]) => `- ${l}: ${span(tz)}`).join('\n')}` : '',
+    zones.length ? `Studio workdays in local time. Each is a separate shift of the same length, Monday to Friday in Iligan, never one continuous stretch:\n${zones.map(([l, tz]) => `- ${l}: ${span(tz)}`).join('\n')}` : '',
     o.leadSent ? 'The visitor already sent their details through the form.' : '',
   ].filter(Boolean).join('\n');
 }

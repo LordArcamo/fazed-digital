@@ -25,6 +25,8 @@
   --lime-06: rgba(201, 255, 87, .06);
   --lime-12: rgba(201, 255, 87, .12);
   --lime-25: rgba(201, 255, 87, .25);
+  /* Fazzy, the mascot (src/chat/fazzy.ts). Suit and boots lifted from the brand's near-black so he reads on the dark panel */
+  --fazzy-bevel: #E6FFA8; --fazzy-shade: #86B82A; --fazzy-visor: #111410; --fazzy-led: #F4FFD0; --fazzy-suit: #3A3A42; --fazzy-boot: #2A2A2A;
   --err: #FFB3A8; /* form error text: 11.0:1 on gray-900 */
 
   --font-display: 'Clash Display', 'Clash Fallback', 'Arial Narrow', sans-serif;
