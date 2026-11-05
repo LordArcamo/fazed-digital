@@ -24,6 +24,7 @@ export function start(flags: Flags) {
     bus.lenis = lenis;
     (window as any).__lenis = lenis;
     lenis.on('scroll', ScrollTrigger.update);
+    document.addEventListener('fz:layout', () => ScrollTrigger.refresh());
     gsap.ticker.add((t) => lenis.raf(t * 1000));
     // In-page links (#index, #engine, #pricing…) get exactly one owner for the scroll. Before, the browser or the
     // ClientRouter jumped to the section natively, then Lenis (which didn't know) pulled the page back where it was.

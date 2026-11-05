@@ -28,25 +28,31 @@ const schema = [
 <Base title="Contact Fazed Digital | Free Web Design Quote" description="Get a free quote for a website, brand, SEO or web app. Studio in Iligan City, Philippines, working with clients worldwide. Reply within one business day." formation="node" schema={schema} current="/contact">
   <section class="ct-hero" data-f="node" aria-labelledby="ct-h">
     <div class="container ct-in">
-      <p class="mono">Signal · {NAP.coords} · Iligan City, PH</p>
-      <h1 id="ct-h" class="t-d1"><span class="h-l1">Start with <span class="ct-hn" aria-hidden="true"><span class="ct-ring poster-art"></span><span class="node-anchor" data-node-anchor></span></span></span> <span class="h-l2">a message.</span></h1>
+      <div class="ct-head">
+        <p class="mono">Signal · {NAP.coords} · Iligan City, PH</p>
+        <h1 id="ct-h" class="t-d1"><span class="h-l1">Start with <span class="ct-hn" aria-hidden="true"><span class="ct-ring poster-art"></span><span class="node-anchor" data-node-anchor></span></span></span> <span class="h-l2">a message.</span></h1>
+      </div>
       <p class="t-body-l ct-deck">Tell us what you need and when you need it. A real person at Fazed Digital in {NAP.city}, Philippines replies within one business day, Monday to Friday. Fixed-price websites start at {prices.usd.starter} ({prices.php.starter}). Custom projects are quoted after a short discovery call. Meet us in Iligan or Cagayan de Oro, or online.</p>
-      <dl class="ct-cells">
+      <div class="ct-brief" id="brief"><ContactForm id="contact-cf" /></div>
+      <div class="ct-side">
+        <dl class="ct-cells">
         <div><dt class="mono">Email</dt><dd><a class="link" href={`mailto:${NAP.email}`} aria-label={`Email Fazed Digital at ${NAP.email}`}>{NAP.email}</a></dd></div>
         <div><dt class="mono">Phone</dt><dd><a class="link" href={`tel:${NAP.tel}`} aria-label={`Call Fazed Digital on ${NAP.phone}`}>{NAP.phone}</a></dd></div>
         <div><dt class="mono">Hours</dt><dd>Mon–Fri, 8:30am–5:00pm (PHT, UTC+8)</dd></div>
         <div><dt class="mono">Studio</dt><dd>Iligan City, Lanao del Norte, Philippines</dd></div>
       </dl>
-      <p class="ct-small">Outside our hours? Send the form anyway. It’ll be first in the queue the next working morning.</p>
+        <p class="ct-small">Outside our hours? Send the form anyway. It’ll be first in the queue the next working morning.</p>
+        <p class="mono ct-cap">{capsCopy.custom}</p>
+        <ul class="ct-alts">
+          <li>Need a simple site live this week? <a class="link" href="/lp/7-day-website">Get live in 7 days</a><span data-market="ph"> · <a class="link" href="/lp/7-day-website/ph">See peso pricing (₱)</a></span></li>
+          <li>Not ready for a quote? <a class="link" href="/audit">Book a free 15-minute website check</a></li>
+        </ul>
+      </div>
     </div>
   </section>
   <section class="section container ct-next" aria-labelledby="n-h">
     <h2 id="n-h" class="t-d2">What happens after you hit send</h2>
     <ol>{next.map(([n, t, b]) => <li class="rv"><span class="ct-node" aria-hidden="true"></span><span class="mono">{n}</span><h3 class="t-h3">{t}</h3><p>{b}</p></li>)}</ol>
-  </section>
-  <section class="section container ct-form" id="brief" aria-label="Send us your brief">
-    <div class="ct-form-side"><p class="mono ct-cap">{capsCopy.custom}</p><p>Need a simple site live this week? <a class="link" href="/lp/7-day-website">Get live in 7 days</a><span data-market="ph"> · <a class="link" href="/lp/7-day-website/ph">See peso pricing (₱)</a></span></p></div>
-    <ContactForm id="contact-cf" />
   </section>
   <section class="section container ct-faq" data-f="lattice" aria-labelledby="f-h">
     <div><p class="mono">FAQ · 07</p><h2 id="f-h" class="t-d2">Questions, answered.</h2></div>
@@ -54,38 +60,40 @@ const schema = [
   </section>
 </Base>
 <style>
-  .ct-hero { position: relative; overflow-x: clip; /* the decorative ring can poke past narrow screens */ min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 160px); padding-bottom: 72px; }
+  .ct-hero { position: relative; overflow-x: clip; /* the decorative ring can poke past narrow screens */ min-height: 100svh; display: flex; align-items: center; padding-top: calc(var(--header-h) + 24px); padding-bottom: 40px; }
   /* the contact node sits inline in the H1, on the x-height of the line */
   .ct-hn { position: relative; display: inline-block; width: .5em; height: .5em; vertical-align: baseline; }
   .node-anchor { position: absolute; left: 50%; top: 50%; width: 1px; height: 1px; }
   .ct-ring { position: absolute; left: 50%; top: 50%; width: 230px; height: 230px; margin: -115px; border-radius: 50%; background: radial-gradient(circle, var(--lime) 0 8px, transparent 8.5px 31px, var(--lime-25) 31.5px 32.5px, transparent 33px 71px, var(--lime-12) 71.5px 72.5px, transparent 73px 111px, rgba(201,255,87,.08) 111.5px 112.5px, transparent 113px); }
-  .ct-in { position: relative; z-index: 0; display: grid; gap: 1.5rem; }
+  /* the head and the ways to reach us share the left column; the form holds the right one for the whole first screen */
+  .ct-in { position: relative; z-index: 0; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-areas: 'head brief' 'deck brief' 'side brief'; grid-template-rows: auto auto 1fr; gap: 1rem clamp(2rem, 4vw, 4rem); align-items: start; }
+  .ct-head { grid-area: head; display: grid; gap: 1rem; }
+  .ct-brief { grid-area: brief; position: relative; z-index: 1; }
+  .ct-side { grid-area: side; display: grid; gap: .9rem; }
   .ct-ring { z-index: -1; }
   .ct-in h1 { max-width: none; }
   /* two-line rhythm like home: line 2 in gray-400 */
   .ct-in h1 .h-l1, .ct-in h1 .h-l2 { display: block; } .ct-in h1 .h-l2 { color: var(--gray-400); }
-  .ct-deck { max-width: 56ch; }
-  .ct-cells { display: grid; grid-template-columns: repeat(4, auto); justify-content: start; gap: 1rem 3rem; margin-top: 1rem; }
-  .ct-cells dd { margin-top: .3rem; color: var(--gray-200); font-size: 1.1rem; }
+  .ct-deck { grid-area: deck; max-width: 52ch; font-size: var(--fs-body); }
+  .ct-cells { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem var(--gutter); }
+  .ct-cells dd { margin-top: .15rem; color: var(--gray-200); font-size: 1rem; line-height: 1.35; overflow-wrap: anywhere; }
   .ct-cells a { display: inline-flex; min-height: 44px; align-items: center; }
-  .ct-small { color: var(--gray-400); font-size: .95rem; }
+  .ct-small { color: var(--gray-400); font-size: .9rem; }
+  .ct-alts { display: grid; gap: .35rem; font-size: .95rem; color: var(--gray-300); }
   .ct-next { display: grid; gap: 3rem; }
   .ct-next ol { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--gutter); }
   .ct-next li { display: grid; gap: .6rem; align-content: start; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); position: relative; }
   .ct-node { position: absolute; top: -6px; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--lime); }
   @media (max-width: 1023px) { .ct-cells dd > .link { display: inline-block; padding-block: 8px; } }
-  .ct-form { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; padding-top: 0; }
-  .ct-form-side { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
-  .ct-form > :global(.cf) { grid-column: 6 / span 7; }
   .ct-cap { color: var(--lime); }
   .ct-faq { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .ct-faq > div:first-child { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
   .ct-faq > :global(.faq) { grid-column: 6 / span 7; }
   @media (max-width: 1023px) {
-    .ct-cells { grid-template-columns: 1fr 1fr; }
+    .ct-in { grid-template-columns: minmax(0, 1fr); grid-template-areas: 'head' 'brief' 'deck' 'side'; grid-template-rows: none; }
     .ct-next ol { grid-template-columns: 1fr; }
-    .ct-form > :global(*), .ct-faq > :global(*) { grid-column: 1 / -1 !important; }
-    .ct-hero { align-items: flex-end; padding-top: 200px; padding-bottom: calc(112px + env(safe-area-inset-bottom)); }
+    .ct-faq > :global(*) { grid-column: 1 / -1 !important; }
+    .ct-hero { min-height: 0; padding-top: 96px; padding-bottom: 48px; }
   }
   @media (max-width: 599px) { .ct-cells { grid-template-columns: 1fr; } }
 </style>

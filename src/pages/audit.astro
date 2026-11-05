@@ -188,7 +188,7 @@ const schema = [
   .au-tick::after { content: ''; position: absolute; left: 5px; top: 2px; width: 5px; height: 9px; border: solid var(--black); border-width: 0 2px 2px 0; rotate: 45deg; opacity: 0; animation: au-mark 7.5s calc(var(--i) * 1.4s + .6s) infinite both; }
   @keyframes au-tick { 0%, 8% { background: transparent; border-color: var(--gray-400); } 14%, 88% { background: var(--lime); border-color: var(--lime); } 100% { background: transparent; border-color: var(--gray-400); } }
   @keyframes au-mark { 0%, 10% { opacity: 0; } 16%, 88% { opacity: 1; } 100% { opacity: 0; } }
-  .au-hero h1 { max-width: 13ch; }
+  .au-hero h1 { max-width: 16ch; }
   .au-eyebrow { display: inline-flex; align-items: center; gap: .6rem; color: var(--lime); }
   .au-dot { position: relative; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
   .au-dot::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--lime); animation: au-pulse 2.4s ease-out infinite; }
