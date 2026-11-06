@@ -1,11 +1,11 @@
-# Content calendar: nightly blog queue (12 weeks, 84 topics)
+# Content calendar: blog queue (runs Mon, Wed and Fri since 6 Nov 2026)
 
 Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-prompt.md`). Strategy and keyword logic: `docs/seo/strategy.md`.
 
 ## How the routine uses this file
 - It takes the **first line that starts with `- [ ]`**, top to bottom (the oldest unticked line, whatever its date). Dates are the plan, not a gate: if a night is missed, the next run picks up the oldest open line.
 - Line format: `- [ ] YYYY-MM-DD | market | category | working title | primary keyword | money page`
-  - **market**: PH, US, UK, AU or Global. It sets spelling, currency and examples (see the routine prompt).
+  - **market**: PH, US, UK, CA, AU or Global. It sets spelling, currency and examples (see the routine prompt).
   - **category**: exactly one of Branding, SEO, Development, Design, Strategy.
   - **working title**: the routine may tighten it to 45–62 characters, keeping the primary keyword near the start.
   - **money page**: the page the post must link to (path on https://www.fazeddigital.com). If the path does not exist at run time, the routine uses `/lp/7-day-website/ph` for PH posts and `/lp/7-day-website` for everything else.
@@ -42,36 +42,42 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [ ] 2026-11-08 | US | Design | Website for a Cleaning Business: Pages That Book Jobs | website for cleaning business | /lp/7-day-website
 - [ ] 2026-11-09 | Global | Development | Who Owns Your Website? Domain, Hosting, Code and Logins | who owns my website | /lp/7-day-website
 - [ ] 2026-11-10 | PH | Design | Resort Website in the Philippines: Direct Bookings, Not DMs | resort website philippines | /lp/7-day-website/ph
+- [ ] 2026-11-11 | CA | Strategy | Small Business Website Cost in Canada: A 2027 Price Guide | website cost canada | /lp/7-day-website
 - [ ] 2026-11-11 | AU | Development | Law Firm Website, Client Portal and App: Do You Need All Three? | law firm websites australia | /work/08
 - [ ] 2026-11-12 | PH | Strategy | Freelancer or Agency for Your Website in the Philippines? | web designer philippines freelancer vs agency | /lp/7-day-website/ph
 - [ ] 2026-11-13 | US | Strategy | Time Zones and Offshore Web Projects: A US Owner's Playbook | time difference philippines and usa | /lp/7-day-website
 - [ ] 2026-11-14 | PH | Development | Car Rental Booking System in the Philippines: The Must-Haves | car rental booking system philippines | /work/06
 - [ ] 2026-11-15 | UK | Strategy | UK VAT on an Overseas Web Designer: A Plain-English Primer | uk vat on overseas services | /lp/7-day-website
 - [ ] 2026-11-16 | Global | Design | 3D Websites for Brands: When Immersive Is Worth It | 3d website design | /lab
+- [ ] 2026-11-17 | CA | Development | Contractor Websites in Canada: What Wins Local Quotes | contractor website canada | /lp/7-day-website
 - [ ] 2026-11-17 | AU | Development | Membership Portals for Clubs and Associations: Build vs Buy | membership portal for associations | /work/07
 - [ ] 2026-11-18 | PH | Design | Dental Clinic Website in the Philippines: Pages Patients Need | dental clinic website design philippines | /lp/7-day-website/ph
 - [ ] 2026-11-19 | US | Design | Website Design for Plumbers: What Gets the Phone Ringing | website design for plumbers | /lp/7-day-website
 - [ ] 2026-11-20 | PH | Strategy | Business Permit Done in Iligan? Your Get-Online Checklist | iligan city business permit | /web-design-iligan-city
 - [ ] 2026-11-21 | AU | Strategy | Paying an Overseas Web Studio From Australia: AUD, Wise and GST | gst on overseas services | /lp/7-day-website
 - [ ] 2026-11-22 | Global | Branding | Brand Identity Package: What a Complete One Includes | brand identity package | /services#brand
+- [ ] 2026-11-23 | CA | SEO | Local SEO for Canadian Small Businesses: A Starter Guide | local seo canada small business | /services#seo
 - [ ] 2026-11-23 | PH | Design | Real Estate Website in the Philippines: Listings That Sell | website for real estate philippines | /lp/7-day-website/ph
 - [ ] 2026-11-24 | US | SEO | How Much Does SEO Cost for a Small Business per Month? | how much does seo cost for a small business per month | /services#seo
 - [ ] 2026-11-25 | PH | Development | PayMongo vs Xendit for a Small Business Website | xendit vs paymongo | /services#systems
 - [ ] 2026-11-26 | UK | Design | Electrician Website Design in the UK: Badges, Reviews, Quotes | website design for electricians uk | /lp/7-day-website
 - [ ] 2026-11-27 | AU | Design | NDIS Provider Websites: What Participants Look For | website design for ndis providers | /lp/7-day-website
 - [ ] 2026-11-28 | US | Development | Roofing Company Website: Website Builder or Custom Build? | website builder for roofing company | /lp/7-day-website
+- [ ] 2026-11-29 | CA | Strategy | Hiring an Offshore Web Studio From Canada: What to Check | offshore web design canada | /lp/7-day-website
 - [ ] 2026-11-29 | PH | Design | Restaurant Website With Online Ordering in the Philippines | restaurant website philippines online ordering | /lp/7-day-website/ph
 - [ ] 2026-11-30 | Global | SEO | AI Overviews and Your Business Website: How to Get Cited | ai overviews small business | /services#seo
 - [ ] 2026-12-01 | PH | Strategy | Shopee or Lazada Seller? Why You Still Need Your Own Website | shopee seller own website | /lp/7-day-website/ph
 - [ ] 2026-12-02 | AU | Branding | Not-for-Profit Rebrand: Heritage Without Looking Dated | not for profit branding | /work/07
 - [ ] 2026-12-03 | PH | Development | Custom Software Cost in the Philippines: Web Apps and Portals | custom software development cost philippines | /services#systems
 - [ ] 2026-12-04 | US | Strategy | Do You Need a Website If You're Already on Google Maps? | do you need a website for google my business | /audit
+- [ ] 2026-12-05 | CA | Design | Bilingual Websites in Canada: English and French Basics | bilingual website canada | /services#web
 - [ ] 2026-12-05 | UK | Strategy | Pay-Monthly Website vs One-Off Build: A UK Owner's Maths | pay monthly website uk | /lp/7-day-website
 - [ ] 2026-12-06 | PH | SEO | English, Tagalog or Bisaya? Choosing Your Website's Language | website language philippines seo | /lp/7-day-website/ph
 - [ ] 2026-12-07 | Global | Development | Three.js, Spline or Video: Choosing 3D for a Product Site | three.js website | /lab
 - [ ] 2026-12-08 | AU | SEO | Tradie SEO: Ranking in the Suburbs You Actually Work | tradie seo | /services#seo
 - [ ] 2026-12-09 | PH | Development | Cooperative Membership System: Members, Dues and Reports | cooperative management system philippines | /work/07
 - [ ] 2026-12-10 | US | Development | MVP in 5 Weeks: When a PWA Beats a Native App | pwa vs native app mvp | /work/03
+- [ ] 2026-12-11 | CA | Development | Accessible Websites in Canada: What Small Businesses Should Know | accessible website canada | /services#web
 - [ ] 2026-12-11 | PH | Design | Tour Operator Website in the Philippines: From Views to Bookings | tour booking website philippines | /lp/7-day-website/ph
 - [ ] 2026-12-12 | AU | Design | Nail and Beauty Salon Website: Online Bookings First | nail salon website | /lp/7-day-website
 - [ ] 2026-12-13 | Global | Strategy | What to Prepare Before a 7-Day Website Build | website content checklist | /lp/7-day-website
