@@ -2,8 +2,8 @@
 // from here, so turning an offer off removes it everywhere at once.
 import { prices } from './proof';
 
-/** Founding client rate (Lord, 2026-11-01): PH Starter for the first 5 clients, secured with a deposit, in exchange
- *  for an honest review and permission to feature the build. Set `on: false` when the 5 spots are gone. */
+/** Founding client rate (Lord, 2026-11-01): PH Starter for the first 5 clients, secured with a deposit. Nothing is asked
+ *  in return: no discount may be tied to a review (owner, 2026-11-06). Set `on: false` when the 5 spots are gone. */
 export const FOUNDING_PH = {
   on: true,
   pkg: 'starter',
