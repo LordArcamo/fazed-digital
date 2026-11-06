@@ -102,7 +102,7 @@
 - [Mobile-First Web Design: Why Your Website Must Be Built for Phones First](https://www.fazeddigital.com/blog/mobile-first-web-design) (Design, 18 Jun 2026)
 - [Small Business Website Checklist: 15 Must-Haves Before You Launch](https://www.fazeddigital.com/blog/small-business-website-checklist) (Development, 06 Jun 2026)
 - [Why Brand Identity Is Your Most Important Business Asset](https://www.fazeddigital.com/blog/why-brand-identity-matters) (Branding, 18 Apr 2025)
-- [Core Web Vitals: What They Are and Why They Destroy Rankings](https://www.fazeddigital.com/blog/core-web-vitals-seo) (SEO, 02 Apr 2025)
+- [Core Web Vitals: What They Are and How They Affect Rankings](https://www.fazeddigital.com/blog/core-web-vitals-seo) (SEO, 02 Apr 2025)
 - [Astro vs Next.js: Which Should Your Agency Choose in 2025?](https://www.fazeddigital.com/blog/astro-vs-nextjs-agencies) (Development, 21 Mar 2025)
 - [7 UX Mistakes That Are Quietly Killing Your Conversion Rate](https://www.fazeddigital.com/blog/ux-mistakes-killing-conversions) (Design, 05 Mar 2025)
 - [A No-Nonsense Content Strategy for Small Businesses](https://www.fazeddigital.com/blog/content-strategy-small-business) (Strategy, 14 Feb 2025)
