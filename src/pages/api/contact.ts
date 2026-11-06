@@ -1,7 +1,7 @@
 export const prerender = false;
 
 import type { APIRoute } from 'astro';
-import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
+import { sendLead, forwardViaResend, LEAD_TO, LEAD_CC, CONTACT_FORWARD_TO } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
 import { saveToCrm, markCrmAlert } from '../../lib/crm';
 
@@ -65,6 +65,7 @@ export const POST: APIRoute = async ({ request }) => {
   const [crm, emailed, hs] = await Promise.all([
     flagged ? null : saveToCrm({ form: 'contact', name, email, phone, business: company, service: serviceLabel, budget, message, source }),
     sendLeadEmail({ name, email, phone, serviceLabel, company, budget, message, source, flagged }),
+    flagged ? null : forwardViaResend({ to: CONTACT_FORWARD_TO, replyTo: email, subject: `New contact lead: ${company || name} (${serviceLabel})`, html: buildHtml({ name, email, phone, serviceLabel, company, budget, message, source }) }),
     flagged ? null : saveToHubSpot({
       name, email, message: fullMessage, serviceLabel,
       pageUri: request.headers.get('referer') ?? 'https://www.fazeddigital.com/contact',
