@@ -9,7 +9,7 @@ function loadGA() {
   w.dataLayer = w.dataLayer || [];
   w.gtag = function () { w.dataLayer.push(arguments); };
   w.gtag('js', new Date());
-  w.gtag('config', GA, { anonymize_ip: true });
+  w.gtag('config', GA, { anonymize_ip: true }); // sends the first page view; GA's history tracking counts ClientRouter navigations
   const s = document.createElement('script');
   s.async = true;
   s.src = `https://www.googletagmanager.com/gtag/js?id=${GA}`;
@@ -20,7 +20,6 @@ export function initCookies() {
   const el = document.getElementById('cookie');
   const v = localStorage.getItem(KEY);
   if (v === 'granted') loadGA();
-  if (gaLoaded && location.pathname) (window as any).gtag?.('event', 'page_view', { page_path: location.pathname });
   if (!el) return;
   // waits for the first scroll (or 4s) so it never covers the first screen's buttons; GA stays off until consent either way
   stopWait?.();
@@ -44,6 +43,9 @@ export function initCookies() {
     setTimeout(() => { el.hidden = true; el.querySelector('.ck-btns')?.removeAttribute('hidden'); if (toast) toast.textContent = ''; }, 2400);
   });
   document.addEventListener('click', (e) => {
-    if ((e.target as HTMLElement).closest('[data-cookie-settings]')) { el.hidden = false; (el.querySelector('button') as HTMLElement)?.focus(); }
+    const t = e.target as HTMLElement;
+    if (t.closest('[data-cookie-settings]')) { el.hidden = false; (el.querySelector('button') as HTMLElement)?.focus(); }
+    const a = t.closest<HTMLAnchorElement>('a[href^="tel:"], a[href^="mailto:"]');
+    if (a) (window as any).gtag?.('event', a.protocol === 'tel:' ? 'phone_click' : 'email_click', { page_path: location.pathname });
   });
 }

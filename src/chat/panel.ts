@@ -287,6 +287,7 @@ function leadForm() {
       if (!res.ok) throw new Error(j.error);
       state.leadSent = true;
       save();
+      (window as any).gtag?.('event', 'chat_lead_submit', { market: geo() });
       li.remove();
       const done = 'Got it, thanks. It’s with the team now, and a real person will reply within one business day.';
       note(done).insertAdjacentHTML('beforeend', sprite(fazzyRows('hype'), 'fm-hype'));

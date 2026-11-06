@@ -93,6 +93,7 @@ export function initContactForms() {
         if (!res.ok) throw new Error(MSG.server);
         form.hidden = true;
         ok.hidden = false;
+        (window as any).gtag?.('event', 'contact_form_submit', { service: p.service });
         const first = p.name.split(' ')[0];
         ok.querySelector('.cf-ok-b')!.textContent = `Thanks, ${first}. We’ll reply to ${p.email} within one business day, Monday to Friday.`;
         const now = new Date();
