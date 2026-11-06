@@ -1,13 +1,14 @@
 ---
 import { NAP } from '../data/site';
 // copy/contact.md [CONTACT-FORM] + answers #19 (budget) #20 (call optional)
-const { id = 'cf', heading = 'Send us your brief' } = Astro.props;
+const { id = 'cf', heading = 'Send us your brief', level = 3 } = Astro.props;
+const H = `h${level}`;
 const services = [['web', 'Web design & development'], ['brand', 'Brand identity'], ['seo', 'SEO marketing'], ['product', 'Product design'], ['systems', 'Custom system / web app'], ['7day', '7-day website package'], ['unsure', 'Not sure yet'], ['other', 'Something else']];
 const budgets = ['Under $1,500 / ₱60,000 · a 7-day website', '$1,500–$3,000', '$3,000–$5,000', '$5,000–$10,000', '$10,000–$20,000', '$20,000+', 'Not sure yet'];
 ---
 <div class="cf" data-contact-form>
   <form id={id} novalidate>
-    <h3 class="t-h3 cf-h" tabindex="-1">{heading}</h3>
+    <H class="t-h3 cf-h" tabindex="-1">{heading}</H>
     <p class="cf-intro">Only your name, email and message are required.</p>
     <p class="cf-summary" role="alert" hidden>A couple of fields need attention. They’re highlighted below.</p>
     <div class="cf-grid">
