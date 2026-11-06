@@ -18,6 +18,7 @@ const T = {
   webflow: { href: '/webflow', note: 'Product and marketing sites with Webflow Interactions, CMS and native forms.' },
   ecom: { href: '/ecommerce', note: 'Product pages, carts, buying tools and store migrations, quoted upfront.' },
   iligan: { href: '/web-design-iligan-city', note: 'Meet us in person in Iligan or Cagayan de Oro. Peso prices, GCash or Maya.' },
+  australia: { href: '/australia', note: 'Real Australian work, close working hours and fixed US dollar prices.' },
   lp: { href: '/lp/7-day-website', note: `Fixed price from ${prices.usd.starter}, live in 7 business days.` },
   lpph: { href: '/lp/7-day-website/ph', note: `Fixed price from ${prices.php.starter}, live in 7 business days.` },
   audit: { href: '/audit', note: 'A free 15-minute review on Google Meet: the 3 fixes likely to bring more calls.' },

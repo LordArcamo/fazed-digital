@@ -1,0 +1,188 @@
+---
+// /australia: the offshore page for Australian buyers (docs/seo/strategy.md §3.5, reports/Parasite SEO for Fazed Digital.md).
+// Honest position: we're in the Philippines, with real Australian work. Facts come from src/data (prices, hours, cases).
+// No stats, reviews or ratings on this page. AUD is never quoted: it depends on the exchange rate on the day.
+import { Picture } from 'astro:assets';
+import Base from '../layouts/Base.astro';
+import Faq from '../components/Faq.astro';
+import Crumbs from '../components/Crumbs.astro';
+import { NAP, SITE_URL } from '../data/site';
+import { prices, capsCopy } from '../data/proof';
+import { workImages } from '../data/images';
+import { caseIndex } from '../data/cases';
+import { crumbs, faqPage, ORG_REF } from '../lib/schema';
+
+const P = prices.usd;
+const au = caseIndex.filter((c) => c.country === 'Australia');
+const lines: Record<string, string> = {
+  '08': 'A website, client portal and iOS and Android app for a Queensland law firm, so clients can follow their matters and share documents. Built in 14 weeks.',
+  '07': 'A secure, role-based membership portal for the United Grand Lodge of Queensland: member records, lodge admin, dues and reporting in one place.',
+  '05': 'A public website and a separate admin portal for an Australian health and wellness platform, built together.',
+  '04': 'An Australian telco retailer moved from Magento to PrestaShop: catalogue, customers and order history, with zero data loss.',
+};
+const work = [...au].reverse().map((c) => ({ slug: c.slug, name: c.client, where: c.region ?? c.country, what: c.built, line: lines[c.slug] }));
+
+// Our hours against a 9-to-5 on their clock. Offsets are hours ahead of Manila.
+const OURS = { from: 8.5, to: 17 };
+const DAY = { from: 9, to: 17 };
+const TRACK = { from: 8, to: 20 };
+const clock = (h: number) => `${h % 12 === 0 || Math.floor(h) === 12 ? 12 : Math.floor(h) % 12}${h % 1 ? ':30' : ':00'}${h >= 12 ? 'pm' : 'am'}`;
+const pct = (h: number) => `${((h - TRACK.from) / (TRACK.to - TRACK.from)) * 100}%`;
+const hours = [
+  { city: 'Perth', note: 'Same time as us', ahead: 0 },
+  { city: 'Brisbane', note: '2 hours ahead, all year', ahead: 2 },
+  { city: 'Sydney and Melbourne', note: '3 hours ahead in daylight saving, 2 the rest of the year', ahead: 3 },
+].map((r) => {
+  const from = OURS.from + r.ahead;
+  const to = OURS.to + r.ahead;
+  return { ...r, from, to, shared: Math.min(DAY.to, to) - Math.max(DAY.from, from) };
+});
+
+const plans = [
+  { name: 'Starter', price: P.starter, for: 'New businesses getting online', rows: '5 custom-designed pages, on-page SEO setup, contact form, 2 revision rounds' },
+  { name: 'Growth', price: P.growth, for: 'Growing small businesses', rows: '8 custom-designed pages, custom design system, blog you can edit, Google Analytics and Search Console, 3 revision rounds' },
+  { name: 'Pro', price: P.pro, for: 'Businesses ready to scale', rows: '10+ custom pages, full brand integration, e-commerce ready, priority support, unlimited revisions' },
+];
+const straight = [
+  ['We’re not in Australia', `Our studio is in ${NAP.city}, Philippines. Everything runs online, on video calls and email, so we won’t pretend to be down the road.`],
+  ['You own what we build', 'The domain, the site and the content are yours. No lock-in contract.'],
+  ['The price is fixed first', 'You get one price before work starts, in US dollars. Packages are published below, and bigger systems are quoted per project.'],
+  ['You talk to the builders', 'A small team and a direct line. We reply within one business day, Monday to Friday.'],
+];
+const faq = [
+  { q: 'Do you have an office in Australia?', a: `No. We’re based in ${NAP.city}, Philippines, and work with Australian clients online, by video call and email.` },
+  { q: 'How much does a website cost in Australian dollars?', a: `We quote in US dollars: ${P.starter} for 5 pages, ${P.growth} for 8 pages with a blog, and ${P.pro} for 10+ pages. The AUD amount depends on the exchange rate on the day. Extra pages are ${P.page} each, and care plans start from ${P.care}.` },
+  { q: 'What is the time difference?', a: `We work ${NAP.hours}. Brisbane is 2 hours ahead of us all year. Sydney and Melbourne are 3 hours ahead in daylight saving and 2 the rest of the year. Perth is on the same time as us.` },
+  { q: 'How long does a website take?', a: '7 business days on our fixed-price packages, as long as we have your content on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off. Portals, apps and custom systems take longer, and our system builds have run 8 to 14 weeks.' },
+  { q: 'How do I pay from Australia?', a: 'By Wise or bank transfer. We confirm the details with your quote.' },
+  { q: 'Will I own the website?', a: 'Yes. The domain, the site and the content are yours. No lock-in contract.' },
+];
+const url = `${SITE_URL}/australia`;
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': `${url}#service`, name: 'Web design for Australian businesses', serviceType: 'Website design and development',
+    description: `Websites, portals and custom systems for Australian businesses, from a studio in ${NAP.city}, Philippines. Fixed-price websites from ${P.starter}, live in 7 business days.`,
+    url, provider: ORG_REF, areaServed: { '@type': 'Country', name: 'Australia' },
+    offers: plans.map((p) => ({ '@type': 'Offer', name: `${p.name} Website Package`, price: p.price.replace(/[^\d]/g, ''), priceCurrency: 'USD', url: `${SITE_URL}/lp/7-day-website`, availability: 'https://schema.org/InStock' })),
+  },
+  faqPage(faq),
+  crumbs([['Web design for Australia', '/australia']]),
+];
+---
+<Base title="Web Design for Australian Businesses | Fazed Digital" description={`A Philippine web studio with real Australian work, including QLD Law Group and UGLQ. Fixed prices from ${P.starter}, live in 7 business days.`} image="/og/home.png" schema={schema}>
+  <Fragment slot="head"><link rel="alternate" hreflang="en-AU" href={url} /></Fragment>
+  <div class="oz">
+    <section class="oz-hero" aria-labelledby="oz-h">
+      <div class="container oz-hero-in">
+        <Crumbs items={[['Web design for Australia', '/australia']]} />
+        <p class="mono oz-eye">{NAP.city}, Philippines · {NAP.hours}</p>
+        <h1 id="oz-h" class="t-d1">Web design for Australia, <span class="dim">two hours behind Brisbane.</span></h1>
+        <p class="t-body-l oz-deck">Fazed Digital is a web design and development studio in the Philippines. <strong>{au.length} of our {caseIndex.length} case studies are Australian</strong>, from a Queensland law firm to a state-wide membership portal. You get fixed prices, close working hours and the people who build your site on the call.</p>
+        <div class="oz-cta">
+          <a class="btn btn--lime" href="/audit" data-magnetic>Book my free 15-minute website check <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href="#prices">See prices</a>
+        </div>
+      </div>
+    </section>
+
+    <section class="container oz-sec" aria-labelledby="hrs-h">
+      <div class="oz-hd"><p class="mono">Working hours</p><h2 id="hrs-h" class="t-d2">Your 9 to 5, <span class="dim">next to ours.</span></h2></div>
+      <ul class="oz-hours">{hours.map((h) => (
+        <li class="rv">
+          <div class="oz-city"><b>{h.city}</b><span>{h.note}</span></div>
+          <div class="oz-track" role="img" aria-label={`On ${h.city} time, we work ${clock(h.from)} to ${clock(h.to)}. That shares ${h.shared} hours with a 9am to 5pm day.`}>
+            <i class="oz-day" style={`left:${pct(DAY.from)};right:calc(100% - ${pct(DAY.to)})`}></i>
+            <i class="oz-ours" style={`left:${pct(h.from)};right:calc(100% - ${pct(Math.min(h.to, TRACK.to))})`}></i>
+          </div>
+          <p class="oz-shared"><b>{h.shared} hours</b> shared</p>
+        </li>
+      ))}</ul>
+      <p class="mono oz-key"><span class="oz-k1"></span>Your 9am to 5pm <span class="oz-k2"></span>Fazed, on your clock</p>
+    </section>
+
+    <section class="container oz-sec" aria-labelledby="work-h">
+      <div class="oz-hd"><p class="mono">Australian work</p><h2 id="work-h" class="t-d2">Built for <span class="dim">Australian teams.</span></h2></div>
+      <ul class="oz-work">{work.map((w) => (
+        <li class="rv"><a href={`/work/${w.slug}`}>
+          <Picture src={workImages[w.slug]} formats={['avif', 'webp']} widths={[480, 800]} sizes="(max-width: 767px) 92vw, 45vw" alt={`${w.name}: ${w.what}`} loading="lazy" decoding="async" />
+          <span class="mono">{w.where} · {w.what}</span><b>{w.name}</b><span>{w.line}</span>
+        </a></li>
+      ))}</ul>
+      <a class="link" href="/work">See all {caseIndex.length} case studies →</a>
+    </section>
+
+    <section class="container oz-sec" aria-labelledby="str-h">
+      <div class="oz-hd"><p class="mono">Working offshore</p><h2 id="str-h" class="t-d2">What to expect, <span class="dim">straight.</span></h2></div>
+      <dl class="oz-straight">{straight.map(([t, b]) => <div class="rv"><dt>{t}</dt><dd>{b}</dd></div>)}</dl>
+    </section>
+
+    <section class="container oz-sec" id="prices" aria-labelledby="pr-h">
+      <div class="oz-hd"><p class="mono">Prices in US dollars</p><h2 id="pr-h" class="t-d2">Fixed upfront. <span class="dim">Live in 7 business days.</span></h2></div>
+      <ul class="oz-plans">{plans.map((p) => <li class="rv"><div><h3 class="t-h3">{p.name}</h3><p class="mono">{p.for}</p></div><p class="oz-inc">{p.rows}</p><p class="oz-price">{p.price}</p></li>)}</ul>
+      <p class="oz-fine"><strong>The promise, with its conditions:</strong> we launch in 7 business days as long as we have your content on Day 1 and your feedback within 24 hours at each review. If we miss the deadline on our side, you get 20% off. {capsCopy.sevenDay}</p>
+      <a class="btn btn--lime" href="/lp/7-day-website">See the full 7-day package details <span class="arrow" aria-hidden="true">→</span></a>
+    </section>
+
+    <section class="container oz-sec" aria-labelledby="fq-h">
+      <div class="oz-hd"><p class="mono">FAQ</p><h2 id="fq-h" class="t-d2">Questions Australian owners ask.</h2></div>
+      <Faq items={faq} id="australia-faq" />
+      <p class="oz-more">More: <a class="link" href="/blog/website-cost-australia-2027">what a website costs in Australia</a> · <a class="link" href="/blog/tradie-websites-australia">tradie websites in Australia</a> · <a class="link" href="/blog/magento-to-prestashop-migration">moving from Magento to PrestaShop</a></p>
+    </section>
+
+    <section class="oz-end on-lime" aria-label="Get started">
+      <div class="container oz-end-in">
+        <div><p class="t-h3">Start with 15 minutes.</p><p>Book a free website check on Google Meet. You’ll talk to the people who build your site.</p></div>
+        <a class="btn btn--black" href="/audit">Book my free website check <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+    </section>
+  </div>
+</Base>
+<style>
+  .oz-hero { padding: calc(var(--header-h) + 96px) 0 64px; }
+  .oz-hero-in { display: grid; gap: 1.5rem; }
+  .oz-hero h1 { max-width: 26ch; }
+  .oz-eye { color: var(--lime); }
+  .oz-deck { max-width: 60ch; } .oz-deck strong { color: var(--white); }
+  .oz-cta { display: flex; flex-wrap: wrap; gap: .75rem; }
+  .oz-sec { display: grid; gap: 2rem; padding-block: clamp(48px, 6vw, 96px); }
+  .oz-hd { display: grid; gap: .75rem; }
+  .oz-sec > .btn, .oz-sec > .link { justify-self: start; }
+  .oz-hours { display: grid; border-top: 1px solid var(--gray-700); }
+  .oz-hours li { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 7fr) minmax(0, 2fr); gap: 1rem var(--gutter); align-items: center; padding-block: 22px; border-bottom: 1px solid var(--gray-700); }
+  .oz-city { display: grid; gap: .2rem; } .oz-city b { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); } .oz-city span { color: var(--gray-300); font-size: .9375rem; }
+  .oz-track { position: relative; height: 44px; border-radius: 6px; background: var(--gray-900); }
+  .oz-track i { position: absolute; display: block; }
+  .oz-day { top: 0; bottom: 0; border: 1px solid var(--gray-400); border-radius: 6px; }
+  .oz-ours { top: 10px; bottom: 10px; background: var(--lime); border-radius: 4px; }
+  .oz-shared { color: var(--gray-300); text-align: right; } .oz-shared b { display: block; color: var(--lime); font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); }
+  .oz-key { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; color: var(--gray-300); }
+  .oz-k1, .oz-k2 { display: inline-block; width: 22px; height: 12px; border-radius: 3px; } .oz-k1 { border: 1px solid var(--gray-400); } .oz-k2 { background: var(--lime); margin-left: 1rem; }
+  .oz-work { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 3rem var(--gutter); }
+  .oz-work a { display: grid; gap: .4rem; }
+  .oz-work :global(img) { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border: 1px solid var(--gray-700); border-radius: 10px; transition: border-color .2s; }
+  .oz-work a:hover :global(img) { border-color: var(--lime); }
+  .oz-work .mono { color: var(--lime); font-size: 12px; letter-spacing: .1em; }
+  .oz-work b { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); }
+  .oz-work span:last-child { color: var(--gray-300); }
+  .oz-straight { display: grid; border-top: 1px solid var(--gray-700); }
+  .oz-straight div { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); gap: .5rem var(--gutter); padding-block: 20px; border-bottom: 1px solid var(--gray-700); }
+  .oz-straight dt { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); }
+  .oz-straight dd { margin: 0; color: var(--gray-300); max-width: 60ch; }
+  .oz-plans { display: grid; border-top: 1px solid var(--gray-700); }
+  .oz-plans li { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 6fr) minmax(0, 3fr); gap: .75rem var(--gutter); align-items: center; padding-block: 22px; border-bottom: 1px solid var(--gray-700); }
+  .oz-plans .mono { color: var(--gray-400); }
+  .oz-inc { color: var(--gray-300); }
+  .oz-price { font-family: var(--font-display); font-size: clamp(1.75rem, 3vw, 2.4rem); font-weight: 600; color: var(--lime); text-align: right; }
+  .oz-fine { max-width: 72ch; color: var(--gray-300); } .oz-fine strong { color: var(--white); }
+  .oz-more { color: var(--gray-300); }
+  .oz-end { padding: 64px 0; margin-top: 32px; background: var(--lime); }
+  .oz-end-in { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1.5rem; }
+  .oz-end-in p { color: var(--black); max-width: 56ch; }
+  @media (max-width: 767px) {
+    .oz-hero { padding-top: calc(var(--header-h) + 48px); }
+    .oz-cta .btn, .oz-end .btn { width: 100%; justify-content: center; }
+    .oz-hours li, .oz-plans li, .oz-straight div { grid-template-columns: 1fr; }
+    .oz-shared, .oz-price { text-align: left; } .oz-shared b { display: inline; }
+    .oz-work { grid-template-columns: 1fr; }
+  }
+</style>

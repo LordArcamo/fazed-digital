@@ -74,6 +74,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'Will we lose search rankings when we migrate?', a: 'Protecting search was part of this brief, so the new store was built to match the existing catalogue structure. No one can promise rankings. Every migration should map old URLs to new ones and be checked in Google Search Console after launch.' },
     ],
     related: [
+      { href: '/australia', label: 'Web design for Australian businesses' },
       { href: '/ecommerce', label: 'E-commerce builds and migrations' },
       { href: '/services#seo', label: 'SEO marketing' },
       { href: '/blog/magento-to-prestashop-migration', label: 'Magento to PrestaShop: lessons from this store move' },
@@ -93,6 +94,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'How much does a platform like this cost?', a: 'Custom websites and systems like this typically fall in our $5,000 to $20,000 range, depending on scope. We take on 3 custom projects a month and quote once we understand the users, roles and data involved.' },
     ],
     related: [
+      { href: '/australia', label: 'Web design for Australian businesses' },
       { href: '/services#systems', label: 'Custom systems and portals' },
       { href: '/services#web', label: 'Web design and development' },
       { href: '/work/07', label: 'Membership portal case study' },
@@ -131,6 +133,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'How does role-based access work in a membership portal?', a: 'In UGLQ Connect, access is set by role: Grand Lodge administrators, lodge secretaries and members each see only what is relevant to them. That keeps member data secure while lodge secretaries handle their administration in the same system.' },
     ],
     related: [
+      { href: '/australia', label: 'Web design for Australian businesses' },
       { href: '/services#systems', label: 'Custom systems and portals' },
       { href: '/work/08', label: 'Law firm client portal case study' },
       { href: '/blog/offshore-web-design-australia', label: 'Working with an offshore studio from Australia' },
@@ -149,6 +152,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'How much does a law firm client portal cost?', a: 'Custom websites and systems typically fall in our $5,000 to $20,000 range. The price depends on scope: which products you need (website, portal, app), how many practice areas, and what the portal must do. We quote once the scope is clear.' },
     ],
     related: [
+      { href: '/australia', label: 'Web design for Australian businesses' },
       { href: '/services#systems', label: 'Custom systems and portals' },
       { href: '/services#web', label: 'Web design and development' },
       { href: '/work/07', label: 'Membership portal case study' },

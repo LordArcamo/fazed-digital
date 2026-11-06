@@ -12,7 +12,7 @@ const S = 'https://www.fazeddigital.com';
 const lines = [
   '# Fazed Digital',
   '',
-  '> Web design, branding and SEO studio in Iligan City, Lanao del Norte, Philippines (est. 2022). Websites, brands and web apps for clients in the USA, Australia and the Philippines. 120+ projects delivered since 2022.',
+  '> Web design, branding and SEO studio in Iligan City, Lanao del Norte, Philippines (est. 2022). Websites, brands and web apps for clients in the USA, Australia and the Philippines. 120+ projects delivered by our founder since 2022.',
   '',
   '- Not affiliated with Faze Digital (London), Faze47 Digital, Fuze Digital or FZP Digital. Fazed Digital is the studio at www.fazeddigital.com.',
   `- Team (${team.length}): ` + team.map((p) => `${p.name} (${p.role})`).join(', ') + ` · ${S}/about`,
@@ -26,6 +26,7 @@ const lines = [
   ...chapters.map((c) => `- [${c.h2}](${S}/services#${c.id}): ${c.outcome}`),
   `- [7-day website (USD)](${S}/lp/7-day-website) · [Philippine pricing](${S}/lp/7-day-website/ph)`,
   `- [Web design in Iligan City](${S}/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.`,
+  `- [Web design for Australia](${S}/australia): real Australian work, working hours against Australian time zones, prices in US dollars.`,
   `- [Framer websites](${S}/framer): Framer design and build (landing pages, waitlists, CMS blogs, shop pages); 9 concept builds (Suddle, Ricko, Dawdle, Stillroom, Lanewise, YOWCH, Mizzle, Softlight Dental, Tap & Switch) are fictional brands, not client work.`,
   `- [E-commerce websites](${S}/ecommerce): online stores, buying tools (3D rug size planner, 3D tile visualiser) and store migrations; client case: The Telecom Shop, Magento to PrestaShop with zero data loss. Concept stores Madder & Weft and Salt & Kiln are fictional brands.`,
   `- [Webflow websites](${S}/webflow): Webflow design and build (product sites, Webflow Interactions, CMS, forms); concept build Signalbox is a fictional brand, not client work.`,

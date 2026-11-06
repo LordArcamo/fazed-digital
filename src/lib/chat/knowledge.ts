@@ -81,6 +81,7 @@ function pages(): string {
     '/blog: guides',
     '/framer, /webflow, /ecommerce: Framer sites, Webflow sites, online stores',
     '/web-design-iligan-city: the local Iligan City page',
+    '/australia: Australian work, working hours and US dollar prices',
     '/privacy: privacy policy',
   ]);
 }
