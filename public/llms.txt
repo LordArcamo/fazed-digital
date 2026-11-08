@@ -49,6 +49,7 @@
   - TACET Model 01 (concept site, fictional brand): https://fazed-tacet.vercel.app · Next.js, Three.js, Exploded view, Live audio, Blender · 2026-10-29
 
 ## Guides
+- [Cleaning Business Branding: Lessons From Cleen & Green](https://www.fazeddigital.com/blog/cleaning-business-branding-philippines) (Branding, 09 Nov 2026)
 - [Tradie Websites in Australia: What Wins Local Jobs](https://www.fazeddigital.com/blog/tradie-websites-australia) (Design, 06 Nov 2026)
 - [SEO for Cagayan de Oro Businesses: A Local Starter Plan](https://www.fazeddigital.com/blog/seo-cagayan-de-oro) (SEO, 05 Nov 2026)
 - [Small Business Website Cost in the US: A 2027 Price Guide](https://www.fazeddigital.com/blog/small-business-website-cost-us) (Strategy, 04 Nov 2026)
