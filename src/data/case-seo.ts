@@ -1,6 +1,7 @@
 // Per-case SEO layer for /work/NN (The Navigator, docs/seo/pages/case-seo.md, 2026-10-22). Facts only from cases.ts.
 // Case study SEO layer. Facts come only from src/data/cases.ts (cases + CASE_EXTRA) and src/data/proof.ts (prices).
 // Brief and keyword research: docs/seo/pages/case-seo.md. UK spelling in copy. No metrics (CASE_METRICS_REAL is false).
+import { serviceHref } from './service-nav';
 export interface CaseSeo { kw: string; h1Tail: string; seoTitle: string; seoDescription: string; summary: string; stack: string[]; faq: { q: string; a: string }[]; related: { href: string; label: string }[] }
 
 export const caseSeo: Record<string, CaseSeo> = {
@@ -18,7 +19,7 @@ export const caseSeo: Record<string, CaseSeo> = {
     ],
     related: [
       { href: '/lp/7-day-website', label: '7-day website from $499' },
-      { href: '/services#web', label: 'Web design and development' },
+      { href: serviceHref('web'), label: 'Web design and development' },
       { href: '/blog/wordpress-vs-custom-build', label: 'WordPress or a custom build?' },
       { href: '/blog/website-design-general-contractors', label: 'Website design for general contractors' },
     ],
@@ -36,7 +37,7 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'Can we edit the website ourselves?', a: 'Yes. Every service page on the Cleen & Green site runs on WordPress, so the team updates service scopes and page copy themselves without waiting for a developer.' },
     ],
     related: [
-      { href: '/services#brand', label: 'Brand identity' },
+      { href: serviceHref('brand'), label: 'Brand identity' },
       { href: '/lp/7-day-website/ph', label: '7-day website from ₱19,999' },
       { href: '/blog/rebranding-when-and-how', label: 'When and how to rebrand' },
       { href: '/blog/brand-identity-price-philippines', label: 'Brand identity prices in the Philippines' },
@@ -55,8 +56,8 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'Can one platform serve several kinds of user?', a: 'Yes. CrateOnScene serves drivers, spectators, businesses and event organisers at once, with driver profiles, business listings and organiser tools, and lets everyone browse events by type, date and location across JDM, tuner, muscle and import scenes.' },
     ],
     related: [
-      { href: '/services#product', label: 'Product design' },
-      { href: '/services#systems', label: 'Custom systems and web apps' },
+      { href: serviceHref('product'), label: 'Product design' },
+      { href: serviceHref('systems'), label: 'Custom systems and web apps' },
       { href: '/work/06', label: 'Car rental system case study' },
       { href: '/blog/how-long-to-build-a-website', label: 'How long a website or MVP takes to build' },
     ],
@@ -76,7 +77,7 @@ export const caseSeo: Record<string, CaseSeo> = {
     related: [
       { href: '/australia', label: 'Web design for Australian businesses' },
       { href: '/ecommerce', label: 'E-commerce builds and migrations' },
-      { href: '/services#seo', label: 'SEO marketing' },
+      { href: serviceHref('seo'), label: 'SEO marketing' },
       { href: '/blog/magento-to-prestashop-migration', label: 'Magento to PrestaShop: lessons from this store move' },
       { href: '/blog/website-speed-fixes', label: 'Website speed fixes' },
     ],
@@ -95,8 +96,8 @@ export const caseSeo: Record<string, CaseSeo> = {
     ],
     related: [
       { href: '/australia', label: 'Web design for Australian businesses' },
-      { href: '/services#systems', label: 'Custom systems and portals' },
-      { href: '/services#web', label: 'Web design and development' },
+      { href: serviceHref('systems'), label: 'Custom systems and portals' },
+      { href: serviceHref('web'), label: 'Web design and development' },
       { href: '/work/07', label: 'Membership portal case study' },
       { href: '/blog/offshore-web-design-australia', label: 'Working with an offshore studio from Australia' },
     ],
@@ -114,8 +115,8 @@ export const caseSeo: Record<string, CaseSeo> = {
       { q: 'Can we see the 8Drive system live?', a: 'No. It is a private, staff-only system, so there is no public link. This case study describes what it handles: bookings, real-time fleet availability, customer records, chauffeur assignment and reporting.' },
     ],
     related: [
-      { href: '/services#systems', label: 'Custom booking and business systems' },
-      { href: '/services#product', label: 'Product design' },
+      { href: serviceHref('systems'), label: 'Custom booking and business systems' },
+      { href: serviceHref('product'), label: 'Product design' },
       { href: '/work/03', label: 'Event platform MVP case study' },
       { href: '/web-design-iligan-city', label: 'Booking systems and websites from Iligan City' },
     ],
@@ -134,7 +135,7 @@ export const caseSeo: Record<string, CaseSeo> = {
     ],
     related: [
       { href: '/australia', label: 'Web design for Australian businesses' },
-      { href: '/services#systems', label: 'Custom systems and portals' },
+      { href: serviceHref('systems'), label: 'Custom systems and portals' },
       { href: '/work/08', label: 'Law firm client portal case study' },
       { href: '/blog/offshore-web-design-australia', label: 'Working with an offshore studio from Australia' },
     ],
@@ -153,8 +154,8 @@ export const caseSeo: Record<string, CaseSeo> = {
     ],
     related: [
       { href: '/australia', label: 'Web design for Australian businesses' },
-      { href: '/services#systems', label: 'Custom systems and portals' },
-      { href: '/services#web', label: 'Web design and development' },
+      { href: serviceHref('systems'), label: 'Custom systems and portals' },
+      { href: serviceHref('web'), label: 'Web design and development' },
       { href: '/work/07', label: 'Membership portal case study' },
       { href: '/blog/offshore-web-design-australia', label: 'Working with an offshore studio from Australia' },
     ],
@@ -174,7 +175,7 @@ export const caseSeo: Record<string, CaseSeo> = {
     related: [
       { href: '/web-design-iligan-city', label: 'Web design in Iligan City' },
       { href: '/lp/7-day-website/ph', label: '7-day website from ₱19,999' },
-      { href: '/services#web', label: 'Web design and development' },
+      { href: serviceHref('web'), label: 'Web design and development' },
       { href: '/blog/seo-iligan-city', label: 'SEO in Iligan City' },
       { href: '/lab', label: 'More three.js work in the Fazed Lab' },
     ],

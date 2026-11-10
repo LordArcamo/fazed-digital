@@ -34,7 +34,12 @@ function set(open: boolean) {
   document.querySelectorAll('#menu-btn, [data-menu-alt]').forEach((b) => b.setAttribute('aria-expanded', String(open)));
   btn.setAttribute('aria-label', open ? 'Close menu' : 'Menu');
   for (const id of ['main', 'footer']) document.getElementById(id)?.toggleAttribute('inert', open);
-  if (open) { bus.lenis?.stop(); menu.querySelector<HTMLElement>('.menu-link')?.focus({ preventScroll: true }); }
+  if (open) {
+    bus.lenis?.stop(); menu.querySelector<HTMLElement>('.menu-link')?.focus({ preventScroll: true });
+    // phone branch row: bring the current service into view (horizontal only)
+    const cur = menu.querySelector<HTMLElement>('.menu-sub[aria-current]'), br = cur?.closest<HTMLElement>('.menu-br');
+    if (cur && br) br.scrollLeft += cur.getBoundingClientRect().left - br.getBoundingClientRect().left - 8;
+  }
   // rail + M key: the menu button is hidden, so focus falls back to <main>, never <body>
   else { bus.lenis?.start(); (vis(back) && back !== document.body ? back : vis(btn) ? btn : document.getElementById('main'))?.focus({ preventScroll: true }); }
 }
@@ -66,7 +71,7 @@ export function bindMenuOnce() {
     if (isOpen() && t.closest('#menu a')) set(false);
   });
   const word = (e: Event) => {
-    const a = (e.target as HTMLElement).closest<HTMLElement>('.menu-link');
+    const a = (e.target as HTMLElement).closest<HTMLElement>('.menu-link, .menu-sub');
     if (a && isOpen()) dots?.then((d) => d.word(a.dataset.word || ''));
   };
   document.addEventListener('pointerover', word, { passive: true });

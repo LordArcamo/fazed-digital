@@ -1,3 +1,4 @@
+import { serviceHref } from './service-nav';
 // /framer, /webflow and /ecommerce: our showcase builds (concept sites for fictional brands, never client work).
 // Facts come from ~/Projects/fazed-framer-sites/STATUS.md, ~/Projects/fazed-webflow-sites/STATUS.md and
 // ~/Projects/fazed-3d-sites/commerce/SERIES-PLAN.md (2026-10-22). Only published builds are listed; Framer #02 Southerly
@@ -208,5 +209,5 @@ export const platforms = {
 export const choose = [
   ['Framer', 'Best for design-led marketing sites, launch pages and waitlists that need to look great and go live fast. Editing is simple, and the CMS covers blogs and lists.', '/framer'],
   ['Webflow', 'Best when you want more structure: bigger CMS needs, a strict class system and detailed interactions, edited by a marketing team.', '/webflow'],
-  ['Custom code', 'Best for apps, portals, bookings and anything a site builder can’t do, or when you want to own the code and avoid a monthly builder plan. We build these in Astro, Next.js and WordPress.', '/services#web'],
+  ['Custom code', 'Best for apps, portals, bookings and anything a site builder can’t do, or when you want to own the code and avoid a monthly builder plan. We build these in Astro, Next.js and WordPress.', serviceHref('systems')],
 ] as const;

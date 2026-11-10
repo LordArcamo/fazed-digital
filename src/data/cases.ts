@@ -1,3 +1,5 @@
+// .ts extension: scripts/capture-cases.mjs and gen-llms.mjs import this file in plain Node
+import { serviceHref } from './service-nav.ts';
 // Case studies. The `cases` array is moved VERBATIM from work/[slug].astro (getStaticPaths
 // imports it). New optional fields live in CASE_EXTRA below, so the original records stay untouched.
 export interface Case {
@@ -163,11 +165,11 @@ export interface CaseExtra {
 }
 
 const S = {
-  web: { label: 'Web design & development', href: '/services#web' },
-  brand: { label: 'Brand identity', href: '/services#brand' },
-  seo: { label: 'SEO marketing', href: '/services#seo' },
-  product: { label: 'Product design', href: '/services#product' },
-  systems: { label: 'Custom systems', href: '/services#systems' },
+  web: { label: 'Web design & development', href: serviceHref('web') },
+  brand: { label: 'Brand identity', href: serviceHref('brand') },
+  seo: { label: 'SEO marketing', href: serviceHref('seo') },
+  product: { label: 'Product design', href: serviceHref('product') },
+  systems: { label: 'Custom systems', href: serviceHref('systems') },
 };
 
 // Source: copy/work.md (+ copy/answers-2026-10-16.md: 8Drive = Philippines, no public link)

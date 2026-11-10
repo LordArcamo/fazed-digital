@@ -2,11 +2,16 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { registerHooks } from 'node:module';
+// the data files import each other without extensions (Vite resolves those; plain Node does not)
+registerHooks({ resolve(spec, ctx, next) { try { return next(spec, ctx); } catch (e) { if (spec.startsWith('.')) return next(`${spec}.ts`, ctx); throw e; } } });
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const { caseIndex } = await import(join(ROOT, 'src/data/cases.ts'));
 const { chapters } = await import(join(ROOT, 'src/data/services.ts'));
 const { labShipped } = await import(join(ROOT, 'src/data/lab.ts'));
 const { team } = await import(join(ROOT, 'src/data/team.ts'));
+const { serviceHref, SERVICE_NAV } = await import(join(ROOT, 'src/data/service-nav.ts'));
+const { servicePages, rulerBars } = await import(join(ROOT, 'src/data/service-pages.ts'));
 const posts = JSON.parse(readFileSync(join(ROOT, 'src/data/.generated/posts.json'), 'utf8'));
 const S = 'https://www.fazeddigital.com';
 const lines = [
@@ -23,7 +28,16 @@ const lines = [
   '- Custom websites and systems: typically $5,000–$20,000 depending on scope.',
   '',
   '## Services',
-  ...chapters.map((c) => `- [${c.h2}](${S}/services#${c.id}): ${c.outcome}`),
+  `- [All services](${S}/services): the hub, with a summary of each service.`,
+  // a live service page gets one line with its real URL and its facts (prices from proof.ts via the page data)
+  ...chapters.map((c) => {
+    const nav = SERVICE_NAV.find((s) => s.id === c.id), page = nav?.live ? servicePages[nav.slug] : null;
+    if (!page) return `- [${c.h2}](${S}${serviceHref(c.id)}): ${c.outcome}`;
+    const money = (v) => (typeof v === 'object' ? `${v.usd} (${v.php})` : v);
+    const bars = rulerBars(page.ruler).filter((b) => b.kind === 'case');
+    const runs = bars.length ? ` Real build lengths (${page.ruler.unit}): ${bars.map((b) => `${b.client} ${b.w}`).join(', ')}.` : '';
+    return `- [${page.name}](${S}${serviceHref(c.id)}): ${page.h1[1]} ${page.meter.lead} ${money(page.meter.big)}${page.meter.unit.startsWith('/') ? '' : ' '}${page.meter.unit}, ${page.meter.tailPre ? `${page.meter.tailPre} ` : ''}${money(page.meter.tail)}.${runs}`;
+  }),
   `- [7-day website (USD)](${S}/lp/7-day-website) · [Philippine pricing](${S}/lp/7-day-website/ph)`,
   `- [Web design in Iligan City](${S}/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.`,
   `- [Web design for Australia](${S}/australia): real Australian work, working hours against Australian time zones, prices in US dollars.`,

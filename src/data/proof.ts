@@ -45,3 +45,43 @@ export const capsCopy = {
   sevenDay: 'We take on 15 seven-day builds a month, max.',
   custom: 'We take on 3 custom projects a month.',
 };
+
+// Automations and social media management (owner, 10 Nov 2026: docs/seo/pages/service-pages.md "Owner pricing decisions").
+// No clients yet in either service, so nothing here is a result. Read by /services/automations, /services/social-media-management,
+// the /services hub and the chat's market blocks.
+// Render a pair as "$899 (₱29,999)" in one text node: the geo swap in Base.astro reads that pattern, while a bare "$899"
+// would be mapped to the 7-day Growth peso price. Kept apart from `prices.usd`, which lint-chat treats as the package list.
+export const AUTOMATION_CLIENTS_REAL = false; // flip when the first automation client is live and approved to show
+export const automationPrices = [
+  { id: 'check', name: 'Free automation check', usd: 'Free', php: 'Free', includes: 'A 15-minute call, booked through /contact?service=automations' },
+  { id: 'single', name: 'Single automation', usd: '$299', php: '₱9,999', includes: 'One workflow, live in 5 business days, 14 days of fixes' },
+  { id: 'pack', name: 'Automation pack', usd: '$899', php: '₱29,999', includes: 'Up to 3 connected workflows, walkthrough video and written steps, 30 days of fixes' },
+  { id: 'custom', name: 'Custom automation', usd: 'from $2,500', php: 'quoted', includes: 'Custom code, AI agents, systems with no ready-made link' },
+  { id: 'care', name: 'Automation care', usd: '$99/month', php: '₱3,500/month', includes: 'Monitoring, and fixes when a tool changes' },
+] as const;
+export const automationTerms = {
+  tools: ['n8n', 'Zapier', 'Make', 'HubSpot', 'custom code'],
+  // Nothing is asked in return: the owner's 10 Nov note said "for a testimonial", but the 6 Nov rule in offers.ts (no
+  // discount may be tied to a review) wins; resolved by the coordinator in copy/service-pages/automations.md §15.
+  founding: { on: true, off: '20%', spots: 3, line: '20% off for our first 3 automation clients. Nothing is asked in return.' },
+  subscriptions: 'Tool subscriptions are in the client’s own name.',
+};
+
+export const SOCIAL_CLIENTS_REAL = false;
+export const socialPrices = [
+  { id: 'starter', name: 'Starter', usd: '$399/month', php: '₱14,999/month', recommended: false, includes: 'Up to 3 platforms, 12 designed posts a month, captions, scheduling, monthly report' },
+  { id: 'growth', name: 'Growth', usd: '$799/month', php: '₱29,999/month', recommended: true, includes: 'Up to 5 platforms, 20 posts including 4 short videos, stories, replies to comments and DMs on business days, monthly report and call' },
+  { id: 'pro', name: 'Pro', usd: '$1,499/month', php: '₱49,999/month', recommended: false, includes: 'All the client’s platforms, 30 posts including 8 short videos, ads management (ad spend paid by the client), content calendar' },
+] as const;
+export const socialTerms = {
+  minimum: '3-month minimum, then month to month with 30 days’ notice.',
+  // Nothing is asked in return (offers.ts 6 Nov rule; copy/service-pages/social-media-management.md §7)
+  founding: { on: true, off: '20%', spots: 3, months: 3, line: '20% off the first 3 months of any plan for our first 3 clients. Nothing is asked in return.' },
+};
+
+// Work with no published price (owner, 10 Nov 2026). One line each, so the pages and the chat say the same thing.
+export const quotedCopy = {
+  brand: 'Quoted per project', // owner: brand work is quoted per project, with no "from" price
+  seoRetainer: 'Quoted per project', // TBC owner: a starting monthly price, if one is ever published (brief TBC-3)
+  designOnly: 'Quoted per project', // TBC owner: design-only UI/UX price and typical timeline (brief TBC-7)
+};

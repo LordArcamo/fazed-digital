@@ -1,4 +1,5 @@
 ---
+import { serviceHref } from '../data/service-nav';
 // /web-design-iligan-city: the local service page (docs/seo/strategy.md §4.1). Copy: docs/seo/pages/web-design-iligan-city.md
 // (The Wordsmith + The Navigator), owner answers 2026-10-19: Dotted Studios may be named; Bisaya/Tagalog/English;
 // in person in Iligan and Cagayan de Oro; no client office yet; postcode 9200; custom/SEO peso prices are quoted per project.
@@ -22,9 +23,9 @@ const plans = [
 ];
 const builds = [
   ['Websites you can update yourself', 'Custom design, never a template. Built mobile-first, because most people meet your business on a phone. WordPress when your team wants to edit everything, Astro when speed matters most. The domain, hosting, logins and files are yours. No lock-in.', '/lp/7-day-website/ph', 'See the 7-day packages'],
-  ['Local SEO and Google Business Profile', 'For businesses that serve an area. We fix the technical basics, plan the keywords people in Iligan actually type, optimise each page and set up your Google Business Profile so you can show on Maps. Setup takes about a month; results usually show in 6–12 months.', '/services#seo', 'How SEO works with us'],
-  ['Brand identity', 'Logo, colours, type and simple guidelines, so your signage, menu, Facebook page and website all look like the same business. Brand projects typically take 4–6 weeks.', '/services#brand', 'See our brand work'],
-  ['Booking systems and custom tools', 'When a spreadsheet and Messenger can’t keep up: bookings, memberships, client portals and admin dashboards built around how your team works. Our system builds have run 8–14 weeks.', '/services#systems', 'Scope a system'],
+  ['Local SEO and Google Business Profile', 'For businesses that serve an area. We fix the technical basics, plan the keywords people in Iligan actually type, optimise each page and set up your Google Business Profile so you can show on Maps. Setup takes about a month; results usually show in 6–12 months.', serviceHref('seo'), 'How SEO works with us'],
+  ['Brand identity', 'Logo, colours, type and simple guidelines, so your signage, menu, Facebook page and website all look like the same business. Brand projects typically take 4–6 weeks.', serviceHref('brand'), 'See our brand work'],
+  ['Booking systems and custom tools', 'When a spreadsheet and Messenger can’t keep up: bookings, memberships, client portals and admin dashboards built around how your team works. Our system builds have run 8–14 weeks.', serviceHref('systems'), 'Scope a system'],
 ];
 const steps = [
   ['Day 1', 'Kickoff and brief', 'You send your logo, photos and references. We confirm goals and the timeline.'],

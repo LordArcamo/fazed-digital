@@ -7,6 +7,7 @@ import type { Flags } from '../boot/flags';
 import { initCursor } from './cursor';
 import { initMagnetic } from './magnetic';
 import { initHome } from './home';
+import { initRuntime } from './runtime';
 
 gsap.registerPlugin(ScrollTrigger);
 let started = false;
@@ -67,6 +68,8 @@ function pageLoad() {
   }
   pageCleanups.push(initMagnetic());
   if (document.querySelector('[data-page="home"]')) pageCleanups.push(initHome(bus.rm));
+  const rt = document.querySelector<HTMLElement>('[data-page="runtime"]');
+  if (rt && !bus.rm) pageCleanups.push(initRuntime(rt));
   // case plates: the full-page capture scrolls inside the browser frame (scrubbed)
   if (!bus.rm) document.querySelectorAll<HTMLElement>('[data-plate]').forEach((plate) => {
     const view = plate.querySelector<HTMLElement>('.browser-view'), img = view?.querySelector('img');

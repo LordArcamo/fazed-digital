@@ -7,6 +7,7 @@ import FeaturedWork from '../components/FeaturedWork.astro';
 import LabSheetPoster from '../components/LabSheetPoster.astro';
 import { labShipped, LAB_TOTAL, LABEL, pad2 } from '../data/lab';
 import { services } from '../data/services';
+import { serviceHref, SERVICE_TOTAL } from '../data/service-nav';
 import { homeFaq } from '../data/home';
 import Faq from '../components/Faq.astro';
 import { faqPage } from '../lib/schema';
@@ -20,6 +21,8 @@ import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark
 const pageTitle = 'Web Design & Branding Studio in the Philippines | Fazed';
 const pageDesc = 'Custom websites, brands, SEO and web apps from Iligan City, Philippines, for businesses in the USA, Australia and the Philippines. 7-day sites from $499.';
 const heroLines = ['Built in Iligan.', 'Live worldwide.'];
+// the hub's count ("Seven services. One connected brand.", approved 2026-11-10), from service-nav.ts so it can't drift
+const SERVICE_WORD = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'][SERVICE_TOTAL] ?? String(SERVICE_TOTAL);
 const heroDeck = 'Websites, brands and web apps for owners who want to be found, trusted and chosen. Made in the Philippines, shipped to the USA, Australia and home.';
 const unfoldLines = ['Web design, branding', 'and SEO from the Philippines.'];
 const searchLine = unfoldLines.join(' ').replace(/\.$/, '');
@@ -93,30 +96,30 @@ const schema = [
     <section class="services" id="services" data-f="lattice" data-fquiet="0.35" aria-labelledby="svc-h">
       <div class="container svc-head">
         <h2 id="svc-h" class="svc-h rv">This page is five layers deep.</h2>
-        <p class="svc-intro rv">Web design on top. Branding, SEO, product design and custom systems underneath. Five services, one connected system. <a class="link" href="/services">See all five</a></p>
+        <p class="svc-intro rv">Web design on top. Branding, SEO, product design and custom systems underneath. {SERVICE_WORD} services, one connected system. <a class="link" href="/services">See all {SERVICE_WORD.toLowerCase()}</a></p>
       </div>
       <div class="rig">
         <div class="stage">
           <div class="scene" aria-hidden="true">
-            <a class="plane p-web" style="--i:0" href={`/services#${services[0].id}`} tabindex="-1" data-i="0"><div class="pl-in">
+            <a class="plane p-web" style="--i:0" href={serviceHref(services[0].id)} tabindex="-1" data-i="0"><div class="pl-in">
               <svg class="p-mark" viewBox={MARK_VIEWBOX.join(' ')}><defs><g id="sv-mark" transform={MARK_TRANSFORM}>{MARK_PATHS.map((d) => <path d={d} />)}</g><pattern id="sv-dots" width="30" height="30" patternUnits="userSpaceOnUse"><circle cx="15" cy="15" r="9.5" fill="currentColor" /></pattern><mask id="sv-mask"><use class="t-mask" href="#sv-mark" /></mask></defs><rect x={MARK_VIEWBOX[0]} y={MARK_VIEWBOX[1]} width={MARK_VIEWBOX[2]} height={MARK_VIEWBOX[3]} fill="url(#sv-dots)" mask="url(#sv-mask)" /></svg>
               <span class="bar">{navLabels.map((l) => <span>{l}</span>)}<b>7 Days →</b></span>
               <div class="big">{heroLines[0]}<span>{heroLines[1]}</span></div>
               <p>{heroDeck}</p>
               <span class="go">Start a project →</span>
             </div><i class="shade"></i></a>
-            <a class="plane p-brand" style="--i:1" href={`/services#${services[1].id}`} tabindex="-1" data-i="1"><div class="pl-in">
+            <a class="plane p-brand" style="--i:1" href={serviceHref(services[1].id)} tabindex="-1" data-i="1"><div class="pl-in">
               <svg class="p-mark" viewBox={MARK_VIEWBOX.join(' ')}><use class="t-solid" href="#sv-mark" /></svg>
               <div class="aa">Aa</div>
               <div class="sw"><i></i><i></i><i></i></div>
               <div class="fonts">#090909 #F5F4F0 #C9FF57<br />Clash Display / Plus Jakarta Sans / Space Mono</div>
             </div><i class="shade"></i></a>
-            <a class="plane p-seo" style="--i:2" href={`/services#${services[2].id}`} tabindex="-1" data-i="2"><div class="pl-in">
+            <a class="plane p-seo" style="--i:2" href={serviceHref(services[2].id)} tabindex="-1" data-i="2"><div class="pl-in">
               <div class="q"><i></i>{searchLine}</div>
               <div><div class="url">www.fazeddigital.com</div><div class="ttl">{pageTitle}</div><div class="dsc">{pageDesc}</div></div>
               <pre>{schemaLine}</pre>
             </div><i class="shade"></i></a>
-            <a class="plane p-prod" style="--i:3" href={`/services#${services[3].id}`} tabindex="-1" data-i="3"><div class="pl-in">
+            <a class="plane p-prod" style="--i:3" href={serviceHref(services[3].id)} tabindex="-1" data-i="3"><div class="pl-in">
               <svg class="ux" viewBox="0 0 1000 625">
                 <rect class="ux-bar" width="1000" height="46" />
                 <text class="ux-m ux-hi" x="36" y="29">7-Day Brief</text><text class="ux-m" x="176" y="29">/ Phone flow</text>
@@ -157,7 +160,7 @@ const schema = [
                 <g class="ux-steps">{[0, 1, 2, 3, 4, 5, 6].map((n) => <circle class:list={[{ 'is-on': n < 3 }]} cx={826 + n * 24.6} cy="450" r="6" />)}</g>
               </svg>
             </div><i class="shade"></i></a>
-            <a class="plane p-sys" style="--i:4" href={`/services#${services[4].id}`} tabindex="-1" data-i="4"><div class="pl-in">
+            <a class="plane p-sys" style="--i:4" href={serviceHref(services[4].id)} tabindex="-1" data-i="4"><div class="pl-in">
               <svg class="trip" viewBox="0 0 1000 625"><g transform="translate(-6.5 24)">
                 <g class="t-link"><path d="M240 250h44" /><path d="M481 250h44" /><path d="M722 250h44" /></g>
                 <g class="t-tip"><path d="m276 238 14 12-14 12" /><path d="m517 238 14 12-14 12" /><path d="m758 238 14 12-14 12" /></g>
@@ -178,7 +181,7 @@ const schema = [
           <ol class="layers">
             {services.map((s, i) => (
               <li class="layer" id={`svc-${s.id}`} data-i={i}>
-                <h3><a href={`/services#${s.id}`}>{s.short}<span class="sr-only">: {s.title}</span></a></h3>
+                <h3><a href={serviceHref(s.id)}>{s.short}<span class="sr-only">: {s.title}</span></a></h3>
                 <p class="line">{s.line}</p>
                 <div class="more">
                   <ul class="mono scope" aria-label={`${s.title} scope`}>{s.scope.map((x) => <li>{x}</li>)}</ul>

@@ -4,16 +4,17 @@
 // (services.ts, nocode.ts, cases.ts, proof.ts). Never link /halloween (seasonal) or any private preview from here.
 import { prices } from './proof';
 import { caseIndex } from './cases';
+import { serviceHref } from './service-nav';
 
 export interface RelLink { href: string; label: string; note: string }
 
 /** money pages and hubs, with a fact-only one-line note. Keys are used by every map below. */
 const T = {
-  web: { href: '/services#web', note: 'Custom design, no templates. Built in WordPress, Astro, Next.js or Webflow.' },
-  brand: { href: '/services#brand', note: 'Logo, colour, type and guidelines. Brand projects typically take 4–6 weeks.' },
-  seo: { href: '/services#seo', note: 'Technical fixes, keywords, on-page work, local SEO and a plain-English monthly report.' },
-  product: { href: '/services#product', note: 'Research, flows and Figma UI for apps and platforms.' },
-  systems: { href: '/services#systems', note: 'Booking, membership and admin tools built around how your team works.' },
+  web: { href: serviceHref('web'), note: 'Custom design, no templates. Built in WordPress, Astro, Next.js or Webflow.' },
+  brand: { href: serviceHref('brand'), note: 'Logo, colour, type and guidelines. Brand projects typically take 4–6 weeks.' },
+  seo: { href: serviceHref('seo'), note: 'Technical fixes, keywords, on-page work, local SEO and a plain-English monthly report.' },
+  product: { href: serviceHref('product'), note: 'Research, flows and Figma UI for apps and platforms.' },
+  systems: { href: serviceHref('systems'), note: 'Booking, membership and admin tools built around how your team works.' },
   framer: { href: '/framer', note: 'Launch pages, waitlists, CMS blogs and shop pages, designed and built in Framer.' },
   webflow: { href: '/webflow', note: 'Product and marketing sites with Webflow Interactions, CMS and native forms.' },
   ecom: { href: '/ecommerce', note: 'Product pages, carts, buying tools and store migrations, quoted upfront.' },

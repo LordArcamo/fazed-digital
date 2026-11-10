@@ -1,3 +1,4 @@
+import { serviceHref } from '../data/service-nav';
 // Generative dot covers (deterministic from slug × category family), 64×64 SVG, SSR.
 // SEO = concentric · Branding = hex · Strategy = path · Development = grid · Design = pentagon
 const hash = (s: string) => { let h = 2166136261; for (let i = 0; i < s.length; i++) { h ^= s.charCodeAt(i); h = Math.imul(h, 16777619); } return h >>> 0; };
@@ -17,10 +18,10 @@ export function coverDots(slug: string, category: string): { x: number; y: numbe
   return out;
 }
 export const SERVICE_FOR: Record<string, { label: string; href: string }> = {
-  SEO: { label: 'SEO marketing', href: '/services#seo' },
-  Branding: { label: 'Brand identity', href: '/services#brand' },
-  Design: { label: 'Web design', href: '/services#web' },
-  Development: { label: 'Web development', href: '/services#web' },
+  SEO: { label: 'SEO marketing', href: serviceHref('seo') },
+  Branding: { label: 'Brand identity', href: serviceHref('brand') },
+  Design: { label: 'Web design', href: serviceHref('web') },
+  Development: { label: 'Web development', href: serviceHref('web') },
   Strategy: { label: '7-day website', href: '/lp/7-day-website' },
 };
 export const HUBS: Record<string, { intro: string; pillar: string }> = {

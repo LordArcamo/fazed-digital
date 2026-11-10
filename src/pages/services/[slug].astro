@@ -1,0 +1,490 @@
+---
+// /services/<slug>: one template for the seven service pages (Direction C "Runtime", docs/design/service-pages/directions.md).
+// Content: src/data/service-pages.ts (from copy/service-pages/<slug>.md). Nav: src/data/service-nav.ts.
+// Field: the hero ruler is the `runtime` formation, each proof case lights the sticky `meter` (desktop). Everything the
+// field draws is also DOM text, and the CSS poster under it is the reduced-motion / no-GPU picture.
+import { Picture } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import Crumbs from '../../components/Crumbs.astro';
+import Faq from '../../components/Faq.astro';
+import RuntimeRuler from '../../components/RuntimeRuler.astro';
+import { servicePages, rulerBars, weeksOf, type Money, type Link } from '../../data/service-pages';
+import { SERVICE_NAV, SERVICE_TOTAL, liveServices, servicePath } from '../../data/service-nav';
+import { caseIndex } from '../../data/cases';
+import { workImages } from '../../data/images';
+import { SITE_URL } from '../../data/site';
+import { crumbs, faqPage, ORG_REF } from '../../lib/schema';
+import posts from '../../data/.generated/posts.json';
+
+export function getStaticPaths() {
+  // service-nav.ts and service-pages.ts must agree: a live service has a page, and a page belongs to a live service
+  for (const s of SERVICE_NAV) if (s.live !== !!servicePages[s.slug]) throw new Error(`service page "${s.slug}": live=${s.live} but ${servicePages[s.slug] ? 'has' : 'has no'} data`);
+  for (const k of Object.keys(servicePages)) if (!SERVICE_NAV.some((s) => s.slug === k)) throw new Error(`service page "${k}" is not in service-nav.ts`);
+  return liveServices.map((s) => ({ params: { slug: s.slug } }));
+}
+
+const { slug } = Astro.params as { slug: string };
+const page = servicePages[slug];
+const nav = SERVICE_NAV.find((s) => s.slug === slug)!;
+const pad2 = (n: number) => String(n).padStart(2, '0');
+const idx = pad2(SERVICE_NAV.indexOf(nav) + 1);
+const bars = rulerBars(page.ruler);
+const path = servicePath(nav), url = SITE_URL + path;
+const span = page.ruler.span;
+const postBy = new Map(posts.map((p: { slug: string }) => [p.slug, p]));
+const post = (s: string) => { const p = postBy.get(s) as { slug: string; title: string; category: string; date: string; readTime: string } | undefined; if (!p) throw new Error(`service page ${slug}: no post ${s}`); return p; };
+const related = page.related.map((r) => (typeof r === 'string' ? [{ p: post(r), market: undefined }] : [{ p: post(r.usd), market: 'usd' }, { p: post(r.ph), market: 'ph' }])).flat();
+const fill = (s: string) => s.replace('{postCount}', String(posts.length));
+const kase = (s: string) => caseIndex.find((c) => c.slug === s)!;
+const faqH: Record<string, string> = { 'web-design': 'web design', branding: 'brand identity', seo: 'SEO', 'ui-ux-design': 'UI/UX design', 'web-app-development': 'custom web apps', automations: 'automations', 'social-media-management': 'social media management' };
+/** "[label](/href)" inside data strings → parts */
+const md = (s: string) => s.split(/(\[[^\]]+\]\([^)]+\))/).filter(Boolean).map((x) => { const m = x.match(/^\[([^\]]+)\]\(([^)]+)\)$/); return m ? { label: m[1], href: m[2] } : x; });
+const isMoney = (v: unknown): v is Money => typeof v === 'object' && v !== null && 'usd' in v;
+const hasRuns = page.sections.some((s) => s.kind === 'runs');
+
+const schema = [
+  {
+    '@context': 'https://schema.org', '@type': 'Service', '@id': `${url}#service`, name: page.name, serviceType: page.schema.serviceType,
+    description: page.intro, url, provider: ORG_REF,
+    areaServed: [{ '@type': 'Country', name: 'Philippines' }, { '@type': 'Country', name: 'United States' }, { '@type': 'Country', name: 'Australia' }],
+    ...(page.schema.offers ? {
+      hasOfferCatalog: {
+        '@type': 'OfferCatalog', name: `${page.name}: prices`,
+        itemListElement: page.schema.offers.map((o) => ({
+          '@type': 'Offer', name: o.name, price: o.price, priceCurrency: 'USD', url: SITE_URL + o.url,
+          ...(o.monthly ? { priceSpecification: { '@type': 'UnitPriceSpecification', price: o.price, priceCurrency: 'USD', unitCode: 'MON', referenceQuantity: { '@type': 'QuantitativeValue', value: 1, unitCode: 'MON' } } } : {}),
+        })),
+      },
+    } : {}),
+  },
+  ...(page.schema.caseList ? [{
+    '@context': 'https://schema.org', '@type': 'ItemList', name: `${page.name}: case studies`,
+    itemListElement: page.schema.caseList.map((s, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'CreativeWork', name: `${kase(s).title} case study`, url: `${SITE_URL}/work/${s}`, creator: ORG_REF } })),
+  }] : []),
+  faqPage(page.faq),
+  crumbs([['Services', '/services'], [page.crumb, path]]),
+];
+---
+{/* a price per market: crawlers and no-JS see both; the geo script hides one (base.css [data-market]) */}
+<Base title={page.title} description={page.description} image={`/og/services/${slug}.png`} formation="runtime" schema={schema} current="/services" service={nav.id}>
+  <div class="sv" data-page="runtime">
+    <section class="sv-hero" data-f="runtime" aria-labelledby="sv-h">
+      <div class="container sv-hero-in">
+        <div class="sv-crumbs"><Crumbs items={[['Services', '/services'], [page.crumb, path]]} /></div>
+        <p class="mono sv-eye">Service {idx} / {pad2(SERVICE_TOTAL)}<span class="sv-eye-n"> · {nav.name}</span></p>
+        <h1 id="sv-h" class="sv-h1"><span>{page.h1[0]}</span> <span class="l2">{page.h1[1]}</span></h1>
+        <p class="sv-ans">
+          <span class="mono">{page.meter.lead}</span>
+          <span class="n">{isMoney(page.meter.big) ? <><span data-market="usd">{page.meter.big.usd}</span><span data-market="ph">{page.meter.big.php}</span></> : page.meter.big}<small>{page.meter.unit}</small></span>
+          <span class="mono sv-ans-t">{page.meter.tailPre && `${page.meter.tailPre} `}{isMoney(page.meter.tail) ? <><span data-market="usd">{page.meter.tail.usd}</span><span class="mk-sep"> · </span><span data-market="ph">{page.meter.tail.php}</span></> : page.meter.tail}</span>
+        </p>
+        <div class="sv-row">
+          <p class="sv-intro">{page.intro}</p>
+          <div class="sv-cta">
+            <a class="btn btn--lime" href={page.cta.href} data-magnetic>{page.cta.label} <span class="arrow" aria-hidden="true">→</span></a>
+            <a class:list={['btn btn--ghost sv-ghost', { 'sv-ghost--in': page.ghost.href.startsWith('#') }]} href={page.ghost.href}>{page.ghost.label}</a>
+          </div>
+        </div>
+        <div class="sv-ruler"><RuntimeRuler ruler={page.ruler} bars={bars} /></div>
+      </div>
+    </section>
+
+    {page.sections.map((s, si) => (
+      <section class:list={['sv-sec', `sv-k-${s.kind}`]} id={s.id} data-f={s.kind === 'runs' ? undefined : 'lattice'} aria-labelledby={`s${si}-h`}>
+        <div class="container">
+          <div class="sv-hd">
+            <p class="mono">{s.eyebrow}</p>
+            <h2 id={`s${si}-h`} class={s.kind === 'runs' || s.kind === 'process' ? 't-d1' : 't-d2'}>{s.h2[0]} <span class="dim">{s.h2[1]}</span></h2>
+            {s.lead && <p class="t-body-l sv-lead">{s.lead}</p>}
+          </div>
+
+          {s.kind === 'getfit' && (
+            <div class="sv-cols">
+              <div class="sv-col"><h3 class="mono">{s.getH}</h3><ul class="sv-get">{s.get.map((g) => <li class="rv"><span class="t">{g.t}</span>{g.d && <span class="d">{g.d}</span>}</li>)}</ul>{s.getNote && <p class="sv-note">{s.getNote}</p>}</div>
+              <div class="sv-col sv-col--fit"><h3 class="mono">Good fit if</h3><ul class="sv-get sv-fit">{s.fit.map((g) => <li class="rv"><span class="t">{g}</span></li>)}</ul></div>
+            </div>
+          )}
+
+          {s.kind === 'prose' && (
+            <div class="sv-prose">
+              <div class="sv-prose-b">{s.body.map((p) => <p>{fill(p)}</p>)}</div>
+              {s.flow && (
+                <div class="sv-flow" role="img" aria-label={`${s.flow.from.join(' and ')} go to ${s.flow.to.join(' and ')} at the same moment.`}>
+                  <ul aria-hidden="true">{s.flow.from.map((f) => <li class="mono">{f}</li>)}</ul>
+                  <span class="sv-flow-l" aria-hidden="true"><i></i></span>
+                  <ul aria-hidden="true">{s.flow.to.map((f) => <li class="mono lit">{f}</li>)}</ul>
+                </div>
+              )}
+              {s.list && <ul class="sv-plist">{s.list.map((l) => <li class="rv"><b>{fill(l.t)}</b> <span>{l.d}</span></li>)}</ul>}
+              {s.links && <p class="sv-links">{s.links.map((l) => <a class="link" href={l.href} data-market={l.market}>{l.label} <span aria-hidden="true">→</span></a>)}</p>}
+              {s.small && <p class="mono sv-small">{s.small}</p>}
+            </div>
+          )}
+
+          {s.kind === 'rows' && (
+            <ul class="sv-rows">{s.rows.map((r) => (
+              <li class="rv" data-market={r.market}>
+                <h3 class="t">{r.t}</h3>
+                {r.d && <p class="d">{r.d}</p>}
+                {r.link ? <a class="link" href={r.link.href}>{r.link.label} <span aria-hidden="true">→</span></a> : <span></span>}
+              </li>
+            ))}</ul>
+          )}
+
+          {s.kind === 'table' && (
+            <div class="sv-tw">
+              <table class:list={['sv-table', s.colTable ? 'sv-table--cols' : 'sv-table--rows']}>
+                <caption class="sr-only">{s.h2.join(' ')}</caption>
+                <thead><tr>{s.colTable && <td></td>}{s.head.map((h, i) => <th scope="col" class:list={{ pick: s.pick === i }}>{h}{s.pick === i && <span class="mono sv-pick">Recommended</span>}</th>)}</tr></thead>
+                <tbody>
+                  {s.rows.map((r) => (
+                    <tr>
+                      <th scope="row">{r.th}</th>
+                      {r.cells.map((c, i) => (
+                        <td class:list={{ pick: s.pick === i }} data-h={s.colTable ? s.head[i] : s.head[i + 1]}>
+                          {isMoney(c) ? <><span data-market="usd">{c.usd}</span><span class="mk-sep"> · </span><span data-market="ph">{c.php}</span></> : md(c).map((x) => (typeof x === 'string' ? x : <a class="link" href={x.href}>{x.label}</a>))}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                  {s.ctas && <tr class="sv-tctas"><td></td>{s.ctas.map((l, i) => <td class:list={{ pick: s.pick === i }}><a class:list={['btn', s.pick === i || (s.pick === undefined && i === s.ctas!.length - 1) ? 'btn--lime' : 'btn--ghost']} href={l.href}>{l.label} <span class="arrow" aria-hidden="true">→</span></a></td>)}</tr>}
+                </tbody>
+              </table>
+              {s.foot && <p class="sv-foot">{md(s.foot).map((x) => (typeof x === 'string' ? x : <a class="link" href={x.href}>{x.label} <span aria-hidden="true">→</span></a>))}</p>}
+            </div>
+          )}
+
+          {s.kind === 'runs' && (
+            <div class="sv-runs-in">
+              <div class="sv-meter" data-meter={span} aria-hidden="true">
+                <div class="poster-art sv-meter-p" style={`--span:${span}`}></div>
+                <p class="mono" data-meter-l>{page.ruler.unit}</p>
+              </div>
+              <div class="sv-cases">
+                {s.runs.map((r, k) => {
+                  const c = kase(r.slug), w = weeksOf(r.slug);
+                  return (
+                    <article class="sv-case" data-f="meter" data-step={k} data-weeks={w} data-label={`${c.title} · ${w} wk${w === 1 ? '' : 's'}`} aria-labelledby={`case-${r.slug}`}>
+                      <p class="big" aria-hidden="true">{pad2(w)}<small>week{w === 1 ? '' : 's'} · {r.small}</small></p>
+                      <div class="txt">
+                        <p class="mono">{c.strip}</p>
+                        <h3 id={`case-${r.slug}`} class="t-h3">{c.title} <span class="sr-only">, {w} week{w === 1 ? '' : 's'}</span></h3>
+                        <p class="hl">{r.headline}</p>
+                        <p class="ba"><span>Before</span> {r.before}</p>
+                        <p class="ba"><span>After</span> {r.after}</p>
+                        <a class="link" href={`/work/${r.slug}`}>Read the {c.title.replace(/^The /, '')} case <span aria-hidden="true">→</span></a>
+                      </div>
+                      <figure>
+                        <div class="bar" style={`--span:${span}`} aria-hidden="true">{Array.from({ length: span }, (_, i) => <i class:list={{ on: i < w }}></i>)}</div>
+                        <div class="sv-shot"><Picture src={workImages[r.slug]} formats={['avif', 'webp']} widths={[480, 800, 1200]} sizes="(max-width: 1023px) 92vw, 58vw" alt={c.alt} loading="lazy" decoding="async" /></div>
+                        <figcaption class="mono"><span>{r.caption}</span><span>Week {w} of {span}</span></figcaption>
+                      </figure>
+                    </article>
+                  );
+                })}
+                {s.after && <p class="sv-after">{s.after.lead} <a class="link" href={s.after.href}>{s.after.label} <span aria-hidden="true">→</span></a></p>}
+              </div>
+            </div>
+          )}
+
+          {s.kind === 'process' && (
+            <>
+              <ol class="sv-phases">{s.steps.map(([t, d], i) => <li class="rv"><span class="mono">{pad2(i + 1)}</span><b>{t}</b><p>{d}</p></li>)}</ol>
+              <p class="sv-time"><span class="mono">Timeline</span> {s.timeline} {s.timelineLink && <a class="link" href={s.timelineLink.href}>{s.timelineLink.label}</a>}</p>
+              {s.price && (
+                <div class="sv-price" id={s.id ? undefined : 'price-line'}>
+                  <p class="mono">{s.price.points.length ? 'Price, on the same line' : 'Price'}</p>
+                  <div class="sv-price-r" aria-hidden={s.price.points.length ? 'true' : undefined}>
+                    {s.price.text && <span class="sv-pl sv-pl--text up" style="left:0"><span class="v">{s.price.text}</span></span>}
+                    {s.price.points.map((p, i) => {
+                      const L = (p.at / s.price!.span) * 100, Wd = p.to !== undefined ? ((p.to - p.at) / s.price!.span) * 100 : 0, right = L > 55;
+                      return (<>
+                        {p.to !== undefined ? <span class="sv-pm rg" style={`left:${L}%;width:${Wd}%`}></span> : <span class="sv-pm pt" style={`left:${L}%`}></span>}
+                        <span class:list={['sv-pl', i % 2 ? 'dn' : 'up', { right }]} style={right ? `right:${100 - L - Wd}%` : `left:${L}%`}>
+                          <span class="mono lime">{p.label}</span>
+                          <span class="v">{isMoney(p.value) ? <><span data-market="usd">{p.value.usd}</span><em data-market="ph"> {p.value.php}</em></> : p.value}</span>
+                        </span>
+                      </>);
+                    })}
+                  </div>
+                  {s.price.points.length > 0 && <ul class="sr-only">{s.price.points.map((p) => <li>{p.label}: {isMoney(p.value) ? `${p.value.usd} (${p.value.php})` : p.value}</li>)}</ul>}
+                  <p class="sv-price-sub">{s.price.sub}</p>
+                </div>
+              )}
+            </>
+          )}
+        </div>
+      </section>
+    ))}
+
+    <section class="sv-sec sv-faq" id="faq" data-f="lattice" aria-labelledby="faq-h">
+      <div class="container sv-faq-in">
+        <div class="sv-faq-hd"><p class="mono">FAQ · {pad2(page.faq.length)}</p><h2 id="faq-h" class="t-d2">Questions about {faqH[slug]}</h2></div>
+        <Faq items={page.faq} id="svfaq" />
+        <div class="sv-read">
+          <h2 class="mono">Read before your call</h2>
+          <ul>{related.map(({ p, market }) => (
+            <li data-market={market}><a href={`/blog/${p.slug}`}>
+              <span class="rt mono" aria-hidden="true">{Array.from({ length: parseInt(p.readTime, 10) || 1 }, () => <i></i>)}<span>{p.readTime}</span></span>
+              <span class="t">{p.title}</span>
+              <span class="mono">{p.category} · {p.date}<span class="sr-only"> · {p.readTime}</span></span>
+            </a></li>
+          ))}</ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="sv-sec sv-end" data-f="lattice" aria-labelledby="end-h">
+      <div class="container sv-end-in">
+        <p class="mono">Ready when you are</p>
+        <h2 id="end-h">{page.close.h2[0]} <span class="lime">{page.close.h2[1]}</span></h2>
+        <p class="t-body-l sv-end-b">{page.close.body}</p>
+        {page.close.caps.map((c) => <p class="mono lime">{c}</p>)}
+        <div class="sv-cta">
+          <a class="btn btn--lime" href={page.cta.href} data-magnetic>{page.cta.label} <span class="arrow" aria-hidden="true">→</span></a>
+          <a class="btn btn--ghost" href={page.close.next.href}>{page.close.next.label}</a>
+        </div>
+        {page.close.also.length > 0 && <p class="sv-also">{page.close.alsoLead} {page.close.also.map((l: Link, i) => <span data-market={l.market}>{i ? ' · ' : ''}<a class="link" href={l.href}>{l.label}</a></span>)}</p>}
+        <nav class="sv-svcs" aria-label="All services">
+          <ul>{SERVICE_NAV.map((s) => <li><a href={s.live ? servicePath(s) : `/services#${s.hub}`} aria-current={s.id === nav.id ? 'page' : undefined}><i aria-hidden="true"></i><span class="mono">{s.n.slice(-1).padStart(2, '0')}</span> {s.short}</a></li>)}</ul>
+        </nav>
+      </div>
+    </section>
+  </div>
+</Base>
+
+<script>
+  // Proof: the sticky meter's label follows the case in view, and a CSS fallback fills the meter where the GL field is
+  // not running (reduced motion, no GPU). The field itself is driven by data-f="meter" in the GL chunk. No gsap/three.
+  const initRuntime = () => {
+    const root = document.querySelector<HTMLElement>('[data-page="runtime"]');
+    if (!root || root.dataset.bound) return;
+    root.dataset.bound = '1';
+    const meter = root.querySelector<HTMLElement>('[data-meter]');
+    const label = meter?.querySelector<HTMLElement>('[data-meter-l]');
+    const cases = [...root.querySelectorAll<HTMLElement>('.sv-case')];
+    if (!meter || !label || !cases.length) return;
+    const io = new IntersectionObserver((es) => es.forEach((e) => {
+      if (!e.isIntersecting) return;
+      const el = e.target as HTMLElement;
+      meter.style.setProperty('--lit', el.dataset.weeks || '0');
+      label.textContent = el.dataset.label || '';
+    }), { rootMargin: '-45% 0px -45% 0px' });
+    cases.forEach((c) => io.observe(c));
+    document.addEventListener('astro:before-swap', () => io.disconnect(), { once: true });
+  };
+  initRuntime();
+  document.addEventListener('astro:page-load', initRuntime);
+</script>
+
+<style>
+  :global(html[data-geo]) .mk-sep { display: none; }
+  .sv { --gut: var(--gutter); }
+  /* ── hero: answer first, the ruler is the bottom of the first screen ── */
+  .sv-hero { position: relative; min-height: 100svh; padding-top: calc(var(--header-h) + 28px); display: flex; flex-direction: column; }
+  .sv-hero-in { flex: 1; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); grid-template-rows: auto auto auto auto 1fr; align-content: start; }
+  .sv-crumbs, .sv-eye, .sv-h1, .sv-ruler { grid-column: 1 / -1; }
+  .sv-crumbs :global(.crumbs) { font-size: 11px; }
+  .sv-eye { color: var(--lime); margin-top: .5rem; }
+  .sv-h1 { font-size: clamp(2.75rem, 4.6vw, 5.4rem); line-height: .92; letter-spacing: -.035em; font-weight: 600; margin-top: .75rem; }
+  .sv-h1 span { display: block; } .sv-h1 .l2 { color: var(--gray-400); }
+  @media (min-width: 1024px) { .sv-h1 span { white-space: nowrap; } }
+  .sv-row { grid-column: 1 / span 7; grid-row: 4; display: grid; gap: 1.25rem; justify-items: start; margin-top: clamp(1.25rem, 3vh, 2rem); }
+  .sv-intro { font-size: 1.0625rem; line-height: 1.55; color: var(--gray-300); max-width: 62ch; }
+  .sv-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
+  .sv-ans { grid-column: 9 / span 4; grid-row: 4; align-self: start; display: grid; gap: .2rem; margin-top: clamp(1.25rem, 3vh, 2rem); }
+  .sv-ans .n { font: 600 clamp(2.5rem, 4.4vw, 4.75rem)/.9 var(--font-display); letter-spacing: -.035em; color: var(--lime); white-space: nowrap; }
+  .sv-ans .n small { font-size: .38em; letter-spacing: 0; color: var(--gray-300); margin-left: .2em; }
+  .sv-ruler { grid-row: 5; align-self: end; margin: 1.5rem 0 1.25rem; }
+  /* ── sections ── */
+  .sv-sec { padding-block: var(--section); position: relative; }
+  .sv-hd { display: grid; gap: 1rem; max-width: 980px; margin-bottom: clamp(2rem, 4vw, 3.5rem); }
+  .sv-hd h2 { color: var(--white); }
+  .sv-lead { max-width: 62ch; }
+  /* get + fit: two tight type columns */
+  .sv-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem var(--gut); }
+  .sv-col h3 { margin-bottom: 1rem; font-weight: 400; }
+  .sv-get li { display: grid; gap: .35rem; padding: .9rem 0 .9rem 1.6rem; border-top: 1px solid var(--gray-700); position: relative; }
+  .sv-get li::before { content: ''; position: absolute; left: 0; top: 1.4rem; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); }
+  .sv-get .t { font: 500 1.25rem/1.3 var(--font-display); color: var(--white); }
+  .sv-get .d { color: var(--gray-300); font-size: .975rem; }
+  .sv-fit .t { color: var(--gray-300); }
+  .sv-fit li::before { background: transparent; border: 1px solid var(--gray-400); }
+  .sv-note { margin-top: 1rem; color: var(--gray-300); }
+  /* prose */
+  .sv-prose { display: grid; gap: 1.5rem; max-width: 72ch; }
+  .sv-prose-b { display: grid; gap: 1rem; font-size: 1.125rem; line-height: 1.65; color: var(--gray-200); }
+  .sv-plist { display: grid; gap: 0; }
+  .sv-plist li { padding: 1rem 0 1rem 1.6rem; border-top: 1px solid var(--gray-700); position: relative; color: var(--gray-300); }
+  .sv-plist li::before { content: ''; position: absolute; left: 0; top: 1.55rem; width: 7px; height: 7px; border-radius: 50%; background: var(--lime); }
+  .sv-plist b { font: 500 1.2rem/1.3 var(--font-display); color: var(--white); display: block; margin-bottom: .2rem; }
+  .sv-links { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
+  .sv-links a, .sv-rows .link, .sv-after .link, .sv-also .link, .sv-foot .link, .sv-case .link { display: inline-flex; align-items: center; min-height: 44px; }
+  .sv-small { color: var(--gray-400); }
+  .sv-flow { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1.25rem; padding: 1.5rem 0; border-block: 1px solid var(--gray-700); }
+  .sv-flow ul { display: grid; gap: .6rem; }
+  .sv-flow li { padding: .6rem .9rem; border: 1px solid var(--gray-700); border-radius: 999px; color: var(--gray-300); white-space: nowrap; }
+  .sv-flow li.lit { border-color: var(--lime-25); color: var(--lime); }
+  .sv-flow-l { height: 2px; background: radial-gradient(circle, var(--lime) .9px, transparent 1.2px) 0 0 / 6px 2px repeat-x; position: relative; }
+  .sv-flow-l i { position: absolute; right: -2px; top: 50%; width: 8px; height: 8px; margin-top: -4px; border-radius: 50%; background: var(--lime); }
+  /* rows */
+  .sv-rows li { display: grid; grid-template-columns: 4fr 6fr 3fr; gap: .5rem var(--gut); align-items: baseline; padding: 1.25rem 0; border-top: 1px solid var(--gray-700); }
+  .sv-rows li:last-child { border-bottom: 1px solid var(--gray-700); }
+  .sv-rows .t { font: 600 1.5rem/1.15 var(--font-display); color: var(--white); }
+  .sv-rows .d { color: var(--gray-300); max-width: 60ch; }
+  .sv-rows .link { justify-self: end; }
+  /* tables: a ruled grid, not cards */
+  .sv-tw { display: grid; gap: 1.25rem; }
+  .sv-table { width: 100%; border-collapse: collapse; }
+  .sv-table th, .sv-table td { text-align: left; vertical-align: top; padding: 1rem var(--gut) 1rem 0; border-top: 1px solid var(--gray-700); }
+  .sv-table thead td { border-top: 0; }
+  .sv-table thead th { font: 600 1.375rem/1.15 var(--font-display); color: var(--white); border-top: 0; padding-top: 0; }
+  .sv-table tbody th { font: 400 12px/1.6 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); width: 16%; }
+  .sv-table--rows tbody th { font: 600 1.25rem/1.25 var(--font-display); letter-spacing: 0; text-transform: none; color: var(--white); width: 26%; }
+  .sv-table td { color: var(--gray-200); }
+  .sv-table td [data-market] { color: var(--white); font-weight: 600; }
+  .sv-table .pick { background: linear-gradient(var(--lime-06), var(--lime-06)); }
+  .sv-table thead .pick { box-shadow: inset 0 2px 0 var(--lime); padding-left: .75rem; }
+  .sv-table td.pick { padding-left: .75rem; }
+  .sv-pick { display: block; color: var(--lime); margin-top: .35rem; }
+  .sv-tctas td { border-top: 0; padding-top: 1.25rem; }
+  .sv-foot { color: var(--gray-300); max-width: 72ch; }
+  /* proof: the run meter sits sticky in the gutter, each case opens on its week count */
+  .sv-runs-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); }
+  .sv-meter { grid-column: 1 / span 1; position: sticky; top: 120px; align-self: start; height: min(420px, 56vh); --lit: 0; }
+  .sv-meter-p { position: absolute; inset: 0 auto 0 0; width: 60px; background: radial-gradient(circle, var(--gray-500) 1.5px, transparent 2px) 0 0 / 12px calc(100% / var(--span)); }
+  .sv-meter-p::after { content: ''; position: absolute; left: 0; right: 0; top: 0; height: calc(100% * var(--lit) / var(--span)); background: radial-gradient(circle, var(--lime) 2.5px, transparent 3px) 0 0 / 12px calc((100% / var(--lit, 1)) * 1); transition: height .5s var(--ease-out); }
+  /* the label sits under the dots, wrapped to the gutter column, so it never runs into the case copy */
+  .sv-meter p { position: absolute; left: 0; right: 0; top: calc(100% + .75rem); font-size: 10px; line-height: 1.5; letter-spacing: .1em; color: var(--gray-300); }
+  .sv-cases { grid-column: 2 / -1; }
+  .sv-case { display: grid; grid-template-columns: repeat(11, minmax(0, 1fr)); column-gap: var(--gut); row-gap: 1.25rem; padding-block: 3.5rem; border-top: 1px solid var(--gray-700); min-height: 70vh; align-content: center; }
+  .sv-case .big { grid-column: 1 / span 4; font: 600 clamp(6rem, 13vw, 13rem)/.78 var(--font-display); letter-spacing: -.05em; color: var(--white); }
+  .sv-case .big small { display: block; font: 400 12px/1.5 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--lime); margin-top: 1.25rem; }
+  .sv-case .txt { grid-column: 1 / span 4; display: grid; gap: .8rem; align-content: start; }
+  .sv-case .hl { font: 500 1.25rem/1.3 var(--font-display); color: var(--white); }
+  .sv-case .ba { color: var(--gray-300); }
+  .sv-case .ba span { font: 400 11px var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); margin-right: .4rem; }
+  .sv-case .link { justify-self: start; }
+  .sv-case figure { grid-column: 5 / -1; grid-row: 1 / span 2; display: grid; gap: .75rem; align-content: start; }
+  .sv-case .bar { display: grid; grid-template-columns: repeat(var(--span), 1fr); gap: 3px; }
+  .sv-case .bar i { height: 6px; border-radius: 3px; background: var(--gray-700); }
+  .sv-case .bar i.on { background: var(--lime); }
+  .sv-shot { position: relative; aspect-ratio: 16 / 10; overflow: hidden; border: 1px solid var(--gray-700); background: var(--gray-900); }
+  .sv-shot :global(img) { width: 100%; height: 100%; object-fit: cover; object-position: top; }
+  .sv-case figcaption { display: flex; justify-content: space-between; gap: 1rem; }
+  .sv-after { margin-top: 1.5rem; color: var(--gray-300); padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
+  /* the develop (A's dot → pixel resolve): dots at the field's pitch, then a solid wave; motion/runtime.ts takes the mask off */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js-motion) .sv-shot:not(.is-set) {
+      --r: 0; --w: 0;
+      -webkit-mask-image: radial-gradient(circle, #000 calc(var(--r) * 1px), transparent calc(var(--r) * 1px + .75px)), radial-gradient(circle at 0% 100%, #000 calc(var(--w) * 1% - 18%), transparent calc(var(--w) * 1%));
+      mask-image: radial-gradient(circle, #000 calc(var(--r) * 1px), transparent calc(var(--r) * 1px + .75px)), radial-gradient(circle at 0% 100%, #000 calc(var(--w) * 1% - 18%), transparent calc(var(--w) * 1%));
+      -webkit-mask-size: var(--pitch) var(--pitch), 100% 100%; mask-size: var(--pitch) var(--pitch), 100% 100%;
+      -webkit-mask-repeat: repeat, no-repeat; mask-repeat: repeat, no-repeat;
+    }
+  }
+  /* process on a hairline + price on the same line */
+  .sv-phases { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--gray-700); }
+  .sv-phases li { padding: 1.5rem 1.25rem 0 0; position: relative; display: grid; gap: .4rem; align-content: start; }
+  .sv-phases li::before { content: ''; position: absolute; left: 0; top: -6px; width: 11px; height: 11px; border-radius: 50%; background: var(--black); border: 1px solid var(--gray-400); }
+  .sv-phases li:first-child::before { background: var(--lime); border-color: var(--lime); }
+  .sv-phases b { font: 600 1.375rem/1.15 var(--font-display); color: var(--white); }
+  .sv-phases p { color: var(--gray-300); }
+  .sv-time { margin-top: 2.5rem; max-width: 72ch; color: var(--gray-300); }
+  .sv-time .mono { margin-right: .75rem; }
+  .sv-price { margin-top: var(--section); }
+  .sv-price-r { position: relative; height: 1px; background: var(--gray-700); margin: 6.5rem 0 7rem; }
+  .sv-pm { position: absolute; top: 0; transform: translateY(-50%); }
+  .sv-pm.pt { width: 13px; height: 13px; margin-left: -6px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 7px var(--lime-12); }
+  .sv-pm.rg { height: 7px; border-radius: 4px; background: var(--lime-25); border: 1px solid var(--lime); }
+  .sv-pl { position: absolute; display: grid; gap: .15rem; }
+  .sv-pl.right { text-align: right; }
+  .sv-pl .v { font: 600 clamp(2rem, 4vw, 3.75rem)/.95 var(--font-display); letter-spacing: -.03em; color: var(--white); white-space: nowrap; }
+  .sv-pl .v em { font-style: normal; color: var(--gray-400); font-size: .5em; letter-spacing: 0; }
+  .sv-pl.up { bottom: 22px; } .sv-pl.dn { top: 22px; }
+  .sv-pl--text .v { color: var(--lime); }
+  .sv-price-sub { max-width: 68ch; color: var(--gray-300); }
+  /* FAQ + read before your call */
+  .sv-faq-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--gut); row-gap: 2rem; }
+  .sv-faq-hd { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
+  .sv-faq-in > :global(.faq) { grid-column: 6 / span 7; }
+  .sv-read { grid-column: 1 / -1; margin-top: 4rem; }
+  .sv-read h2 { font-weight: 400; margin-bottom: 1rem; }
+  .sv-read ul { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--gut); border-top: 1px solid var(--gray-700); }
+  :global(html[data-geo]) .sv-read ul { grid-template-columns: repeat(4, 1fr); }
+  .sv-read a { display: grid; gap: .75rem; padding-top: 1.25rem; }
+  .sv-read .t { font: 600 1.25rem/1.2 var(--font-display); color: var(--white); transition: color .2s; }
+  .sv-read a:hover .t, .sv-read a:focus-visible .t { color: var(--lime); }
+  .sv-read .rt { display: flex; align-items: center; gap: 5px; }
+  .sv-read .rt i { width: 6px; height: 6px; border-radius: 50%; background: var(--lime); }
+  .sv-read .rt span { margin-left: .5rem; }
+  /* close */
+  .sv-end { padding-bottom: 0; }
+  .sv-end-in { display: grid; gap: 1.5rem; justify-items: start; }
+  .sv-end h2 { font-size: clamp(3.2rem, 10vw, 10rem); line-height: .84; letter-spacing: -.045em; font-weight: 600; color: var(--white); }
+  .sv-end h2 .lime, .sv .lime { color: var(--lime); }
+  .sv-end-b { max-width: 52ch; }
+  .sv-also { color: var(--gray-300); }
+  .sv-svcs { margin-top: 3rem; width: 100%; border-top: 1px solid var(--gray-700); padding-top: 1rem; }
+  .sv-svcs ul { display: flex; flex-wrap: wrap; gap: 0 1.75rem; }
+  .sv-svcs a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); transition: color .2s; }
+  .sv-svcs a .mono { color: var(--gray-400); }
+  .sv-svcs a i { width: 7px; height: 7px; border-radius: 50%; border: 1px solid var(--gray-400); }
+  .sv-svcs a:hover, .sv-svcs a:focus-visible { color: var(--white); }
+  .sv-svcs a[aria-current='page'], .sv-svcs a[aria-current='page'] .mono { color: var(--lime); }
+  .sv-svcs a[aria-current='page'] i { background: var(--lime); border-color: var(--lime); }
+
+  /* ── phone: its own composition (C-390): eyebrow, H1, the lime answer, intro, one CTA, a compact ruler ── */
+  @media (max-width: 1023px) {
+    .sv-hero { padding-top: 60px; min-height: 0; }
+    .sv-hero-in { display: flex; flex-direction: column; }
+    .sv-crumbs { display: none; }
+    .sv-eye { font-size: 11px; margin-top: .25rem; }
+    .sv-eye-n { display: none; }
+    .sv-h1 { font-size: clamp(2.1rem, 9.4vw, 3.6rem); margin-top: .4rem; }
+    .sv-ans { display: flex; flex-wrap: wrap; align-items: baseline; gap: .1rem .6rem; margin-top: .8rem; }
+    .sv-ans .n { font-size: 2.25rem; }
+    .sv-row { gap: 1rem; margin-top: .75rem; grid-template-columns: minmax(0, 1fr); width: 100%; }
+    /* long CTA labels ("Book a free 15-minute automation check") wrap instead of widening the column */
+    .sv-cta .btn { white-space: normal; text-align: left; height: auto; min-height: 48px; padding-block: .65rem; max-width: 100%; }
+    .sv-intro { font-size: .9375rem; line-height: 1.5; }
+    .sv-ghost--in { display: none; } /* in-page jumps drop on phones; a real route (SEO → /audit) stays */
+    .sv-ruler { width: 100%; margin: 1.6rem 0 0; }
+    .sv-cols { grid-template-columns: 1fr; }
+    .sv-rows li { grid-template-columns: 1fr; }
+    .sv-rows .link { justify-self: start; }
+    .sv-runs-in { display: block; }
+    .sv-meter { display: none; }
+    .sv-case { display: flex; flex-direction: column; min-height: 0; padding-block: 2.5rem; }
+    .sv-case .big { font-size: 6.5rem; }
+    .sv-phases { grid-template-columns: 1fr; border-top: 0; border-left: 1px solid var(--gray-700); margin-left: 5px; }
+    .sv-phases li { padding: 0 0 1.75rem 1.75rem; } .sv-phases li::before { left: -6px; top: 4px; }
+    .sv-price-r { margin: 6rem 0 6.5rem; }
+    .sv-pl .v { font-size: 1.75rem; }
+    .sv-pl .mono { font-size: 10px; letter-spacing: .1em; }
+    .sv-faq-in > :global(*) { grid-column: 1 / -1 !important; }
+    .sv-read ul, :global(html[data-geo]) .sv-read ul { grid-template-columns: 1fr; gap: 0; border: 0; }
+    .sv-read a { padding: 1.25rem 0; border-top: 1px solid var(--gray-700); }
+    .sv-end h2 { font-size: clamp(3rem, 15vw, 4.5rem); }
+    .sv-flow { grid-template-columns: 1fr; justify-items: start; }
+    .sv-flow-l { width: 2px; height: 32px; margin-left: 1.5rem; background-size: 2px 6px; background-repeat: repeat-y; }
+    .sv-flow-l i { right: auto; left: -3px; top: auto; bottom: -2px; }
+    /* tables stack: each row a block, each cell carries its column name */
+    .sv-table, .sv-table tbody, .sv-table tr, .sv-table th, .sv-table td { display: block; width: 100% !important; }
+    .sv-table thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+    .sv-table tr { border-top: 1px solid var(--gray-700); padding: 1rem 0; }
+    .sv-table th, .sv-table td { border: 0; padding: .25rem 0; }
+    .sv-table td[data-h]::before { content: attr(data-h); display: block; font: 400 11px/1.6 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }
+    .sv-table .pick { background: none; }
+    .sv-table td.pick { padding-left: 0; border-left: 2px solid var(--lime); padding-left: .75rem; }
+    .sv-tctas td:empty { display: none; }
+    .sv-tctas td { padding: .35rem 0; }
+  }
+  @media (min-width: 1024px) and (max-width: 1279px) {
+    .sv-row { grid-column: 1 / span 8; }
+    .sv-ans { grid-column: 9 / span 4; }
+    .sv-rows li { grid-template-columns: 4fr 6fr 4fr; }
+  }
+  /* 1024×768-class screens: the first screen keeps the ruler in view */
+  @media (min-width: 1024px) and (max-height: 820px) { .sv-h1 { font-size: clamp(2.5rem, 4.3vw, 4.6rem); } .sv-hero { padding-top: calc(var(--header-h) + 12px); } }
+</style>

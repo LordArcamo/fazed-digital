@@ -5,7 +5,11 @@ import { NAP, SOCIALS } from '../data/site';
 import { labShipped, pad2 } from '../data/lab';
 import { offerPrice } from '../data/offers';
 import { caseIndex, countries } from '../data/cases';
-const { current = '', lp = false } = Astro.props;
+import { liveServices, servicePath, SERVICE_NAV, SERVICE_TOTAL } from '../data/service-nav';
+// `service`: on /services/<slug>, the service id. Services stays lit in the rail; the menu lights the branch link and
+// the phone dock chip shows the service's short name (no index: "Web design 04.1" truncates at 390, directions.md).
+const { current = '', lp = false, service = '' } = Astro.props;
+const svc = SERVICE_NAV.find((s) => s.id === service);
 // Lab sits after Work (its proof sibling). Six links fit the rail from 1180 at the tight rhythm (measured 2026-11-10:
 // ≥40px clear of the telemetry at 1180–1920); below that Blog (.sd-blog) waits in the menu and the footer.
 const links = [
@@ -16,7 +20,7 @@ const menu = [
   { href: '/', label: 'Home', hint: 'MARK · START HERE' },
   { href: '/work', label: 'Work', hint: `${pad2(caseIndex.length)} CASES · ${countries.length} COUNTRIES` },
   { href: '/lab', label: 'Lab', hint: `${pad2(labShipped.length)} CONCEPT SITES · OWN ENGINE` },
-  { href: '/services', label: 'Services', hint: '05 SERVICES · 01 SYSTEM' },
+  { href: '/services', label: 'Services', hint: `${pad2(SERVICE_TOTAL)} SERVICES · 01 SYSTEM` },
   { href: '/about', label: 'About', hint: '04 PEOPLE · EST. 2022' },
   { href: '/blog', label: 'Blog', hint: 'PRACTICAL GUIDES' },
   { href: '/contact', label: 'Contact', hint: 'REPLY IN 1 BUSINESS DAY' },
@@ -41,7 +45,7 @@ const cur = menu.find((m) => m.href === current);
     <nav class="sd sd-m" id="sd" aria-label="Primary">
       <a href="/" class="sd-mark" aria-label="Fazed Digital, home"><svg width="17" height="24" viewBox={MARK_VIEWBOX.join(' ')} aria-hidden="true" focusable="false"><g transform={MARK_TRANSFORM} fill="currentColor">{MARK_PATHS.map((d) => <path d={d} />)}</g></svg></a>
       <span class="sd-div" aria-hidden="true"></span>
-      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{cur ? cur.label : 'Menu'}</span>{cur && <span class="sd-idx" aria-hidden="true">{cur.n}/{pad2(menu.length)}</span>}</button>
+      <button type="button" class="sd-cur" data-menu-alt popovertarget="menu" aria-controls="menu" aria-label={`Menu, current page ${svc ? svc.name : cur ? cur.label : 'none'}`}><i class="sd-n is-lit" aria-hidden="true"></i><span>{svc ? svc.short : cur ? cur.label : 'Menu'}</span>{cur && !svc && <span class="sd-idx" aria-hidden="true">{cur.n}/{pad2(menu.length)}</span>}</button>
       <div class="sd-lw">
       <span class="sd-goo" aria-hidden="true"><i class="sd-b sd-b1"></i><i class="sd-b sd-b2"></i></span>
       <ul class="sd-list" id="sd-list">
@@ -55,7 +59,7 @@ const cur = menu.find((m) => m.href === current);
     </>}
   </div>
 </header>
-{!lp && <div class="menu" id="menu" popover aria-label="Site menu" data-word={cur ? cur.label : 'Fazed'}>
+{!lp && <div class="menu" id="menu" popover aria-label="Site menu" data-word={svc ? svc.short : cur ? cur.label : 'Fazed'}>
   <canvas class="menu-cv" aria-hidden="true"></canvas>
   <span class="menu-flood" aria-hidden="true"></span>
   <p class="mono menu-tel" aria-hidden="true"><span data-clock></span> PHT · <i class="t-open" data-open></i> <span data-open-l>Studio</span><span class="menu-tel-r"> · Reply in 1 business day</span></p>
@@ -63,7 +67,10 @@ const cur = menu.find((m) => m.href === current);
   <div class="menu-in container">
     <nav aria-label="Menu">
       <ol class="menu-list">
-        {menu.map((m, i) => <li style={`--i:${i}`}><a href={m.href} class="menu-link" data-word={m.label} aria-current={current === m.href ? 'page' : undefined}><span class="mono menu-n">{m.n}</span><i class="sd-n mn-n" aria-hidden="true"></i><span class="menu-label">{m.label}</span><span class="mono menu-hint" aria-hidden="true">{m.hint}</span></a></li>)}
+        {menu.map((m, i) => <li style={`--i:${i}`} class={m.href === '/services' && liveServices.length ? 'menu-svc' : undefined}><a href={m.href} class="menu-link" data-word={m.label} aria-current={current === m.href ? (svc ? 'true' : 'page') : undefined}><span class="mono menu-n">{m.n}</span><i class="sd-n mn-n" aria-hidden="true"></i><span class="menu-label">{m.label}</span><span class="mono menu-hint" aria-hidden="true">{m.hint}</span></a>
+          {m.href === '/services' && liveServices.length > 0 && (
+            <ul class="menu-br" aria-label="Service pages">{liveServices.map((s) => <li><a href={servicePath(s)} class="menu-sub mono" data-word={s.short} aria-current={svc?.id === s.id ? 'page' : undefined}><i aria-hidden="true"></i><span class="menu-sn" aria-hidden="true">{s.n}</span> {s.short}</a></li>)}</ul>
+          )}</li>)}
         <li style={`--i:${menu.length}`}><a href="/lp/7-day-website" class="menu-link menu-lit" data-word="7 days"><span class="mono menu-n">{total}</span><i class="sd-ring mn-n" aria-hidden="true"></i><span class="menu-label">Get live in 7 days →</span><span class="mono menu-hint" aria-hidden="true">FROM $499 · ₱19,999</span></a></li>
       </ol>
     </nav>
@@ -266,13 +273,25 @@ const cur = menu.find((m) => m.href === current);
   .menu-n { color: var(--gray-400); }
   .mn-n.sd-n { width: 9px; height: 9px; }
   .mn-n.sd-ring { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--lime); }
-  .menu-link[aria-current='page'] .mn-n { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 5px rgba(201, 255, 87, .16); }
+  .menu-link[aria-current] .mn-n { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 5px rgba(201, 255, 87, .16); }
   .menu-label { white-space: nowrap; font-family: var(--font-display); font-weight: 600; font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1; letter-spacing: -.03em; color: var(--white); transition: color .2s; }
   .menu-hint { grid-column: 4; padding-left: 1rem; white-space: nowrap; opacity: 0; transform: translateX(-6px); transition: opacity .2s, transform .2s; color: var(--gray-400); }
   .menu-link:hover .menu-label, .menu-link:focus-visible .menu-label { color: var(--lime); }
   .menu-link:hover .mn-n.sd-n, .menu-link:focus-visible .mn-n.sd-n { background: var(--white); border-color: var(--white); }
   .menu-link:hover .menu-hint, .menu-link:focus-visible .menu-hint { opacity: 1; transform: none; }
   .menu-lit .menu-label { color: var(--lime); font-size: 2rem; }
+  /* the Services branch (Direction C): live service pages as one mono line under the row; a lime-25 hairline hangs off
+     the row's node. Desktop wraps to two rows at seven; phones get one 44px row that swipes, with a fade on the right */
+  .menu-br { position: relative; display: flex; flex-wrap: wrap; gap: 0 1.1rem; max-width: 36rem; margin: -.25rem 0 .5rem calc(2.5rem + 1rem + 4px); padding-left: calc(9px + 1rem - 4px); border-left: 1px solid var(--lime-25); }
+  .menu-sub { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; font-size: 11px; color: var(--gray-300); white-space: nowrap; transition: color .2s; }
+  .menu-sub i { flex: none; width: 6px; height: 6px; border-radius: 50%; border: 1px solid var(--gray-400); }
+  .menu-sn { color: var(--gray-400); }
+  .menu-sub[aria-current='page'], .menu-sub[aria-current='page'] .menu-sn { color: var(--lime); }
+  .menu-sub[aria-current='page'] i { background: var(--lime); border-color: var(--lime); }
+  .menu-sub:hover, .menu-sub:focus-visible { color: var(--white); }
+  .menu-sub:hover i, .menu-sub:focus-visible i { background: var(--white); border-color: var(--white); }
+  .menu-sub:focus-visible { outline: 2px solid var(--lime); outline-offset: 2px; border-radius: 4px; }
+  @media (prefers-reduced-motion: no-preference) { .menu.is-open .menu-br { animation: menuIn .5s var(--ease-out) both; animation-delay: calc(.16s + var(--i, 0) * 40ms); } }
   .menu-lit .menu-n { color: var(--lime); }
   .menu-link:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; border-radius: 4px; }
   .menu-foot { display: flex; flex-wrap: wrap; gap: .5rem 2rem; align-items: center; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-400); }
@@ -304,9 +323,19 @@ const cur = menu.find((m) => m.href === current);
     .menu-label { font-size: 40px; }
     .menu-lit .menu-label { font-size: 22px; }
     .menu-hint { display: none; }
+    .menu-br { flex-wrap: nowrap; max-width: none; width: calc(100vw - 2 * var(--side) - 84px - 2rem - .75rem); margin: -.25rem 0 .25rem calc(2rem + .75rem); padding: 0 2rem 0 0; border-left: 0; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); }
+    .menu-br::-webkit-scrollbar { display: none; }
+    /* phones: the name only (no 04.n index) and a tighter gap, so two links and the start of a third show; the lit link
+       is scrolled into view on open (menu.ts) */
+    .menu-br { gap: 0 .7rem; padding-right: .75rem; }
+    .menu-sub { letter-spacing: .06em; }
+    .menu-sn { display: none; }
+    .menu-br li { scroll-snap-align: start; }
     .menu-foot { flex-direction: column; align-items: flex-start; gap: 0; }
     .menu-st { display: none; }
   }
+  /* short laptop screens (1280×720, 1366×768): the Services branch adds a row, so the rows tighten to keep the 7-day row on screen */
+  @media (min-width: 1024px) and (max-height: 820px) { .menu-link { min-height: 52px; } .menu-label { font-size: clamp(2.25rem, 4vw, 3.5rem); } .menu-br { margin-bottom: .25rem; } }
   @media (max-width: 1023px) and (max-height: 700px) { .menu-link { min-height: 48px; } .menu-label { font-size: 32px; } }
   /* ≤399: the clock strip stays on one line (it wrapped into the first menu row at 375) */
   @media (max-width: 399px) { .menu-tel { white-space: nowrap; letter-spacing: .05em; } }

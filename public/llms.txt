@@ -11,11 +11,14 @@
 - Custom websites and systems: typically $5,000–$20,000 depending on scope.
 
 ## Services
-- [Web design & development](https://www.fazeddigital.com/services#web): A website that brings in enquiries, not just compliments.
-- [Brand identity](https://www.fazeddigital.com/services#brand): Look as good as you actually are.
-- [SEO marketing](https://www.fazeddigital.com/services#seo): Get found by people already looking for you.
-- [Product design](https://www.fazeddigital.com/services#product): Apps and platforms people finish using.
-- [Custom system development](https://www.fazeddigital.com/services#systems): Software that fits how your team works.
+- [All services](https://www.fazeddigital.com/services): the hub, with a summary of each service.
+- [Web design & development](https://www.fazeddigital.com/services/web-design): A website that brings in enquiries. Live in 7 days, from $499 (₱19,999). Real build lengths (weeks): Dotted Studios 1, A Framing Company 6, The Telecom Shop 10, QLD Law Group 14.
+- [Brand identity](https://www.fazeddigital.com/services/branding): Look as good as you actually are. Brand projects 4–6 wks, quoted per project. Real build lengths (weeks): Cleen & Green 8.
+- [SEO and AI search](https://www.fazeddigital.com/services/seo): Get found on Google and in AI answers. Setup in 1 month, results usually in 6–12 months.
+- [Product design (UI/UX)](https://www.fazeddigital.com/services/ui-ux-design): Apps and platforms people finish using. Idea to live MVP in 5 wks, CrateOnScene · design + build. Real build lengths (weeks): CrateOnScene 5, 8Drive 10, UGLQ 12, QLD Law Group 14.
+- [Custom web apps and portals](https://www.fazeddigital.com/services/web-app-development): Built around how your team works. Our builds 8–14 wks, typically $5,000–$20,000. Real build lengths (weeks): Canwell 8, 8Drive 10, UGLQ 12, QLD Law Group 14.
+- [Business automations](https://www.fazeddigital.com/services/automations): Let your tools do the busywork. Live in 5 business days, from $299 (₱9,999).
+- [Social media management](https://www.fazeddigital.com/services/social-media-management): Your pages, handled every week. From $399 (₱14,999)/month, 3-month minimum.
 - [7-day website (USD)](https://www.fazeddigital.com/lp/7-day-website) · [Philippine pricing](https://www.fazeddigital.com/lp/7-day-website/ph)
 - [Web design in Iligan City](https://www.fazeddigital.com/web-design-iligan-city): local studio in Iligan City 9200, Lanao del Norte; meets clients in person in Iligan and Cagayan de Oro; works in English, Bisaya and Tagalog.
 - [Web design for Australia](https://www.fazeddigital.com/australia): real Australian work, working hours against Australian time zones, prices in US dollars.

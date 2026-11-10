@@ -5,13 +5,14 @@
 import { chapters, serviceFaq } from '../../data/services';
 import { caseIndex } from '../../data/cases';
 import { lpFaq, lpPlans, lpProcess } from '../../data/lp';
-import { prices, stats, capsCopy, LP_REVIEWS_REAL, CASE_METRICS_REAL } from '../../data/proof';
+import { prices, stats, capsCopy, LP_REVIEWS_REAL, CASE_METRICS_REAL, automationPrices, automationTerms, socialPrices, socialTerms, quotedCopy } from '../../data/proof';
 import { FOUNDING_PH } from '../../data/offers';
 import { homeFaq } from '../../data/home';
 import { NAP, SOCIALS } from '../../data/site';
 import { labShipped, LABEL } from '../../data/lab';
 import { team } from '../../data/team';
 import { BOT } from '../../chat/links';
+import { serviceHref, liveServices, servicePath, SERVICE_NAV } from '../../data/service-nav';
 
 export type Market = 'ph' | 'intl';
 
@@ -72,7 +73,8 @@ The Knowledge section is the studio's own data.`;
 
 function pages(): string {
   return lines([
-    '/services: all services (anchors: #web, #brand, #seo, #product, #systems)',
+    `/services: all services (anchors: ${SERVICE_NAV.map((s) => `#${s.hub}`).join(', ')})`,
+    ...liveServices.map((s) => `${servicePath(s)}: ${s.name}, the full service page`),
     '/work: all case studies; /work/NN: one case',
     '/lab: Fazed Lab, concept sites',
     '/audit: free 15-minute website check on Google Meet (no site needed)',
@@ -103,7 +105,7 @@ export function sharedKnowledge(): string {
     '',
     '## Services',
     ...chapters.map((c) => [
-      `### ${c.h2} (/services#${c.id})`,
+      `### ${c.h2} (${serviceHref(c.id)})`,
       c.outcome,
       c.body.filter(noMoney).join(' '),
       `Includes: ${c.get.filter(noMoney).join('; ')}.`,
@@ -141,7 +143,20 @@ export function marketKnowledge(market: Market): string {
     lines(plans.map((p) => `${p.name}: ${p.price}${p.was ? ` (standard ${p.was})` : ''}. ${p.for.replace(/\.?$/, '.')} Includes: ${p.rows.join(', ')}.`)),
     `Extra pages: ${P.page} each. Monthly care plans: from ${P.care}.`,
     capsCopy.sevenDay,
-    php && FOUNDING_PH.on ? `Founding client rate (the only discount that exists): Starter at ${FOUNDING_PH.price} instead of ${FOUNDING_PH.standard}, for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit. We don't know how many spots are left, so never give a number remaining.` : 'There are no discounts on offer.',
+    php && FOUNDING_PH.on ? `Founding client rate on the 7-day website: Starter at ${FOUNDING_PH.price} instead of ${FOUNDING_PH.standard}, for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit. We don't know how many spots are left, so never give a number remaining.` : 'There is no discount on the 7-day website.',
+    '',
+    '### Automations (/services/automations; no automation clients yet, our own lead flow runs on it)',
+    lines(automationPrices.map((p) => `${p.name}: ${php ? p.php : p.usd}. ${p.includes}.`)),
+    `Tools: ${automationTerms.tools.join(', ')}. ${automationTerms.subscriptions}`,
+    automationTerms.founding.on ? `Founding rate: ${automationTerms.founding.line}` : '',
+    '',
+    '### Social media management (/services/social-media-management; no social media clients yet)',
+    lines(socialPrices.map((p) => `${p.name}${p.recommended ? ' (recommended)' : ''}: ${php ? p.php : p.usd}. ${p.includes}.`)),
+    socialTerms.minimum,
+    socialTerms.founding.on ? `Founding rate: ${socialTerms.founding.line}` : '',
+    '',
+    `Brand identity: ${quotedCopy.brand.toLowerCase()}. SEO retainers: ${quotedCopy.seoRetainer.toLowerCase()}. Design-only UI/UX: ${quotedCopy.designOnly.toLowerCase()}.`,
+    'The founding rates above are the only discounts that exist. Nothing is asked in return for any of them.',
     '',
     '### Custom work',
     `Custom websites and systems are quoted after a discovery call and typically run ${prices.customRange}${php ? ' (quoted in US dollars; we have no peso figure for custom work)' : ''}. ${capsCopy.custom}`,

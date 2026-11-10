@@ -1,0 +1,121 @@
+---
+// Direction C "Runtime" ruler: weeks (or months) W0…span, the typical band(s), markers, fix windows, and one bar per real
+// case as long as the build took (or our own site/business, or a plan row on the retainer pages). Three layers:
+//   · labels: real DOM text, always on;
+//   · poster (.poster-art): CSS dots; each case bar is textured with a core sample of its client's screen (luma stops
+//     read from the baked shot bin at build time). It is the reduced-motion / no-GPU / pre-GL picture;
+//   · the GL field draws the same geometry (formations.ts runtime(), src/field/runtime-geo.ts) and hides the poster.
+import { readFileSync, existsSync } from 'node:fs';
+import { join } from 'node:path';
+import { RULER, barY, shotBand, type RulerSpec } from '../field/runtime-geo';
+import type { RulerDef, PlottedBar } from '../data/service-pages';
+
+const { ruler, bars } = Astro.props as { ruler: RulerDef; bars: PlottedBar[] };
+const S = ruler.span, months = ruler.unit === 'months';
+const u = months ? 'mo' : 'wk', U = months ? 'M' : 'W';
+const pct = (w: number) => +((w / S) * 100).toFixed(3);
+const len = (w: number) => `${w} ${u}${w === 1 ? '' : 's'}`;
+const spec: RulerSpec = {
+  span: S,
+  bars: bars.map((b) => ({ slug: b.shot, w: b.w, kind: b.kind, ...(b.kind === 'plan' ? { posts: b.posts, videos: b.videos } : {}) })),
+  bands: ruler.bands.map((b) => [b.from, b.to]), marks: ruler.marks.map((m) => m.at), runs: ruler.runs.map((r) => [r.from, r.to]),
+};
+
+// luma stops along each case bar (same band and normalisation as the GL texture), as a CSS mask
+const STOPS = 28;
+const stops = (shot: string) => {
+  const f = join(process.cwd(), 'public/formations', `shot-${shot}.bin`);
+  if (!shot || !existsSync(f)) return 'linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,.75))';
+  const b = readFileSync(f), cols = b[0], rows = b[2];
+  const tex = shotBand(rows, cols, new Uint8Array(b.buffer, b.byteOffset + 8, cols * rows), RULER.rows.desk);
+  const out: string[] = [];
+  for (let i = 0; i < STOPS; i++) {
+    const c0 = Math.floor((i / STOPS) * cols), c1 = Math.max(c0 + 1, Math.floor(((i + 1) / STOPS) * cols));
+    let s = 0, n = 0;
+    for (const row of tex) for (let c = c0; c < c1; c++) { s += row[c]; n++; }
+    out.push(`rgba(0,0,0,${(0.3 + 0.7 * (s / n)).toFixed(2)}) ${(((i + 0.5) / STOPS) * 100).toFixed(1)}%`);
+  }
+  return `linear-gradient(90deg, ${out.join(', ')})`;
+};
+const y = (k: number, phone: boolean) => { const p = barY(k, bars.length, phone); return `calc(${(p.f * 100).toFixed(3)}% + ${p.a.toFixed(2)}px)`; };
+const ends = new Set(bars.filter((b) => b.kind !== 'plan').map((b) => b.w));
+// a band label that would sit on a marker's label drops to the second label row
+const bandRow = (b: { from: number }) => (ruler.marks.some((m) => Math.abs(m.at - b.from) < S * 0.2) ? 1 : 0);
+---
+<div class="rr" data-runtime={JSON.stringify(spec)} role="img" aria-label={ruler.aria}>
+  <div class="poster-art rr-poster" aria-hidden="true">
+    {Array.from({ length: S + 1 }, (_, i) => <i class:list={['rr-tick', { 'rr-tick--s': i % 2 === 1, 'rr-tick--0': i === 0 }]} style={`left:${pct(i)}%`}></i>)}
+    <i class="rr-base"></i>
+    {ruler.bands.map((b, k) => <i class="rr-band" style={`left:${pct(b.from)}%;width:${pct(b.to - b.from)}%;--o:${k * 6}px`}></i>)}
+    {ruler.marks.map((m) => <i class="rr-fast" style={`left:${pct(m.at)}%`}></i>)}
+    {ruler.runs.map((r) => <i class="rr-run" style={`left:${pct(r.from)}%;width:${pct(r.to - r.from)}%`}></i>)}
+    {bars.map((b, k) => b.kind === 'plan'
+      ? <span class="rr-plan" style={`--yd:${y(k, false)};--yp:${y(k, true)};--p:${b.posts};--v:${b.videos ?? 0};--span:${S}`}><i class="rr-pd"></i><i class="rr-pv"></i></span>
+      : <span class:list={['rr-bar', { 'rr-bar--own': b.kind === 'own' }]} style={`--k:${b.w / S};--yd:${y(k, false)};--yp:${y(k, true)};width:${pct(b.w)}%;--m:${b.kind === 'case' ? stops(b.shot) : 'linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,.75))'}`}><i class="rr-tex"></i><i class="rr-node"></i></span>)}
+  </div>
+  <div class="rr-labels" aria-hidden="true">
+    {Array.from({ length: S + 1 }, (_, i) => <span class:list={['mono rr-wk', { on: ends.has(i) }]} style={`left:${pct(i)}%`}>{i === 0 ? `${U}0` : i}</span>)}
+    <span class="mono rr-unit">{ruler.unitLabel ?? `${ruler.unit} →`}</span>
+    {ruler.bands.map((b) => <span class:list={['mono rr-bandl', { 'rr-row2': bandRow(b) }]} style={`left:${pct(b.from)}%`}>{b.label}</span>)}
+    {ruler.marks.map((m) => <span class="mono rr-fastl" style={`left:${pct(m.at)}%`}>{m.label}</span>)}
+    {ruler.runs.map((r) => <span class="mono rr-runl" style={`left:${pct(r.from)}%`}>{r.label}</span>)}
+    {bars.map((b, k) => (
+      <span class:list={['mono rr-bl', { flip: b.kind !== 'plan' && b.w / S > 0.72, plan: b.kind === 'plan' }]} style={`--yd:${y(k, false)};--yp:${y(k, true)};left:${b.kind === 'plan' ? 0 : pct(b.w)}%`}>{b.kind === 'case' ? <><b>{b.label}</b> · {len(b.w)}</> : <b>{b.label}</b>}</span>
+    ))}
+  </div>
+</div>
+<style define:vars={{ top: `${RULER.top.desk}px`, topp: `${RULER.top.phone}px`, bot: `${RULER.bottom}px` }}>
+  .rr { position: relative; height: clamp(200px, 28vh, 260px); --pitch-r: 4px; --rows: 4; --t: var(--top); }
+  .rr-poster, .rr-labels { position: absolute; inset: 0; }
+  /* ticks + baseline: dotted, like the field draws them */
+  .rr-tick { position: absolute; bottom: var(--bot); width: 2px; height: 12px; margin-left: -1px; background: radial-gradient(circle, var(--gray-400) .8px, transparent 1.1px) 0 0 / 2px 3px repeat-y; }
+  .rr-tick--s { height: 6px; }
+  .rr-tick--0 { background-image: radial-gradient(circle, var(--lime) .8px, transparent 1.1px); }
+  .rr-base { position: absolute; left: 0; right: 0; bottom: calc(var(--bot) - 1px); height: 2px; background: radial-gradient(circle, var(--gray-500) .8px, transparent 1.1px) 0 0 / var(--pitch-r) 2px repeat-x; }
+  .rr-band { position: absolute; top: calc(var(--t) - 8px + var(--o)); bottom: calc(var(--bot) + 6px); background: radial-gradient(circle, var(--lime-25) 1px, transparent 1.4px) var(--o) 0 / 12px 12px; }
+  .rr-fast { position: absolute; top: calc(var(--t) - 8px); bottom: var(--bot); width: 2px; margin-left: -1px; background: radial-gradient(circle, var(--lime) .9px, transparent 1.2px) 0 0 / 2px 4px repeat-y; }
+  .rr-run { position: absolute; bottom: calc(var(--bot) - 3px); height: 5px; background: radial-gradient(circle, var(--lime) .9px, transparent 1.2px) 0 0 / 2px 3px; }
+  /* a bar: rows of dots at the bar pitch, masked by the client's screen luma; a lime node at the end of the build */
+  .rr-bar { position: absolute; left: 0; top: var(--yd); height: calc(var(--rows) * var(--pitch-r)); transform: translateY(-50%); }
+  .rr-tex { position: absolute; inset: 0; background: radial-gradient(circle, var(--white) 1px, transparent 1.3px) 0 0 / var(--pitch-r) var(--pitch-r); opacity: .55; -webkit-mask-image: var(--m); mask-image: var(--m); }
+  .rr-node { position: absolute; right: 0; top: 50%; width: 10px; height: 10px; margin: -5px -5px 0 0; border-radius: 50%; background: var(--lime); box-shadow: 0 0 0 6px var(--black), 0 0 0 7px var(--lime-25); }
+  /* arrival: the bars draw from W0 outward, each at the same speed, so the longest finishes last (reduced motion: drawn) */
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .rr-bar { animation: rrDraw calc(250ms + var(--k) * 650ms) var(--ease-out) 120ms both; }
+    :global(html.js) .rr-plan { animation: rrDraw 900ms var(--ease-out) 120ms both; }
+  }
+  @keyframes rrDraw { from { clip-path: inset(-14px 100% -14px -14px); } to { clip-path: inset(-14px -14px -14px -14px); } }
+  .rr-bar--own .rr-node { background: var(--black); border: 2px solid var(--lime); }
+  /* a plan row: one dot per post per month, the short videos lime; no node */
+  .rr-plan { position: absolute; left: 0; right: 0; top: var(--yd); height: 4px; transform: translateY(-50%); }
+  .rr-plan i { position: absolute; inset: 0; background: radial-gradient(circle, var(--gray-300) 1px, transparent 1.3px) 0 0 / calc(100% / var(--span) / var(--p)) 4px repeat-x; }
+  .rr-pv { background-image: radial-gradient(circle, var(--lime) 1.2px, transparent 1.5px) !important; -webkit-mask: repeating-linear-gradient(90deg, #000 0 calc(100% / var(--span) * var(--v) / var(--p)), transparent 0 calc(100% / var(--span))); mask: repeating-linear-gradient(90deg, #000 0 calc(100% / var(--span) * var(--v) / var(--p)), transparent 0 calc(100% / var(--span))); }
+  /* labels: real text */
+  .rr-wk { position: absolute; bottom: 0; transform: translateX(-50%); font-size: 10px; letter-spacing: .08em; }
+  .rr-wk.on { color: var(--white); }
+  .rr-unit { position: absolute; right: 0; top: 0; font-size: 10px; }
+  .rr-bandl, .rr-fastl { position: absolute; top: 0; font-size: 10px; color: var(--lime); white-space: nowrap; }
+  .rr-bandl.rr-row2 { top: 16px; }
+  .rr-fastl { transform: translateX(-12px); }
+  .rr-runl { position: absolute; bottom: calc(var(--bot) + 8px); transform: translateX(8px); font-size: 10px; color: var(--lime); white-space: nowrap; }
+  .rr-bl { position: absolute; top: var(--yd); transform: translateY(-50%); padding-left: 22px; white-space: nowrap; font-size: 11px; color: var(--gray-300); }
+  .rr-bl b { color: var(--white); font-weight: 400; }
+  .rr-bl.flip { padding-left: 0; transform: translate(-100%, -170%); }
+  /* shorter rulers (1024–1279 wide, or short windows): rows sit too close for a label above, so a flipped label rides
+     on its own bar, just left of the node, on a black chip */
+  @media (min-width: 1024px) and (max-width: 1279px), (min-width: 1024px) and (max-height: 820px) {
+    .rr-bl.flip { transform: translate(calc(-100% - 18px), -50%); background: var(--black); padding: 0 8px; }
+  }
+  .rr-bl.plan { padding-left: 0; transform: translateY(-160%); }
+  /* phone: 3 rows at a 3px pitch, the labels sit above each bar, and the band/marker labels drop out (the answer says them) */
+  @media (max-width: 1023px) {
+    .rr { height: 176px; --pitch-r: 3px; --rows: 3; --t: var(--topp); }
+    .rr-bar, .rr-plan { top: var(--yp); }
+    .rr-node { width: 8px; height: 8px; margin: -4px -4px 0 0; box-shadow: 0 0 0 4px var(--black), 0 0 0 5px var(--lime-25); }
+    /* labels sit on a black chip above the poster, the marker line and the GL field, so the lime marker never cuts them */
+    .rr-labels { z-index: 1; }
+    .rr-bl, .rr-bl.flip, .rr-bl.plan { top: var(--yp); left: 0 !important; padding: 0 6px 0 0; background: var(--black); transform: translateY(-165%); font-size: 9.5px; letter-spacing: .08em; }
+    .rr-wk { font-size: 9px; letter-spacing: .02em; }
+    .rr-unit, .rr-bandl, .rr-fastl, .rr-runl { display: none; }
+  }
+</style>

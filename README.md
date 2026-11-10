@@ -100,13 +100,18 @@ Off until `ANTHROPIC_API_KEY` is set in Vercel and the site is redeployed (no bu
 | lab.md (USER ANSWERS) + `../brief/lab-spec.md` (H1 "Concept sites. / Real craft.", alternatives in a comment) | `src/pages/lab.astro`, `src/data/lab.ts`, `src/components/{LabSheetPoster,LabIndex,Engine,IndexPreview}.astro`; teasers in `about.astro` (`.a-engine` → `/lab#engine`), `index.astro` (process line), `work.astro` (deck line) |
 | seo-strategy.md (titles, descriptions, schema, hubs, llms.txt) | page frontmatter, `src/lib/schema.ts`, `scripts/gen-llms.mjs` |
 
-**Kept current wording** (MUST-KEEP until the user approves the proposed lines): the H1s on /services, /work, /about, /contact, /blog, /404 and the LPs. Proposed titles and ≤155-char descriptions are applied. Placeholders that render as clearly marked placeholders while their flag in `proof.ts` is `false`: `LP_REVIEWS_REAL` (LP reviews) and `CASE_METRICS_REAL` (case metrics).
+**Kept current wording** (MUST-KEEP until the user approves the proposed lines): the H1s on /services ("Seven services. / One connected brand.", approved 2026-11-10), /work, /about, /contact, /blog, /404 and the LPs. Proposed titles and ≤155-char descriptions are applied. Placeholders that render as clearly marked placeholders while their flag in `proof.ts` is `false`: `LP_REVIEWS_REAL` (LP reviews) and `CASE_METRICS_REAL` (case metrics).
 
 ## Fazed Lab (/lab)
 - **Flags** (`src/data/lab.ts`): `LAB_04 = 'full' | 'text' | 'hide'` (#04 Halde Ø1 uses a CC BY-NC-SA 4.0 base mesh; `'full'` = the user's choice 2026-10-17, with the visible credit on its entry; `'text'`/`'hide'` ship no Halde-derived pixel: the bake deletes `lab-04*` and the plate/silhouette drop out). `LAB_SHOW_JURY = false` (scores are never shown). Every count (eyebrow, menu hint, JSON-LD, OG) is computed from `labItems`.
 - **Field:** `slate` (the 5×2 contact sheet; static frames first and unshuffled, so the 4.2 s auto-advance only morphs the lead; hover/focus on a caption holds it, 6 s after leave it resumes; in-view only), `lab` (index: `fz:lab` → `F.sil` at 1.5× the plate), `pipeline8` (8 stations + 3 gates + agent rings + tool square, lit by the page script's `fz:pipe`). Bins: `public/formations/lab-NN.bin` (Shot format, luma → matte) + `lab-NN-poster.webp` (the T0/SVG sheet), baked from `scripts/lab-src/` (block 3b). Curl eases to 1.5 on `slate`/`pipeline8` so the frames read as drawn lines.
 - **Plates:** `src/assets/lab/0N.jpg` from fresh captures (`scripts/capture-lab.mjs`). Re-capture before relaunching: the #02 raffle clock dates the plate.
 - **Nav:** Lab after Work; Blog leaves the top rail only (dock ≥1180, menu, footer keep it). Menu = 8 rows, `sd-idx` total computed; ≤720px-tall phones get 44px rows + email/phone on one row.
+
+## Service pages (/services/<slug>)
+- One template, `src/pages/services/[slug].astro` (Direction C "Runtime", `docs/design/service-pages/directions.md`), content in `src/data/service-pages.ts` from `copy/service-pages/<slug>.md`; the seven services and which are live in `src/data/service-nav.ts` (`serviceHref(id)` is the one link every other file uses). The build fails if the two files disagree, or if a ruler bar is unsourced.
+- Field: `runtime` (the hero ruler: ticks, bands, markers, one bar per real case, textured from `shot-NN.bin`) and `meter` (the sticky proof meter, desktop). `src/field/runtime-geo.ts` is shared with the CSS poster in `RuntimeRuler.astro`. The /services hub's formation is a heptagon (`data-fsides`).
+- Retainer rulers (SEO, automations, social) run in months and plot only our own site/business (start date pinned to a commit) or plan rows. Lines marked `// TBC owner` in the data are owner defaults to confirm.
 
 ## Known gaps / next
 See `../media/build/PROGRESS.md` for the latest state and the exact next step.

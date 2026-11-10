@@ -2,6 +2,7 @@
 //   data  = (x px, y px, layer, tone)   layer 0 = flat, 1..3 = mark plane (z = (layer-2)·uDepth)
 //   alpha = 0..1, or negative = "dust" (alpha = -a · uDust)
 // Coordinates are viewport CSS px, top-left origin, so formations line up with the DOM.
+import { RULER, barY, yAt, shotBand, barTone, type RulerSpec } from './runtime-geo';
 
 export interface Formation {
   id: string;
@@ -162,8 +163,9 @@ const cluster = (out: Pt[], c: P2, r: number, count: number, tone: number, seed:
 export interface Glyphs { pts: { x: number; y: number; lit: number }[][] }
 export function parseGlyphs(buf: ArrayBuffer): Glyphs {
   const dv = new DataView(buf);
-  const counts = [0, 1, 2, 3, 4].map((i) => dv.getUint16(i * 2, true));
-  let o = 10;
+  const N = dv.getUint16(0, true); // glyph count (7 since the heptagon)
+  const counts = Array.from({ length: N }, (_, i) => dv.getUint16(2 + i * 2, true));
+  let o = 2 + N * 2;
   const pts = counts.map((c) => {
     const arr = [];
     for (let k = 0; k < c; k++) { arr.push({ x: dv.getUint16(o, true), y: dv.getUint16(o + 2, true), lit: dv.getUint8(o + 4) }); o += 5; }
@@ -171,25 +173,26 @@ export function parseGlyphs(buf: ArrayBuffer): Glyphs {
   });
   return { pts };
 }
-export const SERVICE_IDS = ['web', 'brand', 'seo', 'product', 'systems'];
+export const SERVICE_IDS = ['web', 'brand', 'seo', 'product', 'systems', 'automations', 'social'];
 
-/* ── pentagon: 5 nodes + edges + spokes; the active node becomes its glyph ── */
-export function pentagon(c: P2, r: number, n: number, v: View, active = -1, glyphs?: Glyphs, glyphSize = 220, dim = 1): Formation {
+/* ── pentagon (now any polygon: the /services hub is a heptagon, one node per service): nodes + edges + spokes;
+      the active node becomes its glyph ── */
+export function pentagon(c: P2, r: number, n: number, v: View, active = -1, glyphs?: Glyphs, glyphSize = 220, dim = 1, sides = 5): Formation {
   // solid edges (2.5px pitch reads as a line), crisp 6px nodes; only the active node is lime with a halo
   const pts: Pt[] = [];
-  const nodes = [0, 1, 2, 3, 4].map((k) => {
-    const a = (-90 + k * 72) * (Math.PI / 180);
+  const nodes = Array.from({ length: sides }, (_, k) => {
+    const a = (-90 + (k * 360) / sides) * (Math.PI / 180);
     return { x: c.x + Math.cos(a) * r, y: c.y + Math.sin(a) * r };
   });
-  for (let k = 0; k < 5; k++) {
-    line(pts, nodes[k], nodes[(k + 1) % 5], 2.5, 0.55, dim);
+  for (let k = 0; k < sides; k++) {
+    line(pts, nodes[k], nodes[(k + 1) % sides], 2.5, 0.55, dim);
     line(pts, c, nodes[k], 3, 0.3, 0.7 * dim);
   }
   const lit = active < 0 ? -1 : active;
   dot(pts, c, lit < 0 ? 2 : 1, Math.min(1, dim * 2.4));
   if (lit < 0) halo(pts, c, Math.min(1, dim * 2.4));
   nodes.forEach((p, k) => {
-    if (k === active && glyphs) {
+    if (k === active && glyphs && glyphs.pts[k]) {
       const g = glyphs.pts[k], s = glyphSize / 280;
       for (const q of g) pts.push([p.x + (q.x - 140) * s, p.y + (q.y - 140) * s, 0, q.lit ? 2 : 1, 1]);
     } else {
@@ -435,4 +438,56 @@ export function pipeline8(nodes: R4[], gates: R4[], agents: R4[], tools: R4[], l
   });
   tools.forEach((r) => { for (let i = 0; i < 16; i++) { const s = Math.floor(i / 4), t = (i % 4) / 4 - 0.375; const h = r.width / 2 + 4, vv = r.height / 2 + 4, p = c(r); pts.push(s === 0 ? [p.x + t * 2 * h, p.y - vv, 0, 0.6, 1] : s === 1 ? [p.x + h, p.y + t * 2 * vv, 0, 0.6, 1] : s === 2 ? [p.x - t * 2 * h, p.y + vv, 0, 0.6, 1] : [p.x - h, p.y - t * 2 * vv, 0, 0.6, 1]); } });
   return pack('pipeline8', pts, n, v, 2, nodes[0] ? [c(nodes[0]).x, c(nodes[0]).y] : [v.w / 2, v.h / 2]);
+}
+
+/* ── runtime: the service-page ruler (Direction C). Ticks W0…span, the typical band(s) as faint lime dots, markers
+      (the 7-day site, SEO setup), fix windows on the baseline, and one bar per case as long as the build took, textured
+      with a core sample of its real screen. Own-site bars are plain dots; plan rows are one dot per post per month. ── */
+export function runtime(rect: R4, spec: RulerSpec, shots: Map<string, Shot>, n: number, v: View, phone: boolean): Formation {
+  const pts: Pt[] = [];
+  const { span, bars } = spec;
+  const W = rect.width, H = rect.height, x0 = rect.left;
+  const base = rect.top + H - RULER.bottom, top = rect.top + (phone ? RULER.top.phone : RULER.top.desk);
+  const st = phone ? RULER.pitch.phone : RULER.pitch.desk, rows = phone ? RULER.rows.phone : RULER.rows.desk;
+  const X = (u: number) => x0 + (W * u) / span;
+  for (let i = 0; i <= span; i++) line(pts, { x: X(i), y: base - (i % 2 ? 6 : 12) }, { x: X(i), y: base }, 3, i ? 0.55 : 2);
+  line(pts, { x: x0, y: base }, { x: x0 + W, y: base }, st, 0.35);
+  spec.bands.forEach(([a, b], k) => {
+    for (let y = top - 8 + k * 6; y < base - 6; y += 12) for (let x = X(a) + k * 6; x <= X(b) + 0.5; x += 12) pts.push([x, y, 0, 2, 0.14]);
+  });
+  spec.marks.forEach((at) => line(pts, { x: X(at), y: top - 8 }, { x: X(at), y: base }, 4, 2, 0.9));
+  spec.runs.forEach(([a, b]) => { for (let x = X(a); x <= X(b); x += 2) for (const dy of [-1.5, 1.5]) pts.push([x, base + dy, 0, 2, 1]); });
+  bars.forEach((b, k) => {
+    const y0 = rect.top + yAt(barY(k, bars.length, phone), H), L = (W * b.w) / span;
+    if (b.kind === 'plan') {
+      // one dot per post per month, the short videos lit lime; no end node (a plan, not a project)
+      const mw = W / span, per = b.posts || 1;
+      for (let mo = 0; mo < b.w; mo++) for (let i = 0; i < per; i++) pts.push([x0 + mo * mw + ((i + 0.5) * mw) / per, y0, 0, i < (b.videos || 0) ? 2 : 0.8, 1]);
+      return;
+    }
+    const s = b.kind === 'case' ? shots.get(b.slug) : undefined;
+    const tex = s ? shotBand(s.rows, s.cols, s.luma, rows) : null;
+    for (let r = 0; r < rows; r++) for (let x = 0; x <= L; x += st) {
+      const val = tex ? tex[r][Math.min(tex[r].length - 1, Math.floor((x / Math.max(L, 1)) * tex[r].length))] : 0.62;
+      pts.push([x0 + x, y0 + (r - (rows - 1) / 2) * st, 0, barTone(val), 1]);
+    }
+    const e = { x: x0 + L, y: y0 }, rn = phone ? RULER.node.phone : RULER.node.desk, rr = phone ? RULER.ring.phone : RULER.ring.desk;
+    // a finished build ends in a filled lime node; our own ongoing work (kind 'own') in a hollow one
+    for (let y = -rn; y <= rn; y += 1.5) for (let x = -rn; x <= rn; x += 1.5) { const d = x * x + y * y; if (d <= rn * rn && (b.kind !== 'own' || d >= (rn - 2) * (rn - 2))) pts.push([e.x + x, e.y + y, 0, 2, 1]); }
+    const ringN = Math.round((2 * Math.PI * rr) / 3);
+    for (let i = 0; i < ringN; i++) { const a = (i / ringN) * Math.PI * 2; pts.push([e.x + Math.cos(a) * rr, e.y + Math.sin(a) * rr, 0, 2, 0.6]); }
+  });
+  // anchor on W0 at the baseline: the morph stagger is radial from here, so the bars draw from W0 outward by length
+  return pack('runtime', pts, n, v, phone ? 1.7 : 2.2, [x0, base]);
+}
+
+/* ── meter: the sticky run meter in the proof gutter. `span` rows of five day-dots; the first `lit` rows go lime. ── */
+export function meter(rect: R4, span: number, lit: number, n: number, v: View): Formation {
+  const pts: Pt[] = [];
+  const row = rect.height / span;
+  for (let i = 0; i < span; i++) for (let d = 0; d < 5; d++) {
+    const on = i < lit;
+    pts.push([rect.left + 4 + d * 12, rect.top + i * row + row / 2, 0, on ? 2 : 0.5, on ? 1 : 0.55]);
+  }
+  return pack('meter', pts, n, v, 4, [rect.left + 4, rect.top], null);
 }

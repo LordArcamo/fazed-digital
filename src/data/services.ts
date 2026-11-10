@@ -1,4 +1,6 @@
 // copy/home.md HOME-03 (node blocks). Full chapters for /services live in copy/services.md.
+// Chapters 06 and 07 (automations, social media management) and the FAQ edits: copy/service-pages/hub.md (10 Nov 2026).
+import { prices, automationPrices, socialPrices } from './proof.ts';
 export const services = [
   { id: 'web', short: 'Websites', title: 'Web design & development', line: 'Fast, mobile-first sites you can update yourself, built to bring in enquiries.', scope: ['Custom design', 'WordPress / Astro', 'Core Web Vitals', 'CMS handover'], proof: { label: 'CASE 09 →', name: 'Dotted Studios', href: '/work/09' } },
   { id: 'brand', short: 'Brands', title: 'Brand identity', line: 'Logos, colour, type and guidelines that make a good business look as good as it is.', scope: ['Logo system', 'Colour + type', 'Guidelines', 'Templates'], proof: { label: 'CASE 02 →', name: 'Cleen & Green', href: '/work/02' } },
@@ -14,6 +16,8 @@ export interface Chapter {
   proof: { tag: string; text: string; link: Link }[]; timeline?: string; reading: Link[]; cta: Link;
 }
 const post = (slug: string, label: string): Link => ({ label, href: `/blog/${slug}` });
+const AU = (id: string) => automationPrices.find((p) => p.id === id)!;
+const SO = (id: string) => socialPrices.find((p) => p.id === id)!;
 export const chapters: Chapter[] = [
   {
     id: 'web', n: '01', h2: 'Web design & development', outcome: 'A website that brings in enquiries, not just compliments.',
@@ -94,14 +98,35 @@ export const chapters: Chapter[] = [
     reading: [post('wordpress-vs-custom-build', 'WordPress vs custom build'), post('website-maintenance-guide', 'Website maintenance guide')],
     cta: { label: 'Scope a system', href: '/contact?service=systems' },
   },
+  {
+    id: 'automations', n: '06', h2: 'Automations', outcome: 'Let your tools do the busywork.',
+    body: ['Most small teams lose hours copying details from one app to another. We connect the tools you already pay for, with n8n, Zapier, Make, HubSpot or custom code, so that work runs on its own.'],
+    get: ['One workflow, live in 5 business days', 'Up to 3 connected workflows in a pack', 'Custom code and AI agents', 'Monitoring and fixes when a tool changes'],
+    fit: ['Someone copies the same details between apps every week', 'New leads wait in an inbox', 'Your tools don’t talk to each other'],
+    proof: [{ tag: 'Our own business', text: 'Every contact form and site chat lead goes to Gmail and HubSpot automatically. We run on it every day.', link: { label: 'See how our lead flow runs', href: '/services/automations#proof' } }],
+    timeline: `A single automation is ${AU('single').usd} (${AU('single').php}) and goes live in 5 business days. Start with a free 15-minute check.`,
+    reading: [],
+    cta: { label: 'Book a free automation check', href: '/contact?service=automations' },
+  },
+  {
+    id: 'social', n: '07', h2: 'Social media management', outcome: 'Your pages, handled every week.',
+    body: ['We design your posts, edit short videos from your own photos and footage, write the captions and schedule everything, on every platform you use.'],
+    get: ['12, 20 or 30 posts a month', 'Short videos on Growth and Pro', 'Replies to comments and DMs on business days (Growth)', 'A monthly report'],
+    fit: ['Your last post was weeks ago', 'Your pages look different every time someone new posts', 'Messages wait days for a reply'],
+    proof: [{ tag: 'New service', text: 'Founding rate: 20% off the first 3 months for our first 3 clients.', link: { label: 'Social media plans and what’s in them', href: '/services/social-media-management#price' } }],
+    timeline: `Plans from ${SO('starter').usd} (${SO('starter').php}), 3-month minimum, then month to month.`,
+    reading: [],
+    cta: { label: 'Ask about social media', href: '/contact?service=social' },
+  },
 ];
 
 export const serviceFaq = [
   { q: 'Do you work with businesses outside the Philippines?', a: 'Yes. Most of our case studies are for clients in the USA and Australia. We work remotely with clear milestones, regular video check-ins and detailed written updates.' },
-  { q: 'How long does a project take?', a: 'Brand identity takes 4–6 weeks. Websites take 4 weeks for simpler builds and 12+ weeks for complex ones. Need it fast? Our 7-day website package has a fixed timeline and price.' },
-  { q: 'How much does a website cost?', a: 'Our 7-day packages start at $499 (₱19,999 in the Philippines). Custom projects are quoted after a discovery call, and a typical custom website or system runs $5,000–$20,000 depending on scope.' },
+  { q: 'How long does a project take?', a: 'Brand identity takes 4–6 weeks. Websites take 4 weeks for simpler builds and 12+ weeks for complex ones, and our system builds have run 8–14 weeks. A single automation goes live in 5 business days. Need a website fast? Our 7-day package has a fixed timeline and price.' },
+  { q: 'How much does a website cost?', a: `Our 7-day packages start at ${prices.usd.starter} (${prices.php.starter} in the Philippines). Custom projects are quoted after a discovery call, and a typical custom website or system runs ${prices.customRange} depending on scope.` },
   { q: 'How long does SEO take?', a: 'Setup takes about a month: the technical fixes, keyword plan and tracking. Results usually show in 6–12 months, depending on your market and competition. You get a plain-English report every month.' },
   { q: 'Will I own my website?', a: 'Yes. Your domain, hosting, logins, design files and content are yours once paid for. No lock-in contracts.' },
   { q: 'Which platforms do you build on?', a: 'WordPress when you want to edit everything yourself. Astro, React or Next.js when performance and flexibility matter most. Framer or Webflow when your marketing team wants a site builder they can edit. We recommend the best fit for you.' },
-  { q: 'Do you offer support after launch?', a: 'Yes. Monthly maintenance plans start at $99/month (₱3,500 in the Philippines), and SEO retainers are available for continued growth.' },
+  { q: 'Do you offer support after launch?', a: `Yes. Website care plans start at ${prices.usd.care} (${prices.php.care} in the Philippines). Custom web apps get support scoped and priced with the build, and SEO retainers are available for continued growth.` },
+  { q: 'Can we hire you for just one service?', a: 'Yes. Hire us for one piece, or connect the lot. Most projects start with one service, and the rest are there when you need them.' },
 ];

@@ -13,11 +13,15 @@ import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { MARK_PATHS, MARK_TRANSFORM } from './lib/mark.mjs';
 import { pumpkinDots } from './lib/pumpkin.mjs';
+import { registerHooks } from 'node:module';
+// the data files import each other without extensions (Vite resolves those; plain Node does not)
+registerHooks({ resolve(spec, ctx, next) { try { return next(spec, ctx); } catch (e) { if (spec.startsWith('.')) return next(`${spec}.ts`, ctx); throw e; } } });
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT = join(ROOT, 'public/og');
 mkdirSync(join(OUT, 'work'), { recursive: true });
 mkdirSync(join(OUT, 'blog'), { recursive: true });
+mkdirSync(join(OUT, 'services'), { recursive: true });
 await initWasm(readFileSync(join(ROOT, 'node_modules/@resvg/resvg-wasm/index_bg.wasm')));
 const fonts = [
   { name: 'Clash', data: readFileSync(join(ROOT, 'scripts/fonts/ClashDisplay-Semibold.woff')), weight: 600, style: 'normal' },
@@ -83,7 +87,7 @@ const META = 'Iligan City, PH · 8.2280° N 124.2452° E · Est. 2022';
 const pages = {
   home: { eyebrow: 'Web design · Branding · SEO', title: 'Built in Iligan. Live worldwide.', meta: META },
   about: { eyebrow: 'About · 04 people · 01 city', title: 'We make bold brands for ambitious people.', meta: META },
-  services: { eyebrow: 'What we do · 05 services', title: 'Services that move the needle.', meta: 'Web · Brand · SEO · Product · Systems' },
+  services: { eyebrow: 'What we do · 07 services', title: 'Seven services. One connected brand.', meta: 'Web · Brand · SEO · UI/UX · Web apps · Automations · Social' },
   work: { eyebrow: 'Selected work · 09 cases · 03 countries', title: 'Projects we’re proud of.', meta: 'USA · Australia · Philippines' },
   contact: { eyebrow: 'Signal · reply within 1 business day', title: 'Let’s build something great.', meta: META },
   blog: { eyebrow: 'Insights · practical guides', title: 'Ideas that move brands forward.', meta: 'SEO · Branding · Design · Development · Strategy' },
@@ -101,6 +105,21 @@ const labShipped = (labSrc.match(/status: 'shipped'/g) || []).length - (/LAB_04[
 pages.lab = { eyebrow: 'Concept sites · fictional brands', title: 'Our lab. Your next site.', meta: `Fazed Lab · ${String(labShipped).padStart(2, '0')} immersive 3D concept sites`, art: sheetSvg(labShipped), dep: join(ROOT, 'src/data/lab.ts') };
 let n = 0;
 for (const [k, o] of Object.entries(pages)) { const out = join(OUT, `${k}.png`); if (fresh(out, me, ...(o.dep ? [o.dep] : []))) continue; await render(out, o); n++; }
+
+// service pages: /services/<slug> (src/data/service-pages.ts + service-nav.ts). The meta line is the page's lime answer.
+{
+  const { servicePages } = await import(join(ROOT, 'src/data/service-pages.ts'));
+  const { SERVICE_NAV, SERVICE_TOTAL } = await import(join(ROOT, 'src/data/service-nav.ts'));
+  const deps = ['src/data/service-pages.ts', 'src/data/service-nav.ts', 'src/data/proof.ts'].map((f) => join(ROOT, f));
+  for (const s of SERVICE_NAV.filter((x) => x.live)) {
+    const p = servicePages[s.slug], out = join(OUT, 'services', `${s.slug}.png`);
+    if (!p || fresh(out, me, ...deps)) continue;
+    const money = (v) => (typeof v === 'object' ? v.usd : v);
+    const i = String(SERVICE_NAV.indexOf(s) + 1).padStart(2, '0');
+    await render(out, { eyebrow: `Service ${i} / ${String(SERVICE_TOTAL).padStart(2, '0')} · ${s.name}`, title: p.h1[0], meta: `${p.meter.lead} ${money(p.meter.big)} ${p.meter.unit} · ${p.meter.tailPre ? `${p.meter.tailPre} ` : ''}${money(p.meter.tail)}` });
+    n++;
+  }
+}
 
 // cases (parse the TS data file without a TS runtime: pull the fields we need)
 const casesSrc = readFileSync(join(ROOT, 'src/data/cases.ts'), 'utf8');

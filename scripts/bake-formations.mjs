@@ -5,7 +5,7 @@
  *  mark-mask.bin   2-bit mask of the 3 isometric planes (192×277), 0 = empty, 1..3 = plane
  *  shot-NN.bin     case screenshots: 16:10 top crop sampled on a 181×113 grid (20,453 pts)
  *                  layout: header (8 B) + cols*rows u8 luma
- *  glyphs.bin      the 5 service glyphs stroke-sampled every 3px in a 280×280 box
+ *  glyphs7.bin     the service glyphs (7) stroke-sampled every 3px in a 280×280 box
  *  globe.bin       land bitmask over a 20,480-point fibonacci sphere (1 bit per index)
  *  wordmark.bin    "FAZED" rasterised with Clash Display 700, 2-bit-ish 1-bit mask
  *
@@ -136,7 +136,7 @@ for (const [id, o] of Object.entries(LAB)) {
 
 /* ── 3. service glyphs: stroke-sampled points in a 280-unit box ───────────── */
 {
-  const out = join(OUT, 'glyphs.bin');
+  const out = join(OUT, 'glyphs7.bin'); // renamed with the 7-glyph format: /formations/* is cached for 7 days
   if (stale(out, me, join(ROOT, 'scripts/lib/glyphs.mjs'))) {
     // Rasterise each glyph's strokes at 1px/unit, then keep a 3px-pitch subsample of
     // the stroke pixels (a cheap, even "stroke sampled every 3px").
@@ -151,16 +151,18 @@ for (const [id, o] of Object.entries(LAB)) {
       }
       parts.push(pts);
     }
-    // layout: u16 count per glyph ×5, then per point u16 x, u16 y, u8 lit (padded to 6 B)
+    // layout: u16 glyph count N, u16 point count per glyph ×N, then per point u16 x, u16 y, u8 lit
     const total = parts.reduce((a, p) => a + p.length / 3, 0);
-    const buf = Buffer.alloc(10 + total * 5);
-    let o = 10;
+    const head = 2 + parts.length * 2;
+    const buf = Buffer.alloc(head + total * 5);
+    buf.writeUInt16LE(parts.length, 0);
+    let o = head;
     parts.forEach((p, i) => {
-      buf.writeUInt16LE(p.length / 3, i * 2);
+      buf.writeUInt16LE(p.length / 3, 2 + i * 2);
       for (let k = 0; k < p.length; k += 3) { buf.writeUInt16LE(p[k], o); buf.writeUInt16LE(p[k + 1], o + 2); buf[o + 4] = p[k + 2]; o += 5; }
     });
     writeFileSync(out, buf);
-    log('glyphs.bin', buf.length, 'B', parts.map((p) => p.length / 3).join('/'));
+    log('glyphs7.bin', buf.length, 'B', parts.map((p) => p.length / 3).join('/'));
   }
 }
 

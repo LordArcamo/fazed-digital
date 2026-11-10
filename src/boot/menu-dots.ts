@@ -29,7 +29,8 @@ function sample(word: string): { x: number; y: number }[] {
   c.font = fam;
   const tw = Math.max(1, c.measureText(word).width);
   // target box: desktop ≤50% vw wide and ≤40% vh tall; mobile spine ≤130px thick, ≤70% vh long
-  const maxL = m ? H * 0.62 : W * 0.5, maxT = m ? Math.min(130, W * 0.2) : H * 0.4;
+  // desktop ≤44% wide: the Services branch line (service links) runs out to ~50vw under the row
+  const maxL = m ? H * 0.62 : W * (W < 1366 ? 0.4 : 0.44), maxT = m ? Math.min(130, W * 0.2) : H * 0.4;
   const s = Math.min(maxL / tw, maxT / 200);
   const fs = 200 * s, L = Math.ceil(tw * s), T = Math.ceil(fs * 1.2);
   off.width = Math.ceil(L / pitch) + 2; off.height = Math.ceil(T / pitch) + 2;

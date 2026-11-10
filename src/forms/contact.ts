@@ -42,6 +42,10 @@ export function initContactForms() {
     const btn = form.querySelector<HTMLButtonElement>('button[type=submit]')!;
     const q = new URLSearchParams(location.search).get('service');
     if (q) { const sel = form.querySelector<HTMLSelectElement>('select[name=service]'); if (sel && [...sel.options].some((o) => o.value === q)) sel.value = q; }
+    // /services/social-media-management plan buttons: ?plan= starts the message (only if it is empty)
+    const plan = new URLSearchParams(location.search).get('plan');
+    const msg = form.querySelector<HTMLTextAreaElement>('textarea[name=message]');
+    if (plan && /^(starter|growth|pro)$/.test(plan) && msg && !msg.value) msg.value = `I'm interested in the ${plan[0].toUpperCase()}${plan.slice(1)} plan.`;
     const svc = form.querySelector<HTMLSelectElement>('select[name=service]');
     const tip = form.querySelector<HTMLElement>('.cf-tip');
     const syncTip = () => { if (tip && svc) tip.hidden = svc.value !== '7day'; };

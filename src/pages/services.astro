@@ -6,73 +6,96 @@ import { chapters, serviceFaq } from '../data/services';
 import { capsCopy, prices } from '../data/proof';
 import { SITE_URL } from '../data/site';
 import { crumbs, faqPage, ORG_REF } from '../lib/schema';
-import { SERVICE_ALSO } from '../data/links';
+import { SERVICE_NAV, SERVICE_TOTAL, serviceHref, servicePath } from '../data/service-nav';
+import { servicePages } from '../data/service-pages';
+import posts from '../data/.generated/posts.json';
+
+// Seven services (copy/service-pages/hub.md, 10 Nov 2026). H1 approved by the owner (relayed by the coordinator).
+// Each chapter is a summary that hands off to its own page; the chapter ids stay (blog posts link to them).
+const N = SERVICE_TOTAL;
+const pad2 = (n: number) => String(n).padStart(2, '0');
+const navOf = (id: string) => SERVICE_NAV.find((s) => s.id === id)!;
+const handoff: Record<string, string> = {
+  web: 'Web design and development in detail', brand: 'Brand identity: process and deliverables', seo: 'How our SEO and AI search service works',
+  product: 'UI/UX and product design in detail', systems: 'Custom web apps, booking systems and portals', automations: 'Automations: tools, packages and prices', social: 'Social media plans and what’s in them',
+};
+// one proof line per chapter; SEO uses our own site (no client SEO result is claimed), with the live guide count
+const proofOf = (c: (typeof chapters)[number]) => c.id === 'seo'
+  ? { tag: 'Our own site', text: `${posts.length} practical guides on our blog, plus structured data on every page of this site. We practise what we sell.`, link: { label: 'Read the SEO guides', href: '/blog/category/seo' } }
+  : c.proof[0];
+const jumpLabel: Record<string, string> = { web: 'Web', brand: 'Brand', seo: 'SEO', product: 'UI/UX', systems: 'Web apps', automations: 'Automations', social: 'Social' };
+// a question marked up on a service page leaves the hub's FAQPage (one marked-up instance per question sitewide)
+const owned = new Set(Object.values(servicePages).flatMap((p) => p.faq.map((f) => f.q)));
+const hubFaqMarkup = serviceFaq.filter((f) => !owned.has(f.q));
+const vert = (k: number) => { const a = (-90 + (k * 360) / N) * Math.PI / 180; return { x: Math.cos(a), y: Math.sin(a) }; };
 
 const schema = [
   {
     '@context': 'https://schema.org',
     '@type': 'ItemList',
     name: 'Fazed Digital services',
-    itemListElement: chapters.map((c, i) => ({ '@type': 'ListItem', position: i + 1, item: { '@type': 'Service', name: c.h2, description: c.outcome, url: `${SITE_URL}/services#${c.id}`, provider: ORG_REF, areaServed: 'Worldwide' } })),
+    itemListElement: chapters.map((c, i) => {
+      const url = `${SITE_URL}${serviceHref(c.id)}`, live = navOf(c.id).live;
+      // a live service is defined once, on its own page: the hub only references it
+      return { '@type': 'ListItem', position: i + 1, item: live ? { '@id': `${url}#service`, name: c.h2, url } : { '@type': 'Service', name: c.h2, description: c.outcome, url, provider: ORG_REF, areaServed: 'Worldwide' } };
+    }),
   },
-  faqPage(serviceFaq),
+  faqPage(hubFaqMarkup),
   crumbs([['Services', '/services']]),
 ];
 ---
 <Base
-  title="Web Design, Branding & SEO Services | Fazed Digital PH"
-  description="Web design, branding, SEO, product design and custom web apps from Iligan City, Philippines, for clients worldwide. Clear scope, real proof."
+  title="Web Design, Branding, SEO, Apps & Automation | Fazed"
+  image="/og/services.png"
+  description={`Websites, brand identity, SEO, UI/UX, web apps, automations and social media from one studio in the Philippines. 7-day sites from ${prices.usd.starter}.`}
   formation="pentagon"
   schema={schema}
   current="/services"
 >
-  <section class="s-hero" data-f="pentagon" data-fx="0.5" data-fy="0.54" data-fr="0.27" data-fdim="0.35" data-ftop="128" aria-labelledby="s-h">
+  <section class="s-hero" data-f="pentagon" data-fsides={N} data-fx="0.5" data-fy="0.54" data-fr="0.27" data-fdim="0.35" data-ftop="128" aria-labelledby="s-h">
     <svg class="poster-art s-poster" viewBox="0 0 200 200" aria-hidden="true">
-      {[0, 1, 2, 3, 4].map((k) => { const a = (-90 + k * 72) * Math.PI / 180, b = (-90 + ((k + 1) % 5) * 72) * Math.PI / 180; return <g><line x1={100 + Math.cos(a) * 80} y1={100 + Math.sin(a) * 80} x2={100 + Math.cos(b) * 80} y2={100 + Math.sin(b) * 80} stroke="#F5F4F0" stroke-opacity=".3" stroke-width=".5" /><line x1="100" y1="100" x2={100 + Math.cos(a) * 80} y2={100 + Math.sin(a) * 80} stroke="#F5F4F0" stroke-opacity=".16" stroke-width=".5" /><circle cx={100 + Math.cos(a) * 80} cy={100 + Math.sin(a) * 80} r="1.6" fill="#F5F4F0" fill-opacity=".6" /></g>; })}
+      {Array.from({ length: N }, (_, k) => { const a = vert(k), b = vert((k + 1) % N); return <g><line x1={100 + a.x * 80} y1={100 + a.y * 80} x2={100 + b.x * 80} y2={100 + b.y * 80} stroke="#F5F4F0" stroke-opacity=".3" stroke-width=".5" /><line x1="100" y1="100" x2={100 + a.x * 80} y2={100 + a.y * 80} stroke="#F5F4F0" stroke-opacity=".16" stroke-width=".5" /><circle cx={100 + a.x * 80} cy={100 + a.y * 80} r="1.6" fill="#F5F4F0" fill-opacity=".6" /></g>; })}
       <circle cx="100" cy="100" r="5" fill="none" stroke="#C9FF57" stroke-opacity=".35" stroke-width=".4" />
       <circle cx="100" cy="100" r="1.8" fill="#C9FF57" />
     </svg>
     <div class="container s-hero-in">
-      <p class="mono">What we do · 05 services · 01 system</p>
-      <h1 id="s-h" class="t-d1"><span class="h-l1">Five services.</span> <span class="h-l2">One connected brand.</span></h1>
-      <p class="t-body-l s-deck">Fazed Digital is one team in Iligan City, Philippines, with five services that fit together: web design, brand identity, SEO, product design and custom systems. Fixed-price websites start at {prices.usd.starter} ({prices.php.starter}) and go live in 7 business days. Custom builds take 4–12+ weeks and typically run {prices.customRange}. Hire us for one piece, or connect the lot.</p>
+      <p class="mono">What we do · {pad2(N)} services · 01 system</p>
+      <h1 id="s-h" class="t-d1"><span class="h-l1">Seven services.</span> <span class="h-l2">One connected brand.</span></h1>
+      <p class="t-body-l s-deck">Fazed Digital is one team in Iligan City, Philippines, with seven services that fit together: web design, brand identity, SEO and AI search, UI/UX design, custom web apps, automations and social media management. Fixed-price websites start at {prices.usd.starter} ({prices.php.starter}) and go live in 7 business days. Custom builds take 4–12+ weeks and typically run {prices.customRange}. Hire us for one piece, or connect the lot.</p>
       <div class="s-cta">
         <a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a>
         <a class="btn btn--ghost" href="/lp/7-day-website">Get live in 7 days</a>
       </div>
     </div>
-    <!-- the pentagon's vertices are the jump links (≥1024 they sit on the field's nodes) -->
+    <!-- the heptagon's vertices are the jump links (≥1024 they sit on the field's nodes) -->
     <nav class="s-jump" aria-label="Jump to a service">
-      <ul>{chapters.map((c, k) => <li class={`v${k}`}><a href={`#${c.id}`}><span class="mono">{c.n}</span> <span class="s-jl">{c.id === 'web' ? 'Web' : c.id === 'brand' ? 'Brand' : c.id === 'seo' ? 'SEO' : c.id === 'product' ? 'Product' : 'Systems'}</span><span class="sr-only">: {c.h2}</span></a></li>)}</ul>
+      <ul>{chapters.map((c, k) => { const p = vert(k); return <li style={`--x:${p.x.toFixed(4)};--y:${p.y.toFixed(4)}`} class:list={[`v${k}`, p.x > 0.05 ? 'is-r' : p.x < -0.05 ? 'is-l' : 'is-t']}><a href={`#${c.id}`}><span class="mono">{c.n}</span> <span class="s-jl">{jumpLabel[c.id]}</span><span class="sr-only">: {c.h2}</span></a></li>; })}</ul>
     </nav>
   </section>
-  {chapters.map((c, i) => (
-    <section class="chap" id={c.id} data-f="pentagon" data-step={i} data-fx="0.2" data-fy="0.5" data-fr="0.11" aria-labelledby={`${c.id}-h`}>
+  {chapters.map((c, i) => {
+    const pr = proofOf(c), nav = navOf(c.id);
+    return (
+    <section class="chap" id={c.id} data-f="pentagon" data-fsides={N} data-step={i} data-fx="0.2" data-fy="0.5" data-fr="0.11" aria-labelledby={`${c.id}-h`}>
       <div class="container chap-in">
         <div class="chap-side">
-          <p class="mono chap-n">Node {c.n}/05 · {c.id}</p>
+          <p class="mono chap-n">Node {c.n}/{pad2(N)} · {c.id}</p>
           <div class="chap-glyph"><Glyph id={c.id} size={120} /></div>
         </div>
         <div class="chap-main">
           <h2 id={`${c.id}-h`} class="t-h3 chap-h2">{c.h2}</h2>
           <p class="t-d2 chap-out">{c.outcome}</p>
-          <div class="chap-body">{c.body.map((p) => <p>{p}</p>)}</div>
+          <div class="chap-body"><p>{c.body[0]}</p>{c.id === 'systems' && <p>Need one workflow, not a whole system? <a class="link" href={serviceHref('automations')}>See automations</a>.</p>}</div>
           <div class="chap-cols">
-            <div><h3 class="mono">What you get</h3><ul class="ticks">{c.get.map((g) => <li>{g}</li>)}</ul></div>
-            <div><h3 class="mono">Good fit if</h3><ul class="ticks ticks--dim">{c.fit.map((g) => <li>{g}</li>)}</ul></div>
+            <div><h3 class="mono">What you get</h3><ul class="ticks">{c.get.slice(0, 4).map((g) => <li>{g}</li>)}</ul></div>
+            <div class="chap-proof"><h3 class="mono">Proof</h3><ul><li><p class="mono">{pr.tag}</p><p>{pr.text}</p><a class="link" href={pr.link.href}>{pr.link.label}</a></li></ul></div>
           </div>
-          <div class="chap-proof">
-            <h3 class="mono">Proof</h3>
-            <ul>{c.proof.map((p) => <li><p class="mono">{p.tag}</p><p>{p.text}</p><a class="link" href={p.link.href}>{p.link.label}</a></li>)}</ul>
-          </div>
-          {c.timeline && <p class="chap-time"><span class="mono">Timeline</span> {c.timeline} {c.id === 'web' && <a class="link" href="/lp/7-day-website">Get live in 7 days</a>}</p>}
-          <p class="chap-read"><span class="mono">Related reading</span> {c.reading.map((r, k) => <>{k ? ' · ' : ''}<a class="link" href={r.href}>{r.label}</a></>)}</p>
-          {SERVICE_ALSO[c.id] && <p class="chap-read chap-also"><span class="mono">Also</span> {SERVICE_ALSO[c.id].lead} {SERVICE_ALSO[c.id].links.map((r, k) => <>{k ? ' · ' : ''}<a class="link" href={r.href}>{r.label}</a></>)}</p>}
+          {(c.id === 'automations' || c.id === 'social') && c.timeline && <p class="chap-time"><span class="mono">{c.id === 'social' ? 'Plans' : 'Price'}</span> {c.timeline}</p>}
+          {nav.live && <a class="chap-hand" href={servicePath(nav)}><span class="mono">{nav.n.replace('04.', '0')} · Full page</span><span class="chap-hand-l">{handoff[c.id]}</span><span class="arrow" aria-hidden="true">→</span></a>}
           <a class="btn btn--lime chap-cta" href={c.cta.href}>{c.cta.label} <span class="arrow" aria-hidden="true">→</span></a>
         </div>
       </div>
     </section>
-  ))}
+  ); })}
 
   <section class="section s-faq" id="faq" data-f="lattice" aria-labelledby="faq-h">
     <div class="container s-faq-in">
@@ -93,6 +116,7 @@ const schema = [
         <a class="btn btn--lime" href="/contact" data-magnetic>Start a project <span class="arrow" aria-hidden="true">→</span></a>
       </div>
       <p>Need it fast? <a class="link" href="/lp/7-day-website">Get live in 7 days</a><span data-market="ph"> · <a class="link" href="/lp/7-day-website/ph">See peso pricing (₱)</a></span></p>
+      <nav class="s-svcs" aria-label="All services"><ul>{SERVICE_NAV.map((s) => <li><a href={serviceHref(s.id)}><span class="mono">{s.n.replace('04.', '0')}</span> {s.short}</a></li>)}</ul></nav>
     </div>
   </section>
 </Base>
@@ -117,13 +141,14 @@ const schema = [
   @media (min-width: 1024px) {
     .s-jump li { position: absolute; left: calc(50% + var(--x) * var(--R)); top: calc(var(--cy) + var(--y) * var(--R)); translate: var(--tx) var(--ty); white-space: nowrap; }
     .s-jump a { padding: 0 6px; }
-    /* the H1 is sized off the pentagon: "Five services." (≈6.4em) ends ≥24px inside the side vertex labels at every width/height */
-    .s-hero h1 { font-size: min(var(--fs-d1), calc(var(--R) * .297 - 10.6px)); }
-    .v0 { --x: 0; --y: -1; --tx: -50%; --ty: calc(-100% - 6px); }
-    .v1 { --x: .951; --y: -.309; --tx: 14px; --ty: -50%; }
-    .v2 { --x: .588; --y: .809; --tx: 14px; --ty: -50%; }
-    .v3 { --x: -.588; --y: .809; --tx: calc(-100% - 14px); --ty: -50%; }
-    .v4 { --x: -.951; --y: -.309; --tx: calc(-100% - 14px); --ty: -50%; }
+    /* the H1 is sized off the heptagon: "Seven services." (≈6.9em, one character longer than the old "Five services.") ends
+       inside the side vertex labels at every width/height (tuned from the pentagon's .297 by the line-length ratio) */
+    .s-hero h1 { font-size: min(var(--fs-d1), calc(var(--R) * .276 - 10px)); }
+    /* the heptagon's side vertices sit at ±.975R, level with the deck: keep the deck (and its lines) inside them */
+    .s-deck { max-width: min(56ch, calc(var(--R) * 1.95 - 72px)); }
+    .s-jump li { --tx: 14px; --ty: -50%; }
+    .s-jump li.is-l { --tx: calc(-100% - 14px); }
+    .s-jump li.is-t { --tx: -50%; --ty: calc(-100% - 6px); }
   }
   @media (max-width: 1023px) {
     .s-hero { --R: 27vw; }
@@ -154,6 +179,18 @@ const schema = [
   .chap-time .mono, .chap-read .mono { margin-right: .75rem; }
   .chap-also { margin-top: -1.25rem; } /* sits under Related reading as one block */
   .chap-cta { justify-self: start; }
+  /* the hand-off to the service's own page: a ruled row, not a card */
+  .chap-hand { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 1rem; min-height: 64px; padding: .75rem 0; border-block: 1px solid var(--gray-700); color: var(--white); transition: border-color .2s, color .2s; }
+  .chap-hand .mono { color: var(--lime); }
+  .chap-hand-l { font: 600 clamp(1.125rem, 1.6vw, 1.5rem)/1.2 var(--font-display); }
+  .chap-hand .arrow { color: var(--lime); transition: transform .2s var(--ease-out); }
+  .chap-hand:hover, .chap-hand:focus-visible { border-color: var(--lime); }
+  .chap-hand:hover .arrow, .chap-hand:focus-visible .arrow { transform: translateX(4px); }
+  .chap-hand:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; }
+  .s-svcs { margin-top: 2.5rem; border-top: 1px solid var(--gray-700); padding-top: 1rem; }
+  .s-svcs ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 0 1.75rem; }
+  .s-svcs a { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; color: var(--gray-300); }
+  .s-svcs a:hover, .s-svcs a:focus-visible { color: var(--lime); }
   .s-faq-in { display: grid; grid-template-columns: repeat(12, 1fr); column-gap: var(--gutter); row-gap: 2rem; }
   .s-faq-in > div:first-child { grid-column: 1 / span 4; display: grid; gap: 1rem; align-content: start; }
   .s-faq-in > :global(.faq) { grid-column: 6 / span 7; }

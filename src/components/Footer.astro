@@ -1,10 +1,13 @@
 ---
 import { NAP, SOCIALS, BUILD_YEAR } from '../data/site';
+import { SERVICE_NAV, serviceHref } from '../data/service-nav';
+// Services: each label links to its page once it is live, else to its /services chapter (service-nav.ts)
 const cols = [
-  { h: 'Services', links: [['Web design', '/services#web'], ['Brand identity', '/services#brand'], ['SEO marketing', '/services#seo'], ['Product design', '/services#product'], ['Custom systems', '/services#systems']] },
+  { h: 'Services', links: SERVICE_NAV.map((s) => [s.short, serviceHref(s.id)]) },
   { h: 'Websites', links: [['7-day website', '/lp/7-day-website'], ['7-day website (₱)', '/lp/7-day-website/ph'], ['Framer websites', '/framer'], ['Webflow websites', '/webflow'], ['E-commerce websites', '/ecommerce'], ['Free website check', '/audit']] },
   { h: 'Studio', links: [['About', '/about'], ['Work', '/work'], ['Lab', '/lab'], ['Blog', '/blog'], ['Contact', '/contact'], ['Web design in Iligan', '/web-design-iligan-city'], ['Web design for Australia', '/australia']] },
 ];
+const here = Astro.url.pathname.replace(/\/$/, '');
 ---
 <footer class="ftr page" id="footer">
   <div class="container">
@@ -16,7 +19,7 @@ const cols = [
       {cols.map((c) => (
         <nav aria-label={c.h}>
           <h2 class="mono">{c.h}</h2>
-          <ul>{c.links.map(([l, h]) => <li><a class="ftr-a" href={h}>{l}</a></li>)}</ul>
+          <ul>{c.links.map(([l, h]) => <li><a class="ftr-a" href={h} aria-current={h === here ? 'page' : undefined}>{l}</a></li>)}</ul>
         </nav>
       ))}
       <div>
@@ -51,6 +54,7 @@ const cols = [
   .ftr-row { display: flex; flex-wrap: wrap; gap: 0 1.5rem; }
   .ftr-a { display: inline-flex; align-items: center; min-height: 44px; color: var(--gray-300); transition: color .2s; text-align: left; }
   .ftr-a:hover { color: var(--lime); }
+  .ftr-a[aria-current='page'] { color: var(--lime); }
   .ftr-t { min-height: 44px; display: flex; align-items: center; color: var(--gray-400); }
   .ftr-word { font-family: var(--font-display); font-weight: 700; font-size: clamp(5rem, 24vw, 22rem); line-height: .8; letter-spacing: -.04em; color: transparent; -webkit-text-stroke: 1px var(--gray-700); text-align: center; user-select: none; margin: 24px 0 48px; }
   :global(html.gl-live) .ftr-word.gl-owned { -webkit-text-stroke-color: transparent; }

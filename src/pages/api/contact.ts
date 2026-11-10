@@ -14,6 +14,8 @@ const SERVICE_LABELS: Record<string, string> = {
   seo:     'SEO Marketing',
   product: 'Product Design',
   systems: 'Custom System / Web App',
+  automations: 'Automations',
+  social: 'Social Media Management',
   '7day':  '7-Day Website Package',
   unsure:  'Not Sure Yet',
   other:   'Other',

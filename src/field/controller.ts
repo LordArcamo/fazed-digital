@@ -5,6 +5,7 @@ import { createField, type Field } from './field';
 import { TIERS } from './tiers';
 import * as F from './formations';
 import { Watchdog } from './watchdog';
+import type { RulerSpec } from './runtime-geo';
 import { bus } from '../lib/bus';
 import type { Gate } from '../boot/gpu';
 import type { Flags } from '../boot/flags';
@@ -74,10 +75,13 @@ export async function start(g: Gate, flags: Flags) {
   const shots = new Map<string, F.Shot>();
   const preload = async () => {
     const tasks: Promise<unknown>[] = [bin('mark-mask').then((b) => (mask = F.parseMask(b)))];
+    // service pages: the ruler's case screens load with the mask, so the first GL frame is the poster's ruler (no blink)
+    const rt = document.querySelector<HTMLElement>('[data-runtime]')?.dataset.runtime;
+    if (rt) for (const b of (JSON.parse(rt) as RulerSpec).bars) if (b.kind === 'case') tasks.push(shot(b.slug).catch(() => null));
     await Promise.all(tasks);
     // the rest lazily, in idle time
     const later = () => {
-      bin('glyphs').then((b) => (glyphs = F.parseGlyphs(b))).catch(() => {});
+      bin('glyphs7').then((b) => (glyphs = F.parseGlyphs(b))) // glyphs7: new count-header format, new URL past the 7-day cache.catch(() => {});
       bin('globe').then((b) => (land = new Uint8Array(b))).catch(() => {});
       bin('wordmark').then((b) => (word = F.parseWordmark(b))).catch(() => {});
     };
@@ -145,7 +149,7 @@ export async function start(g: Gate, flags: Flags) {
         const fx = d.fx ? +d.fx : 0.7, fy = d.fy ? +d.fy : 0.53, fr = d.fr ? +d.fr : 0.17;
         const cx = desktop() ? v.w * fx : v.w / 2, cy = v.h * fy;
         const r = Math.min(v.w * fr, v.h * fr * 1.75, d.ftop ? cy - +d.ftop : Infinity);
-        return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95), d.fdim ? +d.fdim : 1);
+        return F.pentagon({ x: cx, y: cy }, r, n, v, svcStep, glyphs ?? undefined, Math.min(240, r * 0.95), d.fdim ? +d.fdim : 1, d.fsides ? +d.fsides : 5);
       }
       case 'path4': {
         const r = rectOf(within(el, '[data-path-anchor]'));
@@ -198,6 +202,28 @@ export async function start(g: Gate, flags: Flags) {
         if (!r) return null;
         const isHero = !!a?.classList.contains('poster-days');
         return attach(F.days7(r, n, v, isHero ? -1 : 7, isHero ? r.top + 5 : r.top), a); // vertical rects (LP hero ≥1024) take the display branch
+      }
+      case 'runtime': {
+        // service pages: the ruler. Bars and span are data attributes rendered from cases.ts; the case screens load
+        // first (one 20 KB bin each), then the bars draw from W0 outward
+        const a = within(el, '[data-runtime]') as HTMLElement | null;
+        const r = rectOf(a);
+        if (!a || !r || r.width < 1) return F.lattice(v, n);
+        const spec = JSON.parse(a.dataset.runtime!) as RulerSpec;
+        const missing = spec.bars.filter((b) => b.kind === 'case' && !shots.has(b.slug));
+        if (missing.length) {
+          Promise.all(missing.map((b) => shot(b.slug).catch(() => null))).then(() => { if (beat === 'runtime' && beatEl === el) morph(build('runtime', el), bus.rm ? 0 : 0.9, 'power3.out'); });
+          return F.lattice(v, n);
+        }
+        return attach(F.runtime(r, spec, shots, n, v, v.w < 1024), a);
+      }
+      case 'meter': {
+        // the run meter is desktop only (the phone layout drops it); it fills to the case in view
+        const m = document.querySelector<HTMLElement>('[data-meter]');
+        const r = rectOf(m);
+        if (!m || !r || r.width < 1 || v.w < 1024) return F.lattice(v, n);
+        const lit = +((el as HTMLElement | null)?.dataset.weeks || 0);
+        return attach(F.meter(r, +(m.dataset.meter || 14), lit, n, v), m);
       }
       case 'scatter': return F.scatter(n, v);
       case 'flood': return F.lattice(v, n);
@@ -453,8 +479,10 @@ export async function start(g: Gate, flags: Flags) {
     } else {
       u.uTilt.value.set(0, 0);
     }
-    // lab frames and the pipeline read as drawn lines: the curl drift eases to 1.5 there (4 everywhere else, as before)
-    if (t > 2 && !bus.rm) u.uCurl.value += ((beat === 'slate' || beat === 'pipeline8' ? 1.5 : 4) - u.uCurl.value) * 0.05;
+    // lab frames, the pipeline and the service-page ruler/meter read as drawn lines: the curl drift eases to 1.5 there
+    // (4 everywhere else, as before); at 4 the ruler's bars wobbled off their week ticks
+    const lineBeat = beat === 'slate' || beat === 'pipeline8' || beat === 'runtime' || beat === 'meter';
+    if (t > 2 && !bus.rm) u.uCurl.value += ((lineBeat ? 1.5 : 4) - u.uCurl.value) * 0.05;
     if (beat === 'slate' && !bus.rm && innerWidth >= 768) {
       slateT += dt;
       if (slateT > 4.2 && performance.now() / 1000 > slateHold) {
