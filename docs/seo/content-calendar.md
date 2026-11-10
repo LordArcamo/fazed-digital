@@ -39,7 +39,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-11-05 | PH | SEO | SEO for Cagayan de Oro Businesses: A Local Starter Plan | seo cagayan de oro | /web-design-iligan-city → /blog/seo-cagayan-de-oro
 - [x] 2026-11-06 | AU | Design | Tradie Websites in Australia: What Wins Local Jobs | websites for tradies australia | /lp/7-day-website → /blog/tradie-websites-australia
 - [x] 2026-11-07 | PH | Branding | Cleaning Business Branding: Lessons From Cleen & Green | cleaning business branding philippines | /work/02 → /blog/cleaning-business-branding-philippines
-- [ ] 2026-11-08 | US | Design | Website for a Cleaning Business: Pages That Book Jobs | website for cleaning business | /lp/7-day-website
+- [x] 2026-11-08 | US | Design | Website for a Cleaning Business: Pages That Book Jobs | website for cleaning business | /lp/7-day-website → /blog/website-for-cleaning-business
 - [ ] 2026-11-09 | Global | Development | Who Owns Your Website? Domain, Hosting, Code and Logins | who owns my website | /lp/7-day-website
 - [ ] 2026-11-10 | PH | Design | Resort Website in the Philippines: Direct Bookings, Not DMs | resort website philippines | /lp/7-day-website/ph
 - [ ] 2026-11-11 | CA | Strategy | Small Business Website Cost in Canada: A 2027 Price Guide | website cost canada | /lp/7-day-website
