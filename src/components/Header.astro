@@ -6,8 +6,8 @@ import { labShipped, pad2 } from '../data/lab';
 import { offerPrice } from '../data/offers';
 import { caseIndex, countries } from '../data/cases';
 const { current = '', lp = false } = Astro.props;
-// Lab sits after Work (its proof sibling). Six links never fit the top rail (measured, lab-spec §7),
-// so Blog leaves the rail only (.sd-blog, undocked ≥1024); it stays in the dock ≥1180, the menu and the footer.
+// Lab sits after Work (its proof sibling). Six links fit the rail from 1180 at the tight rhythm (measured 2026-11-10:
+// ≥40px clear of the telemetry at 1180–1920); below that Blog (.sd-blog) waits in the menu and the footer.
 const links = [
   { href: '/work', label: 'Work' }, { href: '/lab', label: 'Lab' }, { href: '/services', label: 'Services' }, { href: '/about', label: 'About' },
   { href: '/blog', label: 'Blog' }, { href: '/contact', label: 'Contact' },
@@ -130,8 +130,9 @@ const cur = menu.find((m) => m.href === current);
   .sd-ring { width: 9px; height: 9px; border-radius: 50%; border: 1px solid var(--lime); transition: background-color .2s; }
   .sd-cta:hover .sd-ring, .sd-cta:focus-visible .sd-ring { background: var(--lime); }
   .sd :focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; border-radius: 999px; }
-  /* 1024–1199 rail: tighter rhythm so the CTA never clips (1024 was 64px over) */
-  @media (min-width: 1024px) and (max-width: 1199px) { .t-city { display: none; } .hdr-tel { margin-left: 24px; } .sd-lw { --gap: 8px; } .sd-a { padding: 0 10px; } }
+  /* rail: tight rhythm so six links + CTA clear the telemetry (1024 was 64px over); the city name steps out below 1240 */
+  @media (min-width: 1024px) { .sd-lw { --gap: 8px; } .sd-a { padding: 0 10px; } }
+  @media (min-width: 1024px) and (max-width: 1239px) { .t-city { display: none; } .hdr-tel { margin-left: 24px; } }
   /* dock layout */
   @media (min-width: 1024px) {
     :global(html.is-docked) .sd { position: fixed; left: 50%; top: 16px; translate: -50% 0; margin: 0; }
@@ -189,9 +190,8 @@ const cur = menu.find((m) => m.href === current);
   :global(html.menu-open) .sd .sd-menu.sd-menu { background: var(--white); color: var(--black); }
   .sd-tip { position: absolute; bottom: calc(100% + 18px); left: 50%; translate: -50% 0; padding: 6px 10px; border-radius: 999px; background: var(--gray-900); border: 1px solid var(--gray-700); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--gray-300); white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .2s; }
   .sd-menu:hover .sd-tip, .sd-menu:focus-visible .sd-tip { opacity: 1; }
-  @media (min-width: 1024px) and (max-width: 1179px) { :global(html.is-docked) .sd-blog { display: none; } }
-  /* top rail: six links never fit next to the telemetry, so Blog steps out of the rail only */
-  @media (min-width: 1024px) { :global(html:not(.is-docked)) .sd-blog { display: none; } }
+  /* 1024–1179: six links don't fit the rail or the dock, so Blog waits in the menu and the footer */
+  @media (min-width: 1024px) and (max-width: 1179px) { .sd-blog { display: none; } }
   :global(html.dock-hide) .sd { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; }
   @media (max-width: 1023px) { :global(html.dock-kb) .sd, :global(html.dock-kb) .sd-lp { transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none; } }
   /* menu open: the dock stays as the close control; the rail and top bar step back */
