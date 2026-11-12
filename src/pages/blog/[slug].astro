@@ -15,6 +15,42 @@ import { postLinks } from '../../data/links';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'who-owns-your-website',
+      title: "Who Owns Your Website? Domain, Hosting, Code and Logins",
+      category: 'Development',
+      date: '13 Nov 2026',
+      readTime: '5 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: '',
+      image: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "Who owns your website when the agency built it? Domain, hosting, code and logins often sit with different parties. Here's how to check and take control.",
+      content: `
+        <p>Who owns your website is one of the first questions to ask any web studio. In most cases, you should own the domain, the hosting account, and all the content. But when a third party builds your site, those assets sometimes end up registered in their name rather than yours — and recovering them can take weeks.</p>
+        <h2>Who should own your website — and what that means</h2>
+        <p>Your website is made up of four distinct things, and you can own each one separately. The domain name is your address on the internet. Hosting is the server where your site's files actually live. Source code or CMS access is the ability to edit, update or move your site. And logins — to your domain registrar, hosting panel, and CMS — are what let you act on all of the above.</p>
+        <p>Many small business owners assume that because they paid for a website, they own all of it. That is often true, but not always. The critical detail is whose name and whose email address were used to register each account. If it was the studio's, you are dependent on them for access — even after you have paid in full. Understanding this before you sign a brief is far easier than sorting it out after a relationship ends badly.</p>
+        <h2>Domain name: whose name is on the registration?</h2>
+        <p>Your domain should be registered in your business name, with your email address as the registrant contact. You can verify this with a free WHOIS lookup — search for "WHOIS lookup" and enter your domain. The registrant name and organisation are displayed publicly.</p>
+        <p>If the domain was registered by an agency or freelancer, ask them to initiate a transfer to your account with your chosen registrar. Namecheap, Cloudflare and GoDaddy all support transfers and handle them routinely. Most take 5–7 days to complete. Do not let the domain expire before the transfer finishes. If you are starting fresh with a new site, always register your own domain before you brief anyone to build it. That one habit eliminates the most common ownership dispute in the industry.</p>
+        <h2>Hosting: who controls the server?</h2>
+        <p>Hosting is where most confusion arises. Studios often host client sites on accounts they control — sometimes included in a monthly maintenance plan, sometimes simply as a convenience. This is not automatically a problem, provided you understand the arrangement clearly.</p>
+        <p>If your hosting is managed by your studio as part of a care plan, ask two questions before you agree to it: what happens to the site if you cancel the plan, and can you migrate to your own hosting if you move to a different studio? The answers reveal whether you have a service arrangement or a dependency. For more context on how hosting plans and account structures work, our guide on <a href="https://www.fazeddigital.com/blog/web-hosting-small-business-guide">web hosting for small businesses</a> covers what to look for in a plan and what account control actually means in practice.</p>
+        <p>If you want full independence, the simplest approach is to open your own account with a hosting provider, pay for it directly with your own card, and ask your developer to deploy into it. That way the account never sits with a third party, regardless of what happens to your working relationship.</p>
+        <h2>Source code, CMS and content</h2>
+        <p>If your site runs on a CMS such as WordPress, Webflow or Squarespace, your day-to-day editing access is through that platform's admin panel. Make sure you hold an administrator-level account — not an editor or contributor login. Administrator access lets you install plugins, change settings and manage users. If a studio created the account, ask them to either transfer ownership to your email or create a new admin user under your address and remove their own access.</p>
+        <p>For custom-built or bespoke sites, the source code is a separate question. The convention in the industry — and the written term in a well-drafted contract — is that intellectual property in the final deliverables transfers to the client on full payment. If you paid in full and have no written confirmation of that transfer, ask for it. A short email confirming that the code and files are yours is enough to establish the record. Our standard terms follow the same principle: a 50% deposit before work starts, with full IP passing to you on final payment. You own the domain, the site files, and all the content you have provided.</p>
+        <h2>How to check what you own right now</h2>
+        <p>Work through this list for your current site. First, run a WHOIS lookup on your domain and confirm you are the registrant. Second, log in to your domain registrar with your own credentials and verify the domain is listed in your account. Third, log in to your hosting control panel — cPanel, Kinsta, Cloudways, or whatever your host uses — using your own account. Fourth, log in to your CMS with an administrator account under your email address. Fifth, ask your developer to confirm in writing that the site's code and assets belong to you.</p>
+        <p>If you get stuck at any step — no login, no account, no written confirmation — that is the problem to fix first, before anything else about your site.</p>
+        <h2>Frequently asked questions</h2>
+        <p><strong>What happens to my website if the agency closes?</strong> If the domain and hosting sit in the agency's name, your site can go offline without warning. Getting a domain back after a studio closes is difficult and sometimes impossible if the registrar account becomes inaccessible. This is the main practical reason to hold those accounts yourself from the start.</p>
+        <p><strong>If I got a free or low-cost website on a monthly plan, do I own it?</strong> Usually not. Free or heavily subsidised website plans often mean you are renting a site rather than owning one. Read the terms carefully: look for what happens to the domain and files if you cancel, and whether you can export your content. If ownership is unclear, it is worth switching to an arrangement where it is not.</p>
+        <p><strong>Does Fazed hand over the site on completion?</strong> Yes. Under our standard terms, full IP in the final deliverables passes to you on final payment. There is no lock-in contract, and you own the domain, the site files, and all content you have provided from day one.</p>
+        <p>If you are planning a new site and want clarity on ownership from the start, see <a href="https://www.fazeddigital.com/lp/7-day-website">our 7-day website package</a> — it includes a 7-day launch target, two to unlimited revision rounds depending on your plan, and full client ownership of everything we build.</p>
+      `,
+    },
+    {
       slug: 'website-for-cleaning-business',
       title: "Website for a Cleaning Business: Pages That Book Jobs",
       category: 'Design',
