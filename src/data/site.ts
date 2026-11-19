@@ -19,4 +19,6 @@ export const SOCIALS = [
   { label: 'Facebook', href: 'https://www.facebook.com/profile.php?id=61557960053584' },
   { label: 'Instagram', href: 'https://www.instagram.com/fazedddigital/' },
 ];
+// The 15-minute call: Fazed's Google Calendar appointment schedule (/audit and /quiz book through it).
+export const BOOK = 'https://calendar.google.com/calendar/appointments/schedules/AcZssZ2L1Fs1oTiHh8854mrEVtm_ny4BEhlyi5Pg-jdTsutFOInmrjHh4L-gxqLYqq_eM8pcUqxot6PF';
 export const abs = (path: string) => new URL(path, SITE_URL).toString().replace(/(?<!:\/)\/$/, (m) => (path === '/' ? m : ''));

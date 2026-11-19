@@ -6,6 +6,7 @@ import { saveToHubSpot } from '../../lib/hubspot';
 import { saveToCrm, markCrmAlert } from '../../lib/crm';
 import { offerPrice, FOUNDING_PH } from '../../data/offers';
 import { NAP, SITE_URL } from '../../data/site';
+import { quizLead } from '../../lib/quiz-lead';
 
 // Every lead: Gmail alert to the team (src/lib/mail.ts) + a HubSpot contact for the leads list (src/lib/hubspot.ts).
 
@@ -63,6 +64,8 @@ export const POST: APIRoute = async ({ request }) => {
 
   const s = (v: unknown) => (typeof v === 'string' ? v.trim() : '');
   const referer = request.headers.get('referer') ?? '';
+  // the website quiz (/quiz) shares this endpoint and pipeline: kind 'quiz' → src/lib/quiz-lead.ts
+  if ((body as { kind?: string }).kind === 'quiz') return quizLead(body as Record<string, unknown>, referer);
   const variant: Lead['variant'] = body.variant === 'php' || body.variant === 'usd' ? body.variant : referer.includes('/lp/7-day-website/ph') ? 'php' : 'usd';
   const d: Lead = {
     variant,

@@ -1,0 +1,11 @@
+---
+// /quiz: website quiz landing page (docs/marketing/quiz-lp-plan.md). Ad, social and outreach landing page.
+// Hidden from search until the owner ships it: noindex, out of the sitemap (astro.config.mjs) and out of llms.txt.
+// Landing-page chrome (lp="quiz"): logo + studio clock, no site nav, no chat, LP footer.
+import Base from '../layouts/Base.astro';
+import Quiz from '../components/Quiz.astro';
+import { page } from '../data/quiz';
+---
+<Base title={page.title} description={page.description} formation="lattice" lp="quiz" noindex>
+  <Quiz />
+</Base>

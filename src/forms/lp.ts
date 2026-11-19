@@ -4,13 +4,9 @@
 import { captcha, loadRecaptcha } from './captcha';
 import { bus } from '../lib/bus';
 import { leadSource } from '../lib/source';
+import { EMAIL, reduced, desktop, pad, typoFix, numberKey, isTap } from './steps';
 
-const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const digits = (v: string) => v.replace(/\D/g, '').length;
-const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
-const desktop = () => matchMedia('(min-width: 1024px)').matches;
-const pad = (n: number) => String(n).padStart(2, '0');
-const DOMAINS = ['gmail.com', 'yahoo.com', 'outlook.com', 'hotmail.com', 'icloud.com', 'ymail.com'];
 const FIELDS = ['package', 'industry', 'industryOther', 'goal', 'timeline', 'styleVibe', 'businessName', 'facebookPage', 'currentWebsite', 'name', 'email', 'phone', 'notes'];
 
 const MSG = {
@@ -30,24 +26,6 @@ const MSG = {
   network: 'Your brief didn’t send. That’s on us. Try again, or email it to info@fazeddigital.com.',
   offline: 'You’re offline. Your answers are still here. Reconnect, then tap Send again.',
 };
-
-// One edit away from a common mail domain → suggest it (gmial.com → gmail.com).
-function typoFix(email: string): string {
-  const [user, dom] = email.toLowerCase().split('@');
-  if (!user || !dom || DOMAINS.includes(dom)) return '';
-  const near = (a: string, b: string) => {
-    if (Math.abs(a.length - b.length) > 1) return false;
-    let i = 0, j = 0, edits = 0;
-    while (i < a.length && j < b.length) {
-      if (a[i] === b[j]) { i++; j++; continue; }
-      if (++edits > 1) return false;
-      if (a.length > b.length) i++; else if (a.length < b.length) j++; else if (a[i + 1] === b[j] && a[i] === b[j + 1]) { i += 2; j += 2; } else { i++; j++; }
-    }
-    return edits + (a.length - i) + (b.length - j) <= 1;
-  };
-  const hit = DOMAINS.find((d) => near(dom, d));
-  return hit ? `${user}@${hit}` : '';
-}
 
 const openers = new Map<string, (pkg?: string, from?: HTMLElement | null) => void>(); // variant → open()
 
@@ -298,7 +276,7 @@ export function initLpForms() {
     }
     form.addEventListener('click', (ev) => {
       const lab = (ev.target as Element).closest<HTMLLabelElement>('label.qt');
-      if (!lab || ev.detail === 0) return; // keyboard-triggered clicks have detail 0
+      if (!lab || !isTap(ev as MouseEvent)) return; // keyboard-triggered clicks have detail 0
       const input = lab.querySelector<HTMLInputElement>('input[type=radio]');
       const s = lab.closest<HTMLElement>('[data-q]');
       if (!input || !s || !isChoice(s)) return;
@@ -347,10 +325,8 @@ export function initLpForms() {
         if (send.hidden) go(1); else form.requestSubmit(send);
         return;
       }
-      const typing = t.tagName === 'TEXTAREA' || (t.tagName === 'INPUT' && t.type !== 'radio');
-      if (isChoice(s) && !typing && /^[1-9]$/.test(ev.key) && !ev.metaKey && !ev.ctrlKey && !ev.altKey) {
-        const opt = s.querySelectorAll<HTMLInputElement>('input[type=radio]')[Number(ev.key) - 1];
-        if (!opt) return;
+      const opt = isChoice(s) ? numberKey(ev, s.querySelectorAll<HTMLInputElement>('input[type=radio]')) : null;
+      if (opt) {
         ev.preventDefault();
         opt.checked = true; opt.focus();
         opt.dispatchEvent(new Event('change', { bubbles: true }));

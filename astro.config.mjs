@@ -18,7 +18,7 @@ export default defineConfig({
   trailingSlash: 'ignore',
   integrations: [
     sitemap({
-      filter: (page) => !page.includes('/storybook/') && !page.includes('/_styleguide') && !page.includes('/_formations') && !page.includes('/404') && !page.includes('/halloween'),
+      filter: (page) => !page.includes('/storybook/') && !page.includes('/_styleguide') && !page.includes('/_formations') && !page.includes('/404') && !page.includes('/halloween') && !/\/quiz\/?$/.test(page), // /quiz: noindex until the owner ships it
       changefreq: 'weekly',
       priority: 0.7,
       serialize(item) {
