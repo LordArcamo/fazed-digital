@@ -330,10 +330,11 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
   .qz[data-step='mid'] .qz-hero, .qz[data-step='mid'] .qz-alt, .qz[data-step='mid'] .qz-resume { display: none !important; }
   .qz[data-step='mid'] .qz-room[data-room] { min-height: calc(var(--screen-h, 100svh) - 60px); display: flex; }
   .qz[data-step='mid'] .qz-grid { display: flex; flex-direction: column; flex: 1; padding-top: 16px; padding-bottom: 14px; }
-  .qz[data-step='mid'] .qz-box { flex: 1; }
+  .qz[data-step='mid'] .qz-box { flex: 0 0 auto; } /* Back sits right under the answers, not pinned to the screen bottom */
   .qz[data-step='mid'] .qz-coach { display: inline-flex; }
   .qz[data-step='mid'] .qz-qnav { display: flex; }
-  .qz[data-step='mid'] .q-end { margin-top: auto; padding-top: 18px; }
+  .qz[data-step='mid'] .q-end { margin-top: 0; padding-top: 24px; } /* answers follow the question; a screen-high gap read as broken (owner) */
+  .qz .q-h:focus, .qz .q-h:focus-visible, .qz .qz-score-h:focus, .qz .qz-score-h:focus-visible { outline: none; } /* programmatic focus target for screen readers, not a control */
   .qz[data-step='mid'] .qz-prog-t b { font-size: 3.2rem; line-height: .85; }
   .qz[data-step='mid'] .qz-prog-t em { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: var(--lime); font-size: .85rem; }
   .qz[data-step='mid'] .qz-prog-t em::before { content: none; }
@@ -491,11 +492,16 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
     .qz[data-step='first'] .slab { min-height: 92px; }
     .qz[data-step='first'] .q-h { font-size: 2.4rem; }
     .qz[data-step='mid'] .qz-room[data-room] { min-height: calc(var(--screen-h, 100svh) - 72px); }
-    .qz[data-step='mid'] .qz-grid { max-width: 1080px; padding-top: 40px; padding-bottom: 36px; }
-    .qz[data-step='mid'] .q-h { font-size: 3.4rem; line-height: 1.02; max-width: 20ch; }
-    .qz[data-step='mid'] .q-opts { grid-template-columns: 1fr 1fr; }
-    .qz[data-step='mid'] .q-end { padding-top: 44px; }
-    .qz[data-step='mid'] .slab { min-height: 92px; font-size: 1.2rem; }
+    /* desktop: no thumb zone, so the answers sit right under the question (owner: a big gap read as broken);
+       one column of answers, so 3- and 5-answer questions never leave a hole; left edge on the logo's container */
+    .qz[data-step='mid'] .qz-grid { justify-content: center; padding-top: 32px; padding-bottom: 48px; }
+    .qz[data-step='mid'] .qz-box { flex: 0 0 auto; width: 100%; max-width: 760px; }
+    .qz[data-step='mid'] .q-h { font-size: 3.2rem; line-height: 1.02; max-width: 20ch; }
+    .qz[data-step='mid'] .q-opts { grid-template-columns: 1fr; gap: 12px; }
+    .qz[data-step='mid'] .q-end { margin-top: 0; padding-top: 32px; }
+    .qz[data-step='mid'] .qz-qnav { max-width: 760px; }
+    .qz[data-step='mid'] .qz-prog { max-width: 760px; }
+    .qz[data-step='mid'] .slab { min-height: 76px; font-size: 1.2rem; }
     .qz-adding { min-height: calc(var(--screen-h, 100svh) - 72px); }
 
     .qz-limetop { padding: 40px 0 48px; }
