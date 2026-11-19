@@ -1,7 +1,9 @@
 ---
 // copy/global.md [GLOBAL-COOKIE] · answers #26. GA4 only loads after "Accept analytics".
+// `inline` (/quiz only): rendered in the normal flow below the form, never fixed over it. Consent logic is unchanged.
+const { inline = false } = Astro.props as { inline?: boolean };
 ---
-<div class="ck" id="cookie" role="region" aria-label="Cookie preferences" hidden>
+<div class:list={['ck', inline && 'ck--inline']} id="cookie" role="region" aria-label="Cookie preferences" hidden>
   <p class="ck-copy"><span class="ck-long">We use a few cookies to see which pages help people, and reCAPTCHA to keep spam out. No ads, no selling your data. </span><span class="ck-short">Analytics cookies + reCAPTCHA. No ads, no data selling. </span><a class="link" href="/privacy" target="_blank" rel="noopener"><span class="ck-long">Read our privacy policy</span><span class="ck-short">Privacy</span><span class="sr-only"> (opens in a new tab)</span></a></p>
   <div class="ck-btns">
     <button class="btn btn--lime" type="button" data-consent="granted">Accept analytics</button>
@@ -27,4 +29,16 @@
   /* service pages: bottom-right, so the card never covers the ruler's W0, the 7-day marker and the first bar labels */
   @media (min-width: 1024px) { :global(html:has([data-page='runtime'])) .ck.ck { left: auto; right: 16px; } }
   @media (min-width: 1024px) { .ck { right: auto; left: 16px; max-width: 420px; padding: 1rem 1.1rem .85rem; font-size: .85rem; border-radius: 20px; } .ck-btns { flex-wrap: nowrap; } .ck-btns .btn { min-height: 44px; } }
+  /* /quiz: in the flow on the paper ground below the quiz, ink on paper */
+  .ck.ck--inline { position: static; inset: auto; z-index: auto; max-width: min(1280px, calc(100% - 40px)); margin: 32px auto; padding: 14px 16px; border: 0; border-radius: 18px; background: var(--white); color: var(--black); box-shadow: 0 0 0 1px color-mix(in srgb, var(--black) 14%, var(--white)); display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; font-size: .85rem; line-height: 1.45; }
+  .ck--inline[hidden] { display: none; }
+  .ck--inline .ck-copy { flex: 1 1 320px; }
+  .ck--inline .ck-long { display: inline; } .ck--inline .ck-short { display: none; }
+  .ck--inline .link { color: var(--black); }
+  .ck--inline .ck-btns { margin: 0; flex-wrap: nowrap; }
+  .ck--inline .btn { min-height: 44px; padding: 0 1rem; font-size: .85rem; }
+  .ck--inline .btn--lime { background: var(--black); color: var(--white); }
+  .ck--inline .btn--ghost { color: var(--black); border-color: color-mix(in srgb, var(--black) 30%, var(--white)); }
+  .ck--inline .btn--ghost::before { border-color: currentColor; }
+  .ck--inline .ck-toast { flex-basis: 100%; color: var(--black); }
 </style>

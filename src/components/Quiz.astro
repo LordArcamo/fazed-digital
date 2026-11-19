@@ -1,7 +1,9 @@
 ---
-// Website quiz (/quiz). Form-first: the first screen IS the quiz start. One question per screen, tap to answer.
-// Content: src/data/quiz.ts (copy/quiz.md). Engine: src/forms/quiz.ts, loaded at once by the shell script below
-// (dynamic import: the page's eager JS stays tiny, and no gsap/three import). Leads: /api/lp-submit (kind: 'quiz').
+// Website quiz (/quiz), Direction B "Lime Room" (docs/marketing/quiz-redesign/review.md, direction-B/ mocks).
+// The first screen IS Q1 (server-rendered, no Start gate). Every question is full-bleed lime with ink answer slabs that
+// press down on tap; the result steps out onto paper with the score on a lime block and Lord's Book card.
+// Content: src/data/quiz.ts (copy/quiz.md). Engine: src/forms/quiz.ts, loaded by the shell script below
+// (dynamic import: no gsap/three, eager JS stays tiny). Leads: /api/lp-submit (kind: 'quiz'), preview-guarded.
 import { Image } from 'astro:assets';
 import {
   start, chrome, questions, NO_SITE, coachExtra, areas, AREA_PRIORITY, areaLevels, fixes, bands, buildingLine,
@@ -10,17 +12,18 @@ import {
 import { caseIndex } from '../data/cases';
 import { workImages } from '../data/images';
 import { capsCopy } from '../data/proof';
+import { team } from '../data/team';
 import { BOOK } from '../data/site';
 
-// PREVIEW: in local dev the email gate never calls the API (the engine also treats localhost and ?preview as preview)
-const preview = import.meta.env.DEV;
+const preview = import.meta.env.DEV; // the engine also treats localhost and ?preview as preview: the gate never posts
 const usedCases = [...new Set(Object.values(casesByBiz).flatMap((c) => c.slugs))];
 const cases = caseIndex.filter((c) => usedCases.includes(c.slug));
+const lord = team.find((p) => p.id === 'lord')!;
+const total = questions.filter((q) => q.path !== 'nosite').length;
 
-// Everything the browser needs, as plain JSON (functions → {name}/{email}/{biz}/{n}/{p} templates)
 const data = {
   preview, emailLive: QUIZ_RESULT_EMAIL, noSite: NO_SITE,
-  q: questions.map((q) => ({ id: q.id, n: q.n, kind: q.kind, path: q.path, area: q.area, none: q.none, cap: q.cap, h: q.h, hint: q.hint, hintBuilding: q.hintBuilding, opts: q.options.map((o) => ({ v: o.v, label: o.label, pts: o.pts, coach: o.coach })) })),
+  q: questions.map((q) => ({ id: q.id, n: q.n, kind: q.kind, path: q.path, area: q.area, none: q.none, cap: q.cap, h: q.h, opts: q.options.map((o) => ({ v: o.v, label: o.label, pts: o.pts, coach: o.coach })) })),
   areas, priority: AREA_PRIORITY, levels: areaLevels, fixes, bands, bizPhrase,
   next: {
     sevenday: { h: nextSteps.sevenday.h, body: { usd: nextSteps.sevenday.body(nextSteps.sevenday.price.usd), php: nextSteps.sevenday.body(nextSteps.sevenday.price.php) }, cta: nextSteps.sevenday.cta, href: nextSteps.sevenday.href },
@@ -29,192 +32,203 @@ const data = {
   nosite: { ...nosite, timeline: { ...nosite.timeline, asap: capsCopy.sevenDay } },
   cases: casesByBiz,
   t: {
-    of: chrome.of, hint: chrome.hint(9).replace('9', '{n}'), hintMulti: chrome.hintMulti(9).replace('9', '{n}'),
-    coachProof: coachExtra.proofStrong, coachLast: coachExtra.last, adding: chrome.adding, building: buildingLine,
-    resume: start.resume, label: result.label, fixesH: result.fixesH, fixesSub: result.fixesSub, noFixesH: result.noFixesH, noFixesSub: result.noFixesSub,
-    example: result.example, before: result.before, after: result.after, why: result.why, locked: result.lockedTag,
+    of: chrome.of, hint: chrome.hint(9).replace('9', '{n}'), aboutYou: chrome.aboutYou, halfway: chrome.halfway,
+    coachProof: coachExtra.proofStrong, coachLast: coachExtra.last, adding: chrome.adding, resume: start.resume,
+    label: result.label, fixesH: result.fixesH, fixesSub: result.fixesSub, fixesSubDone: result.fixesSubDone('{biz}'), noFixesH: result.noFixesH, noFixesSub: result.noFixesSub,
+    before: result.before, after: result.after, why: result.why, lockLine: result.lockLine('{biz}'), lockedSr: result.lockedSr,
     gateLine: result.gateLine('{biz}'), gateSending: result.gateSending, doneH: result.doneH('{name}', '{email}'),
-    bookUnder: result.book.under, bookUnderNoSite: result.book.underNoSite,
+    bookRail: result.book.rail, bookInline: result.book.inline, helpH: result.helpH,
     casesMatch: result.casesH.match, casesLocal: result.casesH.local, casesAny: result.casesH.any,
     shareText: result.shareText, shared: result.shared, nosLabel: nosite.label,
   },
+  facts: { site: result.book.facts, nosite: result.book.factsNoSite },
   msg,
 };
-const hp = 'quiz-hp';
+const check = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><path d="M5 12.5l4.2 4.2L19 7" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const lock = '<svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true"><rect x="5" y="10.5" width="14" height="10" rx="2.5" fill="currentColor"/><path d="M8 10.5V8a4 4 0 0 1 8 0v2.5" fill="none" stroke="currentColor" stroke-width="2.2"/></svg>';
+const eye = '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M2 12s3.6-6.5 10-6.5S22 12 22 12s-3.6 6.5-10 6.5S2 12 2 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>';
+const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? result.book.rail : result.book.inline });
 ---
-<section class="qz" data-quiz aria-labelledby="qz-h">
+<div class="qz" data-quiz data-view="q" data-step="first">
   <script type="application/json" data-quiz-data set:html={JSON.stringify(data)} />
-  <p class="qz-preview mono" aria-hidden="true">Preview · nothing is sent</p>
-  <div class="container qz-in">
+  <p class="qz-preview" aria-hidden="true">Preview · nothing is sent</p>
 
-    <!-- ── Start ── -->
-    <div class="qz-start" data-start-screen>
-      <div class="qz-start-tx">
-        <p class="mono qz-eyebrow"><span class="qz-dot" aria-hidden="true"></span>{start.eyebrow}</p>
-        <h1 id="qz-h" class="qz-h1">{start.h1[0]} <span class="dim">{start.h1[1]}</span></h1>
-        <p class="qz-sub">{start.sub}</p>
-        <p class="qz-tip"><span class="qz-eye" aria-hidden="true"></span>{start.tip}</p>
-        <div class="qz-go-row">
-          <button type="button" class="btn btn--lime qz-go" data-go data-cursor="GO →"><span data-go-label>{start.cta}</span> <span class="arrow" aria-hidden="true">→</span></button>
-          <a class="qz-book-link" href={BOOK} target="_blank" rel="noopener" data-book="start">{start.book}<span class="sr-only"> (opens the booking calendar)</span></a>
+  <!-- ── The lime room: Q1 in the hero, then one question per screen ── -->
+  <section class="qz-room" data-room aria-labelledby="qz-h">
+    <div class="qz-wrap qz-grid">
+      <div class="qz-hero">
+        <h1 id="qz-h" class="qz-h1">{start.h1[0]} <span class="qz-tail">{start.h1[1]}</span></h1>
+        <p class="qz-meta">{start.meta}</p>
+        <ul class="qz-trust">{start.trust.map((t) => <li>{t}</li>)}</ul>
+      </div>
+
+      <div class="qz-box" data-box>
+        <p class="qz-coach" data-coach role="status" aria-live="polite"></p>
+        <p class="qz-resume" data-resume-row hidden><button type="button" class="qz-resume-go" data-resume><span data-resume-label>{start.resume}</span> <span aria-hidden="true">→</span></button><button type="button" class="qz-textbtn" data-restart>{start.restart}</button></p>
+        <div class="qz-prog" aria-hidden="true">
+          <p class="qz-prog-t"><b data-count-n>1</b><span data-count-of>{chrome.of} {total}</span><em data-count-chip>{chrome.aboutYou}</em></p>
+          <div class="qz-track"><i data-bar style={`width:${(0.5 / total) * 100}%`}></i><s data-knob></s></div>
         </div>
-        <p class="mono qz-under">{start.under}</p>
-        <p class="qz-resume" data-resume-row hidden><button type="button" class="qz-textbtn" data-restart>{start.restart}</button></p>
-        <noscript><p class="qz-nojs">{start.noJs} <a class="link" href={BOOK} target="_blank" rel="noopener">Book a 15-min call</a></p></noscript>
-      </div>
-      <!-- the reward, previewed: the score card they get at the end (decorative) -->
-      <div class="qz-card" aria-hidden="true">
-        <p class="mono qz-card-hd"><span>{result.label}</span><span>12 taps</span></p>
-        <p class="qz-card-score"><span class="qz-card-q">??</span><span class="qz-of">/100</span></p>
-        <ol class="qz-card-areas">{areas.map((a, i) => <li style={`--i:${i}`}><span>{a.name}</span><i></i></li>)}</ol>
-        <p class="mono qz-card-ft"><span>= Your 3 biggest fixes</span><span class="qz-card-lock"></span></p>
-      </div>
-      <ul class="qz-trust mono">{start.trust.map((t) => <li>{t}</li>)}</ul>
-    </div>
 
-    <!-- ── Question chrome ── -->
-    <div class="qz-top" data-top hidden>
-      <button type="button" class="qz-back" data-back><span aria-hidden="true">←</span> {chrome.back}</button>
-      <p class="mono qz-count" data-count aria-hidden="true"></p>
-      <div class="qz-bar" aria-hidden="true"><span data-bar></span></div>
-    </div>
-
-    <form class="qz-form" data-form novalidate hidden aria-labelledby="qz-h">
-      <p class="qz-coach" data-coach role="status" aria-live="polite"></p>
-      {questions.map((q) => (
-        <fieldset class="q" data-q={q.id} data-kind={q.kind} data-path={q.path} hidden>
-          <legend class="q-lg">
-            <h2 class="q-h" data-h tabindex="-1">{q.h}</h2>
-          </legend>
-          {q.hint && <p class="q-hint"><span class="qz-eye" aria-hidden="true"></span><span data-qhint data-alt={q.hintBuilding}>{q.hint}</span></p>}
-          <div class:list={['q-opts', q.options.length > 4 && 'q-opts--many']}>{q.options.map((o, i) => (
-            <label class:list={['qt', q.kind === 'multi' && 'qt--multi', o.v === q.none && 'qt--none']}>
-              <input type={q.kind === 'multi' ? 'checkbox' : 'radio'} name={q.id} value={o.v} />
-              <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span><span class="qt-t" data-opt>{o.label}</span><span class="qt-node" aria-hidden="true"></span></span>
-            </label>
-          ))}</div>
-          {q.kind === 'multi' && <button type="button" class="btn btn--lime q-next" data-next>{chrome.multiNext} <span class="arrow" aria-hidden="true">→</span></button>}
-          <p class="q-err" data-err role="alert"></p>
-        </fieldset>
-      ))}
-      <p class="mono q-keys" data-hint aria-hidden="true"></p>
-      <p class="sr-only" data-live role="status" aria-live="polite"></p>
-    </form>
-
-    <div class="qz-adding" data-adding hidden role="status">
-      <span class="qz-adding-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span>
-      <p class="qz-adding-t" data-adding-t>{chrome.adding}</p>
-    </div>
-
-    <!-- ── Result ── -->
-    <div class="qz-res" data-result hidden>
-      <div class="qz-res-grid">
-        <div class="qz-res-main">
-          <header class="qz-res-hd">
-            <p class="mono qz-res-label" data-res-label>{result.label}</p>
-            <p class="qz-score qz-site" aria-hidden="true"><span class="qz-num" data-score>0</span><span class="qz-of">{result.of}</span></p>
-            <p class="mono qz-band qz-site" data-band-name></p>
-            <h2 class="qz-res-h" data-res-h tabindex="-1"><span class="sr-only" data-score-sr></span><span data-res-h-t></span></h2>
-            <p class="qz-res-sum" data-res-sum></p>
-            <p class="qz-building" data-building hidden><span class="qz-dot" aria-hidden="true"></span>{buildingLine}</p>
-          </header>
-
-          <section class="qz-areas qz-site" aria-labelledby="qz-areas-h">
-            <h3 class="mono qz-sec-h" id="qz-areas-h">{result.areasH}</h3>
-            <ol>{areas.map((a) => (
-              <li data-area-row={a.id}><span class="qz-area-n">{a.name}</span><span class="qz-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="mono qz-area-l" data-area-l></span><span class="mono qz-area-v" data-area-v></span></li>
-            ))}</ol>
-          </section>
-
-          <section class="qz-plan qz-nosite" aria-labelledby="qz-plan-h">
-            <h3 class="mono qz-sec-h" id="qz-plan-h">{nosite.planH}</h3>
-            <div class="qz-plan-card">
-              <p class="qz-plan-pk"><span data-plan-name></span> <span class="qz-plan-price" data-plan-price></span></p>
-              <p data-plan-line></p>
-              <p class="qz-plan-fixed">{nosite.fixed}</p>
-              <p class="qz-plan-fb" data-plan-fb hidden>{nosite.facebookPH}</p>
-              <p class="mono qz-plan-when" data-plan-when></p>
-            </div>
-            <h3 class="mono qz-sec-h">{nosite.answersH}</h3>
-            <dl class="qz-plan-dl" data-plan-dl></dl>
-          </section>
-
-          <section class="qz-fixes qz-site" aria-labelledby="qz-fixes-h">
-            <h3 class="qz-fixes-h" id="qz-fixes-h" data-fixes-h>{result.fixesH}</h3>
-            <p class="qz-fixes-sub" data-fixes-sub>{result.fixesSub}</p>
-            <ol class="qz-fx-list" data-fixes></ol>
-
-            <div class="qz-gate-wrap" data-gate-wrap>
-              <form class="qz-gate" data-gate novalidate aria-labelledby="qz-gate-l">
-                <p class="qz-gate-l" id="qz-gate-l" data-gate-line></p>
-                <div class="hp" aria-hidden="true"><label for={hp}>Leave this field empty</label><input id={hp} name="fz_check" tabindex="-1" autocomplete="off" /></div>
-                <div class="qz-fields">
-                  <div class="f"><label for="qz-n">{result.gateName}</label><input id="qz-n" name="name" autocomplete="given-name" autocapitalize="words" enterkeyhint="next" required /></div>
-                  <div class="f"><label for="qz-e">{result.gateEmail}</label><input id="qz-e" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="next" required /><p class="q-typo" data-typo hidden>Did you mean <button type="button" data-typo-fix></button>?</p></div>
-                  <div class="f f--wide"><label for="qz-w">{result.gateSite}</label><input id="qz-w" name="currentWebsite" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="url" enterkeyhint="send" placeholder={result.gateSitePh} /></div>
-                </div>
-                <p class="q-err" data-gate-err role="alert"></p>
-                <button type="submit" class="btn btn--lime qz-gate-btn" data-gate-btn data-cursor="SEND"><span data-gate-label>{result.gateCta}</span> <span class="arrow" aria-hidden="true">→</span></button>
-                {result.gateUnder && <p class="mono qz-gate-under">{result.gateUnder}</p>}
-                <p class="qz-fine">{result.privacy} <a class="link" href="/privacy" target="_blank" rel="noopener">Our privacy policy<span class="sr-only"> (opens in a new tab)</span></a>. Protected by reCAPTCHA: Google’s <a class="link" href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a class="link" href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply.</p>
-              </form>
-              <div class="qz-done" data-gate-done hidden>
-                <p class="qz-done-h" data-done-h tabindex="-1"></p>
-                <p class="qz-done-help"><strong>{result.helpH}</strong> {result.helpBody}</p>
-                <a class="btn btn--lime" href={BOOK} target="_blank" rel="noopener" data-book="after-fixes">{result.book.cta} <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
-                {result.spam && <p class="mono qz-gate-under">{result.spam}</p>}
+        <form class="qz-form" data-form novalidate aria-label="Website quiz">
+          {questions.map((q, qi) => (
+            <fieldset class="q" data-q={q.id} data-kind={q.kind} data-path={q.path} hidden={qi > 0}>
+              <legend class="q-lg"><h2 class="q-h" data-h tabindex="-1">{q.h}</h2></legend>
+              {q.hint && <p class="q-hint"><Fragment set:html={eye} /><span data-qhint data-alt={q.hintBuilding}>{q.hint}</span></p>}
+              <div class="q-end">
+                <div class:list={['q-opts', q.options.length > 4 && 'q-opts--many']}>{q.options.map((o, i) => (
+                  <label class:list={['slab', q.kind === 'multi' && 'slab--multi', o.v === q.none && 'slab--none']}>
+                    <input type={q.kind === 'multi' ? 'checkbox' : 'radio'} name={q.id} value={o.v} />
+                    <span class="slab-key" aria-hidden="true">{i + 1}</span><span class="slab-t" data-opt>{o.label}</span><span class="slab-node" aria-hidden="true"><Fragment set:html={check} /></span>
+                  </label>
+                ))}</div>
+                {q.kind === 'multi' && <button type="button" class="qz-cta qz-cta--ink q-next" data-next>{chrome.multiNext} <span aria-hidden="true">→</span></button>}
+                <p class="q-err" data-err role="alert"></p>
               </div>
-            </div>
-          </section>
+            </fieldset>
+          ))}
+          <p class="sr-only" data-live role="status" aria-live="polite"></p>
+        </form>
+
+        <div class="qz-qnav">
+          <button type="button" class="qz-back" data-back hidden><svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path d="M15 5l-7 7 7 7" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>{chrome.back}</button>
+          <span class="qz-kb" data-hint aria-hidden="true">{chrome.hint(4)}</span>
         </div>
+        <a class="qz-alt" href={BOOK} target="_blank" rel="noopener" data-book="first">{start.book} <span aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
+        <noscript><p class="qz-nojs">{start.noJs} <a href={BOOK} target="_blank" rel="noopener">Book a 15-min call</a></p></noscript>
+      </div>
+    </div>
+  </section>
 
-        <aside class="qz-res-side" aria-label="Next steps">
-          <div class="qz-bookcard">
-            <img class="qz-lord" src="/images/team/lord.jpeg" width="96" height="96" alt={result.book.alt} loading="lazy" decoding="async" />
-            <p class="mono qz-bk-eb">{result.book.eyebrow}</p>
-            <a class="btn btn--lime qz-bk-btn" href={BOOK} target="_blank" rel="noopener" data-book="result" data-cursor="BOOK">{result.book.cta} <span class="arrow" aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
-            <p class="mono qz-bk-under" data-book-under>{result.book.under}</p>
+  <section class="qz-room qz-adding" data-adding hidden role="status">
+    <div class="qz-wrap"><span class="qz-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></span><p class="qz-adding-t" data-adding-t>{chrome.adding}</p></div>
+  </section>
+
+  <!-- ── Result: the score on a lime block, the rest on paper ── -->
+  <div class="qz-res" data-result hidden>
+    <div class="qz-limetop">
+      <div class="qz-wrap qz-score">
+        <p class="qz-score-l" data-res-label>{result.label}</p>
+        <p class="qz-score-n qz-site" aria-hidden="true"><span data-score>0</span><span class="qz-of">{result.of}</span></p>
+        <p class="qz-band qz-site" data-band-name></p>
+        <h2 class="qz-score-h" data-res-h tabindex="-1"><span class="sr-only" data-score-sr></span><span data-res-h-t></span></h2>
+        <p class="qz-score-sum" data-res-sum></p>
+        <p class="qz-building" data-building hidden>{buildingLine}</p>
+        <a class="qz-jump qz-site" href="#qz-fixes-h" data-jump>{result.jump} <span aria-hidden="true">↓</span></a>
+      </div>
+    </div>
+
+    <div class="qz-wrap qz-resg">
+      <div class="qz-main">
+        <section class="qz-areas qz-site" aria-labelledby="qz-areas-h">
+          <h2 class="qz-sec-h" id="qz-areas-h">{result.areasH}</h2>
+          <ol>{areas.map((a) => (
+            <li class="qz-area" data-area-row={a.id}><span class="qz-area-n">{a.name}</span><span class="qz-meter" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i></span><span class="qz-area-l"><span data-area-l></span> <b data-area-v></b></span></li>
+          ))}</ol>
+        </section>
+
+        <section class="qz-plan qz-nosite" aria-labelledby="qz-plan-h">
+          <h2 class="qz-sec-h" id="qz-plan-h">{nosite.planH}</h2>
+          <div class="qz-plan-card">
+            <p class="qz-plan-pk"><span data-plan-name></span> <span class="qz-plan-price" data-plan-price></span></p>
+            <p data-plan-line></p>
+            <p class="qz-plan-fixed">{nosite.fixed}</p>
+            <p class="qz-plan-fb" data-plan-fb hidden>{nosite.facebookPH}</p>
+            <p class="qz-plan-when" data-plan-when></p>
           </div>
-          <div class="qz-next" data-next-card>
-            <p class="qz-next-h" data-next-h></p>
-            <p class="qz-next-b" data-next-b></p>
-            <a class="btn btn--ghost qz-next-a" href="/lp/7-day-website" data-next-link><span data-next-cta></span> <span class="arrow" aria-hidden="true">→</span></a>
+          <h2 class="qz-sec-h qz-sec-h--s">{nosite.answersH}</h2>
+          <dl class="qz-plan-dl" data-plan-dl></dl>
+        </section>
+
+        <div class="qz-done" data-gate-done role="status" hidden><span class="qz-done-i"><Fragment set:html={check} /></span><p data-done-h tabindex="-1"></p></div>
+
+        <section class="qz-fixes qz-site" aria-labelledby="qz-fixes-h">
+          <h2 class="qz-sec-h" id="qz-fixes-h" data-fixes-h>{result.fixesH}</h2>
+          <p class="qz-sec-sub" data-fixes-sub>{result.fixesSub}</p>
+          <div class="qz-fx-list" data-fixes></div>
+        </section>
+
+        <form class="qz-gate qz-site" data-gate novalidate aria-labelledby="qz-gate-h">
+          <p class="qz-gate-k"><Fragment set:html={lock} /><span>{result.gateChip}</span></p>
+          <h2 class="qz-gate-h" id="qz-gate-h" data-gate-line></h2>
+          <div class="hp" aria-hidden="true"><label for="qz-hp">Leave this field empty</label><input id="qz-hp" name="fz_check" tabindex="-1" autocomplete="off" /></div>
+          <div class="qz-gate-f">
+            <div class="qz-fld"><label for="qz-n">{result.gateName}</label><input id="qz-n" name="name" autocomplete="given-name" autocapitalize="words" enterkeyhint="next" placeholder={result.gateNamePh} required /></div>
+            <div class="qz-fld"><label for="qz-e">{result.gateEmail}</label><input id="qz-e" name="email" type="email" inputmode="email" autocomplete="email" autocapitalize="off" spellcheck="false" enterkeyhint="send" placeholder={result.gateEmailPh} required /><p class="qz-typo" data-typo hidden>Did you mean <button type="button" data-typo-fix></button>?</p></div>
+            <div class="qz-fld qz-fld--wide" data-site-fld hidden><label for="qz-w">{result.gateSite}</label><input id="qz-w" name="currentWebsite" inputmode="url" autocapitalize="off" spellcheck="false" autocomplete="url" enterkeyhint="send" placeholder={result.gateSitePh} /></div>
           </div>
-        </aside>
+          <button type="button" class="qz-gate-add" data-site-add aria-controls="qz-w">{result.gateAdd}</button>
+          <p class="q-err qz-gate-err" id="qz-gate-err" data-gate-err role="alert"></p>
+          <div class="qz-gate-row">
+            <button type="submit" class="qz-cta qz-cta--lime qz-gate-go" data-gate-btn><span data-gate-label>{result.gateCta}</span> <span aria-hidden="true">→</span></button>
+            {result.gateUnder && <p class="qz-gate-u">{result.gateUnder}</p>}
+          </div>
+          <p class="qz-gate-p">{result.privacy} <a href="/privacy" target="_blank" rel="noopener">Our privacy policy<span class="sr-only"> (opens in a new tab)</span></a>. Protected by reCAPTCHA: Google’s <a href="https://policies.google.com/privacy" target="_blank" rel="noopener">Privacy Policy<span class="sr-only"> (opens in a new tab)</span></a> and <a href="https://policies.google.com/terms" target="_blank" rel="noopener">Terms<span class="sr-only"> (opens in a new tab)</span></a> apply.</p>
+        </form>
+
+        {[bookCard('inline')].map((b) => (
+          <aside class="qz-book qz-book--inline" aria-labelledby="qz-bk-i">
+            <div class="qz-book-who"><img src={lord.photo} alt={result.book.alt} width="64" height="64" loading="lazy" decoding="async" /><p><b>{lord.name}</b><span>{lord.role}, Fazed Digital</span></p></div>
+            <h2 class="qz-book-h" id="qz-bk-i" data-book-h={b.where}>{b.h}</h2>
+            <p class="qz-book-sub" data-book-sub hidden>{result.helpBody}</p>
+            <ul class="qz-book-facts" data-book-facts>{result.book.facts.map((f) => <li>{f}</li>)}</ul>
+            <a class="qz-cta qz-cta--lime qz-book-go" href={BOOK} target="_blank" rel="noopener" data-book="result-inline"><img src={lord.photo} alt="" width="44" height="44" loading="lazy" decoding="async" /><span>{result.book.cta}</span> <span aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
+            {result.spam && <p class="qz-spam" data-spam hidden>{result.spam}</p>}
+          </aside>
+        ))}
+
+        <section class="qz-sec2" data-next-card>
+          <h2 class="qz-sec2-h" data-next-h></h2>
+          <p data-next-b></p>
+          <a class="qz-ulink" href="/lp/7-day-website" data-next-link><span data-next-cta></span> <span aria-hidden="true">→</span></a>
+        </section>
+
+        <section class="qz-cases" aria-labelledby="qz-cases-h">
+          <h2 class="qz-sec-h" id="qz-cases-h" data-cases-h>{result.casesH.match}</h2>
+          <ul class="qz-cases-g" data-cases>{cases.map((c) => (
+            <li class="qz-case" data-case={c.slug} hidden>
+              <a href={`/work/${c.slug}`} data-case-link>
+                <Image src={workImages[c.slug]} alt={c.alt} widths={[360, 640]} sizes="(min-width: 1024px) 360px, 92vw" loading="lazy" class="qz-case-img" />
+                <span class="qz-case-k">{c.sector} · {c.country}</span>
+                <span class="qz-case-t">{c.title}</span>
+                <span class="qz-case-c">{c.changed}</span>
+              </a>
+            </li>
+          ))}</ul>
+        </section>
+
+        <div class="qz-share">
+          <button type="button" class="qz-ghost" data-share>{result.share}</button>
+          <button type="button" class="qz-ulink" data-retake>{result.retake}</button>
+          <span class="qz-share-note" data-share-note role="status" aria-live="polite"></span>
+        </div>
+        <p class="qz-foot">{result.footnote}</p>
       </div>
 
-      <section class="qz-cases" aria-labelledby="qz-cases-h">
-        <h3 class="mono qz-sec-h" id="qz-cases-h" data-cases-h>{result.casesH.match}</h3>
-        <ul class="qz-case-list" data-cases>{cases.map((c) => (
-          <li class="qz-case" data-case={c.slug} hidden>
-            <a href={`/work/${c.slug}`} data-case-link>
-              <Image src={workImages[c.slug]} alt={c.alt} widths={[360, 640]} sizes="(min-width: 1024px) 400px, 92vw" loading="lazy" class="qz-case-img" />
-              <span class="mono qz-case-m">{c.sector} · {c.country}</span>
-              <span class="qz-case-t">{c.title}</span>
-              <span class="qz-case-c">{c.changed}</span>
-            </a>
-          </li>
-        ))}</ul>
-      </section>
-
-      <div class="qz-again">
-        <button type="button" class="btn btn--ghost" data-share>{result.share}</button>
-        <button type="button" class="qz-textbtn" data-retake>{result.retake}</button>
-        <span class="mono qz-share-note" data-share-note role="status" aria-live="polite"></span>
-      </div>
-      <p class="qz-foot">{result.footnote}</p>
+      {[bookCard('rail')].map((b) => (
+        <div class="qz-rail">
+          <aside class="qz-book" aria-labelledby="qz-bk-r">
+            <div class="qz-book-who"><img src={lord.photo} alt={result.book.alt} width="64" height="64" loading="lazy" decoding="async" /><p><b>{lord.name}</b><span>{lord.role}, Fazed Digital</span></p></div>
+            <h2 class="qz-book-h" id="qz-bk-r" data-book-h={b.where}>{b.h}</h2>
+            <p class="qz-book-sub" data-book-sub hidden>{result.helpBody}</p>
+            <ul class="qz-book-facts" data-book-facts>{result.book.facts.map((f) => <li>{f}</li>)}</ul>
+            <a class="qz-cta qz-cta--lime qz-book-go" href={BOOK} target="_blank" rel="noopener" data-book="result-rail"><img src={lord.photo} alt="" width="44" height="44" loading="lazy" decoding="async" /><span>{result.book.cta}</span> <span aria-hidden="true">→</span><span class="sr-only"> (opens the booking calendar)</span></a>
+            {result.spam && <p class="qz-spam" data-spam hidden>{result.spam}</p>}
+          </aside>
+        </div>
+      ))}
     </div>
   </div>
-</section>
+</div>
 
 <script>
-  // Eager shell (tiny): binds once per page and loads the engine right away. A Start tap before the engine lands is
-  // remembered (data-pending) and replayed. ClientRouter: guarded with dataset.bound, run now and on astro:page-load.
+  // Eager shell (tiny): binds once per page, loads the engine at once. Q1 is plain server-rendered radios, so a tap
+  // before the engine lands just checks one; the engine picks that up and advances. ClientRouter: dataset.bound guard,
+  // run now and on astro:page-load.
   function initQuizShell() {
     const root = document.querySelector<HTMLElement>('[data-quiz]');
     if (!root || root.dataset.bound) return;
     root.dataset.bound = '1';
-    root.querySelector('[data-go]')?.addEventListener('click', () => { if (!root.classList.contains('is-ready')) root.dataset.pending = '1'; });
     import('../forms/quiz').then((m) => m.initQuiz(root));
   }
   initQuizShell();
@@ -222,281 +236,311 @@ const hp = 'quiz-hp';
 </script>
 
 <style>
+  /* Palette tokens only (tokens.css). Direction B's ink = --black, paper = --white; the in-between tones are mixes of them. */
+  .qz {
+    --ink: var(--black); --paper: var(--white);
+    --ink-2: color-mix(in srgb, var(--black) 88%, var(--lime));
+    --ink-3: color-mix(in srgb, var(--black) 74%, var(--white));
+    --steel: color-mix(in srgb, var(--black) 64%, var(--white));
+    --mist: color-mix(in srgb, var(--black) 13%, var(--white));
+    --edge: color-mix(in srgb, var(--lime-dark) 42%, var(--black));
+    --ease: cubic-bezier(.16, 1, .3, 1);
+    color: var(--ink); font-family: var(--font-body);
+  }
   .qz [hidden] { display: none !important; }
-  :global(html.quiz-q #cookie) { display: none !important; }
-  .qz { position: relative; min-height: var(--screen-h, 100svh); padding: calc(var(--header-h) + 8px) 0 clamp(48px, 6vw, 96px); display: flex; }
-  .qz-in { display: flex; flex-direction: column; justify-content: center; flex: 1; }
-  /* questions and the result start near the top (the answers stay in thumb reach); only the start screen is centred */
-  .qz:is([data-view='q'], [data-view='result']) .qz-in { justify-content: flex-start; padding-top: clamp(8px, 4vh, 56px); }
-  :global(html.js) .qz-start { animation: qz-in .5s var(--ease-out) both; }
-  @keyframes qz-in { from { opacity: 0; translate: 0 12px; } }
-  .qz-preview { display: none; white-space: nowrap; position: fixed; left: 50%; bottom: 12px; translate: -50% 0; z-index: 60; padding: 6px 12px; border-radius: 999px; background: var(--gray-800); border: 1px dashed var(--lime); color: var(--lime); pointer-events: none; }
-  .qz.is-preview .qz-preview { display: block; }
+  :global(html:has(.qz)), :global(body:has(.qz)) { background: var(--white); color-scheme: light; }
+  .qz :global(:is(h1, h2, h3)) { color: inherit; } /* base.css paints headings white; the fix cards' h3 is injected by JS */
+  .qz-res { background: var(--paper); }
+  :global(body:has(.qz) #field-root), :global(body:has(.qz) #cursor) { display: none; }
+  :global(body:has(.qz) .lpft) { background: var(--black); }
+  .qz :focus-visible { outline: 2px solid var(--ink); outline-offset: 3px; box-shadow: 0 0 0 6px color-mix(in srgb, var(--lime) 60%, transparent); }
+  .qz-wrap { width: 100%; max-width: 1280px; margin-inline: auto; padding-inline: 20px; }
+  .qz-preview { display: none; position: fixed; right: 8px; bottom: 8px; z-index: 70; padding: 3px 8px; border-radius: 6px; background: var(--ink); color: var(--lime); font-size: 12px; font-weight: 600; pointer-events: none; }
+  .qz.is-preview-badge .qz-preview { display: block; }
 
-  /* ── Start ─────────────────────────────────────────────── */
-  .qz-start { display: grid; gap: 1.25rem; align-items: center; }
-  .qz-start-tx { display: grid; gap: 1.1rem; justify-items: start; }
-  .qz-eyebrow { display: inline-flex; align-items: center; gap: .6rem; color: var(--lime); }
-  .qz-dot { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--lime); }
-  .qz-dot::after { content: ''; position: absolute; inset: -5px; border-radius: 50%; border: 1px solid var(--lime); animation: qz-pulse 2.4s ease-out infinite; }
-  @keyframes qz-pulse { 0% { transform: scale(.5); opacity: .8; } 100% { transform: scale(1.4); opacity: 0; } }
-  .qz-h1 { font-size: clamp(2.4rem, 5.4vw, 5.25rem); line-height: .94; letter-spacing: -.03em; font-weight: 600; max-width: 13ch; text-wrap: balance; }
-  .qz-h1 .dim { display: block; color: var(--gray-400); }
-  .qz-sub { font-size: var(--fs-body-l); line-height: 1.5; color: var(--gray-300); max-width: 46ch; }
-  .qz-tip { display: flex; gap: .65rem; align-items: flex-start; color: var(--gray-200); font-size: .95rem; max-width: 46ch; padding: .7rem .9rem; border: 1px dashed var(--gray-500); border-radius: 12px; }
-  .qz-eye { position: relative; flex: none; width: 18px; height: 12px; margin-top: .3em; border: 1.5px solid var(--lime); border-radius: 50% / 60%; }
-  .qz-eye::after { content: ''; position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; margin: -2.5px; border-radius: 50%; background: var(--lime); }
-  .qz-go-row { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; margin-top: .25rem; }
-  .qz-go { min-height: 64px; padding: 0 2rem; font-size: 1.125rem; }
-  .qz-book-link { color: var(--gray-300); text-decoration: underline; text-decoration-color: var(--gray-500); text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; }
-  .qz-book-link:hover { color: var(--lime); text-decoration-color: var(--lime); }
-  .qz-under { color: var(--gray-400); }
-  .qz-textbtn { background: none; border: 0; padding: 0; color: var(--gray-300); font: inherit; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; min-height: 44px; }
-  .qz-textbtn:hover { color: var(--lime); }
-  .qz-nojs { color: var(--gray-200); max-width: 46ch; }
-  :global(html:not(.js)) .qz-go-row .qz-go { display: none; }
-  .qz-trust { display: flex; flex-wrap: wrap; gap: .4rem 1.75rem; color: var(--gray-400); list-style: none; padding: 0; margin: 0; }
-  .qz-trust li { display: inline-flex; align-items: center; gap: .55rem; }
-  .qz-trust li::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--lime); }
+  /* ── The lime room ─────────────────────────────────────── */
+  .qz-room { background: var(--lime); color: var(--ink); }
+  .qz-grid { display: grid; gap: 22px; padding-top: 22px; padding-bottom: 26px; }
+  .qz-h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2.1rem, 1.3rem + 3.6vw, 5.4rem); line-height: .96; letter-spacing: -.03em; text-wrap: balance; }
+  .qz-tail { display: block; color: var(--ink-3); }
+  .qz-meta { margin-top: 12px; font-weight: 700; font-size: .95rem; }
+  .qz-trust { display: none; margin: 22px 0 0; padding: 0; list-style: none; gap: 8px; font-size: .95rem; font-weight: 500; color: var(--ink-2); }
+  .qz-trust li { display: flex; gap: 10px; align-items: baseline; }
+  .qz-trust li::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); translate: 0 -1px; }
 
-  /* the reward card (decorative) */
-  .qz-card { border: 1px solid var(--gray-700); background: var(--capsule); border-radius: 18px; padding: 22px 24px; display: grid; gap: 14px; box-shadow: var(--capsule-sh); }
-  .qz-card-hd, .qz-card-ft { display: flex; justify-content: space-between; align-items: center; margin: 0; color: var(--gray-300); }
-  .qz-card-ft { color: var(--lime); border-top: 1px solid var(--gray-700); padding-top: 14px; }
-  .qz-card-score { display: flex; align-items: baseline; gap: .3rem; font-family: var(--font-display); font-weight: 600; line-height: .9; }
-  .qz-card-q { font-size: clamp(4rem, 7vw, 6.5rem); letter-spacing: -.04em; color: var(--white); }
-  .qz-of { font-size: 1.5rem; color: var(--gray-400); letter-spacing: -.01em; }
-  .qz-card-areas { display: grid; gap: 10px; list-style: none; padding: 0; margin: 0; }
-  .qz-card-areas li { display: grid; grid-template-columns: 8.5rem 1fr; align-items: center; gap: 12px; color: var(--gray-300); font-size: .95rem; }
-  .qz-card-areas i { height: 6px; border-radius: 3px; background: repeating-linear-gradient(90deg, var(--gray-700) 0 calc(16.66% - 3px), transparent calc(16.66% - 3px) 16.66%); position: relative; overflow: hidden; }
-  .qz-card-areas i::after { content: ''; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, var(--lime) 0 calc(16.66% - 3px), transparent calc(16.66% - 3px) 16.66%); transform-origin: left; animation: qz-fill 6s calc(var(--i) * .35s + .4s) var(--ease-out) infinite both; }
-  @keyframes qz-fill { 0% { clip-path: inset(0 100% 0 0); } 25%, 80% { clip-path: inset(0 calc(100% - (30% + var(--i) * 13%)) 0 0); } 100% { clip-path: inset(0 100% 0 0); } }
-  .qz-card-lock { width: 12px; height: 10px; border-radius: 2px; background: var(--lime); position: relative; margin-top: 5px; }
-  .qz-card-lock::before { content: ''; position: absolute; left: 2px; right: 2px; top: -6px; height: 8px; border: 1.5px solid var(--lime); border-bottom: 0; border-radius: 5px 5px 0 0; }
+  .qz-box { display: flex; flex-direction: column; min-width: 0; }
+  .qz-prog { display: grid; gap: 10px; }
+  .qz-prog-t { display: flex; align-items: baseline; gap: 8px; margin: 0; font-weight: 700; }
+  .qz-prog-t b { font-family: var(--font-display); font-weight: 600; font-size: 2rem; line-height: .9; }
+  .qz-prog-t em { font-style: normal; }
+  .qz-prog-t em::before { content: '· '; }
+  .qz-track { position: relative; height: 10px; border-radius: 5px; background: color-mix(in srgb, var(--ink) 16%, transparent); }
+  .qz-track i { position: absolute; inset: 0 auto 0 0; min-width: 10px; border-radius: 5px; background: var(--ink); transition: width .32s var(--ease); }
+  .qz-track s { display: none; position: absolute; top: 50%; width: 18px; height: 18px; translate: -50% -50%; border-radius: 50%; background: var(--paper); box-shadow: 0 0 0 4px var(--ink); transition: left .32s var(--ease); }
 
-  @media (min-width: 1024px) {
-    .qz-start { grid-template-columns: minmax(0, 7fr) minmax(0, 4.5fr); column-gap: clamp(2rem, 5vw, 6rem); }
-    .qz-trust { grid-column: 1 / -1; padding-top: 1.25rem; border-top: 1px solid var(--gray-700); }
-  }
-  @media (max-width: 1023px) {
-    .qz-card { display: none; }
-  }
+  .qz-form { display: flex; flex-direction: column; flex: 1; }
+  fieldset.q { border: 0; padding: 0; margin: 0; min-width: 0; display: flex; flex-direction: column; flex: 1; }
+  .q:not([hidden]) { transition: opacity .32s var(--ease), translate .32s var(--ease); }
+  @starting-style { .q:not([hidden]) { opacity: 0; translate: 24px 0; } }
+  .qz[data-dir='back'] .q:not([hidden]) { @starting-style { translate: -24px 0; } }
+  .q-lg { padding: 0; float: left; width: 100%; }
+  .q-lg + * { clear: both; }
+  .q-h { margin-top: 18px; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); line-height: 1.06; letter-spacing: -.02em; outline: none; text-wrap: balance; }
+  .q-hint { display: flex; gap: 10px; align-items: flex-start; margin-top: 12px; font-weight: 600; color: var(--ink-2); }
+  .q-hint :global(svg) { flex: none; margin-top: 3px; }
+  .q-end { margin-top: 18px; }
+  .q-opts { display: grid; gap: 12px; }
+  .q-err { margin: 10px 0 0; font-weight: 700; color: var(--ink); }
+  .q-err:empty { display: none; }
+  .q-err:not(:empty)::before { content: '! '; }
+  .q-next { margin-top: 18px; }
 
-  /* ── Question chrome ───────────────────────────────────── */
-  .qz-top { display: grid; grid-template-columns: auto 1fr; align-items: center; gap: 10px 16px; margin-bottom: clamp(1.25rem, 3vw, 2.5rem); }
-  .qz-back { display: inline-flex; align-items: center; gap: .5rem; min-height: 44px; padding: 0 1rem 0 .8rem; border-radius: 999px; border: 1px solid var(--gray-500); background: transparent; color: var(--white); font: inherit; font-weight: 500; cursor: pointer; }
-  .qz-back:hover { border-color: var(--white); }
-  .qz-back:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
-  .qz-count { justify-self: end; color: var(--gray-300); }
-  .qz-count :global(b) { color: var(--white); font-weight: 400; }
-  .qz-bar { grid-column: 1 / -1; height: 3px; border-radius: 2px; background: var(--gray-700); overflow: hidden; }
-  .qz-bar span { display: block; height: 100%; background: var(--lime); transform: scaleX(var(--p, 0)); transform-origin: left; transition: transform .3s var(--ease-out); }
+  /* slabs: ink on lime; pressed = drops 5px onto its edge; selected = paper with an ink ring and a lime check */
+  .slab { position: relative; display: flex; align-items: center; gap: 14px; min-height: 70px; padding: 10px 16px 10px 12px; border-radius: 18px; background: var(--ink); color: var(--paper); font-weight: 700; font-size: 1.08rem; line-height: 1.25; cursor: pointer; box-shadow: 0 5px 0 0 var(--edge); transition: transform 120ms var(--ease), box-shadow 120ms, background-color 160ms, color 160ms; -webkit-tap-highlight-color: transparent; }
+  .slab input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
+  .slab-key { flex: none; display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; background: var(--lime); color: var(--ink); font-family: var(--font-display); font-weight: 600; font-size: .95rem; }
+  .slab-t { flex: 1; }
+  .slab-node { flex: none; display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; box-shadow: inset 0 0 0 2px color-mix(in srgb, var(--paper) 45%, transparent); color: transparent; }
+  .slab--multi .slab-node { border-radius: 8px; }
+  @media (hover: hover) { .slab:hover { background: color-mix(in srgb, var(--ink) 86%, var(--paper)); } }
+  .slab:active, .slab:has(input:checked) { transform: translateY(5px); box-shadow: 0 0 0 0 var(--edge); }
+  .slab:has(input:checked) { background: var(--paper); color: var(--ink); box-shadow: inset 0 0 0 3px var(--ink); }
+  .slab:has(input:checked) .slab-key { background: var(--ink); color: var(--lime); }
+  .slab:has(input:checked) .slab-node { background: var(--lime); color: var(--ink); box-shadow: inset 0 0 0 2px var(--ink); }
+  .slab:has(input:focus-visible) { outline: 3px solid var(--ink); outline-offset: 4px; }
+  .slab:has(input[aria-invalid]) { box-shadow: 0 5px 0 0 var(--edge), 0 0 0 3px var(--paper); }
+  .slab--none:not(:has(input:checked)) { background: color-mix(in srgb, var(--ink) 80%, var(--lime)); }
 
-  .qz-form { position: relative; display: flex; flex-direction: column; }
-  .qz-coach { position: absolute; top: -2.1rem; left: 0; right: 0; margin: 0; color: var(--lime); font-size: .95rem; min-height: 1.4em; opacity: 0; translate: 0 4px; transition: opacity .25s, translate .25s var(--ease-out); pointer-events: none; }
+  .qz-qnav { display: none; align-items: center; justify-content: space-between; margin-top: 10px; }
+  .qz-back { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 10px 0 4px; border: 0; background: none; color: var(--ink); font: inherit; font-weight: 700; font-size: 1.05rem; cursor: pointer; }
+  .qz-back[hidden] { display: inline-flex !important; visibility: hidden; }
+  .qz-kb { display: none; font-size: .9rem; font-weight: 500; color: var(--ink-2); }
+  @media (hover: hover) and (pointer: fine) { .qz-kb { display: block; } }
+  .qz-alt { display: inline-flex; align-self: flex-start; gap: 8px; margin-top: 16px; min-height: 44px; align-items: center; font-family: var(--font-display); font-weight: 600; color: var(--ink); text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 2px; }
+  .qz-nojs { margin-top: 12px; font-weight: 600; }
+
+  .qz-coach { display: none; align-self: flex-start; align-items: center; gap: 8px; margin: 0 0 14px; padding: 8px 14px 8px 10px; border-radius: 999px; background: var(--paper); font-weight: 600; font-size: .9rem; line-height: 1.3; opacity: 0; translate: 0 -4px; transition: opacity .25s, translate .25s var(--ease); }
+  .qz-coach::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); }
   .qz-coach.is-on { opacity: 1; translate: 0 0; }
-  fieldset.q { border: 0; padding: 0; margin: 0; min-width: 0; display: grid; gap: 14px; align-content: start; }
-  .q:not([hidden]) { transition: opacity .2s var(--ease-out), translate .2s var(--ease-out); }
-  @starting-style { .q:not([hidden]) { opacity: 0; translate: 0 14px; } }
-  .qz[data-dir='back'] .q:not([hidden]) { @starting-style { translate: 0 -14px; } }
-  .q-lg { padding: 0; float: none; width: 100%; }
-  .q-h { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3.4vw, 2.9rem); line-height: 1.04; letter-spacing: -.02em; outline: none; text-wrap: balance; max-width: 22ch; }
-  .q-hint { display: flex; gap: .65rem; align-items: flex-start; color: var(--gray-300); font-size: .975rem; max-width: 52ch; }
-  .q-opts { display: grid; gap: 10px; margin-top: 6px; }
-  .q-err { color: var(--err); min-height: 1.4em; font-size: .95rem; margin: 0; }
-  .q-err:empty { min-height: 0; }
-  .q-next { justify-self: start; min-height: 56px; padding: 0 1.75rem; }
-  .q-keys { color: var(--gray-400); margin-top: 16px; display: none; }
-  @media (hover: hover) and (pointer: fine) { .q-keys { display: block; } }
+  .qz-resume { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin: 0 0 16px; }
+  .qz-resume-go { min-height: 44px; padding: 0 18px; border: 0; border-radius: 999px; background: var(--ink); color: var(--lime); font: inherit; font-weight: 700; cursor: pointer; }
+  .qz-textbtn { min-height: 44px; border: 0; padding: 0; background: none; color: var(--ink); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 
-  @media (min-width: 1024px) {
-    /* question left, answers right: the eye reads, then taps */
-    fieldset.q { grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); column-gap: clamp(2rem, 5vw, 5rem); align-items: start; }
-    fieldset.q > :is(.q-lg, .q-hint) { grid-column: 1; }
-    fieldset.q > :is(.q-opts, .q-next, .q-err) { grid-column: 2; }
-    fieldset.q > .q-opts { grid-row: 1 / span 3; margin-top: 0; }
-    .q-opts--many { grid-template-columns: 1fr 1fr; }
-    .q-keys { padding-left: calc(45.45% + 2.3rem); }
-  }
-
-  /* ── Answer tile (same look as the 7-day brief's tiles) ── */
-  .qt { position: relative; display: block; cursor: pointer; color: inherit; }
-  .qt input { position: absolute; opacity: 0; width: 1px; height: 1px; pointer-events: none; }
-  .qt-b { position: relative; display: flex; align-items: center; gap: 14px; min-height: 64px; height: 100%; padding: 12px 48px 12px 20px; background: var(--gray-800); border: 1px solid var(--gray-500); border-radius: 14px; color: var(--white); font-size: 1.0625rem; font-weight: 500; line-height: 1.3; transition: background-color .15s, border-color .15s, scale .12s var(--ease-out); }
-  .qt-node { position: absolute; right: 20px; top: 50%; width: 12px; height: 12px; margin-top: -6px; border-radius: 50%; border: 1px solid var(--gray-400); transition: background-color .15s, box-shadow .15s, border-color .15s; }
-  .qt--multi .qt-node { border-radius: 3px; }
-  .qt-k { display: none; place-items: center; flex: none; width: 26px; height: 26px; border: 1px solid var(--gray-500); border-radius: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--gray-300); }
-  @media (hover: hover) and (pointer: fine) {
-    .qt-k { display: inline-grid; }
-    .qt:hover .qt-b { background: var(--gray-700); border-color: var(--gray-300); }
-    .qt:hover .qt-node { border-color: var(--white); }
-  }
-  .qt:active .qt-b { scale: .985; }
-  .qt input:focus-visible + .qt-b { outline: 2px solid var(--lime); outline-offset: 3px; }
-  .qt input:checked + .qt-b { border-color: var(--lime); box-shadow: inset 0 0 0 1px var(--lime); background: var(--lime-06); }
-  .qt input:checked + .qt-b .qt-node { background: var(--lime); border-color: var(--lime); box-shadow: 0 0 0 6px var(--lime-12); }
-  .qt input:checked + .qt-b .qt-k { background: var(--lime); border-color: var(--lime); color: var(--black); }
-  .qt--multi input:checked + .qt-b .qt-node::after { content: ''; position: absolute; left: 3.5px; top: 1px; width: 3px; height: 6px; border: solid var(--black); border-width: 0 1.5px 1.5px 0; rotate: 45deg; }
-  .qt--none .qt-b { border-style: dashed; }
-  .qt input[aria-invalid] + .qt-b { border-color: var(--err); }
+  /* mid questions: the room fills the screen, answers sit at the bottom in thumb reach, Back in the bottom row */
+  .qz[data-step='mid'] .qz-hero, .qz[data-step='mid'] .qz-alt, .qz[data-step='mid'] .qz-resume { display: none !important; }
+  .qz[data-step='mid'] .qz-room[data-room] { min-height: calc(var(--screen-h, 100svh) - 60px); display: flex; }
+  .qz[data-step='mid'] .qz-grid { display: flex; flex-direction: column; flex: 1; padding-top: 16px; padding-bottom: 14px; }
+  .qz[data-step='mid'] .qz-box { flex: 1; }
+  .qz[data-step='mid'] .qz-coach { display: inline-flex; }
+  .qz[data-step='mid'] .qz-qnav { display: flex; }
+  .qz[data-step='mid'] .q-end { margin-top: auto; padding-top: 18px; }
+  .qz[data-step='mid'] .qz-prog-t b { font-size: 3.2rem; line-height: .85; }
+  .qz[data-step='mid'] .qz-prog-t em { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: var(--lime); font-size: .85rem; }
+  .qz[data-step='mid'] .qz-prog-t em::before { content: none; }
+  .qz[data-step='mid'] .qz-track s { display: block; }
+  .qz[data-step='first'] .qz-kb { display: none; }
 
   /* ── Adding up ─────────────────────────────────────────── */
-  .qz-adding { display: grid; justify-items: center; gap: 18px; padding: 12vh 0; text-align: center; }
-  .qz-adding-t { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.5rem, 3vw, 2.4rem); letter-spacing: -.02em; }
-  .qz-adding-dots { display: flex; gap: 10px; }
-  .qz-adding-dots i { width: 12px; height: 12px; border-radius: 50%; background: var(--gray-700); animation: qz-dot .9s calc(var(--d, 0) * 90ms) var(--ease-out) both; }
-  .qz-adding-dots i:nth-child(2) { --d: 1; } .qz-adding-dots i:nth-child(3) { --d: 2; } .qz-adding-dots i:nth-child(4) { --d: 3; } .qz-adding-dots i:nth-child(5) { --d: 4; }
-  @keyframes qz-dot { 60%, 100% { background: var(--lime); box-shadow: 0 0 14px var(--lime-25); } }
+  .qz-adding { min-height: calc(var(--screen-h, 100svh) - 60px); display: grid; place-items: center; text-align: center; }
+  .qz-adding .qz-wrap { display: grid; justify-items: center; gap: 18px; }
+  .qz-adding-t { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.6rem); letter-spacing: -.02em; }
+  .qz-dots { display: flex; gap: 10px; }
+  .qz-dots i { width: 14px; height: 14px; border-radius: 50%; background: color-mix(in srgb, var(--ink) 18%, transparent); animation: qz-dot .8s calc(var(--d, 0) * 90ms) var(--ease) both; }
+  .qz-dots i:nth-child(2) { --d: 1; } .qz-dots i:nth-child(3) { --d: 2; } .qz-dots i:nth-child(4) { --d: 3; } .qz-dots i:nth-child(5) { --d: 4; }
+  @keyframes qz-dot { 60%, 100% { background: var(--ink); } }
 
   /* ── Result ────────────────────────────────────────────── */
-  .qz-res { display: grid; gap: clamp(2.5rem, 5vw, 4.5rem); padding-top: clamp(.5rem, 2vw, 1.5rem); }
-  .qz-res:not([hidden]) { animation: qz-in .4s var(--ease-out) both; }
+  .qz-res:not([hidden]) { animation: qz-in .4s var(--ease) both; }
+  @keyframes qz-in { from { opacity: 0; translate: 0 12px; } }
   .qz-res[data-path='site'] .qz-nosite, .qz-res[data-path='nosite'] .qz-site { display: none !important; }
-  .qz-res-grid { display: grid; gap: clamp(2rem, 4vw, 3rem); align-items: start; }
-  .qz-res-main { display: grid; gap: clamp(2rem, 4vw, 3rem); min-width: 0; }
-  .qz-res-hd { display: grid; gap: .6rem; justify-items: start; }
-  .qz-res-label { color: var(--lime); }
-  .qz-score { display: flex; align-items: baseline; gap: .35rem; font-family: var(--font-display); font-weight: 600; line-height: .82; margin: .25rem 0 .35rem; }
-  .qz-num { font-size: clamp(6rem, 15vw, 12rem); letter-spacing: -.05em; font-variant-numeric: tabular-nums; color: var(--white); }
-  .qz-score .qz-of { font-size: clamp(1.5rem, 2.6vw, 2.25rem); }
-  .qz-band { color: var(--black); background: var(--lime); padding: 4px 10px; border-radius: 999px; }
-  .qz-res[data-band='leaking'] .qz-band, .qz-res[data-band='holding'] .qz-band { background: var(--white); }
-  .qz-res-h { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3vw, 2.6rem); line-height: 1.05; letter-spacing: -.02em; max-width: 22ch; outline: none; text-wrap: balance; }
-  .qz-res-sum { color: var(--gray-300); font-size: var(--fs-body-l); line-height: 1.5; max-width: 52ch; }
-  .qz-building { display: flex; align-items: center; gap: .7rem; color: var(--gray-200); }
-  .qz-sec-h { color: var(--gray-300); margin-bottom: 14px; }
+  .qz-limetop { background: var(--lime); padding: 22px 0 28px; }
+  .qz-score { display: grid; justify-items: start; }
+  .qz-score-l { font-weight: 700; }
+  .qz-score-n { display: flex; align-items: baseline; gap: 6px; margin: 2px 0 0; font-family: var(--font-display); }
+  .qz-score-n [data-score] { font-weight: 700; font-size: clamp(7rem, 5rem + 9vw, 13rem); line-height: .86; letter-spacing: -.04em; font-variant-numeric: tabular-nums; }
+  .qz-of { font-weight: 600; font-size: 1.6rem; color: var(--ink-3); }
+  .qz-band { display: inline-flex; margin-top: 12px; padding: 6px 14px; border-radius: 999px; background: var(--ink); color: var(--lime); font-weight: 700; font-size: .9rem; }
+  .qz-score-h { margin-top: 14px; font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); line-height: 1.06; letter-spacing: -.02em; max-width: 22ch; outline: none; }
+  .qz-score-sum { margin-top: 10px; color: var(--ink-2); font-size: 1.02rem; max-width: 56ch; }
+  .qz-building { margin-top: 10px; font-weight: 700; }
+  .qz-jump { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; min-height: 48px; padding: 0 20px; border-radius: 999px; background: var(--ink); color: var(--lime); font-family: var(--font-display); font-weight: 600; text-decoration: none; }
 
-  .qz-areas ol { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--gray-700); }
-  .qz-areas li { display: grid; grid-template-columns: minmax(8rem, 11rem) 1fr auto 2.6rem; align-items: center; gap: 14px; min-height: 52px; border-bottom: 1px solid var(--gray-700); }
-  .qz-area-n { font-weight: 600; }
-  .qz-meter { display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
-  .qz-meter i { height: 8px; border-radius: 2px; background: var(--gray-700); transition: background-color .3s calc(var(--k) * 60ms + 200ms); }
-  .qz-meter i:nth-child(1) { --k: 1; } .qz-meter i:nth-child(2) { --k: 2; } .qz-meter i:nth-child(3) { --k: 3; } .qz-meter i:nth-child(4) { --k: 4; } .qz-meter i:nth-child(5) { --k: 5; } .qz-meter i:nth-child(6) { --k: 6; }
-  .qz-meter i.on { background: var(--lime); }
-  .qz-areas li.is-weak .qz-meter i.on { background: var(--white); }
-  .qz-area-l { color: var(--gray-300); }
-  .qz-areas li.is-weak .qz-area-l { color: var(--white); }
-  .qz-area-v { color: var(--gray-400); text-align: right; }
+  .qz-resg { padding-top: 28px; padding-bottom: 24px; }
+  .qz-main { display: grid; gap: 0; min-width: 0; }
+  .qz-sec-h { font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; line-height: 1.1; letter-spacing: -.015em; }
+  .qz-sec-h--s { margin-top: 28px; }
+  .qz-sec-sub { margin-top: 6px; color: var(--ink-3); }
 
-  .qz-fixes { display: grid; gap: 1rem; }
-  .qz-fixes-h { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); letter-spacing: -.01em; }
-  .qz-fixes-sub { color: var(--gray-300); max-width: 56ch; }
-  .qz-fx-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-  .qz-fx-list :global(.qz-fx) { position: relative; display: grid; gap: .55rem; padding: 20px 22px; border: 1px solid var(--gray-700); border-radius: 16px; background: var(--gray-900); }
-  .qz-fx-list :global(.qz-fx-k) { display: flex; gap: .9rem; color: var(--lime); }
-  .qz-fx-list :global(.qz-fx-k span + span) { color: var(--gray-400); }
-  .qz-fx-list :global(.qz-fx-p) { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.2; letter-spacing: -.01em; }
-  .qz-fx-list :global(.qz-fx-lock) { display: grid; gap: 8px; padding: 14px 16px; border: 1px dashed var(--gray-500); border-radius: 12px; margin-top: .3rem; }
-  .qz-fx-list :global(.qz-fx-lock i) { display: block; height: 9px; border-radius: 5px; background: var(--gray-700); }
-  .qz-fx-list :global(.qz-fx-lock i:nth-child(2)) { width: 82%; } .qz-fx-list :global(.qz-fx-lock i:nth-child(3)) { width: 64%; }
-  .qz-fx-list :global(.qz-fx-tag) { display: inline-flex; align-items: center; gap: .55rem; color: var(--gray-300); }
-  .qz-fx-list :global(.qz-lock) { position: relative; width: 11px; height: 9px; border-radius: 2px; background: var(--gray-300); margin-top: 4px; }
-  .qz-fx-list :global(.qz-lock::before) { content: ''; position: absolute; left: 2px; right: 2px; top: -5px; height: 7px; border: 1.5px solid var(--gray-300); border-bottom: 0; border-radius: 4px 4px 0 0; }
-  .qz-fx-list :global(.qz-ba) { display: grid; gap: 8px; margin: .35rem 0 0; }
-  .qz-fx-list :global(.qz-ba > div) { display: grid; grid-template-columns: 4.5rem 1fr; gap: 12px; padding: 12px 14px; border-radius: 12px; background: var(--gray-800); }
-  .qz-fx-list :global(.qz-ba > div.is-after) { background: var(--lime-06); box-shadow: inset 0 0 0 1px var(--lime-25); }
-  .qz-fx-list :global(.qz-ba dt) { color: var(--gray-400); }
-  .qz-fx-list :global(.qz-ba > div.is-after dt) { color: var(--lime); }
-  .qz-fx-list :global(.qz-ba dd) { margin: 0; }
-  .qz-fx-list :global(.qz-ba > div:not(.is-after) dd) { color: var(--gray-300); text-decoration: line-through; text-decoration-color: var(--gray-500); }
-  .qz-fx-list :global(.qz-why) { color: var(--gray-200); }
-  .qz-fx-list :global(.qz-why b) { color: var(--white); }
-  .qz-fx-list :global(.qz-fx-note) { color: var(--gray-400); font-size: .9rem; }
-  .qz-fx-list :global(.qz-fx.is-new) { animation: qz-in .4s calc(var(--n, 0) * 80ms) var(--ease-out) both; }
+  .qz-areas ol { list-style: none; margin: 8px 0 0; padding: 0; }
+  .qz-area { display: grid; grid-template-columns: 1fr auto; grid-template-areas: 'n l' 'm m'; gap: 8px 12px; padding: 12px 0; border-top: 1px solid var(--mist); }
+  .qz-area-n { grid-area: n; font-weight: 600; }
+  .qz-area-l { grid-area: l; color: var(--ink-3); font-weight: 500; font-size: .9rem; }
+  .qz-area-l b { color: var(--ink); margin-left: 4px; }
+  .qz-meter { grid-area: m; display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; }
+  .qz-meter i { height: 8px; border-radius: 4px; background: var(--mist); transition: background-color .3s; }
+  .qz-meter i.on { background: var(--ink); }
+  .qz-area.is-low .qz-meter i { box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-area.is-low .qz-meter i:not(.on) { background: var(--lime); }
+  .qz-area.is-low .qz-area-l { color: var(--ink); }
+  .qz-area.is-low .qz-area-l::before { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--ink); margin-right: 8px; translate: 0 -1px; }
 
-  .qz-gate-wrap { margin-top: .5rem; }
-  .qz-gate, .qz-done { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; padding: clamp(20px, 3vw, 28px); border: 1px solid var(--lime); border-radius: 18px; background: var(--capsule); box-shadow: var(--capsule-sh); }
-  .qz-gate-l, .qz-done-h { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.2; letter-spacing: -.01em; outline: none; max-width: 34ch; }
-  .qz-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; }
-  .f { display: flex; flex-direction: column; gap: 6px; }
-  .f--wide { grid-column: 1 / -1; }
-  .f label { font-family: var(--font-mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--gray-300); }
-  .f input { width: 100%; min-height: 56px; background: var(--gray-800); border: 1px solid var(--gray-500); border-radius: 12px; color: var(--white); padding: .8rem 1rem; font-size: 1.0625rem; }
-  .f input::placeholder { color: var(--gray-400); }
-  .f input:hover { border-color: var(--gray-300); }
-  .f input:focus-visible { border-color: var(--lime); outline: 2px solid var(--lime); outline-offset: 0; }
-  .f input[aria-invalid] { border-color: var(--err); }
-  .q-typo { font-size: .95rem; color: var(--gray-200); }
-  .q-typo button { background: none; border: 0; padding: 0; color: var(--lime); font: inherit; text-decoration: underline; cursor: pointer; min-height: 44px; }
-  .qz-gate-btn { justify-self: start; min-height: 60px; padding: 0 2rem; font-size: 1.0625rem; }
-  .qz-gate-btn:disabled { background: var(--lime-dark); cursor: progress; }
-  .qz-gate-under { color: var(--gray-300); }
-  .qz-fine { color: var(--gray-400); font-size: .85rem; line-height: 1.5; }
-  .qz-done .btn { justify-self: start; min-height: 56px; }
-  .qz-done-help { color: var(--gray-200); max-width: 56ch; }
-  .qz-done-help strong { color: var(--white); }
+  .qz-done { display: flex; gap: 12px; align-items: flex-start; margin-top: 18px; padding: 16px 18px; border-radius: 20px; background: var(--lime); box-shadow: inset 0 0 0 2px var(--ink); font-size: 1.05rem; }
+  .qz-done p { margin: 0; outline: none; }
+  .qz-done :global(b) { font-weight: 700; }
+  .qz-done-i { flex: none; display: grid; place-items: center; width: 30px; height: 30px; border-radius: 50%; background: var(--ink); color: var(--lime); }
+
+  .qz-fixes { margin-top: 40px; }
+  .qz-fx-list { display: grid; gap: 12px; margin-top: 12px; }
+  .qz-fx-list :global(.qz-fix) { padding: 18px 16px; border-radius: 22px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-fx-list :global(.qz-fix-k) { display: flex; align-items: center; gap: 10px; margin: 0; font-weight: 700; font-size: .9rem; }
+  .qz-fx-list :global(.qz-fix-n) { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 8px; background: var(--ink); color: var(--lime); font-family: var(--font-display); }
+  .qz-fx-list :global(.qz-fix-s) { color: var(--steel); font-weight: 600; }
+  .qz-fx-list :global(.qz-fix-h) { margin-top: 10px; font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; letter-spacing: -.01em; }
+  .qz-fx-list :global(.qz-ba) { position: relative; display: grid; gap: 8px; margin-top: 14px; }
+  .qz-fx-list :global(.qz-ba-row) { display: grid; grid-template-columns: 64px 1fr; gap: 10px; margin: 0; padding: 12px 14px; border-radius: 14px; background: color-mix(in srgb, var(--white) 70%, var(--gray-200)); box-shadow: inset 0 0 0 1px var(--mist); font-size: .98rem; }
+  .qz-fx-list :global(.qz-ba-after) { background: var(--lime); box-shadow: inset 0 0 0 1.5px var(--ink); }
+  .qz-fx-list :global(.qz-ba-l) { font-weight: 700; font-size: .85rem; color: var(--ink-3); padding-top: 2px; }
+  .qz-fx-list :global(.qz-ba-after .qz-ba-l) { color: var(--ink); }
+  .qz-fx-list :global(.qz-ba-before .qz-ba-t:not(.is-blur)) { text-decoration: line-through; text-decoration-color: color-mix(in srgb, var(--ink) 45%, transparent); color: var(--ink-3); }
+  .qz-fx-list :global(.is-blur) { filter: blur(5px); user-select: none; }
+  .qz-fx-list :global(.qz-ba-lock) { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 8px 12px; border-radius: 999px; background: var(--ink); color: var(--paper); font-weight: 600; font-size: .8rem; line-height: 1.25; max-width: calc(100% - 20px); }
+  .qz-fx-list :global(.qz-ba-lock svg) { flex: none; color: var(--lime); }
+  .qz-fx-list :global(.qz-fix-why) { margin-top: 14px; }
+  .qz-fx-list :global(.qz-fix-why b) { font-weight: 700; }
+  .qz-fx-list :global(.qz-fix-note) { margin-top: 8px; font-size: .88rem; color: var(--steel); }
+  .qz-fx-list :global(.qz-fix.is-new) { animation: qz-in .4s calc(var(--n, 0) * 80ms) var(--ease) both; }
+
+  .qz-gate { margin-top: 18px; padding: 24px 18px; border-radius: 28px; background: var(--ink); color: var(--paper); }
+  .qz-gate-k { display: inline-flex; align-items: center; gap: 8px; margin: 0; padding: 6px 12px; border-radius: 999px; background: var(--lime); color: var(--ink); font-weight: 700; font-size: .85rem; }
+  .qz-gate-h { margin-top: 12px; font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; line-height: 1.15; letter-spacing: -.01em; }
+  .qz-gate-f { display: grid; gap: 12px; margin-top: 18px; }
+  .qz-fld { display: grid; gap: 6px; font-weight: 600; font-size: .92rem; }
+  .qz-fld input { width: 100%; height: 56px; padding: 0 16px; border-radius: 14px; border: 0; background: var(--paper); color: var(--ink); font: inherit; font-weight: 500; font-size: 1.05rem; }
+  .qz-fld input::placeholder { color: var(--steel); }
+  .qz-fld input:focus-visible { outline: none; box-shadow: 0 0 0 4px var(--lime); }
+  .qz-fld input[aria-invalid] { box-shadow: 0 0 0 3px var(--lime), inset 0 0 0 2px var(--ink); }
+  .qz-typo { margin: 0; font-weight: 500; }
+  .qz-typo button { min-height: 40px; border: 0; padding: 0; background: none; color: var(--lime); font: inherit; text-decoration: underline; cursor: pointer; }
+  .qz-gate-add { display: block; margin-top: 10px; min-height: 40px; border: 0; padding: 0; background: none; color: color-mix(in srgb, var(--paper) 82%, var(--ink)); font: inherit; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+  .qz-gate-err { color: var(--lime); }
+  .qz-gate-err:not(:empty)::before { content: none; }
+  .qz-gate-row { display: grid; gap: 10px; margin-top: 8px; }
+  .qz-gate-go { width: 100%; }
+  .qz-gate-u { margin: 0; text-align: center; font-weight: 600; font-size: .9rem; }
+  .qz-gate-p { margin-top: 12px; font-size: .8rem; line-height: 1.45; color: color-mix(in srgb, var(--paper) 78%, var(--ink)); }
+  .qz-gate-p a { color: var(--paper); }
   .hp { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 
-  .qz-plan-card { display: grid; gap: .7rem; padding: 22px 24px; border: 1px solid var(--lime); border-radius: 18px; background: var(--lime-06); margin-bottom: 2rem; }
-  .qz-plan-pk { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.6rem, 3vw, 2.25rem); letter-spacing: -.02em; line-height: 1.05; }
-  .qz-plan-price { color: var(--lime); }
-  .qz-plan-fixed, .qz-plan-fb { color: var(--gray-300); }
-  .qz-plan-when { color: var(--white); }
-  .qz-plan-dl { display: grid; border-top: 1px solid var(--gray-700); margin: 0; }
-  .qz-plan-dl :global(div) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--gray-700); }
-  .qz-plan-dl :global(dt) { color: var(--gray-400); }
-  .qz-plan-dl :global(dd) { margin: 0; font-weight: 500; }
+  .qz-cta { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 60px; padding: 0 26px; border: 0; border-radius: 999px; font-family: var(--font-display); font-weight: 600; font-size: 1.12rem; text-decoration: none; color: var(--ink); cursor: pointer; transition: transform 120ms var(--ease), box-shadow 120ms; }
+  .qz-cta--lime { background: var(--lime); box-shadow: inset 0 0 0 2px var(--ink), 0 4px 0 0 var(--ink); }
+  .qz-cta--lime:active { transform: translateY(4px); box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-cta--lime:disabled { cursor: progress; transform: translateY(4px); box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-cta--ink { align-self: flex-start; background: var(--ink); color: var(--lime); box-shadow: 0 5px 0 0 var(--edge); }
+  .qz-cta--ink:active { transform: translateY(5px); box-shadow: none; }
 
-  .qz-res-side { display: grid; gap: 14px; }
-  .qz-bookcard { display: grid; gap: 12px; justify-items: start; padding: 24px; border-radius: 20px; border: 1px solid var(--gray-700); background: var(--capsule); box-shadow: var(--capsule-sh); }
-  .qz-lord { width: 72px; height: 72px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; box-shadow: 0 0 0 3px var(--black), 0 0 0 4px var(--lime); }
-  .qz-bk-eb { color: var(--lime); }
-  .qz-bk-btn { width: 100%; min-height: 64px; font-size: 1.0625rem; white-space: normal; text-align: center; }
-  .qz-bk-under { color: var(--gray-300); font-size: 11px; line-height: 1.7; }
-  .qz-next { display: grid; gap: .6rem; justify-items: start; padding: 22px 24px; border-radius: 20px; border: 1px solid var(--gray-700); }
-  .qz-next-h { font-family: var(--font-display); font-weight: 600; font-size: 1.35rem; line-height: 1.15; letter-spacing: -.01em; }
-  .qz-next-b { color: var(--gray-300); }
-  .qz-next-a { white-space: normal; text-align: left; min-height: 52px; margin-top: .25rem; }
+  .qz-book { margin-top: 18px; padding: 22px 18px; border-radius: 26px; background: var(--paper); box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-book-who { display: flex; align-items: center; gap: 12px; }
+  .qz-book-who img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; box-shadow: 0 0 0 3px var(--paper), 0 0 0 5px var(--ink); }
+  .qz-book-who p { display: grid; margin: 0; line-height: 1.25; }
+  .qz-book-who b { font-weight: 700; }
+  .qz-book-who span { color: var(--steel); font-weight: 500; font-size: .9rem; }
+  .qz-book-h { margin-top: 14px; font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; line-height: 1.12; }
+  .qz-book-sub { margin-top: 6px; color: var(--ink-3); }
+  .qz-book-facts { display: grid; gap: 6px; margin: 12px 0 0; padding: 0; list-style: none; font-weight: 600; font-size: .92rem; color: var(--ink-3); }
+  .qz-book-facts :global(li) { display: flex; gap: 8px; align-items: center; }
+  .qz-book-facts :global(li)::before { content: ''; flex: none; width: 16px; height: 16px; border-radius: 50%; background: var(--lime) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 12.5l4 4L18 8' fill='none' stroke='%23090909' stroke-width='3.4' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 12px no-repeat; }
+  .qz-book-go { width: 100%; margin-top: 16px; padding: 0 18px 0 8px; gap: 10px; justify-content: space-between; font-size: clamp(.95rem, .8rem + 1vw, 1.05rem); white-space: nowrap; }
+  .qz-book-go img { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; }
+  .qz-book-go span:first-of-type { flex: 1; text-align: center; }
+  .qz-spam { margin-top: 10px; font-size: .88rem; color: var(--ink-3); text-align: center; }
 
-  .qz-case-list { list-style: none; padding: 0; margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); gap: 14px; }
-  .qz-case a { display: grid; gap: .35rem; color: inherit; text-decoration: none; }
-  .qz-case :global(.qz-case-img) { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 14px; border: 1px solid var(--gray-700); margin-bottom: .5rem; transition: border-color .2s; }
-  .qz-case a:hover :global(.qz-case-img) { border-color: var(--lime); }
-  .qz-case a:focus-visible { outline: 2px solid var(--lime); outline-offset: 4px; border-radius: 14px; }
-  .qz-case-m { color: var(--gray-400); }
-  .qz-case-t { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; }
-  .qz-case-c { color: var(--gray-300); }
+  .qz-plan-card { display: grid; gap: .6rem; margin-top: 12px; padding: 22px 20px; border-radius: 22px; background: var(--lime); box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-plan-card p { margin: 0; }
+  .qz-plan-pk { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 3vw, 2.2rem); letter-spacing: -.02em; line-height: 1.05; }
+  .qz-plan-fixed, .qz-plan-fb { color: var(--ink-2); }
+  .qz-plan-when { font-weight: 700; }
+  .qz-plan-dl { margin: 8px 0 0; }
+  .qz-plan-dl :global(div) { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; padding: 12px 0; border-top: 1px solid var(--mist); }
+  .qz-plan-dl :global(dt) { color: var(--ink-3); }
+  .qz-plan-dl :global(dd) { margin: 0; font-weight: 600; }
 
-  .qz-again { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-700); }
-  .qz-share-note { color: var(--lime); }
-  .qz-foot { color: var(--gray-400); font-size: .9rem; margin-top: -1.5rem; }
+  .qz-sec2 { margin-top: 32px; padding: 20px 18px; border-radius: 22px; box-shadow: inset 0 0 0 2px var(--ink); }
+  .qz-sec2-h { font-family: var(--font-display); font-weight: 600; font-size: 1.3rem; }
+  .qz-sec2 p { margin-top: 4px; color: var(--ink-3); }
+  .qz-ulink { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; border: 0; padding: 0; background: none; font-family: var(--font-display); font-weight: 500; font-size: 1rem; color: var(--ink); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; cursor: pointer; }
+  .qz-cases { margin-top: 40px; }
+  .qz-cases-g { display: grid; gap: 16px; margin: 14px 0 0; padding: 0; list-style: none; }
+  .qz-case a { display: grid; gap: 4px; color: inherit; text-decoration: none; }
+  .qz-case :global(.qz-case-img) { width: 100%; height: auto; aspect-ratio: 16 / 10; object-fit: cover; object-position: top; border-radius: 16px; outline: 2px solid var(--ink); outline-offset: -2px; margin-bottom: 8px; }
+  .qz-case-k { font-size: .85rem; font-weight: 600; color: var(--steel); }
+  .qz-case-t { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; }
+  .qz-case-c { color: var(--ink-3); }
+  .qz-share { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; margin-top: 36px; }
+  .qz-ghost { min-height: 48px; padding: 0 20px; border: 0; border-radius: 999px; background: none; box-shadow: inset 0 0 0 1.5px var(--ink); color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; }
+  .qz-share-note { font-weight: 600; }
+  .qz-foot { margin-top: 18px; font-size: .88rem; color: var(--ink-3); }
 
+  .qz-rail { display: none; }
   @media (min-width: 1024px) {
-    .qz-res-grid { grid-template-columns: minmax(0, 7fr) minmax(300px, 4fr); column-gap: clamp(2rem, 5vw, 5rem); }
-    .qz-res-side { position: sticky; top: calc(var(--header-h) + 16px); }
+    .qz-wrap { padding-inline: 48px; }
+    .qz-h1 { font-size: clamp(3.4rem, 1.6rem + 3vw, 4.6rem); }
+    .qz-trust { display: grid; }
+    .qz[data-step='first'] .qz-grid { grid-template-columns: 1.1fr 1fr; gap: 64px; min-height: calc(var(--screen-h, 100svh) - 72px); align-items: center; padding-block: 40px; }
+    .qz[data-step='first'] .qz-box { padding: 32px; border-radius: 32px; background: color-mix(in srgb, var(--paper) 35%, transparent); box-shadow: inset 0 0 0 2px var(--ink); }
+    .qz[data-step='first'] .q-opts { grid-template-columns: 1fr 1fr; }
+    .qz[data-step='first'] .slab { min-height: 92px; }
+    .qz[data-step='first'] .q-h { font-size: 2.4rem; }
+    .qz[data-step='mid'] .qz-room[data-room] { min-height: calc(var(--screen-h, 100svh) - 72px); }
+    .qz[data-step='mid'] .qz-grid { max-width: 1080px; padding-top: 40px; padding-bottom: 36px; }
+    .qz[data-step='mid'] .q-h { font-size: 3.4rem; line-height: 1.02; max-width: 20ch; }
+    .qz[data-step='mid'] .q-opts { grid-template-columns: 1fr 1fr; }
+    .qz[data-step='mid'] .q-end { padding-top: 44px; }
+    .qz[data-step='mid'] .slab { min-height: 92px; font-size: 1.2rem; }
+    .qz-adding { min-height: calc(var(--screen-h, 100svh) - 72px); }
+
+    .qz-limetop { padding: 40px 0 48px; }
+    .qz-score { grid-template-columns: auto 1fr; grid-template-areas: 'l l' 'n h' 'n s' 'b s'; column-gap: 56px; align-items: end; }
+    .qz-score-l { grid-area: l; } .qz-score-n { grid-area: n; grid-row: 2 / 4; } .qz-band { grid-area: b; justify-self: start; }
+    .qz-score-h { grid-area: h; font-size: 3rem; max-width: 24ch; } .qz-score-sum { grid-area: s; align-self: start; font-size: 1.15rem; }
+    .qz-building { grid-column: 2; }
+    .qz-res[data-path='nosite'] .qz-score { grid-template-columns: 1fr; grid-template-areas: none; }
+    .qz-res[data-path='nosite'] .qz-score > * { grid-area: auto; grid-column: 1; }
+    .qz-jump { display: none; }
+    .qz-resg { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 56px; align-items: start; max-width: 1200px; padding-top: 36px; }
+    .qz-area { grid-template-columns: 170px 1fr 150px; grid-template-areas: 'n m l'; align-items: center; }
+    .qz-area-l { text-align: right; }
+    .qz-fx-list :global(.qz-fix) { padding: 24px; }
+    .qz-fx-list :global(.qz-fix-h) { font-size: 1.5rem; }
+    .qz-fx-list :global(.qz-ba) { grid-template-columns: 1fr 1fr; }
+    .qz-fx-list :global(.qz-ba-row) { grid-template-columns: 1fr; gap: 4px; }
+    .qz-fx-list :global(.qz-ba-lock) { grid-column: 1 / -1; }
+    .qz-gate { padding: 32px; }
+    .qz-gate-f { grid-template-columns: 1fr 1fr; }
+    .qz-fld--wide { grid-column: 1 / -1; }
+    .qz-gate-row { grid-template-columns: auto 1fr; align-items: center; gap: 16px; }
+    .qz-gate-go { width: auto; min-width: 280px; }
+    .qz-gate-u { text-align: left; }
+    .qz-rail { display: block; position: sticky; top: 24px; }
+    .qz-rail .qz-book { margin-top: 0; }
+    .qz-book--inline { display: none; }
+    .qz-cases-g { grid-template-columns: 1fr 1fr; }
   }
   @media (max-width: 1023px) {
-    /* phones: the Book card comes straight after the score (the main number), then the fixes */
-    .qz-res-grid { display: flex; flex-direction: column; }
-    .qz-res-main, .qz-res-side { display: contents; }
-    .qz-res-hd { order: 1; } .qz-bookcard { order: 2; } .qz-areas, .qz-plan { order: 3; } .qz-fixes { order: 4; } .qz-next { order: 5; }
+    .qz-limetop .qz-wrap, .qz-resg { padding-inline: 20px; }
   }
-  @media (max-width: 599px) {
-    .qz { padding-top: calc(var(--header-h) - 8px); }
-    .qz-go { width: 100%; }
-    .qz-go-row { width: 100%; justify-content: center; }
-    .qz-tip { font-size: .9rem; }
-    .qz-sub { font-size: 1.0625rem; }
-    .qz-fields { grid-template-columns: 1fr; }
-    .qz-gate-btn, .qz-done .btn { width: 100%; }
-    .qz-areas li { grid-template-columns: 1fr auto 2.4rem; gap: 6px 10px; padding: 10px 0; }
-    .qz-meter { grid-column: 1 / -1; grid-row: 2; }
-    .qz-fx-list :global(.qz-ba > div) { grid-template-columns: 1fr; gap: 2px; }
-    .q-next { width: 100%; }
-    .qt-b { min-height: 60px; }
-    .qz-trust { flex-direction: column; }
+  @media (max-width: 1023px) { .qz[data-step='mid'] .q-opts--many .slab { min-height: 58px; } .qz[data-step='mid'] .q-opts--many { gap: 10px; } }
+  @media (max-width: 380px) {
+    .qz-wrap { padding-inline: 16px; }
+    .slab { min-height: 64px; font-size: 1rem; }
   }
   @media (prefers-reduced-motion: reduce) {
-    :global(html.js) .qz-start, .qz-res:not([hidden]), .qz-fx-list :global(.qz-fx.is-new) { animation: none; }
-    .q:not([hidden]), .qt-b, .qz-bar span, .qz-coach, .qz-meter i { transition: none; }
+    .q:not([hidden]), .slab, .qz-track i, .qz-track s, .qz-coach, .qz-cta, .qz-meter i { transition: none; }
     @starting-style { .q:not([hidden]) { opacity: 1; translate: none; } }
-    .qz-dot::after, .qz-card-areas i::after, .qz-adding-dots i { animation: none; }
-    .qz-card-areas i::after { clip-path: inset(0 calc(100% - (30% + var(--i) * 13%)) 0 0); }
-    .qz-adding-dots i { background: var(--lime); }
+    .qz-res:not([hidden]), .qz-fx-list :global(.qz-fix.is-new), .qz-dots i { animation: none; }
+    .qz-dots i { background: var(--ink); }
   }
   @media (forced-colors: active) {
-    .qt-b { border-color: CanvasText; }
-    .qt input:checked + .qt-b { outline: 2px solid Highlight; }
-    .qt-node, .qz-meter i { forced-color-adjust: none; }
+    .slab { border: 2px solid CanvasText; }
+    .slab:has(input:checked) { outline: 3px solid Highlight; }
   }
 </style>

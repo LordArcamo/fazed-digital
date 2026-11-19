@@ -43,34 +43,31 @@ export const page = {
   description: '12 one-tap questions on how your website looks, reads and persuades. Get a free score in about 90 seconds, plus the 3 fixes that matter most.',
 };
 
-/* ── Start screen ───────────────────────────────────────── */
+/* ── First screen (Direction B "Lime Room": the hero holds Q1, no Start gate) ── */
 const founderProjects = stats[0]; // "120+ Projects by our founder" (owner-confirmed, proof.ts)
 export const start = {
-  eyebrow: 'Free website quiz · 12 taps · about 90 seconds',
   h1: ['Does your website make people call?', 'Score it in 12 taps.'],
-  sub: 'One-tap questions on how your site looks, reads and persuades. About 90 seconds. Your score is free at the end, and your 3 biggest fixes are one email away.',
-  tip: 'Open your website on your phone first. Most questions ask you to look at it.',
-  cta: 'Score my website',
-  under: 'No website yet? Start anyway. There’s a short path for you.',
-  book: 'Rather talk? Book a 15-min call',
+  meta: 'Free · About 90 seconds · No sign-up to see your score', // NEW (Direction B mock): recombines the copy's eyebrow + trust line 3
   trust: [
     `${founderProjects.value}${founderProjects.suffix} projects by our founder since ${FOUNDED}`,
     `A studio in ${NAP.city} · clients in the USA, Australia and the Philippines`,
-    'No sign-up to see your score',
   ],
+  book: 'Rather talk? Book a 15-min call',
   resume: 'Continue where you left off',
   restart: 'Start over',
   noJs: 'This quiz needs JavaScript to add up your score. You can still book a free 15-minute call with Lord.',
 };
 
 /* ── Question chrome ────────────────────────────────────── */
+// NEW strings from the Direction B mocks (docs/marketing/quiz-redesign/review.md): Wordsmith + owner to approve.
 export const chrome = {
   of: 'of',
   back: 'Back',
-  hint: (n: number) => `Press 1–${n} to answer`,
-  hintMulti: (n: number) => `Press 1–${n} to tick · Enter for next`,
+  hint: (n: number) => `Press 1 to ${n}`, // NEW (mock), replaces "Press 1–5 to answer"
   multiNext: 'Done, next',
   adding: 'Adding up your answers…',
+  aboutYou: 'About you', // NEW (mock): the progress label for Q1, Q2 and the no-website questions
+  halfway: 'halfway there', // NEW (mock): milestone at the real halfway point
 };
 
 /* ── Questions (one per screen) ─────────────────────────── */
@@ -444,7 +441,14 @@ export const result = {
   before: 'Before',
   after: 'After',
   why: 'Why it works',
-  lockedTag: 'Before-and-after locked',
+  lockLine: (biz: string) => `Example for ${biz}, unlocks with your email`, // NEW (mock)
+  lockedSr: 'Locked until you add your email.',
+  gateChip: 'Unlock your 3 fixes', // NEW (mock)
+  gateAdd: '+ Add your website (optional)', // NEW (mock)
+  gateNamePh: 'Your first name', // NEW (mock)
+  gateEmailPh: 'you@yourbusiness.com', // NEW (mock)
+  jump: 'See your 3 biggest fixes', // NEW (mock, phones)
+  fixesSubDone: (biz: string) => `Each one with a before-and-after for ${biz}, and why it works.`, // NEW (mock)
   gateLine: (biz: string) => `Get your 3 fixes with before-and-after examples for ${biz}. Where should we send them?`,
   gateName: 'First name',
   gateEmail: 'Email',
@@ -459,10 +463,11 @@ export const result = {
   helpBody: 'Book a free 15-minute call. We’ll open your site together and go through your 3 fixes.',
   spam: QUIZ_RESULT_EMAIL ? 'Didn’t get the email? Check your spam folder.' : '',
   book: {
-    eyebrow: 'Talk it through',
+    rail: 'Talk it through with Lord', // NEW (mock, desktop rail)
+    inline: 'Rather talk it through?', // NEW (mock, phones)
     cta: 'Book a 15-min call with Lord',
-    under: 'Free · 15 minutes on Google Meet · We go through your 3 fixes with you',
-    underNoSite: 'Free · 15 minutes on Google Meet · Tell us about the business',
+    facts: ['Free', '15 minutes on Google Meet', 'We go through your 3 fixes with you'], // the copy's "under the CTA" line, as a list
+    factsNoSite: ['Free', '15 minutes on Google Meet'],
     alt: 'Lord Arcamo, founder of Fazed Digital',
   },
   casesH: { match: 'Work for businesses like yours', local: 'Work for local service businesses', any: 'Recent work' },

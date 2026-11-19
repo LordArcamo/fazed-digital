@@ -1,7 +1,7 @@
 ---
 import Logo from './Logo.astro';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
-import { NAP, SOCIALS } from '../data/site';
+import { NAP, SOCIALS, BOOK } from '../data/site';
 import { labShipped, pad2 } from '../data/lab';
 import { offerPrice } from '../data/offers';
 import { caseIndex, countries } from '../data/cases';
@@ -28,10 +28,11 @@ const menu = [
 const total = pad2(menu.length + 1); // + the 7-day row
 const cur = menu.find((m) => m.href === current);
 ---
-<header class="hdr" id="hdr">
+<header class:list={['hdr', lp === 'quiz' && 'hdr--quiz']} id="hdr">
   <div class="hdr-in container">
     {lp ? <span class="hdr-logo"><Logo /></span> : <a href="/" class="hdr-logo" aria-label="Fazed Digital, home"><Logo /></a>}
-    {lp ? <>
+    {lp === 'quiz' ? <a class="hdr-book" href={BOOK} target="_blank" rel="noopener" data-book="bar"><img src="/images/team/lord.jpeg" alt="" width="32" height="32" /><span>Book a call</span><span class="sr-only"> with Lord (opens the booking calendar)</span></a>
+    : lp ? <>
     <p class="hdr-tel mono hdr-tel--lp"><span class="sr-only">Studio in Iligan City, Philippines. We reply in 1 business day.</span><span aria-hidden="true"><span class="t-open" data-open></span> <span class="t-lbl" data-open-l>Studio</span> · <span class="t-time" data-clock></span> PHT<span class="t-city"> · Reply in 1 business day</span></span></p>
     {lp === 'quiz' ? null : lp === 'audit' ? <div class="sd-lp" id="sd-lp" role="region" aria-label="Book your free website check">
       <p class="mono sd-price"><span class="t-city">Free website check · </span>15 min</p>
@@ -91,6 +92,14 @@ const cur = menu.find((m) => m.href === current);
   :global(::view-transition-new(hdr)), :global(::view-transition-new(sd)), :global(::view-transition-new(sdlp)) { animation: none; }
   :global(::view-transition-group(hdr)), :global(::view-transition-group(sd)), :global(::view-transition-group(sdlp)) { animation: none; }
   .hdr-in { height: 100%; display: flex; align-items: center; }
+  /* /quiz (Direction B "Lime Room"): a slim ink bar in the flow, the real logo in paper, a "Book a call" pill with Lord's face */
+  .hdr--quiz { position: relative; height: 60px; background: var(--black); }
+  .hdr--quiz .hdr-in { justify-content: space-between; }
+  .hdr-book { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border-radius: 999px; background: var(--white); color: var(--black); font-family: var(--font-display); font-weight: 500; font-size: .95rem; text-decoration: none; transition: background-color .2s; }
+  .hdr-book:hover { background: var(--lime); }
+  .hdr-book:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .hdr-book img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; }
+  @media (min-width: 1024px) { .hdr--quiz { height: 72px; } }
   .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; flex: none; }
   .hdr-lp { margin-left: auto; min-height: 44px; }
   @media (max-width: 479px) { .hdr-lp { padding: 0 1rem; font-size: .9rem; } .hdr-lp .arrow { display: none; } }

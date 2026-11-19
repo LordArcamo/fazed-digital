@@ -4,7 +4,7 @@ const { variant = 'usd' } = Astro.props;
 ---
 <footer class="lpft page" id="footer">
   <div class="container lpft-in">
-    <p class="mono">© {BUILD_YEAR} Fazed Digital · {variant === 'php' ? 'Iligan City, Lanao del Norte, Philippines' : 'Iligan City, Philippines'}</p>
+    <p class={variant === 'quiz' ? 'lpft-c' : 'mono'}>© {BUILD_YEAR} Fazed Digital · {variant === 'php' ? 'Iligan City, Lanao del Norte, Philippines' : 'Iligan City, Philippines'}</p>
     <nav aria-label="Footer"><ul>
       <!-- Landing-page footer: no exits into the main site; legal opens in a new tab -->
       {variant !== 'audit' && variant !== 'quiz' && <li data-market={variant === 'php' ? 'usd' : 'ph'}>{variant === 'php' ? <a href="/lp/7-day-website">USD pricing ($)</a> : <a href="/lp/7-day-website/ph">See peso pricing (₱)</a>}</li>}
@@ -19,4 +19,5 @@ const { variant = 'usd' } = Astro.props;
   .lpft ul { display: flex; flex-wrap: wrap; gap: .25rem 1.5rem; }
   .lpft a, .lpft button { display: inline-flex; min-height: 44px; align-items: center; color: var(--gray-300); }
   .lpft a:hover, .lpft button:hover { color: var(--lime); }
+  .lpft-c { color: var(--gray-300); font-size: .9rem; }
 </style>
