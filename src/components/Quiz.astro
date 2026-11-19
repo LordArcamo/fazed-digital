@@ -334,7 +334,7 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
   .qz[data-step='mid'] .qz-coach { display: inline-flex; }
   .qz[data-step='mid'] .qz-qnav { display: flex; }
   .qz[data-step='mid'] .q-end { margin-top: 0; padding-top: 24px; } /* answers follow the question; a screen-high gap read as broken (owner) */
-  .qz .q-h:focus, .qz .q-h:focus-visible, .qz .qz-score-h:focus, .qz .qz-score-h:focus-visible { outline: none; } /* programmatic focus target for screen readers, not a control */
+  .qz .q-h:focus, .qz .q-h:focus-visible, .qz .qz-score-h:focus, .qz .qz-score-h:focus-visible { outline: none; box-shadow: none; } /* programmatic focus target for screen readers, not a control */
   .qz[data-step='mid'] .qz-prog-t b { font-size: 3.2rem; line-height: .85; }
   .qz[data-step='mid'] .qz-prog-t em { margin-left: auto; padding: 6px 12px; border-radius: 999px; background: var(--ink); color: var(--lime); font-size: .85rem; }
   .qz[data-step='mid'] .qz-prog-t em::before { content: none; }
@@ -549,4 +549,83 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
     .slab { border: 2px solid CanvasText; }
     .slab:has(input:checked) { outline: 3px solid Highlight; }
   }
+
+  /* ── Calm skin (owner, 19 Nov: the full lime room read as crude) ─────────────────────────────
+     Porcelain page, one centred column, white answer cards with a hairline, lime ONLY on the chosen
+     answer and the Book buttons, a thin progress bar, questions at a readable size. */
+  .qz { --card: #fff; --line: color-mix(in srgb, var(--black) 12%, var(--white)); --soft: color-mix(in srgb, var(--black) 58%, var(--white)); }
+  .qz-room { background: radial-gradient(900px 480px at 50% -12%, color-mix(in srgb, var(--lime) 30%, transparent), transparent 70%), var(--white); }
+  .qz-h1 { font-size: clamp(2rem, 1.4rem + 2.4vw, 3.6rem); line-height: 1; }
+  .qz-tail { color: var(--soft); }
+  .qz-meta { font-weight: 600; color: var(--soft); }
+  .qz-trust li::before { background: var(--lime-dark); }
+
+  /* progress: thin and quiet */
+  .qz-track { height: 6px; border-radius: 3px; background: var(--line); }
+  .qz-track i { border-radius: 3px; background: var(--black); min-width: 6px; }
+  .qz-track s, .qz[data-step='mid'] .qz-track s { display: none !important; }
+  .qz-prog-t b, .qz[data-step='mid'] .qz-prog-t b { font-family: var(--font-body); font-size: 1rem; font-weight: 700; line-height: 1; }
+  .qz-prog-t span { font-weight: 500; color: var(--soft); }
+  .qz[data-step='mid'] .qz-prog-t em { padding: 4px 10px; background: color-mix(in srgb, var(--lime) 55%, var(--white)); color: var(--black); font-weight: 600; font-size: .8rem; }
+
+  /* questions */
+  .q-h { font-size: clamp(1.5rem, 1.15rem + 1.4vw, 2.25rem); line-height: 1.1; }
+  .q-hint { font-weight: 500; color: var(--soft); }
+  .qz-coach { background: var(--card); box-shadow: 0 0 0 1px var(--line), 0 6px 20px -12px rgba(9,9,9,.25); }
+  .qz-coach::before { background: var(--lime-dark); }
+
+  /* answer cards: white, hairline, lift on hover, lime when chosen */
+  .slab { min-height: 62px; padding: 10px 16px 10px 12px; border-radius: 14px; background: var(--card); color: var(--black); font-weight: 600; font-size: 1.04rem; box-shadow: 0 0 0 1px var(--line), 0 1px 2px rgba(9,9,9,.04); transition: transform 140ms var(--ease), box-shadow 140ms, background-color 160ms; }
+  .slab-key { width: 28px; height: 28px; border-radius: 8px; background: transparent; color: var(--soft); box-shadow: inset 0 0 0 1.5px var(--line); font-size: .85rem; }
+  .slab-node { width: 22px; height: 22px; box-shadow: inset 0 0 0 1.5px var(--line); }
+  @media (hover: hover) { .slab:hover { background: var(--card); box-shadow: 0 0 0 1.5px var(--black), 0 10px 24px -14px rgba(9,9,9,.35); transform: translateY(-1px); } }
+  .slab:active { transform: scale(.99); box-shadow: 0 0 0 1.5px var(--black); }
+  .slab:has(input:checked) { transform: none; background: var(--lime); color: var(--black); box-shadow: 0 0 0 1.5px var(--black); }
+  .slab:has(input:checked) .slab-key { background: var(--black); color: var(--lime); box-shadow: none; }
+  .slab:has(input:checked) .slab-node { background: var(--black); color: var(--lime); box-shadow: none; }
+  .slab:has(input:focus-visible) { outline: 2px solid var(--black); outline-offset: 3px; }
+  .slab:has(input[aria-invalid]) { box-shadow: 0 0 0 1.5px #b42318; }
+  .slab--none:not(:has(input:checked)) { background: var(--card); }
+  .qz-back { font-weight: 600; font-size: 1rem; color: var(--soft); }
+  .qz-back:hover { color: var(--black); }
+  .qz-kb { color: var(--soft); }
+
+  /* mid questions: one centred column on every screen size */
+  .qz[data-step='mid'] .qz-grid { align-items: center; }
+  .qz[data-step='mid'] .qz-box, .qz[data-step='mid'] .qz-prog, .qz[data-step='mid'] .qz-qnav { width: 100%; max-width: 680px; }
+  @media (min-width: 1024px) {
+    .qz[data-step='mid'] .q-h { font-size: 2.5rem; }
+    .qz[data-step='mid'] .slab { min-height: 66px; font-size: 1.1rem; }
+    .qz[data-step='first'] .qz-box { padding: 28px; border-radius: 24px; background: var(--card); box-shadow: 0 0 0 1px var(--line), 0 30px 60px -40px rgba(9,9,9,.35); }
+    .qz[data-step='first'] .slab { min-height: 72px; }
+  }
+  /* calm result: porcelain top with a lime glow, white cards on hairlines, lime only on the Book button */
+  .qz-res { background: var(--white); }
+  .qz-limetop { background: radial-gradient(900px 420px at 30% -20%, color-mix(in srgb, var(--lime) 34%, transparent), transparent 70%), var(--white); box-shadow: 0 1px 0 var(--line); }
+  .qz-score-l { font-weight: 600; color: var(--soft); }
+  .qz-band { background: color-mix(in srgb, var(--lime) 55%, var(--white)); color: var(--black); font-weight: 600; }
+  .qz-score-sum { color: var(--soft); }
+  .qz-area { border-top-color: var(--line); }
+  .qz-meter i { background: var(--line); }
+  .qz-area.is-low .qz-meter i { box-shadow: none; }
+  .qz-area.is-low .qz-meter i:not(.on) { background: color-mix(in srgb, var(--lime) 55%, var(--white)); }
+  .qz-fx-list :global(.qz-fix), .qz-book, .qz-sec2, .qz-plan-card { background: var(--card); box-shadow: 0 0 0 1px var(--line), 0 10px 30px -18px rgba(9,9,9,.3); }
+  .qz-fx-list :global(.qz-fix-n) { background: color-mix(in srgb, var(--lime) 55%, var(--white)); color: var(--black); }
+  .qz-fx-list :global(.qz-ba-row) { background: color-mix(in srgb, var(--black) 3%, var(--white)); box-shadow: none; }
+  .qz-fx-list :global(.qz-ba-after) { background: color-mix(in srgb, var(--lime) 30%, var(--white)); box-shadow: 0 0 0 1px color-mix(in srgb, var(--lime-dark) 60%, var(--white)); }
+  .qz-book-who img { box-shadow: 0 0 0 2px var(--card), 0 0 0 3px var(--line); }
+  .qz-done { background: color-mix(in srgb, var(--lime) 40%, var(--white)); box-shadow: 0 0 0 1px var(--line); }
+  .qz-gate { background: var(--card); color: var(--black); box-shadow: 0 0 0 1.5px var(--black), 0 16px 40px -22px rgba(9,9,9,.4); }
+  .qz-gate-k { background: color-mix(in srgb, var(--lime) 55%, var(--white)); font-weight: 600; }
+  .qz-fld input { background: var(--card); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--black) 22%, var(--white)); }
+  .qz-fld input:focus-visible { box-shadow: inset 0 0 0 2px var(--black), 0 0 0 4px color-mix(in srgb, var(--lime) 70%, transparent); }
+  .qz-fld input[aria-invalid] { box-shadow: inset 0 0 0 2px #b42318; }
+  .qz-typo button, .qz-gate-err { color: #b42318; }
+  .qz-gate-add { color: var(--black); }
+  .qz-gate-p { color: var(--soft); } .qz-gate-p a { color: var(--black); }
+  .qz-cta--lime { box-shadow: 0 0 0 1.5px var(--black); }
+  .qz-cta--lime:active, .qz-cta--lime:disabled { transform: scale(.99); box-shadow: 0 0 0 1.5px var(--black); }
+  @media (hover: hover) { .qz-cta--lime:hover { background: var(--lime-dark); } }
+  .qz-cta--ink { background: var(--black); color: var(--white); box-shadow: none; }
+  .qz-cta--ink:active { transform: scale(.99); }
 </style>

@@ -430,7 +430,7 @@ export const nextSteps = {
 
 /* ── Result + gate copy (copy/quiz.md §4, §6) ───────────── */
 export const result = {
-  label: 'Based on your answers',
+  label: 'Your website score',
   of: '/100',
   areasH: 'Your 5 areas',
   fixesH: 'Your 3 biggest fixes',

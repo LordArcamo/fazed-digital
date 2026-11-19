@@ -93,11 +93,14 @@ const cur = menu.find((m) => m.href === current);
   :global(::view-transition-group(hdr)), :global(::view-transition-group(sd)), :global(::view-transition-group(sdlp)) { animation: none; }
   .hdr-in { height: 100%; display: flex; align-items: center; }
   /* /quiz (Direction B "Lime Room"): a slim ink bar in the flow, the real logo in paper, a "Book a call" pill with Lord's face */
-  .hdr--quiz { position: relative; height: 60px; background: var(--black); }
+  .hdr--quiz { position: relative; height: 60px; background: var(--white); box-shadow: 0 1px 0 color-mix(in srgb, var(--black) 8%, transparent); }
+  /* calm skin (owner 19 Nov): porcelain bar, the real logo in ink (Logo.astro paints currentColor; only its colour changes) */
+  .hdr--quiz :global(.logo), .hdr--quiz :global(.logo-mark) { color: var(--black); }
+  .hdr--quiz :global(.logo-sub) { color: color-mix(in srgb, var(--black) 55%, var(--white)); }
   .hdr--quiz .hdr-in { justify-content: space-between; }
-  .hdr-book { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border-radius: 999px; background: var(--white); color: var(--black); font-family: var(--font-display); font-weight: 500; font-size: .95rem; text-decoration: none; transition: background-color .2s; }
-  .hdr-book:hover { background: var(--lime); }
-  .hdr-book:focus-visible { outline: 2px solid var(--lime); outline-offset: 3px; }
+  .hdr-book { display: inline-flex; align-items: center; gap: 8px; height: 44px; padding: 0 16px 0 6px; border-radius: 999px; background: var(--lime); color: var(--black); font-family: var(--font-display); font-weight: 500; font-size: .95rem; text-decoration: none; transition: background-color .2s; }
+  .hdr-book:hover { background: var(--lime-dark); }
+  .hdr-book:focus-visible { outline: 2px solid var(--black); outline-offset: 3px; }
   .hdr-book img { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; object-position: 50% 30%; }
   @media (min-width: 1024px) { .hdr--quiz { height: 72px; } }
   .hdr-logo { display: inline-flex; min-height: 44px; align-items: center; flex: none; }
