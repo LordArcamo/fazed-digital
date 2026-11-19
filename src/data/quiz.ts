@@ -449,7 +449,7 @@ export const result = {
   gateEmailPh: 'you@yourbusiness.com', // NEW (mock)
   jump: 'See your 3 biggest fixes', // NEW (mock, phones)
   fixesSubDone: (biz: string) => `Each one with a before-and-after for ${biz}, and why it works.`, // NEW (mock)
-  gateLine: (biz: string) => `Get your 3 fixes with before-and-after examples for ${biz}. Where should we send them?`,
+  gateLine: (biz: string) => `Get your 3 fixes with before-and-after examples for ${biz}.${QUIZ_RESULT_EMAIL ? ' Where should we send them?' : ''}`,
   gateName: 'First name',
   gateEmail: 'Email',
   gateSite: 'Website address (optional)',
@@ -457,7 +457,7 @@ export const result = {
   gateCta: 'Show my 3 fixes',
   gateUnder: QUIZ_RESULT_EMAIL ? 'We’ll email you a copy too.' : '',
   gateSending: 'One moment…',
-  privacy: 'We’ll use your details to send your result and reply to you. We never sell your data.',
+  privacy: QUIZ_RESULT_EMAIL ? 'We’ll use your details to send your result and reply to you. We never sell your data.' : 'We’ll use your details to reply to you. We never sell your data.',
   doneH: (name: string, email: string) => (QUIZ_RESULT_EMAIL ? `Done, ${name}. Your 3 fixes are below, and a copy is on its way to ${email}.` : `Done, ${name}. Your 3 fixes are below.`),
   helpH: 'Want help with them?',
   helpBody: 'Book a free 15-minute call. We’ll open your site together and go through your 3 fixes.',

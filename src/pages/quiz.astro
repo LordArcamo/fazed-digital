@@ -1,12 +1,12 @@
 ---
 // /quiz: website quiz landing page (docs/marketing/quiz-lp-plan.md). Ad, social and outreach landing page.
 // formation="none": the lime and paper grounds are opaque, so the GPU field would load for nothing (no GL, no motion chunk).
-// Hidden from search until the owner ships it: noindex, out of the sitemap (astro.config.mjs) and out of llms.txt.
+// Live since 2026-11-19 (owner: "push this quiz landing page"): indexed and in the sitemap.
 // Landing-page chrome (lp="quiz"): logo + studio clock, no site nav, no chat, LP footer.
 import Base from '../layouts/Base.astro';
 import Quiz from '../components/Quiz.astro';
 import { page } from '../data/quiz';
 ---
-<Base title={page.title} description={page.description} formation="none" lp="quiz" noindex>
+<Base title={page.title} description={page.description} formation="none" lp="quiz">
   <Quiz />
 </Base>
