@@ -10,7 +10,7 @@ import { FOUNDED, NAP } from './site';
 
 /** The result email to the lead (copy/quiz.md §7) needs the owner's approval, a sending address and an email tool first.
  *  While false: nothing is emailed to the lead and the page never promises an emailed copy. The team alert always goes. */
-export const QUIZ_RESULT_EMAIL = false;
+export const QUIZ_RESULT_EMAIL = true; // owner: start it (2026-11-19). Sender info@ as "Lord at Fazed Digital" (src/lib/quiz-email.ts)
 
 export type AreaId = 'first' | 'clarity' | 'trust' | 'persuasion' | 'ease';
 export type BizId = 'trades' | 'health' | 'food' | 'pro' | 'retail' | 'other';

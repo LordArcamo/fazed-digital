@@ -1,13 +1,17 @@
 // Website quiz leads (/quiz email gate), handled inside /api/lp-submit when the body has kind: 'quiz'.
 // Same pipeline as every other lead: CRM Inbox (once CRM_KEY is set) + Gmail alert to the team + HubSpot contact.
 // Tagged source "quiz · …" with the score, band, answers and market (US/AU/PH).
-// The lead's own result email (copy/quiz.md §7) is NOT sent until the owner approves it (QUIZ_RESULT_EMAIL in data/quiz.ts).
+// The lead's own result email (copy/quiz.md §7, src/lib/quiz-email.ts) goes while QUIZ_RESULT_EMAIL is on (data/quiz.ts).
 import { sendLead, LEAD_TO, LEAD_CC } from './mail';
+import { quizEmail } from './quiz-email';
+import { QUIZ_RESULT_EMAIL } from '../data/quiz';
+import { NAP } from '../data/site';
 import { saveToHubSpot } from './hubspot';
 import { saveToCrm, markCrmAlert } from './crm';
 
 const s = (v: unknown, max = 300) => (typeof v === 'string' ? v.trim().slice(0, max) : '');
 const sent = new Map<string, number>(); // best-effort duplicate guard per warm instance (the client also blocks double taps)
+const mailed = new Map<string, number>(); // one result email per address per 10 minutes, so the gate can't flood an inbox
 
 export async function quizLead(body: Record<string, unknown>, referer: string): Promise<Response> {
   const d = {
@@ -15,6 +19,7 @@ export async function quizLead(body: Record<string, unknown>, referer: string): 
     score: typeof body.score === 'number' && body.score >= 0 && body.score <= 100 ? Math.round(body.score) : null,
     band: s(body.band, 80), business: s(body.business, 80), hasSite: s(body.hasSite, 80), weakest: s(body.weakest, 300),
     answers: s(body.answers, 6000), source: s(body.source) || 'quiz', idem: s(body.idem, 64),
+    bandId: s(body.bandId, 20), bizId: s(body.bizId, 20), fixIds: Array.isArray(body.fixIds) ? body.fixIds.slice(0, 3).map((x) => s(x, 8)) : [],
   };
   const flagged = !!s(body.website); // honeypot: flagged, never dropped; inbox only
   const fast = typeof body.t === 'number' && body.t > 0 && body.t < 8000; // 12 taps in under 8 s: likely a bot (flag only)
@@ -52,6 +57,17 @@ export async function quizLead(body: Record<string, unknown>, referer: string): 
   await markCrmAlert(crm, !!mail);
   if (!crm && !mail && hs !== 'ok') return json({ error: 'Your details didn’t send. Please try again.' }, 502);
   if (d.idem) sent.set(d.idem, now);
+  // the lead's own copy of the result: never for flagged or too-fast submissions, never fails the lead
+  if (QUIZ_RESULT_EMAIL && !flagged && !fast && d.score !== null) {
+    const k = d.email.toLowerCase();
+    for (const [e, at] of mailed) if (now - at > 600_000) mailed.delete(e);
+    const m = mailed.has(k) ? null : quizEmail({ name: d.name, score: d.score, bandId: d.bandId, bizId: d.bizId, fixIds: d.fixIds, market: d.market });
+    if (m) {
+      mailed.set(k, now);
+      const r = await sendLead({ to: [d.email], replyTo: NAP.email, fromName: 'Lord at Fazed Digital', subject: m.subject, html: m.html, text: m.text });
+      console.log(`Quiz result email: ${r || 'failed'}`);
+    }
+  }
   return json({ ok: true });
 }
 

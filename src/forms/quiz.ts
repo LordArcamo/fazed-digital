@@ -403,7 +403,7 @@ export function initQuiz(root: HTMLElement) {
       .map((id) => { const q = Q.get(id)!; return `${q.n}. ${q.h} → ${label(id)}${q.area ? ` (${pts(id)}/3)` : ''}`; }).join('\n');
     const p = {
       kind: 'quiz', name, email, currentWebsite: url, market, path: 'site',
-      score: r.total, band: r.band.name, business: label('biz'), hasSite: label('has'),
+      score: r.total, band: r.band.name, bandId: r.band.id, bizId: biz(), fixIds: r.weak.map((w) => w.fix), business: label('biz'), hasSite: label('has'),
       weakest: r.weak.map((w) => `${w.name} ${w.got}/6 (${w.fix})`).join(', '), answers,
       source: `quiz · ${leadSource()}`, website: gval('fz_check'), t: t0 ? Date.now() - t0 : 0, idem,
     };
