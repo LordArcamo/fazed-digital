@@ -44,7 +44,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-11-10 | PH | Design | Resort Website in the Philippines: Direct Bookings, Not DMs | resort website philippines | /lp/7-day-website/ph → /blog/resort-website-philippines
 - [x] 2026-11-11 | CA | Strategy | Small Business Website Cost in Canada: A 2027 Price Guide | website cost canada | /lp/7-day-website → /blog/website-cost-canada-2027
 - [x] 2026-11-11 | AU | Development | Law Firm Website, Client Portal and App: Do You Need All Three? | law firm websites australia | /work/08 → /blog/law-firm-websites-australia
-- [ ] 2026-11-12 | PH | Strategy | Freelancer or Agency for Your Website in the Philippines? | web designer philippines freelancer vs agency | /lp/7-day-website/ph
+- [x] 2026-11-12 | PH | Strategy | Freelancer or Agency for Your Website in the Philippines? | web designer philippines freelancer vs agency | /lp/7-day-website/ph → /blog/web-designer-philippines-freelancer-vs-agency
 - [ ] 2026-11-13 | US | Strategy | Time Zones and Offshore Web Projects: A US Owner's Playbook | time difference philippines and usa | /lp/7-day-website
 - [ ] 2026-11-14 | PH | Development | Car Rental Booking System in the Philippines: The Must-Haves | car rental booking system philippines | /work/06
 - [ ] 2026-11-15 | UK | Strategy | UK VAT on an Overseas Web Designer: A Plain-English Primer | uk vat on overseas services | /lp/7-day-website
