@@ -5,7 +5,8 @@
 // offers.ts, cases from cases.ts. The page (Quiz.astro) serialises what the browser needs into one JSON block, so the
 // engine (src/forms/quiz.ts) never imports this file and none of these imports reach the client bundle.
 import { prices, stats } from './proof';
-import { offerPrice } from './offers';
+import { offerPrice, bfPrice } from './offers';
+import { BLACK_FRIDAY } from './season';
 import { FOUNDED, NAP } from './site';
 
 /** The result email to the lead (copy/quiz.md §7) needs the owner's approval, a sending address and an email tool first.
@@ -411,6 +412,23 @@ export const buildingLine = 'Good timing: these are cheaper to fix before launch
 // The 7-day price: US/AU see the USD starter, PH sees offerPrice() (the founding rate while FOUNDING_PH.on). The engine
 // picks one by market, so a single price is printed (the copy's "$499 (₱…)" pair is for the static geo swap).
 const starter = { usd: prices.usd.starter, php: offerPrice('php', 'starter').price };
+// Black Friday (src/data/season.ts): shown only while html.bf is on. Half the standard price, never stacked on the founding rate.
+const sale = (m: 'usd' | 'php') => ({
+  starter: { was: prices[m].starter, now: bfPrice(m, 'starter') },
+  growth: { was: prices[m].growth, now: bfPrice(m, 'growth') },
+  pro: { was: prices[m].pro, now: bfPrice(m, 'pro') },
+});
+export const blackFriday = {
+  k: `Black Friday · ${BLACK_FRIDAY.dates}`,
+  h: '7-day websites are 50% off.',
+  from: 'Starter',
+  cta: 'See the sale prices',
+  nextH: 'A new site at half price.',
+  body: (now: string, was: string) => `A new custom site, live in 7 business days or 20% off the project fee if we miss it on our side. Black Friday price from ${now} instead of ${was}, when you send your brief by ${BLACK_FRIDAY.ends}.`,
+  prices: { usd: sale('usd'), php: sale('php') },
+  ends: `The sale price ends ${BLACK_FRIDAY.ends}.`,
+  hash: '#black-friday',
+};
 export const nextSteps = {
   sevenday: {
     h: 'Starting over may be faster.',

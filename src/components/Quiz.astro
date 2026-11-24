@@ -7,7 +7,7 @@
 import { Image } from 'astro:assets';
 import {
   start, chrome, questions, NO_SITE, coachExtra, areas, AREA_PRIORITY, areaLevels, fixes, bands, buildingLine,
-  nextSteps, result, bizPhrase, nosite, casesByBiz, msg, QUIZ_RESULT_EMAIL,
+  nextSteps, result, bizPhrase, nosite, casesByBiz, msg, blackFriday, QUIZ_RESULT_EMAIL,
 } from '../data/quiz';
 import { caseIndex } from '../data/cases';
 import { workImages } from '../data/images';
@@ -29,6 +29,7 @@ const data = {
     sevenday: { h: nextSteps.sevenday.h, body: { usd: nextSteps.sevenday.body(nextSteps.sevenday.price.usd), php: nextSteps.sevenday.body(nextSteps.sevenday.price.php) }, cta: nextSteps.sevenday.cta, href: nextSteps.sevenday.href },
     audit: nextSteps.audit, branding: nextSteps.service.branding, web: nextSteps.service.web, seo: nextSteps.seo,
   },
+  bf: { prices: blackFriday.prices, h: blackFriday.nextH, ends: blackFriday.ends, hash: blackFriday.hash, body: { usd: blackFriday.body(blackFriday.prices.usd.starter.now, blackFriday.prices.usd.starter.was), php: blackFriday.body(blackFriday.prices.php.starter.now, blackFriday.prices.php.starter.was) } },
   nosite: { ...nosite, timeline: { ...nosite.timeline, asap: capsCopy.sevenDay } },
   cases: casesByBiz,
   t: {
@@ -120,6 +121,10 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
 
     <div class="qz-wrap qz-resg">
       <div class="qz-main">
+        <a class="qz-bf bf-on" href="/lp/7-day-website#black-friday" data-bf-link>
+          <span class="qz-bf-t"><span class="qz-bf-k">{blackFriday.k}</span><span class="qz-bf-h">{blackFriday.h}</span><span class="qz-bf-c">{blackFriday.cta} <span aria-hidden="true">→</span></span></span>
+          <span class="qz-bf-p"><span class="qz-bf-n">{blackFriday.from}</span><s><span class="sr-only">Standard price </span><span data-bf-was></span></s><strong><span class="sr-only">Black Friday price </span><span data-bf-now></span></strong></span>
+        </a>
         <section class="qz-areas qz-site" aria-labelledby="qz-areas-h">
           <h2 class="qz-sec-h" id="qz-areas-h">{result.areasH}</h2>
           <ol>{areas.map((a) => (
@@ -130,7 +135,7 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
         <section class="qz-plan qz-nosite" aria-labelledby="qz-plan-h">
           <h2 class="qz-sec-h" id="qz-plan-h">{nosite.planH}</h2>
           <div class="qz-plan-card">
-            <p class="qz-plan-pk"><span data-plan-name></span> <span class="qz-plan-price" data-plan-price></span></p>
+            <p class="qz-plan-pk"><span data-plan-name></span> <s class="qz-plan-was bf-on" data-plan-was></s> <span class="qz-plan-price" data-plan-price></span></p>
             <p data-plan-line></p>
             <p class="qz-plan-fixed">{nosite.fixed}</p>
             <p class="qz-plan-fb" data-plan-fb hidden>{nosite.facebookPH}</p>
@@ -366,6 +371,17 @@ const bookCard = (where: 'rail' | 'inline') => ({ where, h: where === 'rail' ? r
   .qz-building { margin-top: 10px; font-weight: 700; }
   .qz-jump { display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; min-height: 48px; padding: 0 20px; border-radius: 999px; background: var(--ink); color: var(--lime); font-family: var(--font-display); font-weight: 600; text-decoration: none; }
 
+  .qz-bf { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 28px; padding: 18px 20px; border-radius: 22px; background: var(--black); color: var(--white); text-decoration: none; }
+  .qz-bf-t { display: grid; gap: 4px; min-width: 0; }
+  .qz-bf-k { font-size: .8rem; color: var(--lime); }
+  .qz-bf-h { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; line-height: 1.12; }
+  .qz-bf-c { font-size: .95rem; text-decoration: underline; text-underline-offset: 4px; }
+  .qz-bf-p { display: grid; justify-items: end; flex: none; text-align: right; }
+  .qz-bf-n { font-size: .85rem; } .qz-bf-p s { color: var(--gray-300); font-size: .95rem; }
+  .qz-bf-p strong { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem); line-height: 1; letter-spacing: -.02em; color: var(--lime); }
+  .qz-bf:focus-visible { outline: 3px solid var(--lime-dark); outline-offset: 3px; }
+  @media (hover: hover) { .qz-bf:hover .qz-bf-c { color: var(--lime); } }
+  .qz-plan-was { font-weight: 500; color: var(--soft); font-size: .62em; }
   .qz-resg { padding-top: 28px; padding-bottom: 24px; }
   .qz-main { display: grid; gap: 0; min-width: 0; }
   .qz-sec-h { font-family: var(--font-display); font-weight: 600; font-size: 1.6rem; line-height: 1.1; letter-spacing: -.015em; }

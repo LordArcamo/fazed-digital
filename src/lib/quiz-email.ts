@@ -1,8 +1,9 @@
 // The quiz result email to the lead (copy/quiz.md §7, Version A; owner said start it 2026-11-19).
 // Sent from info@ as "Lord at Fazed Digital" through the same Gmail transport as the 7-day confirmation (src/lib/mail.ts).
 // Every line comes from src/data/quiz.ts: the client only says which band, business type and fix ids it showed.
-import { fixes, bands, bizPhrase, nextSteps, areas, result, type BizId } from '../data/quiz';
+import { fixes, bands, bizPhrase, nextSteps, areas, result, blackFriday, type BizId } from '../data/quiz';
 import { NAP, SITE_URL, BOOK } from '../data/site';
+import { blackFridayLive } from '../data/season';
 
 export interface QuizMail { name: string; score: number; bandId: string; bizId: string; fixIds: string[]; market: string }
 
@@ -18,7 +19,9 @@ export function quizEmail(q: QuizMail): { subject: string; html: string; text: s
   const list = fx.map((f, i) => ({ n: i + 1, area: areas.find((a) => a.id === f!.area)!.name, problem: f!.problem, before: f!.ex[exKey][0], after: f!.ex[exKey][1], why: f!.principle }));
 
   const n = band.next;
+  const m = php ? 'php' : 'usd', st = blackFriday.prices[m].starter;
   const card =
+    n === 'sevenday' && blackFridayLive() ? { h: blackFriday.nextH, body: blackFriday.body(st.now, st.was), cta: nextSteps.sevenday.cta, href: nextSteps.sevenday.href[m] + blackFriday.hash } :
     n === 'sevenday' ? { h: nextSteps.sevenday.h, body: nextSteps.sevenday.body(php ? nextSteps.sevenday.price.php : nextSteps.sevenday.price.usd), cta: nextSteps.sevenday.cta, href: php ? nextSteps.sevenday.href.php : nextSteps.sevenday.href.usd }
     : n === 'service' ? (q.fixIds[0] === 'FI-2' ? nextSteps.service.branding : nextSteps.service.web)
     : nextSteps[n];

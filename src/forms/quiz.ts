@@ -20,6 +20,7 @@ interface Data {
   preview: boolean; emailLive: boolean; noSite: string[]; q: Q[]; areas: { id: AreaId; name: string }[]; priority: AreaId[];
   levels: { min: number; label: string }[]; fixes: Fix[]; bands: Band[]; bizPhrase: Record<string, string>;
   next: { sevenday: { h: string; body: { usd: string; php: string }; cta: string; href: { usd: string; php: string } }; audit: Card; branding: Card; web: Card; seo: Card };
+  bf: { prices: Record<'usd' | 'php', Record<string, { was: string; now: string }>>; h: string; ends: string; hash: string; body: { usd: string; php: string } };
   nosite: {
     h: string; summary: string; facebookPH: string; prices: Record<'usd' | 'php', Record<string, { name: string; price: string }>>;
     picks: Record<string, { pkg: string; name?: string; line: string }>; timeline: Record<string, string>;
@@ -263,8 +264,9 @@ export function initQuiz(root: HTMLElement) {
   }
 
   function nextCard(id: 'sevenday' | 'audit' | 'branding' | 'web' | 'seo') {
+    const bf = sale();
     const c = id === 'sevenday'
-      ? { h: D.next.sevenday.h, body: D.next.sevenday.body[money], cta: D.next.sevenday.cta, href: D.next.sevenday.href[money] }
+      ? { h: bf ? D.bf.h : D.next.sevenday.h, body: bf ? D.bf.body[money] : D.next.sevenday.body[money], cta: D.next.sevenday.cta, href: D.next.sevenday.href[money] + (bf ? D.bf.hash : '') }
       : D.next[id];
     $('[data-next-h]').textContent = c.h;
     $('[data-next-b]').textContent = c.body;
@@ -273,7 +275,12 @@ export function initQuiz(root: HTMLElement) {
     l.href = c.href; l.dataset.nextLink = id;
   }
 
+  // Black Friday: html.bf is the visitor's own clock (Base.astro); the strip and the struck prices are .bf-on
+  const sale = () => document.documentElement.classList.contains('bf');
   function renderResult(animate: boolean) {
+    $('[data-bf-was]').textContent = D.bf.prices[money].starter.was;
+    $('[data-bf-now]').textContent = D.bf.prices[money].starter.now;
+    $<HTMLAnchorElement>('[data-bf-link]').href = D.next.sevenday.href[money] + D.bf.hash;
     const site = path() === 'site', r = score();
     res.dataset.path = site ? 'site' : 'nosite';
     res.dataset.band = site ? r.band.id : 'nosite';
@@ -302,10 +309,12 @@ export function initQuiz(root: HTMLElement) {
       const pick = D.nosite.picks[goal === 'calls' && a.who === 'far' ? 'callsFar' : goal] ?? D.nosite.picks.calls;
       const pk = pick.pkg ? D.nosite.prices[money][pick.pkg] : null;
       $('[data-plan-name]').textContent = pk ? `${pk.name},` : pick.name ?? '';
-      $('[data-plan-price]').textContent = pk ? pk.price : '';
+      const cut = pick.pkg && sale() ? D.bf.prices[money][pick.pkg] : null;
+      $('[data-plan-was]').textContent = cut ? cut.was : '';
+      $('[data-plan-price]').textContent = cut ? cut.now : pk ? pk.price : '';
       $('[data-plan-line]').textContent = pick.line;
       $('[data-plan-fb]').hidden = !(a.has === 'facebook' && market === 'PH');
-      $('[data-plan-when]').textContent = D.nosite.timeline[String(a.when)] ?? '';
+      $('[data-plan-when]').textContent = [D.nosite.timeline[String(a.when)], cut && D.bf.ends].filter(Boolean).join(' ');
       $('[data-plan-dl]').innerHTML = ['has', 'biz', 'goal', 'who', 'when'].filter(answered).map((id) => `<div><dt>${esc(Q.get(id)!.h)}</dt><dd>${esc(label(id))}</dd></div>`).join('');
       nextCard('sevenday');
     }
@@ -449,6 +458,7 @@ export function initQuiz(root: HTMLElement) {
     const book = t.closest<HTMLElement>('[data-book]');
     if (book) track('quiz_book_click', { from: book.dataset.book || '', band: finished ? String(res.dataset.band) : 'none', market });
     const nx = t.closest<HTMLElement>('[data-next-link]');
+    if (t.closest('[data-bf-link]')) track('quiz_next_click', { to: 'blackfriday', band: String(res.dataset.band), market });
     if (nx) track(nx.dataset.nextLink === 'sevenday' ? 'quiz_7day_click' : 'quiz_next_click', { to: nx.dataset.nextLink || '', band: String(res.dataset.band), market });
     const cs = t.closest<HTMLElement>('[data-case-link]');
     if (cs) track('quiz_case_click', { slug: cs.closest<HTMLElement>('[data-case]')?.dataset.case ?? '' });
