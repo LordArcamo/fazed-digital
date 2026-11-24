@@ -7,7 +7,8 @@ import Footer from '../components/Footer.astro';
 import CookieBanner from '../components/CookieBanner.astro';
 import ChatLauncher from '../components/ChatLauncher.astro';
 import SeasonPill from '../components/SeasonPill.astro';
-import { HALLOWEEN_LIVE } from '../data/season';
+import BlackFridayPill from '../components/BlackFridayPill.astro';
+import { HALLOWEEN_LIVE, BLACK_FRIDAY } from '../data/season';
 import LpFooter from '../components/LpFooter.astro';
 import { SITE_URL, NAP, SOCIALS, FOUNDED } from '../data/site';
 import { team } from '../data/team';
@@ -122,6 +123,12 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
     try{var m=q.match(/[?&]season=(\w+)/),S=sessionStorage;if(m)S.setItem('season',m[1]);var f=S.getItem('season'),t=new Date(Date.now()+288e5),md=(t.getUTCMonth()+1)*100+t.getUTCDate();
     if(f==='halloween'||(f!=='off'&&md>=1020&&md<=1101))h.classList.add('hw');if(S.getItem('hw-x'))h.classList.add('hw-off');}catch(e){}})(document); /* real visible height, see boot/main.ts */
   </script>
+  {BLACK_FRIDAY.on && <script is:inline data-from={BLACK_FRIDAY.from.join()} data-to={BLACK_FRIDAY.to.join()}>
+    // Black Friday (src/data/season.ts): html.bf while the sale is on, in the visitor's own time zone
+    (function(d){var s=d.currentScript.dataset,f=s.from.split(','),t=s.to.split(','),n=new Date(),p='';try{p=sessionStorage.getItem('season');if(sessionStorage.getItem('bf-x'))d.documentElement.classList.add('bf-hide')}catch(e){}
+    if(location.hostname==='www.fazeddigital.com')p='';
+    if(p==='blackfriday'||(p!=='off'&&n>=new Date(f[0],f[1]-1,f[2])&&n<new Date(t[0],t[1]-1,+t[2]+1)))d.documentElement.classList.add('bf')})(document);
+  </script>}
   <script is:inline>
     // Market swap: pesos and the PH line for visitors in the Philippines, dollars and the US line everywhere else.
     // The HTML stays complete for crawlers. Time zone decides before first paint; /api/geo (IP country) has the final say.
@@ -163,6 +170,7 @@ const pageSchema = schema ? (Array.isArray(schema) ? schema : [schema]) : [];
   {lp === 'quiz' && <CookieBanner inline />}
   {lp ? <LpFooter variant={lp} /> : <Footer />}
   {!lp && HALLOWEEN_LIVE && <SeasonPill />}
+  {!lp && BLACK_FRIDAY.on && <BlackFridayPill />}
   {lp !== 'quiz' && <CookieBanner />}
   {chatOn && <ChatLauncher />}
   <div id="route-announcer" class="sr-only" aria-live="polite"></div>

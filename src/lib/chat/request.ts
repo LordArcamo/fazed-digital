@@ -1,5 +1,6 @@
 // One chat request, shared by the live route and scripts/chat-eval.mjs, so the test set runs exactly what visitors get.
 import type Anthropic from '@anthropic-ai/sdk';
+import { blackFridayLive } from '../../data/season';
 import { RULES, sharedKnowledge, marketKnowledge, type Market } from './knowledge';
 
 // Sonnet 5.5: follows the "never claim" rules closely in English and Taglish, at sales-chat speed with thinking off.
@@ -22,6 +23,7 @@ export const END_TOOL: Anthropic.Tool = {
 // Two cache points: rules + knowledge are shared by everyone, the market block by that market. The live note stays after them.
 const shared = `${RULES}\n\n${sharedKnowledge()}`;
 const market = { ph: marketKnowledge('ph'), intl: marketKnowledge('intl') };
+const saleMarket = { ph: marketKnowledge('ph', true), intl: marketKnowledge('intl', true) };
 
 export function chatRequest(model: string, mkt: Market, note: string, messages: Anthropic.MessageParam[]): Anthropic.MessageCreateParamsNonStreaming {
   return {
@@ -32,7 +34,7 @@ export function chatRequest(model: string, mkt: Market, note: string, messages: 
     tools: [FORM_TOOL, END_TOOL],
     system: [
       { type: 'text', text: shared, cache_control: { type: 'ephemeral' } },
-      { type: 'text', text: market[mkt], cache_control: { type: 'ephemeral' } },
+      { type: 'text', text: (blackFridayLive() ? saleMarket : market)[mkt], cache_control: { type: 'ephemeral' } },
       { type: 'text', text: note },
     ],
     messages,

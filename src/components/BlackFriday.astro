@@ -1,0 +1,87 @@
+---
+// Black Friday section (src/data/season.ts, hidden unless html.bf). The idea: the Starter price is really cut in half.
+// The lower half of the figure slides away under a lime line as the section scrolls in (CSS scroll timeline; without
+// support or with reduced motion it is already cut). Home prints "$ (₱)" pairs in one text node for the geo swap.
+import { prices } from '../data/proof';
+import { bfPrice, FOUNDING_PH } from '../data/offers';
+import { BLACK_FRIDAY } from '../data/season';
+const { variant } = Astro.props as { variant: 'usd' | 'php' | 'home' };
+const home = variant === 'home', m = variant === 'php' ? 'php' : 'usd';
+const was = prices[m].starter;
+const pkgs = ([['Starter', 'starter', '5 pages'], ['Growth', 'growth', '8 pages, blog and CMS'], ['Pro', 'pro', '10+ pages, e-commerce ready']] as const).map(([name, id, what]) => ({
+  name, what,
+  was: home ? `${prices.usd[id]} (${prices.php[id]})` : prices[m][id],
+  now: home ? `${bfPrice('usd', id)} (${bfPrice('php', id)})` : bfPrice(m, id),
+}));
+---
+<section class="bfs bf-on" id="black-friday" aria-labelledby="bf-h">
+  <div class="container bfs-in">
+    <p class="mono bfs-eye"><span>Black Friday · {BLACK_FRIDAY.dates}</span><span class="bfs-left" data-bf-left data-to={BLACK_FRIDAY.to.join()}></span></p>
+    <div class="bfs-cut" aria-hidden="true"><span class="bfs-top">{was}</span><span class="bfs-bot">{was}</span><i class="bfs-line"></i></div>
+    <div class="bfs-cols">
+      <div class="bfs-say">
+        <h2 id="bf-h" class="t-d2">Every <span class="nb">7-day</span> website, <span class="lit">cut in half.</span></h2>
+        <p>50% off Starter, Growth and Pro when you send your brief by {BLACK_FRIDAY.ends}. Same pages, same 7 business days, and the same 20% off the project fee if we miss the deadline on our side.</p>
+        <a class="btn btn--lime" href={home ? '/lp/7-day-website' : '#get-started'}>{home ? 'Get the half price' : 'Get my start date'} <span class="arrow" aria-hidden="true">→</span></a>
+      </div>
+      <dl class="bfs-list">
+        {pkgs.map((p) => <div><dt><b>{p.name}</b><span>{p.what}</span></dt><dd><s><span class="sr-only">Standard price </span>{p.was}</s><strong><span class="sr-only">Black Friday price </span>{p.now}</strong></dd></div>)}
+      </dl>
+    </div>
+    <p class="bfs-fine">Extra pages, care plans and custom projects stay at the standard price.{(home || m === 'php') && FOUNDING_PH.on ? ' The sale price can’t be combined with a founding rate.' : ''} No payment now, and none until you approve the quote.</p>
+  </div>
+</section>
+<script>
+  // time left to midnight on the last day, the visitor's own clock; the sale switches off when it runs out
+  let t = 0;
+  const tick = () => {
+    const els = document.querySelectorAll<HTMLElement>('[data-bf-left]');
+    clearTimeout(t);
+    if (!els.length) return;
+    els.forEach((el) => {
+      const [y, m, d] = el.dataset.to!.split(',').map(Number);
+      const s = Math.floor((+new Date(y, m - 1, d + 1) - Date.now()) / 1000), p = (n: number) => String(n).padStart(2, '0');
+      if (s <= 0) { document.documentElement.classList.remove('bf'); return; }
+      el.textContent = `${Math.floor(s / 86400)}d ${p(Math.floor(s / 3600) % 24)}h ${p(Math.floor(s / 60) % 60)}m left`;
+    });
+    t = window.setTimeout(tick, 20_000);
+  };
+  tick();
+  document.addEventListener('astro:page-load', tick);
+</script>
+<style>
+  .bfs { position: relative; background: var(--black); padding-block: var(--section); overflow: clip; border-block: 1px solid var(--gray-700); }
+  .bfs-in { display: grid; gap: clamp(1.5rem, 3vw, 2.5rem); }
+  .bfs-eye { display: flex; justify-content: space-between; gap: 1rem; flex-wrap: wrap; color: var(--lime); }
+  .bfs-left { color: var(--white); font-variant-numeric: tabular-nums; }
+  .bfs-cut { position: relative; font-family: var(--font-display); font-weight: 700; font-size: clamp(4.5rem, 20vw, 18.5rem); line-height: .86; letter-spacing: -.04em; width: max-content; max-width: 100%; white-space: nowrap; user-select: none; margin-bottom: .2em; /* room for the half that fell */ }
+  .bfs-top { display: block; color: var(--white); clip-path: inset(-10% -5% 50% -5%); }
+  .bfs-bot { position: absolute; inset: 0; color: var(--gray-700); clip-path: inset(50% -5% -10% -5%); translate: .12em .16em; rotate: 3deg; transform-origin: 0 50%; }
+  .bfs-line { position: absolute; left: -100vw; right: -100vw; top: 50%; height: 4px; margin-top: -2px; background: var(--lime); }
+  .bfs-cols { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(2rem, 6vw, 6rem); align-items: start; }
+  .bfs-say { display: grid; gap: 1.25rem; justify-items: start; }
+  .bfs-say .nb { white-space: nowrap; }
+  .bfs-say .lit { color: var(--lime); display: block; }
+  .bfs-say p { max-width: 44ch; }
+  .bfs-list { display: grid; }
+  .bfs-list > div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 1rem 0; border-top: 1px solid var(--gray-700); }
+  .bfs-list > div:last-child { border-bottom: 1px solid var(--gray-700); }
+  .bfs-list dt { display: grid; }
+  .bfs-list dt b { font-family: var(--font-display); font-weight: 600; font-size: var(--fs-h3); color: var(--white); }
+  .bfs-list dt span { color: var(--gray-400); font-size: .9rem; }
+  .bfs-list dd { display: flex; align-items: baseline; gap: clamp(.75rem, 2vw, 1.5rem); text-align: right; }
+  .bfs-list s { color: var(--gray-400); font-size: 1rem; }
+  .bfs-list strong { font-family: var(--font-display); font-weight: 600; font-size: clamp(2rem, 4vw, 3.5rem); line-height: 1; color: var(--lime); }
+  .bfs-fine { color: var(--gray-400); font-size: .9rem; max-width: 80ch; }
+  @supports (animation-timeline: view()) {
+    @media (prefers-reduced-motion: no-preference) {
+      .bfs { view-timeline: --bfs block; }
+      .bfs-bot { animation: bfs-drop linear both; animation-timeline: --bfs; animation-range: entry 40% entry 100%; }
+      .bfs-line { animation: bfs-slice linear both; animation-timeline: --bfs; animation-range: entry 20% entry 60%; transform-origin: 0 50%; }
+      @keyframes bfs-drop { from { translate: 0 0; rotate: 0deg; color: var(--white); } }
+      @keyframes bfs-slice { from { scale: 0 1; } }
+    }
+  }
+  @media (max-width: 899px) { .bfs-cols { grid-template-columns: 1fr; } .bfs-list { order: -1; } }
+  @media (max-width: 480px) { .bfs-list dd { flex-direction: column; align-items: flex-end; gap: .15rem; } }
+</style>

@@ -23,10 +23,14 @@ const { prices } = await import(join(ROOT, 'src/data/proof.ts'));
 
 const errors = [];
 const shared = sharedKnowledge(), ph = marketKnowledge('ph'), intl = marketKnowledge('intl');
+const salePh = marketKnowledge('ph', true), saleIntl = marketKnowledge('intl', true);
 const usdPackages = Object.values(prices.usd).map((p) => p.replace('/month', ''));
 const has = (text, s) => new RegExp(`${s.replace(/[$,.]/g, '\\$&')}(?!,?\\d)`).test(text);
 
 if (/[₱$]/.test(shared)) errors.push(`shared knowledge contains money: ${shared.match(/.{0,50}[₱$].{0,30}/)[0]}`);
+if (/₱|pesos/i.test(saleIntl)) errors.push('the international sale block mentions pesos');
+for (const p of usdPackages) if (has(salePh, p)) errors.push(`the PH sale block contains the USD package price ${p}`);
+if (/founding client rate on the 7-day/i.test(salePh)) errors.push('the PH sale block still offers the founding rate on the 7-day website');
 if (/₱|pesos/i.test(intl)) errors.push('the international block mentions pesos');
 for (const p of usdPackages) if (has(ph, p)) errors.push(`the PH block contains the USD package price ${p}`);
 if (!ph.includes(prices.customRange) || !intl.includes(prices.customRange)) errors.push('the custom range is missing from a market block');

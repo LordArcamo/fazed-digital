@@ -17,3 +17,10 @@ export const offerPrice = (variant: 'usd' | 'php', pkg: string): { price: string
   const base = (prices[variant] as Record<string, string>)[pkg] ?? '';
   return variant === 'php' && FOUNDING_PH.on && pkg === FOUNDING_PH.pkg ? { price: FOUNDING_PH.price, founding: true } : { price: base, founding: false };
 };
+
+/** Black Friday price: half the standard price, rounded down. Never stacked on the founding rate. Dates: src/data/season.ts */
+export const bfPrice = (variant: 'usd' | 'php', pkg: string): string => {
+  const base = (prices[variant] as Record<string, string>)[pkg];
+  if (!base) return '';
+  return base[0] + Math.floor(Number(base.slice(1).replace(/,/g, '')) / 2).toLocaleString('en-US');
+};

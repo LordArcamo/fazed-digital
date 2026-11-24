@@ -4,7 +4,9 @@ import type { APIRoute } from 'astro';
 import { sendLead, LEAD_TO, LEAD_CC } from '../../lib/mail';
 import { saveToHubSpot } from '../../lib/hubspot';
 import { saveToCrm, markCrmAlert } from '../../lib/crm';
-import { offerPrice, FOUNDING_PH } from '../../data/offers';
+import { offerPrice, bfPrice, FOUNDING_PH } from '../../data/offers';
+import { blackFridayLive } from '../../data/season';
+import { prices } from '../../data/proof';
 import { NAP, SITE_URL } from '../../data/site';
 import { quizLead } from '../../lib/quiz-lead';
 
@@ -148,6 +150,8 @@ function packageLabel(pkg: string, variant: 'usd' | 'php'): string {
   const name = PACKAGE_NAMES[pkg];
   if (!name) return pkg || 'Package not selected';
   const { price, founding } = offerPrice(variant, pkg);
+  const bf = blackFridayLive() ? bfPrice(variant, pkg) : '';
+  if (bf) return `${name} (${bf} Black Friday price, standard ${prices[variant][pkg as 'starter']})`;
   if (founding) return `${name} (${price} founding rate, standard ${FOUNDING_PH.standard})`;
   return price ? `${name} (${price})` : name;
 }
@@ -210,7 +214,7 @@ const phoneFor = (d: Lead) => (d.variant === 'php' ? { phone: NAP.phone, tel: NA
 const firstName = (n: string) => n.split(/\s+/)[0] || 'there';
 
 function nextSteps(d: Lead): string[] {
-  const founding = d.variant === 'php' && offerPrice('php', d.pkg).founding;
+  const founding = !blackFridayLive() && d.variant === 'php' && offerPrice('php', d.pkg).founding;
   return [
     d.pkg === 'unsure'
       ? 'Within one business day, we reply with the package we’d suggest, your confirmed start date and a fixed quote.'

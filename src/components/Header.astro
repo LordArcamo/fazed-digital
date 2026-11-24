@@ -3,7 +3,8 @@ import Logo from './Logo.astro';
 import { MARK_PATHS, MARK_TRANSFORM, MARK_VIEWBOX } from '../../scripts/lib/mark.mjs';
 import { NAP, SOCIALS, BOOK } from '../data/site';
 import { labShipped, pad2 } from '../data/lab';
-import { offerPrice } from '../data/offers';
+import { offerPrice, bfPrice } from '../data/offers';
+import { BLACK_FRIDAY } from '../data/season';
 import { caseIndex, countries } from '../data/cases';
 import { liveServices, servicePath, SERVICE_NAV, SERVICE_TOTAL } from '../data/service-nav';
 // `service`: on /services/<slug>, the service id. Services stays lit in the rail; the menu lights the branch link and
@@ -38,7 +39,7 @@ const cur = menu.find((m) => m.href === current);
       <p class="mono sd-price"><span class="t-city">Free website check · </span>15 min</p>
       <a href="#book" class="sd-go">Book a time <span aria-hidden="true">→</span></a>
     </div> : <div class="sd-lp" id="sd-lp" role="region" aria-label="Get started">
-      <p class="mono sd-price"><span class="t-city">7-day website · </span>{(() => { const o = offerPrice(lp === 'php' ? 'php' : 'usd', 'starter'); return o.founding ? `Founding rate ${o.price}` : `From ${o.price}`; })()}</p>
+      <p class="mono sd-price"><span class="t-city">7-day website · </span><span class="bf-off">{(() => { const o = offerPrice(lp === 'php' ? 'php' : 'usd', 'starter'); return o.founding ? `Founding rate ${o.price}` : `From ${o.price}`; })()}</span>{BLACK_FRIDAY.on && <span class="bf-on">50% off · {bfPrice(lp === 'php' ? 'php' : 'usd', 'starter')}</span>}</p>
       <a href="#get-started" class="sd-go">Get my start date <span aria-hidden="true">→</span></a>
     </div>}
     </> : <>

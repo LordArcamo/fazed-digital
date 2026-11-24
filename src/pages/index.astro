@@ -1,4 +1,7 @@
 ---
+import BlackFriday from '../components/BlackFriday.astro';
+import { BLACK_FRIDAY } from '../data/season';
+import { bfPrice } from '../data/offers';
 import Base from '../layouts/Base.astro';
 import MarkPoster from '../components/MarkPoster.astro';
 import ContactForm from '../components/ContactForm.astro';
@@ -63,7 +66,8 @@ const schema = [
     <section class="hero" id="top" data-f="mark" aria-labelledby="hero-h">
       <MarkPoster />
       <div class="container hero-in">
-        <p class="mono hero-strip"><span class="hs-d">Iligan City, PH · {NAP.coords} · Est. 2022</span><span class="hs-m" aria-hidden="true">Iligan, PH · {NAP.coords.split(" N")[0]} N · Est. 2022</span></p>
+        {BLACK_FRIDAY.on && <p class="mono hero-strip bf-on"><a class="hero-bf" href="#black-friday">Black Friday · 50% off 7-day websites ↓</a></p>}
+        <p class="mono hero-strip bf-off"><span class="hs-d">Iligan City, PH · {NAP.coords} · Est. 2022</span><span class="hs-m" aria-hidden="true">Iligan, PH · {NAP.coords.split(" N")[0]} N · Est. 2022</span></p>
         <h1 id="hero-h" class="hero-h"><span class="hero-l1">{heroLines[0]}</span> <span class="hero-l2">{heroLines[1]}</span></h1>
         <p class="t-body-l hero-deck">{heroDeck}</p>
         <div class="hero-cta">
@@ -73,6 +77,9 @@ const schema = [
         <p class="mono hero-cue" aria-hidden="true">Scroll · 01 / 09</p>
       </div>
     </section>
+
+    <!-- Black Friday (src/data/season.ts): shown only while html.bf -->
+    {BLACK_FRIDAY.on && <BlackFriday variant="home" />}
 
     <!-- [HOME-02] UNFOLD -->
     <section class="section unfold" id="unfold" data-f="lattice" aria-labelledby="unfold-h">
@@ -238,13 +245,14 @@ const schema = [
         <ol class="days" aria-label="The 7-day timeline">
           {days.map((d, i) => <li class="day" data-day={i}><span class="day-node" aria-hidden="true"></span><span class="mono">{d}</span></li>)}
         </ol>
-        <ul class="flood-chips" aria-label="Packages">
+        <ul class="flood-chips bf-off" aria-label="Packages">
           <li class="chip">Starter $499</li><li class="chip">Growth $899</li><li class="chip">Pro $1,499</li>
         </ul>
+        {BLACK_FRIDAY.on && <ul class="flood-chips bf-on" aria-label="Packages, Black Friday prices">{([['Starter', 'starter'], ['Growth', 'growth'], ['Pro', 'pro']] as const).map(([n, k]) => <li class="chip">{`${n} ${bfPrice('usd', k)} (${bfPrice('php', k)})`}</li>)}<li class="chip">50% off until {BLACK_FRIDAY.ends}</li></ul>}
         <p class="flood-honest">Seven days works when your content and feedback arrive on time. We’ll tell you exactly what we need on Day 1.</p>
         <div class="flood-cta">
           <a class="btn btn--black" href="/lp/7-day-website" data-magnetic>Get live in 7 days <span class="arrow" aria-hidden="true">→</span></a>
-          <a class="flood-link" href="/lp/7-day-website/ph">See peso pricing (₱19,999+)</a>
+          <a class="flood-link" href="/lp/7-day-website/ph">See peso pricing <span class="bf-off">(₱19,999+)</span></a>
         </div>
       </div>
     </section>
@@ -565,6 +573,8 @@ const schema = [
   }
   @media (prefers-reduced-motion: reduce) { .hlab-list a, .hlab-go { transition: none; } }
   /* FLOOD */
+  .hero-bf { color: var(--lime); display: inline-flex; align-items: center; min-height: 44px; margin-block: -14px; }
+  .hero-bf:hover { text-decoration: underline; text-underline-offset: .3em; }
   .flood { position: relative; background: var(--lime); color: var(--black); padding-block: var(--section); clip-path: circle(150% at 10% 60%); }
   :global(html.js-motion:not(.rm)) .flood { clip-path: circle(var(--flood, 0%) at 12% 62%); }
   .flood :global(*) { color: var(--black); }

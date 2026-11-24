@@ -6,7 +6,8 @@ import { chapters, serviceFaq } from '../../data/services';
 import { caseIndex } from '../../data/cases';
 import { lpFaq, lpPlans, lpProcess } from '../../data/lp';
 import { prices, stats, capsCopy, LP_REVIEWS_REAL, CASE_METRICS_REAL, automationPrices, automationTerms, socialPrices, socialTerms, quotedCopy } from '../../data/proof';
-import { FOUNDING_PH } from '../../data/offers';
+import { FOUNDING_PH, bfPrice } from '../../data/offers';
+import { BLACK_FRIDAY } from '../../data/season';
 import { homeFaq } from '../../data/home';
 import { NAP, SOCIALS } from '../../data/site';
 import { labShipped, LABEL } from '../../data/lab';
@@ -128,7 +129,7 @@ export function sharedKnowledge(): string {
 }
 
 /** This visitor's prices, phone number and links. Two versions, each cached. */
-export function marketKnowledge(market: Market): string {
+export function marketKnowledge(market: Market, sale = false): string {
   const php = market === 'ph';
   const variant = php ? 'php' : 'usd';
   const P = php ? prices.php : prices.usd;
@@ -140,10 +141,10 @@ export function marketKnowledge(market: Market): string {
     `Phone (call or text): ${phone}. 7-day website page: ${lp}.`,
     '',
     '### 7-day website packages (fixed price)',
-    lines(plans.map((p) => `${p.name}: ${p.price}${p.was ? ` (standard ${p.was})` : ''}. ${p.for.replace(/\.?$/, '.')} Includes: ${p.rows.join(', ')}.`)),
+    lines(plans.map((p) => `${p.name}: ${sale ? `${bfPrice(variant, p.id)} (Black Friday, standard ${P[p.id as 'starter']})` : `${p.price}${p.was ? ` (standard ${p.was})` : ''}`}. ${(sale && p.tag ? 'New businesses getting online' : p.for).replace(/\.?$/, '.')} Includes: ${p.rows.join(', ')}.`)),
     `Extra pages: ${P.page} each. Monthly care plans: from ${P.care}.`,
     capsCopy.sevenDay,
-    php && FOUNDING_PH.on ? `Founding client rate on the 7-day website: Starter at ${FOUNDING_PH.price} instead of ${FOUNDING_PH.standard}, for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit. We don't know how many spots are left, so never give a number remaining.` : 'There is no discount on the 7-day website.',
+    sale ? `Black Friday: 50% off the three 7-day packages when the brief is sent by ${BLACK_FRIDAY.ends}. Same scope, delivery and guarantee. It can't be combined with another rate, and extra pages, care plans and all other services stay at their standard price. Nothing is asked in return.` : php && FOUNDING_PH.on ? `Founding client rate on the 7-day website: Starter at ${FOUNDING_PH.price} instead of ${FOUNDING_PH.standard}, for our first ${FOUNDING_PH.spots} clients, secured with a refundable deposit. We don't know how many spots are left, so never give a number remaining.` : 'There is no discount on the 7-day website.',
     '',
     '### Automations (/services/automations; no automation clients yet, our own lead flow runs on it)',
     lines(automationPrices.map((p) => `${p.name}: ${php ? p.php : p.usd}. ${p.includes}.`)),
@@ -156,7 +157,7 @@ export function marketKnowledge(market: Market): string {
     socialTerms.founding.on ? `Founding rate: ${socialTerms.founding.line}` : '',
     '',
     `Brand identity: ${quotedCopy.brand.toLowerCase()}. SEO retainers: ${quotedCopy.seoRetainer.toLowerCase()}. Design-only UI/UX: ${quotedCopy.designOnly.toLowerCase()}.`,
-    'The founding rates above are the only discounts that exist. Nothing is asked in return for any of them.',
+    sale ? 'The Black Friday price and the founding rates above are the only discounts that exist. Nothing is asked in return for any of them.' : 'The founding rates above are the only discounts that exist. Nothing is asked in return for any of them.',
     '',
     '### Custom work',
     `Custom websites and systems are quoted after a discovery call and typically run ${prices.customRange}${php ? ' (quoted in US dollars; we have no peso figure for custom work)' : ''}. ${capsCopy.custom}`,

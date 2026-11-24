@@ -3,20 +3,21 @@
 // with one question per screen and a live brief rail on desktop (docs/forms-redesign/ux-directions.md §6).
 // Copy: docs/forms-redesign/copy.md. Logic: src/forms/lp.ts. API: /api/lp-submit (Gmail alert + HubSpot record).
 import { prices, capsCopy } from '../data/proof';
-import { offerPrice, FOUNDING_PH } from '../data/offers';
+import { offerPrice, bfPrice, FOUNDING_PH } from '../data/offers';
+import { BLACK_FRIDAY } from '../data/season';
 import { NAP } from '../data/site';
 const { variant = 'usd' } = Astro.props as { variant?: 'usd' | 'php' };
 const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
 const pk = (value: string, name: string, forWho: string, detail: string, popular = false) => {
   const o = offerPrice(variant, value);
-  return { value, name, price: o.price, founding: o.founding, was: o.founding ? P[value as 'starter'] : '', for: forWho, detail, popular };
+  return { value, name, price: o.price, founding: o.founding, was: o.founding ? P[value as 'starter'] : '', bf: BLACK_FRIDAY.on ? bfPrice(variant, value) : '', std: P[value as 'starter'], for: forWho, detail, popular };
 };
 const pkgs = [
   pk('starter', 'Starter', 'New businesses getting online', '5 pages · 2 revision rounds'),
   pk('growth', 'Growth', 'Growing small businesses', '8 pages · blog + CMS · 3 revision rounds', true),
   pk('pro', 'Pro', 'Businesses ready to scale', '10+ pages · e-commerce ready · unlimited revisions'),
-  { value: 'unsure', name: 'Not sure yet', price: '', founding: false, was: '', for: 'Help me choose', detail: 'We’ll suggest one when we reply.', popular: false },
+  { value: 'unsure', name: 'Not sure yet', price: '', founding: false, was: '', bf: '', std: '', for: 'Help me choose', detail: 'We’ll suggest one when we reply.', popular: false },
 ];
 const chipOf = (p: (typeof pkgs)[number]) => (p.price ? `${p.name} · ${p.price}${p.founding ? ' founding rate' : ''}` : p.name);
 // what makes people press Send: risk reversal next to the button (all true: lp.ts FAQ, terms, LP guarantee)
@@ -36,10 +37,10 @@ const id = `lpq-${variant}`;
     <p class="qf-card-sub">6 quick questions. No payment now. You can change your package later.</p>
     <div class="qf-card-pk">{pkgs.map((p) => (
       <a class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} href="#get-started" data-start={p.value}>
-        <span class="qt-b">{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t">{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span></span>
+        <span class="qt-b">{p.founding ? <span class="qt-tag mono bf-off">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t">{p.name}</span>{p.price && <span class="qt-price bf-off">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}{p.bf && <span class="qt-price bf-on">{p.bf}<s class="qt-was">{p.std}</s></span>}<span class="qt-for">{p.for}</span></span>
       </a>
     ))}</div>
-    <p class="mono qf-proof">{php && FOUNDING_PH.on ? `Founding rate: ${FOUNDING_PH.spots} spots only · ` : ''}120+ projects by our founder · {capsCopy.sevenDay.replace('We take on ', '').replace(', max.', ' max')}</p>
+    <p class="mono qf-proof">{php && FOUNDING_PH.on && <span class="bf-off">Founding rate: {FOUNDING_PH.spots} spots only · </span>}{BLACK_FRIDAY.on && <span class="bf-on">50% off until {BLACK_FRIDAY.ends} · </span>}120+ projects by our founder · {capsCopy.sevenDay.replace('We take on ', '').replace(', max.', ' max')}</p>
     <p class="qf-resume" data-resume hidden><button type="button" class="btn btn--lime" data-resume-btn><span data-resume-label>Continue your brief · <span data-resume-n></span> of 7 answered</span> <span class="arrow" aria-hidden="true">→</span></button></p>
     <div class="qf-card-ok" data-card-ok hidden><p class="mono qf-eyebrow">Brief sent</p><p class="t-h3">Brief received. You’re in the queue.</p><p>We’ll reply within one business day with your confirmed start date.</p></div>
     <p class="qf-card-fine">Prefer email? <a class="link" href="mailto:info@fazeddigital.com">info@fazeddigital.com</a></p>
@@ -65,9 +66,9 @@ const id = `lpq-${variant}`;
               <legend><h2 class="q-h" data-h tabindex="-1">Which package fits?</h2></legend>
               <p class="q-sub">{php ? 'Fixed peso prices. Pay via GCash, Maya or bank, and only after you approve the quote.' : 'Fixed prices, 7-day delivery. Nothing to pay until you approve the quote.'}</p>
               <div class="q-opts q-opts--cards">{pkgs.map((p, i) => (
-                <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} data-chip={chipOf(p)}>
+                <label class:list={['qt', 'qt--card', p.value === 'unsure' && 'qt--unsure', p.founding && 'qt--founding']} data-chip={chipOf(p)} data-chip-bf={p.bf ? `${p.name} · ${p.bf} Black Friday` : undefined}>
                   <input type="radio" name="package" value={p.value} />
-                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span>{p.founding ? <span class="qt-tag mono">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
+                  <span class="qt-b"><span class="qt-k" aria-hidden="true">{i + 1}</span>{p.founding ? <span class="qt-tag mono bf-off">Founding rate</span> : p.popular && <span class="qt-tag qt-tag--dim mono">Our pick</span>}<span class="qt-t" data-opt>{p.name}</span>{p.price && <span class="qt-price bf-off">{p.price}{p.was && <s class="qt-was">{p.was}</s>}</span>}{p.bf && <span class="qt-price bf-on">{p.bf}<s class="qt-was">{p.std}</s></span>}<span class="qt-for">{p.for}</span><span class="qt-d">{p.detail}</span><span class="qt-node" aria-hidden="true"></span></span>
                 </label>
               ))}</div>
               <p class="q-err" data-err role="alert" id={`${id}-err-package`}></p>

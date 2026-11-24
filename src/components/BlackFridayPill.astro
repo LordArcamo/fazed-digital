@@ -1,0 +1,37 @@
+---
+// Black Friday pill (src/data/season.ts): every non-LP page while html.bf is set, except where the sale section already is (home). Dismiss hides it for the session.
+---
+<div class="bf-pill bf-on" id="bf-pill" role="region" aria-label="Black Friday offer" transition:persist="bf-pill">
+  <a href="/lp/7-day-website" class="bf-a" data-cursor="HALF →"><b class="bf-half" aria-hidden="true">50%</b><span class="bf-t"><span class="sr-only">50% </span>off 7-day websites<span class="bf-lg"> for Black Friday</span></span><span class="bf-go mono">See prices →</span></a>
+  <button type="button" class="bf-x" data-bf-x aria-label="Hide the Black Friday offer">×</button>
+</div>
+<script>
+  // one delegated listener (bundled scripts run once under the ClientRouter)
+  const html = document.documentElement;
+  if (!html.dataset.bfBound) {
+    html.dataset.bfBound = '1';
+    document.addEventListener('click', (e) => {
+      if (!(e.target as Element).closest?.('[data-bf-x]')) return;
+      html.classList.add('bf-hide');
+      try { sessionStorage.setItem('bf-x', '1'); } catch {}
+    });
+  }
+</script>
+<style>
+  /* bottom-left: the chat button owns the right corner. Waits for the first scroll and for the cookie card to go. */
+  .bf-pill { position: fixed; z-index: 55; left: 16px; bottom: 16px; display: flex; align-items: center; gap: 4px; padding: 5px 5px 5px 16px; border-radius: 999px; background: var(--capsule); border: 1px solid var(--gray-700); box-shadow: var(--capsule-sh); }
+  :global(html:not(.is-docked)) .bf-pill, :global(html.bf-hide) .bf-pill, :global(html:has(.bfs)) .bf-pill, :global(html:has(#cookie:not([hidden]))) .bf-pill { display: none !important; }
+  .bf-a { display: flex; align-items: center; gap: .6rem; min-height: 44px; color: var(--white); }
+  .bf-half { font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: var(--lime); letter-spacing: -.02em; }
+  .bf-t { font-weight: 600; font-size: .9rem; white-space: nowrap; }
+  .bf-a:hover .bf-t { color: var(--lime); }
+  .bf-go { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--black); background: var(--lime); border-radius: 999px; padding: .55rem .8rem; white-space: nowrap; }
+  .bf-x { width: 44px; height: 44px; border-radius: 50%; color: var(--gray-300); font-size: 1.1rem; line-height: 1; display: grid; place-items: center; }
+  .bf-x:hover { color: var(--white); background: var(--gray-800); }
+  @media (max-width: 1023px) {
+    .bf-pill { left: 12px; bottom: calc(78px + env(safe-area-inset-bottom)); padding: 0 0 0 14px; }
+    .bf-go, .bf-lg { display: none; }
+    .bf-t { font-size: .8rem; }
+    .bf-half { font-size: 1.05rem; }
+  }
+</style>

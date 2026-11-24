@@ -43,6 +43,11 @@ export function initLpForms() {
     const bar = $('[data-bar]'), count = $('[data-count]'), live = $('[data-live]'), hint = $('[data-hint]');
     const back = $<HTMLButtonElement>('[data-back]'), next = $<HTMLButtonElement>('[data-next]'), send = $<HTMLButtonElement>('[data-submit]');
     const sendLabel = send.querySelector<HTMLElement>('[data-label]')!;
+    // the package with the price on screen: the Black Friday one while html.bf (src/data/season.ts)
+    const pkgChip = () => {
+      const c = form.querySelector<HTMLInputElement>('input[name=package]:checked')?.closest('label')?.dataset;
+      return (document.documentElement.classList.contains('bf') && c?.chipBf) || (c?.chip ?? '');
+    };
     const chip = $('[data-chosen]'), fine = $('[data-fine]'), mail = $('[data-mail]');
     const source = leadSource();
     const skip = new Set<string>();
@@ -143,7 +148,7 @@ export function initLpForms() {
     /* ── brief rail ── */
     function rail() {
       const v: Record<string, string> = {
-        package: skip.has('package') || val('package') ? (form.querySelector<HTMLInputElement>('input[name=package]:checked')?.closest('label')?.dataset.chip ?? '') : '',
+        package: skip.has('package') || val('package') ? (pkgChip()) : '',
         industry: val('industry') === 'Other' && val('industryOther') ? val('industryOther') : optLabel('industry'),
         goal: optLabel('goal'), timeline: optLabel('timeline'), style: optLabel('styleVibe'),
         business: val('businessName'), contact: [val('name'), val('email')].filter(Boolean).join(' · '),
@@ -192,7 +197,7 @@ export function initLpForms() {
       const opts = s.querySelectorAll('input[type=radio]').length;
       hint.textContent = isChoice(s) ? `Press 1–${Math.min(opts, 9)} or Enter` : 'or press Enter ↵';
       chip.hidden = !(skip.has('package') && cur === 0);
-      if (!chip.hidden) chip.querySelector('[data-chosen-label]')!.textContent = form.querySelector<HTMLInputElement>('input[name=package]:checked')?.closest('label')?.dataset.chip ?? '';
+      if (!chip.hidden) chip.querySelector('[data-chosen-label]')!.textContent = pkgChip();
       clearErr(s);
       status.textContent = '';
       mail.hidden = true;

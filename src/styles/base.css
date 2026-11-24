@@ -136,3 +136,7 @@ html.is-docked { scroll-padding-bottom: 104px; }
 html[data-geo='intl'] [data-market='ph'], html[data-geo='ph'] [data-market='usd'] { display: none !important; }
 html[data-geo='intl'] a[href='/lp/7-day-website/ph']:not(.btn), html[data-geo='intl'] li:has(> a[href='/lp/7-day-website/ph']:not(.btn)) { display: none !important; }
 html[data-geo='ph'] .ftr li:has(> a[href='/lp/7-day-website']) { display: none !important; }
+
+/* Black Friday: both prices are in the HTML, html.bf picks one (src/data/season.ts) */
+html:not(.bf) .bf-on { display: none !important; }
+html.bf .bf-off { display: none !important; }

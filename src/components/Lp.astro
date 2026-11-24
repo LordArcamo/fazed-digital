@@ -5,7 +5,9 @@
 import { Picture } from 'astro:assets';
 import Faq from './Faq.astro';
 import LpForm from './LpForm.astro';
-import { FOUNDING_PH, offerPrice } from '../data/offers';
+import BlackFriday from './BlackFriday.astro';
+import { BLACK_FRIDAY } from '../data/season';
+import { FOUNDING_PH, offerPrice, bfPrice } from '../data/offers';
 import { countries, caseIndex } from '../data/cases';
 import { labImages, workImages } from '../data/images';
 import { team } from '../data/team';
@@ -22,6 +24,7 @@ const php = variant === 'php';
 const P = php ? prices.php : prices.usd;
 const st = offerPrice(variant, 'starter'); // { price, founding }: the founding rate while FOUNDING_PH.on, else the standard price
 const plans = lpPlans(variant);
+const bf = BLACK_FRIDAY.on ? bfPrice(variant, 'starter') : ''; // shown instead of the standard/founding price while html.bf
 // no competitor numbers: nothing in src/data backs them (docs/conversion/lp-7day-conversion.md #9)
 const pain = [
   ['Launch dates measured in weeks or months', 'Live in 7 business days'],
@@ -47,18 +50,21 @@ const lord = team.find((t) => t.id === 'lord')!;
     <div class="container lp-hero-in">
       <p class="mono">{php ? '🇵🇭 Philippine pricing · Built in Iligan City' : 'Small business websites · Fixed price in USD'}</p>
       <h1 id="lp-h" class="t-d1">Your website, <span class="dim">live in 7 days.</span></h1>
-      <p class="t-body-l lp-deck">{php ? 'A custom website for your Philippine business that looks established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.' : 'A custom website that makes your business look established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.'} <strong>{php ? `Fixed price from ${st.price}. Pay via GCash, Maya or bank.` : `Fixed price from ${st.price}. You own everything.`}</strong></p>
+      <p class="t-body-l lp-deck">{php ? 'A custom website for your Philippine business that looks established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.' : 'A custom website that makes your business look established, works on every phone and is set up for Google. Designed, built and launched in 7 business days.'} <strong>Fixed price from <span class="bf-off">{st.price}</span>{bf && <span class="bf-on">{bf}, 50% off until {BLACK_FRIDAY.ends}</span>}. {php ? 'Pay via GCash, Maya or bank.' : 'You own everything.'}</strong></p>
       <div class="lp-cta"><a class="btn btn--lime" href="#get-started" data-magnetic>Get my start date <span class="arrow" aria-hidden="true">→</span></a><a class="btn btn--ghost" href="#pricing">See pricing</a></div>
       <p class="mono lp-cta-note">No payment now · Reply within one business day · 7 business days or 20% off</p>
-      {php && FOUNDING && <p class="lp-founding" role="note"><strong class="mono">Founding client rate · {FOUNDING_PH.spots} spots</strong><br /><b>Starter {FOUNDING_PH.price}</b> <span class="dim">instead of {FOUNDING_PH.standard}</span>. For our first {FOUNDING_PH.spots} clients, secured with a refundable deposit. Extra pages and care plans are at the standard rate.</p>}
+      {php && FOUNDING && <p class="lp-founding bf-off" role="note"><strong class="mono">Founding client rate · {FOUNDING_PH.spots} spots</strong><br /><b>Starter {FOUNDING_PH.price}</b> <span class="dim">instead of {FOUNDING_PH.standard}</span>. For our first {FOUNDING_PH.spots} clients, secured with a refundable deposit. Extra pages and care plans are at the standard rate.</p>}
       <ol class="lp-days poster-days" aria-hidden="true" data-days-anchor>{Array.from({ length: 7 }, (_, i) => <li class:list={{ lit: i === 6 }}><span></span><em class="mono">Day {i + 1}<i class="ld-t"> · {['Kickoff', 'Design', 'Design', 'Build', 'Build', 'Review', 'Live'][i]}</i></em></li>)}</ol>
       <dl class="lp-trust">
         {lpTrust.map((t) => <div><dt class="mono">{t.label}</dt><dd>{t.value}</dd></div>)}
-        <div><dt class="mono">{st.founding ? 'Founding rate' : 'Starting price'}</dt><dd>{st.price}</dd></div>
+        <div class="bf-off"><dt class="mono">{st.founding ? 'Founding rate' : 'Starting price'}</dt><dd>{st.price}</dd></div>
+        {bf && <div class="bf-on"><dt class="mono">Black Friday</dt><dd>{bf}</dd></div>}
       </dl>
       <p class="mono lp-names"><span>Clients include</span> {caseIndex.map((c) => c.title).join(' · ')}</p>
     </div>
   </section>
+
+  {bf && <BlackFriday variant={variant} />}
 
   <section class="section container lp-reviews" aria-labelledby="rv-h">
     {LP_REVIEWS_REAL && lpTestimonials.length ? <>
@@ -114,7 +120,7 @@ const lord = team.find((t) => t.id === 'lord')!;
     <p>Here’s what you’re usually signing up for.</p>
     <table class="lp-table">
       <thead><tr><th scope="col" class="mono">Typical agency</th><th scope="col" class="mono">Fazed Digital · that’s us</th></tr></thead>
-      <tbody>{pain.map(([a, b]) => <tr><td><span aria-hidden="true">✕</span> {a}</td><td><span aria-hidden="true">✓</span> {b}</td></tr>)}</tbody>
+      <tbody>{pain.map(([a, b]) => <tr><td><span aria-hidden="true">✕</span> {a}</td><td><span aria-hidden="true">✓</span> {bf && b.includes(st.price) ? <Fragment><span class="bf-off">{b}</span><span class="bf-on">{b.replace(st.price, bf)}</span></Fragment> : b}</td></tr>)}</tbody>
     </table>
   </section>
 
@@ -125,11 +131,12 @@ const lord = team.find((t) => t.id === 'lord')!;
     {php && <><p>All prices in Philippine peso. Pay the way you already do:</p><ul class="lp-chips">{['GCash', 'Maya', 'BPI', 'Metrobank', 'Wise'].map((x) => <li class="chip">{x}</li>)}</ul></>}
     <ul class="lp-plans">
       {plans.map((p) => (
-        <li class:list={['plan', { 'plan--pop': php && st.founding ? !!p.tag : p.popular }]} aria-label={`${p.name} package, ${p.price}`}>
-          {p.tag ? <p class="mono plan-pop">{p.tag}</p> : p.popular && <p class="mono plan-pop">Our pick for most businesses</p>}
+        <li class:list={['plan', { 'plan--pop': php && st.founding ? !!p.tag : p.popular }]} aria-label={`${p.name} package`}>
+          {p.tag ? <p class="mono plan-pop bf-off">{p.tag}</p> : p.popular && <p class="mono plan-pop">Our pick for most businesses</p>}
           <h3 class="t-h3">{p.name}</h3>
-          <p class="plan-price">{p.price}{p.was && <s class="plan-was"> {p.was}</s>}</p>
-          <p class="plan-for">{p.for}</p>
+          <p class="plan-price bf-off">{p.price}{p.was && <s class="plan-was"> {p.was}</s>}</p>
+          {bf && <p class="plan-price bf-on"><span class="sr-only">Black Friday price </span>{bfPrice(variant, p.id)}<s class="plan-was"><span class="sr-only"> standard price</span> {P[p.id as 'starter']}</s></p>}
+          {bf && p.tag ? <Fragment><p class="plan-for bf-off">{p.for}</p><p class="plan-for bf-on">New businesses getting online</p></Fragment> : <p class="plan-for">{p.for}</p>}
           <ul class="plan-rows">{p.rows.map((r) => <li>{r}</li>)}</ul>
           <a class:list={['btn', (php && st.founding ? !!p.tag : p.popular) ? 'btn--lime' : 'btn--ghost']} href="#get-started" data-choose={p.id}>Choose {p.name} <span class="arrow" aria-hidden="true">→</span></a>
         </li>
@@ -142,6 +149,7 @@ const lord = team.find((t) => t.id === 'lord')!;
     </div>
     <p class="lp-note mono">{capsCopy.sevenDay}</p>
     <p class="lp-note">Need something custom? <a class="link" href="mailto:info@fazeddigital.com">Email us</a> and we’ll scope it together. No commitment.</p>
+    {bf && <p class="lp-note mono bf-on">Black Friday: 50% off Starter, Growth and Pro when you send your brief by {BLACK_FRIDAY.ends}. {php && FOUNDING ? 'It replaces the founding rate. ' : ''}Extra pages, care plans and custom projects stay at the standard price.</p>}
     <p class="lp-note mono">Extra pages {P.page} each · Maintenance from {P.care} · Booking systems, portals and custom e-commerce are scoped separately.</p>
   </section>
 
@@ -163,7 +171,7 @@ const lord = team.find((t) => t.id === 'lord')!;
   <section class="section container lp-form" id="get-started" aria-labelledby="gs-h">
     <div class="lp-form-side">
       <p class="mono lp-cap">{capsCopy.sevenDay}</p>
-      {php && FOUNDING && <p class="mono lp-cap">Founding rate: Starter {FOUNDING_PH.price} for our first {FOUNDING_PH.spots} clients.</p>}
+      {php && FOUNDING && <p class="mono lp-cap bf-off">Founding rate: Starter {FOUNDING_PH.price} for our first {FOUNDING_PH.spots} clients.</p>}
       <h2 id="gs-h" class="t-d2">Get your start date <span class="dim">in one business day.</span></h2>
       <p>A few quick questions, mostly one tap each. A real person replies within one business day, Monday to Friday, with your confirmed start date. No payment now, and no commitment until you approve the quote.</p>
       {php && <p>Have a Facebook page? Add it near the end and we’ll pull your photos and details from it to save you time.</p>}
@@ -187,6 +195,7 @@ const lord = team.find((t) => t.id === 'lord')!;
   .lp-cta { display: flex; gap: .75rem; flex-wrap: wrap; }
   .lp-cta-note { color: var(--gray-300); font-size: .75rem; letter-spacing: .06em; margin-top: -.5rem; }
   .lp-work { display: grid; gap: 1.25rem; }
+  .plan-price.bf-on .plan-was { display: block; margin: .5em 0 0; }
   .plan-was { font-size: .4em; color: var(--gray-400); margin-left: .4em; }
   .lp-days { display: grid; grid-template-columns: repeat(7, 1fr); max-width: 760px; margin-top: 2rem; position: relative; }
   .lp-days::before { content: ''; position: absolute; left: 5px; right: 5px; top: 5px; height: 1px; background: var(--gray-700); }
