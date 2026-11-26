@@ -4,6 +4,7 @@ import BlogList from '../../components/BlogList.astro';
 import { SITE_URL } from '../../data/site';
 import { crumbs, ORG_REF } from '../../lib/schema';
 import { authorId } from '../../lib/authors';
+import rankpilotPosts from '../../data/.generated/rankpilot.json';
 
 const posts = [
   {
@@ -746,7 +747,8 @@ const posts = [
 ];
 
 // ── everything below this line is template code (the array above is the routine's contract) ──
-const sorted = [...posts].sort((a, b) => +new Date(b.date) - +new Date(a.date));
+// + Rankpilot articles (src/data/rankpilot, merged and checked by scripts/extract-posts.mjs)
+const sorted = [...posts, ...(rankpilotPosts as typeof posts)].sort((a, b) => +new Date(b.date) - +new Date(a.date));
 const featured = sorted[0];
 const rest = sorted.slice(1);
 const cats = ['SEO', 'Branding', 'Design', 'Development', 'Strategy'].filter((c) => sorted.some((p) => p.category === c));

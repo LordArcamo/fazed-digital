@@ -11,6 +11,7 @@ import { authorPhoto, authorId, initials } from '../../lib/authors';
 import { catSlug } from '../../lib/cover';
 import RelatedLinks from '../../components/RelatedLinks.astro';
 import { postLinks } from '../../data/links';
+import rankpilotPosts from '../../data/.generated/rankpilot.json';
 
 export function getStaticPaths() {
   const posts = [
@@ -2479,7 +2480,8 @@ export function getStaticPaths() {
       `,
     },
   ];
-  return posts.map(p => ({ params: { slug: p.slug }, props: p }));
+  // + Rankpilot articles (src/data/rankpilot, merged and checked by scripts/extract-posts.mjs)
+  return [...posts, ...(rankpilotPosts as typeof posts)].map(p => ({ params: { slug: p.slug }, props: p }));
 }
 
 // ── everything below is template code (the array above is the nightly routine's contract) ──

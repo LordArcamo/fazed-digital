@@ -7,7 +7,7 @@
  * for OG images, llms.txt, category hubs and related posts. Any missing field FAILS the build.
  * Usage: node scripts/extract-posts.mjs [indexFile] [slugFile]
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import vm from 'node:vm';
@@ -55,13 +55,30 @@ for (const [name, arr, fields] of [['index.astro', index, need.index], ['[slug].
     if (isNaN(new Date(p.date))) fail(`${name} entry ${k} (${p.slug}) has an unparseable date "${p.date}"`);
   });
 }
+// Rankpilot articles (src/data/rankpilot/*.json, committed by /api/rankpilot) join the blog here.
+// A bad file or a slug the routine already uses is skipped with a warning, never a failed build.
+const rpDir = join(ROOT, 'src/data/rankpilot');
+const rankpilot = [];
+const routineSlugs = new Set(posts.map((p) => p.slug));
+for (const f of existsSync(rpDir) ? readdirSync(rpDir).filter((f) => f.endsWith('.json')).sort() : []) {
+  let p;
+  try { p = JSON.parse(readFileSync(join(rpDir, f), 'utf8')); } catch (e) { console.warn(`[extract-posts] rankpilot/${f}: bad JSON, skipped`); continue; }
+  const missing = need.post.filter((k) => p[k] === undefined || p[k] === null || (k !== 'authorPhoto' && String(p[k]).trim() === ''));
+  if (missing.length || isNaN(new Date(p.date))) { console.warn(`[extract-posts] rankpilot/${f}: missing ${missing.join(', ') || 'a valid date'}, skipped`); continue; }
+  if (routineSlugs.has(p.slug) || rankpilot.some((r) => r.slug === p.slug)) { console.warn(`[extract-posts] rankpilot/${f}: slug "${p.slug}" already used, skipped`); continue; }
+  rankpilot.push({ ...p, featured: false, source: 'rankpilot' });
+}
+mkdirSync(join(ROOT, 'src/data/.generated'), { recursive: true });
+writeFileSync(join(ROOT, 'src/data/.generated/rankpilot.json'), JSON.stringify(rankpilot));
+posts = [...posts, ...rankpilot];
+index = [...index, ...rankpilot];
 const bySlug = new Map(posts.map((p) => [p.slug, p]));
 for (const p of index) if (!bySlug.has(p.slug)) fail(`index.astro lists "${p.slug}" but [slug].astro has no such post`);
 const out = index.map((p) => {
   const full = bySlug.get(p.slug);
-  return { slug: p.slug, title: p.title, excerpt: p.excerpt, category: p.category, date: p.date, iso: new Date(p.date).toISOString(), readTime: p.readTime, author: p.author, authorRole: full.authorRole, h2: [...full.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1].replace(/<[^>]+>/g, '')) };
+  return { slug: p.slug, title: p.title, excerpt: p.excerpt, category: p.category, date: p.date, iso: new Date(p.date).toISOString(), readTime: p.readTime, author: p.author, authorRole: full.authorRole, ...(full.source ? { source: full.source } : {}), h2: [...full.content.matchAll(/<h2[^>]*>(.*?)<\/h2>/g)].map((m) => m[1].replace(/<[^>]+>/g, '')) };
 }).sort((a, b) => +new Date(b.date) - +new Date(a.date));
 const long = out.filter((p) => p.excerpt.length > 155).length;
 mkdirSync(join(ROOT, 'src/data/.generated'), { recursive: true });
 writeFileSync(join(ROOT, 'src/data/.generated/posts.json'), JSON.stringify(out, null, 1));
-console.log(`[extract-posts] ${out.length} posts OK (${long} excerpts > 155 chars: tell the routine "excerpt ≤ 155")`);
+console.log(`[extract-posts] ${out.length} posts OK (${rankpilot.length} from Rankpilot) (${long} excerpts > 155 chars: tell the routine "excerpt ≤ 155")`);
