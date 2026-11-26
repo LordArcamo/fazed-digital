@@ -15,6 +15,42 @@ import { postLinks } from '../../data/links';
 export function getStaticPaths() {
   const posts = [
     {
+      slug: 'car-rental-booking-system-philippines',
+      title: "Car Rental Booking System in the Philippines: The Must-Haves",
+      category: 'Development',
+      date: '27 Nov 2026',
+      readTime: '4 min read',
+      author: 'Justin Sumaya',
+      authorRole: 'Head of Development',
+      authorPhoto: '',
+      image: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=1200&h=630&fit=crop&auto=format&q=80',
+      excerpt: "A car rental booking system in the Philippines needs to handle fleet availability, driver assignment, and GCash payments from day one.",
+      content: `
+        <p>A car rental booking system in the Philippines needs to handle more than just dates and vehicle types. To run a rental business properly, the platform must manage real-time fleet availability, customer records, payment collection via GCash or bank transfer, and optional chauffeur assignment — all in one place, without spreadsheets.</p>
+        <h2>What a Car Rental Booking System Needs in the Philippines</h2>
+        <p>Most rental businesses start with a WhatsApp thread, a shared spreadsheet, and a good memory. That works at small scale, but it breaks once you have more than a handful of vehicles or more than one person handling bookings. When two staff members confirm the same car to two different customers, or the reservation log does not match what the driver receives that morning, the cost is not just inconvenience — it is reputation damage in a market where reviews spread fast.</p>
+        <p>A proper booking system needs four things working together from the start: a reservations module, live fleet visibility, a customer database, and a payment record. Everything else — chauffeur assignment, utilisation reporting, maintenance tracking — can be layered on once the core is stable.</p>
+        <h2>Real-Time Fleet Availability</h2>
+        <p>This is the part that most off-the-shelf tools handle poorly. Philippine rental businesses often run mixed fleets: self-drive vehicles booked by the day, chauffeured bookings by the hour, and long-term rentals running alongside short ones. A system that only tracks "available" or "not available" is not enough. You need to see which vehicle is out, when it returns, and whether maintenance has been scheduled in that window — before you confirm anything to a customer.</p>
+        <p>When we built <a href="https://www.fazeddigital.com/work/06">the 8Drive booking and fleet management system</a> for 8Drive Cars in the Philippines, real-time fleet visibility was the centrepiece of the build. The platform moved the team from manual processes to a single system handling reservations, fleet availability, customer records and chauffeur scheduling. Staff could confirm bookings confidently without calling around first.</p>
+        <h2>Payments and Philippine Requirements</h2>
+        <p>GCash is the default payment method for a large share of Philippine customers, and your booking system should reflect that. Beyond GCash, you will likely need to support Maya, bank transfer to BPI or Metrobank, and in some cases Wise for clients paying from overseas. Cash at pickup remains common, but the system should still log it, issue a reference number, and update the reservation status — so there is always a clear paper trail.</p>
+        <p>Rental businesses also need to handle deposits, partial payments, and cancellation deductions. These are not just accounting details — they create disputes if the system does not handle them clearly. Build the payment logic to match how you actually operate, not how a generic template assumes you do.</p>
+        <h2>Customer Records and Driver Assignment</h2>
+        <p>A rental system that does not retain customer records misses a real opportunity. When a returning customer calls, your staff should be able to pull up their rental history, see what they hired before, check for pending deposits, and confirm licence details — in under a minute. That kind of service builds repeat business without spending on advertising.</p>
+        <p>For chauffeured rentals, driver assignment is an additional workflow layer. The system needs to know which drivers are available, when they are on duty, and which vehicle is assigned to each job. Without that, scheduling becomes a phone call chain every time a booking comes in.</p>
+        <p>If you are weighing whether to build a custom system or use a third-party platform, our guide on <a href="https://www.fazeddigital.com/blog/online-booking-system-philippines">online booking systems in the Philippines</a> walks through the main options and trade-offs.</p>
+        <h2>Build vs. Buy in the Philippine Context</h2>
+        <p>There are off-the-shelf rental management tools — some international, a few local. The case for buying one is speed and predictable cost. The case against is fit: most generic rental platforms are built around Western payment systems and workflows that do not map well to how Philippine rental businesses actually take bookings. You end up working around the tool more than working with it.</p>
+        <p>A custom-built system takes longer and costs more upfront, but it is built around your exact operations from day one. For a rental business with enough volume to justify the investment — typically one with ten or more vehicles and multiple staff handling bookings daily — a purpose-built platform tends to pay for itself through reduced errors, faster booking confirmations, and cleaner reporting.</p>
+        <h2>Frequently asked questions</h2>
+        <p><strong>How long does it take to build a car rental booking system?</strong> A focused build covering reservations, fleet tracking, payments and customer records typically takes 8–12 weeks from brief to launch, depending on the scope and how quickly you can provide content and feedback at each stage.</p>
+        <p><strong>Can the system accept GCash payments directly?</strong> Yes. Philippine payment gateways such as PayMongo and PayMaya support GCash, Maya and bank transfer integration into a custom reservation system.</p>
+        <p><strong>Do I need a mobile app for my rental system?</strong> Not necessarily. A well-built web application works on mobile browsers, which covers most staff and customers. A native app makes sense only if offline use or push notifications are essential to how you operate.</p>
+        <p>If you are ready to replace manual processes with a system built around how you actually run your rental business, <a href="https://www.fazeddigital.com/contact">get in touch with our team</a> to discuss what your platform needs.</p>
+      `,
+    },
+    {
       slug: 'time-difference-philippines-usa-web-projects',
       title: "Time Zones and Offshore Web Projects: A US Owner's Playbook",
       category: 'Strategy',

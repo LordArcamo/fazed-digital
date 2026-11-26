@@ -46,7 +46,7 @@ Owner: Fazed Digital. Consumed by the nightly blog routine (`docs/seo/routine-pr
 - [x] 2026-11-11 | AU | Development | Law Firm Website, Client Portal and App: Do You Need All Three? | law firm websites australia | /work/08 → /blog/law-firm-websites-australia
 - [x] 2026-11-12 | PH | Strategy | Freelancer or Agency for Your Website in the Philippines? | web designer philippines freelancer vs agency | /lp/7-day-website/ph → /blog/web-designer-philippines-freelancer-vs-agency
 - [x] 2026-11-13 | US | Strategy | Time Zones and Offshore Web Projects: A US Owner's Playbook | time difference philippines and usa | /lp/7-day-website → /blog/time-difference-philippines-usa-web-projects
-- [ ] 2026-11-14 | PH | Development | Car Rental Booking System in the Philippines: The Must-Haves | car rental booking system philippines | /work/06
+- [x] 2026-11-14 | PH | Development | Car Rental Booking System in the Philippines: The Must-Haves | car rental booking system philippines | /work/06 → /blog/car-rental-booking-system-philippines
 - [ ] 2026-11-15 | UK | Strategy | UK VAT on an Overseas Web Designer: A Plain-English Primer | uk vat on overseas services | /lp/7-day-website
 - [ ] 2026-11-16 | Global | Design | 3D Websites for Brands: When Immersive Is Worth It | 3d website design | /lab
 - [ ] 2026-11-17 | CA | Development | Contractor Websites in Canada: What Wins Local Quotes | contractor website canada | /lp/7-day-website

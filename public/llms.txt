@@ -52,6 +52,7 @@
   - TACET Model 01 (concept site, fictional brand): https://fazed-tacet.vercel.app · Next.js, Three.js, Exploded view, Live audio, Blender · 2026-10-29
 
 ## Guides
+- [Car Rental Booking System in the Philippines: The Must-Haves](https://www.fazeddigital.com/blog/car-rental-booking-system-philippines) (Development, 27 Nov 2026)
 - [Time Zones and Offshore Web Projects: A US Owner's Playbook](https://www.fazeddigital.com/blog/time-difference-philippines-usa-web-projects) (Strategy, 25 Nov 2026)
 - [Freelancer or Agency for Your Website in the Philippines?](https://www.fazeddigital.com/blog/web-designer-philippines-freelancer-vs-agency) (Strategy, 23 Nov 2026)
 - [Law Firm Websites in Australia: Do You Need All Three?](https://www.fazeddigital.com/blog/law-firm-websites-australia) (Development, 20 Nov 2026)
